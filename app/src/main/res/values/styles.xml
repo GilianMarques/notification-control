@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="containers_margins">
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="containers_margins_no_padding" parent="containers_margins">
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+    </style>
+
+    <style name="filter_chip_margins_filter" parent="Widget.Material3.Chip.Filter">
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
+    <style name="filter_chip_margins_suggestion" parent="Widget.Material3.Chip.Input">
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
+    <style name="Margins_edittext">
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:drawablePadding">16dp</item>
+    </style>
+
+    <!-- stilo do textviews do frag de configurações -->
+    <style name="SettingsMenuItem" parent="Margins_edittext">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/back_textview_menu</item>
+        <item name="android:textColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+
+</resources>

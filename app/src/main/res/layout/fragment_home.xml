@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="?attr/AppColorBackground">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_profile_picture"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/back_profile_picture"
+        android:contentDescription="@string/Foto_de_perfil_do_usuario"
+        android:elevation="5dp"
+        android:padding="3dp"
+        android:transitionName="profile_picture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/back_circle" />
+
+    <TextView
+        android:id="@+id/tv_greetings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="30dp"
+        android:elevation="18dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_user_name"
+        app:layout_constraintStart_toEndOf="@id/iv_profile_picture"
+        tools:text="Bom dia" />
+
+    <TextView
+        android:id="@+id/tv_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="6dp"
+        android:elevation="19dp"
+        android:fontFamily="@font/urbanist_extrabold"
+        android:maxLines="1"
+        android:textSize="24sp"
+        android:transitionName="username"
+        app:layout_constraintBottom_toBottomOf="@id/iv_profile_picture"
+        app:layout_constraintEnd_toStartOf="@id/iv_menu"
+        app:layout_constraintStart_toEndOf="@id/iv_profile_picture"
+        tools:text="Gilian Marques Fernandes" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Bot_o_de_menu"
+        android:elevation="5dp"
+        android:padding="12dp"
+        android:src="@drawable/vec_menu"
+        android:transitionName="view_menu"
+        app:layout_constraintBottom_toBottomOf="@id/iv_profile_picture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_profile_picture"
+        app:tint="?colorOnBackground" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        android:transitionName="divider"
+        app:layout_constraintTop_toBottomOf="@id/iv_profile_picture" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/Botao_de_adicionar_novo_app_gerenciado"
+        android:src="@drawable/vec_add"
+        android:transitionName="fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:elevation="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@android:color/transparent"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edt_search"
+                    style="@style/Margins_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="6dp"
+                    android:autofillHints="name"
+                    android:background="@drawable/back_edittext_search"
+                    android:drawableStart="@drawable/vec_search"
+                    android:drawablePadding="16dp"
+                    android:drawableTint="?colorOnBackground"
+                    android:hint="@string/Buscar_aplicativo"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxWidth="378dp"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:visibility="invisible"
+                    tools:text="Whatsapp"
+                    tools:visibility="visible" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/empty_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="1dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_view"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="empty_list.json"
+                    app:lottie_repeatCount="-1"
+                    app:lottie_repeatMode="reverse" />
+
+
+                <TextView
+                    android:id="@+id/tv_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:maxWidth="250dp"
+                    android:textColor="?colorSecondary"
+                    android:text="@string/Clique_no_bot_o_para_configurar_o_primeiro_app"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toBottomOf="@id/lottie_view" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <FrameLayout
+                android:id="@+id/container_warnings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:elevation="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvApps"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="@string/Lista_de_aplicativos_sendo_gerenciados"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_warnings"
+                tools:listitem="@layout/item_managed_app"
+                tools:visibility="invisible" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

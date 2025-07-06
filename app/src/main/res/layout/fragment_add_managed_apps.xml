@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:background="?attr/AppColorBackground"
+    tools:context=".presentation.ui.rule_fragment.AddRuleFragment">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_conclude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/Concluir"
+        android:transitionName="fab"
+        app:icon="@drawable/vec_check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/actionbar"
+        layout="@layout/view_activity_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/actionbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <LinearLayout
+                android:id="@+id/ll_rule"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="rule_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:animateLayoutChanges="true"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_rule_tittle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Regra"
+                        android:textSize="20sp"
+                        android:transitionName="tv_rule_tittle"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_add_rule"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/tv_add_rule"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Adicionar_regra"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_rule_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical"
+                    android:transitionName="rule_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/apps_container"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="apps_container">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_target_app"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Aplicativos_alvo"
+                        android:textSize="20sp"
+                        android:transitionName="tv_target_app"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_add_app"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/tv_add_app"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Adicionar_app"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_container_apps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_extra_apps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:textAlignment="gravity"
+                    android:textSize="14sp"
+                    tools:text="+ 50 apps" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_or"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/urbanist_extrabold"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/ou_"
+                android:textAlignment="gravity"
+                android:textSize="16sp" />
+
+
+            <LinearLayout
+                android:id="@+id/notification_container"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="notification_container">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_sel_not"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Selecione_uma_notifica_o"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:transitionName="tv_target_app"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/tv_select_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Selecionar_notificacao"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_sel_not" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
