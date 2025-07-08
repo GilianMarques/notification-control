@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.pm.PackageManager
 import android.os.Build
@@ -51,7 +52,6 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var splashLabel: String
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
-
     private lateinit var appUpdateManager: AppUpdateManager
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
@@ -90,9 +90,9 @@ class MainActivity() : AppCompatActivity() {
         }
 
 
-        if (resources.getBoolean(R.bool.portrait_only)) {
-            requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
-        }
+        requestedOrientation = if (resources.getBoolean(R.bool.portrait_only)) SCREEN_ORIENTATION_PORTRAIT
+        else SCREEN_ORIENTATION_LANDSCAPE
+
 
         observeNavigationChanges()
         checkForAppUpdate()
