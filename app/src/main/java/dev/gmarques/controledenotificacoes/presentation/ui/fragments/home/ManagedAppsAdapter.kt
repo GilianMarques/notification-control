@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
+
 /**
  * Adapter responsável por exibir a lista de aplicativos controlados na RecyclerView.
  * Criado por Gilian Marques
@@ -89,6 +90,7 @@ class ManagedAppsAdapter(
             binding.root.setOnClickListener(AnimatedClickListener {
                 onItemClick(app)
             })
+
         }
     }
 

@@ -20,7 +20,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
@@ -39,7 +38,9 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
@@ -208,14 +209,35 @@ class HomeFragment : MyFragment() {
             ::navigateToViewManagedAppFragment
         )
 
-        rvApps.layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = AutoFitGridLayoutManager(requireContext(), 300)
+
+        rvApps.layoutManager = layoutManager
+
         rvApps.adapter = adapter
         rvApps.doOnPreDraw {
             startPostponedEnterTransition()
         }
+
     }
 
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+
+        if (App.deviceIsTablet) {
+            binding.containerFragDetails!!.isVisible = true
+            requireActivity().supportFragmentManager.beginTransaction().replace(
+                R.id.container_frag_details,
+                ViewManagedAppFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable("app", app)
+                    }
+                }
+            )
+                .commit()
+            return
+
+        }
+
+
         val extras = FragmentNavigatorExtras(
             binding.ivProfilePicture to "view_app_icon",
             binding.tvUserName to "view_app_name",

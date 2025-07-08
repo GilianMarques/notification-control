@@ -89,10 +89,8 @@ class MainActivity() : AppCompatActivity() {
             insets
         }
 
-
-        requestedOrientation = if(App.deviceIsTablet) SCREEN_ORIENTATION_LANDSCAPE
-        else SCREEN_ORIENTATION_PORTRAIT
-
+        if (!App.deviceIsTablet) requestedOrientation = SCREEN_ORIENTATION_PORTRAIT//SCREEN_ORIENTATION_LANDSCAPE
+        //else SCREEN_ORIENTATION_PORTRAIT
 
         observeNavigationChanges()
         checkForAppUpdate()
