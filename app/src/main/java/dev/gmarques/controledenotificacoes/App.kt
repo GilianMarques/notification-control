@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.properties.Delegates
 
 /**
  * Criado por Gilian Marques
@@ -29,6 +30,9 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     companion object {
         lateinit var instance: App
+            private set
+        var deviceIsTablet by Delegates.notNull<Boolean>()
+            private set
     }
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
@@ -37,6 +41,7 @@ class App() : Application(), CoroutineScope by MainScope() {
     override fun onCreate() {
 
         instance = this
+        deviceIsTablet = resources.getBoolean(R.bool.device_is_tablet)
 
         setupRemoteConfig()
         setupCrashLytics()
