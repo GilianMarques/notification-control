@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
@@ -76,6 +78,8 @@ open class MyFragment() : Fragment() {
     private var isFabVisible = true
     private var animatingFab = false
 
+    /**veja a função [closeDetailsPaneIfTablet]*/
+    private var shouldCloseDetailsPaneIfTablet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -240,6 +244,7 @@ open class MyFragment() : Fragment() {
     protected fun goBack() {
         vibrator.interaction()
         findNavController().popBackStack()
+        if (shouldCloseDetailsPaneIfTablet) requireMainActivity().slidingPaneController?.collapse()
     }
 
     protected fun requireMainActivity(): MainActivity {
@@ -458,6 +463,32 @@ open class MyFragment() : Fragment() {
             ).addFlags(FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
 
+        }
+    }
+
+    /** Retorna o  Controlador de navegação do painel de detalhes (o da direita)
+     * Esse controlador só estará disponível em dispositivos com tela grande com tablets e tvs
+     * para saber se pode chamar essa função verifique [App.deviceIsTablet]
+     *
+     * @See findNavControllerMain*/
+    protected fun findNavControllerDetails(): NavController? {
+        return requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_detail)?.findNavController()
+    }
+
+    /** Retorna o  Controlador de navegação do painel principal (o da esquerda), é o mesmo que chamar [findNavController]
+     * fiz esse override pra padronizar com [findNavControllerDetails]
+     * Esse controlador sempre restará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
+     * pois é o principal.
+     */
+    protected fun findNavControllerMain() = findNavController()
+
+    // TODO: documentar 
+    protected fun closeDetailsPaneIfTablet() {
+        if (!App.deviceIsTablet) return
+        shouldCloseDetailsPaneIfTablet = true
+        // TODO: acho que isso bugou o botao de voltar
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            requireMainActivity().slidingPaneController?.collapse()
         }
     }
 

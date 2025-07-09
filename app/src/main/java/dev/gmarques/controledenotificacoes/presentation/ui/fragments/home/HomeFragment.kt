@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
@@ -18,6 +20,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.transition.ChangeBounds
@@ -36,9 +39,9 @@ import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotifica
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
+import dev.gmarques.controledenotificacoes.presentation.PlaceHolderFragmentDirections
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -86,16 +89,20 @@ class HomeFragment : MyFragment() {
 
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View = FragmentHomeBinding.inflate(inflater, container, false).also {
+
         binding = it
         setupUiWithUserData()
     }.root
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch {
             setupPopUpMenu()
             setupRecyclerView()
@@ -104,6 +111,7 @@ class HomeFragment : MyFragment() {
             setupSearch()
         }
     }
+
 
     private fun setupPopUpMenu() {
         val popupMenu = popupMenu {
@@ -210,6 +218,7 @@ class HomeFragment : MyFragment() {
         )
 
         val layoutManager = AutoFitGridLayoutManager(requireContext(), 300)
+        // val layoutManager = LinearLayoutManager(requireContext())
 
         rvApps.layoutManager = layoutManager
 
@@ -222,21 +231,7 @@ class HomeFragment : MyFragment() {
 
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
 
-        if (App.deviceIsTablet) {
-            binding.containerFragDetails!!.isVisible = true
-            requireActivity().supportFragmentManager.beginTransaction().replace(
-                R.id.container_frag_details,
-                ViewManagedAppFragment().apply {
-                    arguments = Bundle().apply {
-                        putSerializable("app", app)
-                    }
-                }
-            )
-                .commit()
-            return
-
-        }
-
+        binding.edtSearch.setText("")
 
         val extras = FragmentNavigatorExtras(
             binding.ivProfilePicture to "view_app_icon",
@@ -246,10 +241,22 @@ class HomeFragment : MyFragment() {
             binding.fabAdd to "fab",
         )
 
-        findNavController().navigate(
-            HomeFragmentDirections.toViewManagedAppFragment(app = app), extras
-        )
-        binding.edtSearch.setText("")
+        if (App.deviceIsTablet) lifecycleScope.launch {
+            launch { requireMainActivity().slidingPaneController!!.expand() }
+            delay(100)
+
+            findNavControllerDetails()!!.navigate(
+                R.id.viewManagedAppFragment,
+                bundleOf("app" to app),
+                NavOptions
+                    .Builder()
+                    .setPopUpTo(R.id.viewManagedAppFragment, true)
+                    .build()
+            )
+        } else {
+            // Navegação padrão (Celular)
+            findNavControllerMain().navigate(HomeFragmentDirections.toViewManagedAppFragment(app = app), extras)
+        }
     }
 
     /**
@@ -310,6 +317,17 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
+
+        /*   val slidingPane = requireActivity().findViewById<SlidingPaneLayout?>(R.id.sliding_pane_layout)
+
+           slidingPane?.post {
+
+               Toast.makeText(requireContext(), "fechando", Toast.LENGTH_SHORT).show()
+               slidingPane.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED_CLOSED
+               slidingPane.closePane()
+
+           }*/
+
     }
 
     private fun showListenNotificationWarning() {
@@ -368,7 +386,8 @@ class HomeFragment : MyFragment() {
     }
 
     private fun showHowToFeedbackDialog() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback))
+            .setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
                 openPlayStore()

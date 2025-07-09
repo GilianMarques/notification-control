@@ -81,7 +81,10 @@ class ViewManagedAppFragment() : MyFragment() {
         setupRecyclerView()
         setupFabOpenApp()
         setupSelectRuleListener()
+        closeDetailsPaneIfTablet()
     }
+
+
 
     /**atua nas animaçoes do lottie e vibração*/
     private fun toggleEmptyState(enabled: Boolean) {

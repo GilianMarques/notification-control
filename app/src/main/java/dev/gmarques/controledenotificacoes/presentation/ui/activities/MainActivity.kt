@@ -20,8 +20,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -35,6 +38,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.presentation.utils.SlidingPaneController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,12 +51,16 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity() : AppCompatActivity() {
 
+
     private lateinit var binding: ActivityMainBinding
     private var backgroundChanged = false
     private lateinit var splashLabel: String
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
+
+    var slidingPaneController: SlidingPaneController? = null
+        private set
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
@@ -75,25 +83,42 @@ class MainActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+        binding.navHostDetail?.isVisible = false
+
         splashLabel = getString(R.string.Splash_fragment)
         homeLabel = getString(R.string.Fragment_home)
 
-        enableEdgeToEdge()
-
+        lockOrientation()
         setContentView(binding.root)
 
+        enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        if (!App.deviceIsTablet) requestedOrientation = SCREEN_ORIENTATION_PORTRAIT//SCREEN_ORIENTATION_LANDSCAPE
-        //else SCREEN_ORIENTATION_PORTRAIT
-
         observeNavigationChanges()
         checkForAppUpdate()
+
+        setupForTablet()
+    }
+
+    private fun setupForTablet() {
+        if (!App.deviceIsTablet) return
+        slidingPaneController = SlidingPaneController(
+            activity = this,
+            masterId = R.id.nav_host_master,
+            detailId = R.id.nav_host_detail
+        )
+        slidingPaneController?.collapse()
+    }
+
+    private fun lockOrientation() {
+        if (App.deviceIsTablet) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
+        else SCREEN_ORIENTATION_PORTRAIT
     }
 
     private fun checkForAppUpdate() {
@@ -128,7 +153,7 @@ class MainActivity() : AppCompatActivity() {
 
     private fun observeNavigationChanges() {
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_master) as NavHostFragment
 
         val navController = navHostFragment.navController
 
