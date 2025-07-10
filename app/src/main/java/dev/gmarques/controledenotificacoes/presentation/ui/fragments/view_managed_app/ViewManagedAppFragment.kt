@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
@@ -20,6 +21,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
@@ -81,7 +83,23 @@ class ViewManagedAppFragment() : MyFragment() {
         setupRecyclerView()
         setupFabOpenApp()
         setupSelectRuleListener()
-        this@ViewManagedAppFragment.closeDetailsPaneOnExit()
+        closeDetailsPaneOnExit()
+    }
+
+
+    private fun closeDetailsPaneOnExit() {
+        if (!App.largeScreenDevice) return
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            this.remove()
+            goBack()
+        }
+    }
+
+    override fun goBack() {
+        requireMainActivity().closeDetailsPane {
+            super.goBack()
+        }
     }
 
     /**atua nas animaçoes do lottie e vibração*/

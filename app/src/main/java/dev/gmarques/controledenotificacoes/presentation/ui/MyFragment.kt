@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
@@ -63,7 +62,6 @@ import kotlin.system.exitProcess
  */
 @AndroidEntryPoint
 open class MyFragment() : Fragment() {
-    // TODO: identificar manualmente os fragmentos de cada  host pra saber quais devem manusear onbackpressed manualmente.
     private var dialogHint: AlertDialog? = null
 
     @Inject
@@ -78,8 +76,6 @@ open class MyFragment() : Fragment() {
     private var isFabVisible = true
     private var animatingFab = false
 
-    /**veja a função [closeDetailsPaneOnExit]*/
-    private var closeDetailsPane = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -241,13 +237,9 @@ open class MyFragment() : Fragment() {
      *
      * Este méto-do é chamado para simular o pressionamento do botão voltar.
      */
-    protected fun goBack() {
+    protected open fun goBack() {
         vibrator.interaction()
-        if (closeDetailsPane) requireMainActivity().slidingPaneController?.collapse {
-            this@MyFragment.findNavController().popBackStack()
-        }
-        else findNavController().popBackStack()
-
+        findNavController().popBackStack()
     }
 
     protected fun requireMainActivity(): MainActivity {
@@ -484,15 +476,5 @@ open class MyFragment() : Fragment() {
      * pois é o principal.
      */
     protected fun findNavControllerMain() = findNavController()
-
-    // TODO: documentar 
-    protected fun closeDetailsPaneOnExit() {
-        if (!App.largeScreenDevice) return
-        closeDetailsPane = true
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            this.remove()
-            goBack()
-        }
-    }
 
 }

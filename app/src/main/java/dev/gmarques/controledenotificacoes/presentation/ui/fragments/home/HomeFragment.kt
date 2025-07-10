@@ -195,7 +195,7 @@ class HomeFragment : MyFragment() {
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-
+            requireMainActivity().closeDetailsPane()
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
@@ -249,7 +249,7 @@ class HomeFragment : MyFragment() {
                         .build()
                 )
             }
-            requireMainActivity().slidingPaneController?.expand(navigate)
+            requireMainActivity().openDetailsPane(navigate)
 
         } else {
             // Navegação padrão (Celular)

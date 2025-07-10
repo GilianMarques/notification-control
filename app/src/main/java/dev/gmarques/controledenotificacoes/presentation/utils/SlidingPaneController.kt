@@ -15,15 +15,16 @@ class SlidingPaneController(
     private val masterId: Int,
     private val detailId: Int,
 ) {
-
-    lateinit var stateListener: (Boolean) -> Any
+    /**Avisa sempre que o estado muda aberto/fechado*/
+    lateinit var stateListener: (expanded: Boolean) -> Any
     private val masterView: View by lazy { activity.findViewById(masterId) }
     private val detailView: View by lazy { activity.findViewById(detailId) }
 
+    /**Recebe a largura da tela, considerando a orientação do dispositivo (sempre recebe o valor horizontal da tela)*/
     private val screenWidth: Int
         get() = activity.resources.displayMetrics.widthPixels
 
-    private val targetPercent = 0.65f
+    private val targetPercent = 0.66f // 2/3 da tela
     private val detailTargetWidth: Int
         get() = (screenWidth * targetPercent).toInt()
 

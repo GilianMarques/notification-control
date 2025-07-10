@@ -57,8 +57,8 @@ class MainActivity() : AppCompatActivity() {
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
 
-    var slidingPaneController: SlidingPaneController? = null
-        private set
+    private var slidingPaneController: SlidingPaneController? = null
+
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
@@ -116,7 +116,7 @@ class MainActivity() : AppCompatActivity() {
         )
 
         /**
-         * Alterna o NavHost padrao uqe é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
+         * Alterna o NavHost padrao que é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
          * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
          * contrario o sistema passa a observar o NavHost do painel master
          * */
@@ -327,7 +327,26 @@ class MainActivity() : AppCompatActivity() {
             return false
         }
     }
+
+    /**
+     * Fecha o painel de detalhes da tela dividida (usado em tablets).
+     * Esta função invoca o mét.odo `collapse` do [slidingPaneController] para recolher o painel de detalhes.
+     *
+     * @param callback Uma função opcional a ser executada após o painel ser fechado. Será chamada mesmo que o painel não exista (celulares) ou que já esteja fechado.
+     */
+    fun closeDetailsPane(callback: () -> Any = {}) {
+        if (slidingPaneController != null) slidingPaneController?.collapse(callback)
+        else callback.invoke()
+    }
+
+    /**
+     * Abre o painel de detalhes da tela dividida (usado em tablets).
+     * Esta função invoca o mét.odo `expand` do [slidingPaneController] para expandir o painel de detalhes.
+     *
+     * @param callback Uma função opcional a ser executada após o painel ser fechado. Será chamada mesmo que o painel não exista (celulares) ou que já esteja fechado.
+     */
+    fun openDetailsPane(callback: () -> Any = {}) {
+        if (slidingPaneController != null) slidingPaneController?.expand(callback)
+        else callback.invoke()
+    }
 }
-
-
-
