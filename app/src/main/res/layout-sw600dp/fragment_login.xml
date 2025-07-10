@@ -23,12 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.6" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guide"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,17 +41,17 @@
 
         <TextView
             android:id="@+id/tv_introduction"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/urbanist_extrabold"
             android:elevation="2dp"
-            android:maxWidth="450dp"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:maxWidth="600dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="@string/Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes"
             android:textAlignment="center"
             android:textColor="?colorSecondary"
-            android:textSize="36sp"
+            android:textSize="26sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guide"
