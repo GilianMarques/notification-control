@@ -31,8 +31,9 @@ class App() : Application(), CoroutineScope by MainScope() {
     companion object {
         lateinit var instance: App
             private set
-        var deviceIsTablet by Delegates.notNull<Boolean>()
+        var largeScreenDevice by Delegates.notNull<Boolean>()
             private set
+
     }
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
@@ -41,7 +42,7 @@ class App() : Application(), CoroutineScope by MainScope() {
     override fun onCreate() {
 
         instance = this
-        deviceIsTablet = resources.getBoolean(R.bool.device_is_tablet)
+        largeScreenDevice = resources.getBoolean(R.bool.device_is_tablet)
 
         setupRemoteConfig()
         setupCrashLytics()

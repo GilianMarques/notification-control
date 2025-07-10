@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -39,7 +38,6 @@ import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotifica
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.presentation.PlaceHolderFragmentDirections
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -102,7 +100,6 @@ class HomeFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         lifecycleScope.launch {
             setupPopUpMenu()
             setupRecyclerView()
@@ -241,18 +238,19 @@ class HomeFragment : MyFragment() {
             binding.fabAdd to "fab",
         )
 
-        if (App.deviceIsTablet) lifecycleScope.launch {
-            launch { requireMainActivity().slidingPaneController!!.expand() }
-            delay(100)
+        if (App.largeScreenDevice) lifecycleScope.launch {
+            val navigate = {
+                findNavControllerDetails()!!.navigate(
+                    R.id.viewManagedAppFragment,
+                    bundleOf("app" to app),
+                    NavOptions
+                        .Builder()
+                        .setPopUpTo(R.id.viewManagedAppFragment, true)
+                        .build()
+                )
+            }
+            requireMainActivity().slidingPaneController?.expand(navigate)
 
-            findNavControllerDetails()!!.navigate(
-                R.id.viewManagedAppFragment,
-                bundleOf("app" to app),
-                NavOptions
-                    .Builder()
-                    .setPopUpTo(R.id.viewManagedAppFragment, true)
-                    .build()
-            )
         } else {
             // Navegação padrão (Celular)
             findNavControllerMain().navigate(HomeFragmentDirections.toViewManagedAppFragment(app = app), extras)
@@ -317,16 +315,6 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
-
-        /*   val slidingPane = requireActivity().findViewById<SlidingPaneLayout?>(R.id.sliding_pane_layout)
-
-           slidingPane?.post {
-
-               Toast.makeText(requireContext(), "fechando", Toast.LENGTH_SHORT).show()
-               slidingPane.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED_CLOSED
-               slidingPane.closePane()
-
-           }*/
 
     }
 

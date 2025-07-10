@@ -22,9 +22,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -77,18 +75,20 @@ class MainActivity() : AppCompatActivity() {
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
         private const val UPDATE_REQUEST_CODE = 46251749
+        private const val DETAILS_PANE_STATE_EXPANDED = "details_pane_state_expanded"
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.navHostDetail?.isVisible = false
 
         splashLabel = getString(R.string.Splash_fragment)
         homeLabel = getString(R.string.Fragment_home)
+
+        val expandDetailsPanel = savedInstanceState?.getBoolean(DETAILS_PANE_STATE_EXPANDED) ?: false
 
         lockOrientation()
         setContentView(binding.root)
@@ -103,21 +103,41 @@ class MainActivity() : AppCompatActivity() {
         observeNavigationChanges()
         checkForAppUpdate()
 
-        setupForTablet()
+        setupForTablet(expandDetailsPanel)
+
     }
 
-    private fun setupForTablet() {
-        if (!App.deviceIsTablet) return
+    private fun setupForTablet(expandDetailsPanel: Boolean) {
+        if (!App.largeScreenDevice) return
         slidingPaneController = SlidingPaneController(
             activity = this,
             masterId = R.id.nav_host_master,
             detailId = R.id.nav_host_detail
         )
-        slidingPaneController?.collapse()
+
+        /**
+         * Alterna o NavHost padrao uqe é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
+         * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
+         * contrario o sistema passa a observar o NavHost do painel master
+         * */
+        slidingPaneController?.stateListener = { expanded: Boolean ->
+            val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
+            val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
+
+            supportFragmentManager.beginTransaction()
+                .setPrimaryNavigationFragment(if (expanded) detailHost else masterHost)
+                .commit()
+
+
+        }
+
+        if (expandDetailsPanel) slidingPaneController?.expand()
+        else slidingPaneController?.collapse()
+
     }
 
     private fun lockOrientation() {
-        if (App.deviceIsTablet) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
+        requestedOrientation = if (App.largeScreenDevice) SCREEN_ORIENTATION_LANDSCAPE
         else SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -146,7 +166,14 @@ class MainActivity() : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(DETAILS_PANE_STATE_EXPANDED, slidingPaneController?.isExpanded() == true)
+    }
+
+
     override fun onStop() {
+        /**impede que a tela de otimização de bateria (a reserva, caso a primeira nao abra) seja aberta se a primeira for*/
         requestIgnoreBatteryOptimizationsJob?.cancel()
         super.onStop()
     }

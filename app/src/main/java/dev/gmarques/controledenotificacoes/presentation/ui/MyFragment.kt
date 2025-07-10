@@ -63,7 +63,7 @@ import kotlin.system.exitProcess
  */
 @AndroidEntryPoint
 open class MyFragment() : Fragment() {
-
+    // TODO: identificar manualmente os fragmentos de cada  host pra saber quais devem manusear onbackpressed manualmente.
     private var dialogHint: AlertDialog? = null
 
     @Inject
@@ -78,8 +78,8 @@ open class MyFragment() : Fragment() {
     private var isFabVisible = true
     private var animatingFab = false
 
-    /**veja a função [closeDetailsPaneIfTablet]*/
-    private var shouldCloseDetailsPaneIfTablet = false
+    /**veja a função [closeDetailsPaneOnExit]*/
+    private var closeDetailsPane = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -243,8 +243,11 @@ open class MyFragment() : Fragment() {
      */
     protected fun goBack() {
         vibrator.interaction()
-        findNavController().popBackStack()
-        if (shouldCloseDetailsPaneIfTablet) requireMainActivity().slidingPaneController?.collapse()
+        if (closeDetailsPane) requireMainActivity().slidingPaneController?.collapse {
+            this@MyFragment.findNavController().popBackStack()
+        }
+        else findNavController().popBackStack()
+
     }
 
     protected fun requireMainActivity(): MainActivity {
@@ -468,7 +471,7 @@ open class MyFragment() : Fragment() {
 
     /** Retorna o  Controlador de navegação do painel de detalhes (o da direita)
      * Esse controlador só estará disponível em dispositivos com tela grande com tablets e tvs
-     * para saber se pode chamar essa função verifique [App.deviceIsTablet]
+     * para saber se pode chamar essa função verifique [App.largeScreenDevice]
      *
      * @See findNavControllerMain*/
     protected fun findNavControllerDetails(): NavController? {
@@ -483,12 +486,12 @@ open class MyFragment() : Fragment() {
     protected fun findNavControllerMain() = findNavController()
 
     // TODO: documentar 
-    protected fun closeDetailsPaneIfTablet() {
-        if (!App.deviceIsTablet) return
-        shouldCloseDetailsPaneIfTablet = true
-        // TODO: acho que isso bugou o botao de voltar
+    protected fun closeDetailsPaneOnExit() {
+        if (!App.largeScreenDevice) return
+        closeDetailsPane = true
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            requireMainActivity().slidingPaneController?.collapse()
+            this.remove()
+            goBack()
         }
     }
 

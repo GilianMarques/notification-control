@@ -31,7 +31,7 @@ class UserRepositoryImpl @Inject constructor(@ApplicationContext private val con
     override fun getUser(): User? {
 
         // remova as barras  abaixo para usar o usuário padrão para testes
-        //  return defaultForTestsOnlyUser
+        return defaultForTestsOnlyUser
 
         val fUser = FirebaseAuth.getInstance().currentUser
         if (fUser == null) return null

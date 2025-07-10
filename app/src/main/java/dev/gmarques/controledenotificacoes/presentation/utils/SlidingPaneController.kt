@@ -16,6 +16,7 @@ class SlidingPaneController(
     private val detailId: Int,
 ) {
 
+    lateinit var stateListener: (Boolean) -> Any
     private val masterView: View by lazy { activity.findViewById(masterId) }
     private val detailView: View by lazy { activity.findViewById(detailId) }
 
@@ -26,18 +27,23 @@ class SlidingPaneController(
     private val detailTargetWidth: Int
         get() = (screenWidth * targetPercent).toInt()
 
-    fun expand() {
+    fun expand(callback: () -> Any = {}) {
         detailView.visibility = View.VISIBLE
 
         animateWidth(masterView, masterView.width, screenWidth - detailTargetWidth)
-        animateWidth(detailView, detailView.width, detailTargetWidth)
+        animateWidth(detailView, detailView.width, detailTargetWidth) {
+            callback.invoke()
+            stateListener.invoke(isExpanded())
+        }
 
     }
 
-    fun collapse() {
+    fun collapse(callback: () -> Any = {}) {
         animateWidth(masterView, masterView.width, screenWidth)
         animateWidth(detailView, detailView.width, 0) {
             detailView.visibility = View.GONE
+            callback.invoke()
+            stateListener.invoke(isExpanded())
         }
     }
 
