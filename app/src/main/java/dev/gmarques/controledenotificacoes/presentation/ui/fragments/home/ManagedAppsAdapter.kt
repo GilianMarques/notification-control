@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
@@ -79,7 +80,7 @@ class ManagedAppsAdapter(
 
 
             CoroutineScope(Main).launch {
-                Glide.with(binding.ivAppIcon.context)
+                Glide.with(App.instance)
                     .load(getInstalledAppIconUseCase(app.packageId))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.vec_app)
