@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
-import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -11,7 +11,7 @@ import javax.inject.Inject
  * Em sexta-feira, 04 de abril de 2025 as 17:43.
  */
 class GenerateRuleDescriptionUseCase @Inject constructor(
-    private val ruleStringsProvider: RuleStringsProvider,
+    private val stringsProvider: StringsProvider,
 ) {
 
     operator fun invoke(rule: Rule): String {
@@ -24,7 +24,7 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
 
     private fun formatCondensedDays(days: List<WeekDay>): String {
         if (days.isEmpty()) return ""
-        if (days.size == 7) return ruleStringsProvider.everyDay()
+        if (days.size == 7) return stringsProvider.everyDay()
 
         val sortedDays = days.sortedBy { it.dayNumber }
 
@@ -59,20 +59,20 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
 
     private fun abbreviatedDay(day: WeekDay): String {
         return when (day) {
-            WeekDay.MONDAY -> ruleStringsProvider.monday()
-            WeekDay.TUESDAY -> ruleStringsProvider.tuesday()
-            WeekDay.WEDNESDAY -> ruleStringsProvider.wednesday()
-            WeekDay.THURSDAY -> ruleStringsProvider.thursday()
-            WeekDay.FRIDAY -> ruleStringsProvider.friday()
-            WeekDay.SATURDAY -> ruleStringsProvider.saturday()
-            WeekDay.SUNDAY -> ruleStringsProvider.sunday()
+            WeekDay.MONDAY -> stringsProvider.monday()
+            WeekDay.TUESDAY -> stringsProvider.tuesday()
+            WeekDay.WEDNESDAY -> stringsProvider.wednesday()
+            WeekDay.THURSDAY -> stringsProvider.thursday()
+            WeekDay.FRIDAY -> stringsProvider.friday()
+            WeekDay.SATURDAY -> stringsProvider.saturday()
+            WeekDay.SUNDAY -> stringsProvider.sunday()
         }
     }
 
     private fun formatTimeRanges(rule: Rule): String {
         if (rule.timeRanges.isEmpty()) return ""
 
-        if (rule.timeRanges.any { it.allDay }) return ruleStringsProvider.wholeDay()
+        if (rule.timeRanges.any { it.allDay }) return stringsProvider.wholeDay()
 
 
         val start = rule.timeRanges.minByOrNull { it.startHour * 60 + it.startMinute }!!
@@ -91,8 +91,8 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
 
     private fun formatRuleType(type: RuleType): String {
         return when (type) {
-            RuleType.PERMISSIVE -> ruleStringsProvider.permissive()
-            RuleType.RESTRICTIVE -> ruleStringsProvider.restrictive()
+            RuleType.PERMISSIVE -> stringsProvider.permissive()
+            RuleType.RESTRICTIVE -> stringsProvider.restrictive()
         }
     }
 }

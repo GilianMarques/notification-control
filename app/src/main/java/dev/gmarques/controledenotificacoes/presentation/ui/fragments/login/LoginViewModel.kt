@@ -69,6 +69,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun getGuestUser(): User {
+        return getUserUseCase() ?: error("deveria retornar o usuario convidado aqui, e nao nulo.")
+    }
+
 }
 
 sealed class LoginEvent {

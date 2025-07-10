@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -36,7 +35,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.presentation.utils.SlidingPaneController
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -56,7 +55,6 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
-
     private var slidingPaneController: SlidingPaneController? = null
 
 
@@ -75,7 +73,7 @@ class MainActivity() : AppCompatActivity() {
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
         private const val UPDATE_REQUEST_CODE = 46251749
-        private const val DETAILS_PANE_STATE_EXPANDED = "details_pane_state_expanded"
+        private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -83,12 +81,17 @@ class MainActivity() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding.navHostDetail?.isVisible = false
 
         splashLabel = getString(R.string.Splash_fragment)
         homeLabel = getString(R.string.Fragment_home)
 
-        val expandDetailsPanel = savedInstanceState?.getBoolean(DETAILS_PANE_STATE_EXPANDED) ?: false
+        val lastSlidingPaneState =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState?.getSerializable(DETAILS_PANE_STATE, SlidingPaneState::class.java)
+            } else {
+                @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState
+            }
+
 
         lockOrientation()
         setContentView(binding.root)
@@ -103,11 +106,11 @@ class MainActivity() : AppCompatActivity() {
         observeNavigationChanges()
         checkForAppUpdate()
 
-        setupForTablet(expandDetailsPanel)
+        setupForTablet(lastSlidingPaneState)
 
     }
 
-    private fun setupForTablet(expandDetailsPanel: Boolean) {
+    private fun setupForTablet(lastState: SlidingPaneState?) {
         if (!App.largeScreenDevice) return
         slidingPaneController = SlidingPaneController(
             activity = this,
@@ -120,19 +123,24 @@ class MainActivity() : AppCompatActivity() {
          * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
          * contrario o sistema passa a observar o NavHost do painel master
          * */
-        slidingPaneController?.stateListener = { expanded: Boolean ->
+        slidingPaneController?.stateListener = { state ->
+
             val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
             val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
 
-            supportFragmentManager.beginTransaction()
-                .setPrimaryNavigationFragment(if (expanded) detailHost else masterHost)
+
+            val defaultHost = when (state) {
+                SlidingPaneState.ONLY_MASTER -> masterHost
+                SlidingPaneState.BOTH -> detailHost
+                SlidingPaneState.ONLY_DETAILS -> detailHost
+            }
+
+            if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
+                .setPrimaryNavigationFragment(defaultHost)
                 .commit()
-
-
         }
 
-        if (expandDetailsPanel) slidingPaneController?.expand()
-        else slidingPaneController?.collapse()
+        toggleSlidingPane(lastState ?: SlidingPaneState.ONLY_MASTER)
 
     }
 
@@ -168,9 +176,8 @@ class MainActivity() : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(DETAILS_PANE_STATE_EXPANDED, slidingPaneController?.isExpanded() == true)
+        outState.putSerializable(DETAILS_PANE_STATE, slidingPaneController?.state ?: SlidingPaneState.ONLY_MASTER)
     }
-
 
     override fun onStop() {
         /**impede que a tela de otimização de bateria (a reserva, caso a primeira nao abra) seja aberta se a primeira for*/
@@ -320,33 +327,20 @@ class MainActivity() : AppCompatActivity() {
     fun launchApp(packageId: String): Boolean {
         val launchIntent = packageManager.getLaunchIntentForPackage(packageId)
 
-        if (launchIntent != null) {
+        return if (launchIntent != null) {
             startActivity(launchIntent)
-            return true
-        } else {
-            return false
-        }
+            true
+        } else false
+
     }
 
     /**
-     * Fecha o painel de detalhes da tela dividida (usado em tablets).
-     * Esta função invoca o mét.odo `collapse` do [slidingPaneController] para recolher o painel de detalhes.
+     * Alterna entre as visualizaçoes do painel de detalhes quando em dispositivos de tela grande.
      *
-     * @param callback Uma função opcional a ser executada após o painel ser fechado. Será chamada mesmo que o painel não exista (celulares) ou que já esteja fechado.
+     * @param callback Uma função opcional a ser executada após a ação. Será chamada mesmo que o painel não exista (celulares)
      */
-    fun closeDetailsPane(callback: () -> Any = {}) {
-        if (slidingPaneController != null) slidingPaneController?.collapse(callback)
-        else callback.invoke()
-    }
-
-    /**
-     * Abre o painel de detalhes da tela dividida (usado em tablets).
-     * Esta função invoca o mét.odo `expand` do [slidingPaneController] para expandir o painel de detalhes.
-     *
-     * @param callback Uma função opcional a ser executada após o painel ser fechado. Será chamada mesmo que o painel não exista (celulares) ou que já esteja fechado.
-     */
-    fun openDetailsPane(callback: () -> Any = {}) {
-        if (slidingPaneController != null) slidingPaneController?.expand(callback)
+    fun toggleSlidingPane(slidingPaneState: SlidingPaneState, callback: () -> Any = {}) {
+        if (slidingPaneController != null) slidingPaneController?.toggleState(slidingPaneState, callback)
         else callback.invoke()
     }
 }

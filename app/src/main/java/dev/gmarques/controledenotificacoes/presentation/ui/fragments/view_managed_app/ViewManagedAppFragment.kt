@@ -32,6 +32,7 @@ import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.framework.model.ShakeDetectorHelper
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
@@ -86,7 +87,6 @@ class ViewManagedAppFragment() : MyFragment() {
         closeDetailsPaneOnExit()
     }
 
-
     private fun closeDetailsPaneOnExit() {
         if (!App.largeScreenDevice) return
 
@@ -97,7 +97,7 @@ class ViewManagedAppFragment() : MyFragment() {
     }
 
     override fun goBack() {
-        requireMainActivity().closeDetailsPane {
+        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
             super.goBack()
         }
     }
@@ -272,7 +272,9 @@ class ViewManagedAppFragment() : MyFragment() {
     }
 
     private fun navigateToSelectRule() {
-        findNavController().navigate(ViewManagedAppFragmentDirections.toSelectRuleFragment())
+        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_DETAILS) {
+            findNavController().navigate(ViewManagedAppFragmentDirections.toSelectRuleFragment())
+        }
     }
 
     private fun confirmRemoveRule() {
@@ -318,6 +320,11 @@ class ViewManagedAppFragment() : MyFragment() {
     override fun onPause() {
         toggleEmptyState(false)
         super.onPause()
+    }
+
+    override fun onResume() {
+        requireMainActivity().toggleSlidingPane(SlidingPaneState.BOTH)
+        super.onResume()
     }
 
     override fun onDestroyView() {

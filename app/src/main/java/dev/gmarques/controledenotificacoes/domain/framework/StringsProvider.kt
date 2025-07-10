@@ -12,7 +12,7 @@ package dev.gmarques.controledenotificacoes.domain.framework
  * Criado por Gilian Marques
  * Em Quarta-feira, 16 de abril de 2025, às 20:51.
  */
-interface RuleStringsProvider {
+interface StringsProvider {
 
     fun monday(): String
     fun tuesday(): String
@@ -26,5 +26,7 @@ interface RuleStringsProvider {
     fun restrictive(): String
     fun wholeDay(): String
     fun everyDay(): String
+
+    fun guest(): String
 
 }

@@ -4,6 +4,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.*
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -87,16 +89,14 @@ class HomeFragment : MyFragment() {
 
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View = FragmentHomeBinding.inflate(inflater, container, false).also {
 
         binding = it
-        setupUiWithUserData()
+        setupActionBar()
     }.root
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -107,8 +107,12 @@ class HomeFragment : MyFragment() {
             setupFabAddManagedApp()
             setupSearch()
         }
-    }
 
+        Log.d(
+            "USUK",
+            "HomeFragment.onViewCreated: -----------------------------------------------\n${requireActivity().resources.displayMetrics.widthPixels}\n---------------------------------"
+        )
+    }
 
     private fun setupPopUpMenu() {
         val popupMenu = popupMenu {
@@ -154,14 +158,18 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+            findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+        }
     }
 
     private fun navigateToSettingsFragment() {
-        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+            findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+        }
     }
 
-    private fun setupUiWithUserData() = binding.apply {
+    private fun setupActionBar() = binding.apply {
 
         val user = getUserUseCase() ?: error("É necessário estar logado para chegar nesse ponto.")
 
@@ -188,14 +196,17 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
+                requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+                    findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
+                }
             })
         }
     }
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            requireMainActivity().closeDetailsPane()
+            requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER)
+
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
@@ -249,7 +260,7 @@ class HomeFragment : MyFragment() {
                         .build()
                 )
             }
-            requireMainActivity().openDetailsPane(navigate)
+            requireMainActivity().toggleSlidingPane(SlidingPaneState.BOTH, navigate)
 
         } else {
             // Navegação padrão (Celular)
@@ -291,6 +302,7 @@ class HomeFragment : MyFragment() {
             }
         }
     }
+
 
     override fun onResume() {
         super.onResume()
