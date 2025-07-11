@@ -25,7 +25,7 @@ class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: Alarm
         for (time in times) {
             if (time.isAfter(now)) {
                 scheduler.scheduleAutoTurnOnAlarm(time.toDate().time).also {
-                    Log.d("USUK", "ScheduleAutoTurnOnUseCase.invoke: scheduled for: $time")
+                  //  Log.d("USUK", "ScheduleAutoTurnOnUseCase.invoke: scheduled for: $time")
                 }
                 break
             }

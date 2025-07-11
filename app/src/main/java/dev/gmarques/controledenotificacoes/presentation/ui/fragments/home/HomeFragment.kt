@@ -40,7 +40,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -152,13 +151,13 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+        requireMainActivity().slidingPaneController?.showOnlyMaster() {
             findNavController().navigate(HomeFragmentDirections.toEchoFragment())
         }
     }
 
     private fun navigateToSettingsFragment() {
-        requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+        requireMainActivity().slidingPaneController?.showOnlyMaster()  {
             findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
         }
     }
@@ -190,7 +189,7 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER) {
+                requireMainActivity().slidingPaneController?.showOnlyMaster() {
                     findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
                 }
             })
@@ -199,7 +198,7 @@ class HomeFragment : MyFragment() {
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            requireMainActivity().toggleSlidingPane(SlidingPaneState.ONLY_MASTER)
+            requireMainActivity().slidingPaneController?.showOnlyMaster()
 
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
@@ -257,7 +256,7 @@ class HomeFragment : MyFragment() {
                         .build()
                 )
             }
-            requireMainActivity().toggleSlidingPane(SlidingPaneState.BOTH, navigate)
+            requireMainActivity().slidingPaneController?.showMasterAndDetails(navigate)
 
         } else {
             // Navegação padrão (Celular)

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AlertDialog
@@ -64,6 +65,9 @@ import kotlin.system.exitProcess
 open class MyFragment() : Fragment() {
     private var dialogHint: AlertDialog? = null
 
+    /**printa as alteraçoes no ciclo de vida dos fragmentos filho, se habilitado*/
+    private val enableLifecycleDebugLogs = false
+
     @Inject
     lateinit var vibrator: VibratorInterface
 
@@ -75,7 +79,6 @@ open class MyFragment() : Fragment() {
 
     private var isFabVisible = true
     private var animatingFab = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -239,7 +242,18 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBack() {
         vibrator.interaction()
-        findNavController().popBackStack()
+        findNavControllerMain().popBackStack()
+        Log.d("USUK", "MyFragment.goBack: ${this.javaClass.simpleName}")
+    }
+
+    /**
+     * Mesmo que [goBack] mas cusando o NavHost do painel de detalhes.
+     * Se quer voltar na navegação em um fragmento no painel de detalhes essa é a fução que deve chamar.
+     */
+    protected open fun goBackDetails() {
+        vibrator.interaction()
+        findNavControllerDetails()?.popBackStack()
+        Log.d("USUK", "MyFragment.goBackDetails: ${this.javaClass.simpleName} ")
     }
 
     protected fun requireMainActivity(): MainActivity {
@@ -476,5 +490,19 @@ open class MyFragment() : Fragment() {
      * pois é o principal.
      */
     protected fun findNavControllerMain() = findNavController()
+    override fun onResume() {
+        if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onResume: ")
+        super.onResume()
+    }
+
+    override fun onStop() {
+        if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onStop: ")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onDestroy: ")
+        super.onDestroy()
+    }
 
 }

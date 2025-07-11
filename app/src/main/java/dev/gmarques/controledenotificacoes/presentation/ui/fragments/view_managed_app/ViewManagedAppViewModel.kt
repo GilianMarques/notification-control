@@ -106,7 +106,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     private fun observeAppChanges(pkg: String) = viewModelScope.launch(IO) {
         observeManagedApp(pkg).collect {
-            Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
+         //   Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
 
             if (it == null) _eventsFlow.tryEmit(Event.AppRemoved)
             else observeRuleChanges(it.ruleId)
@@ -147,7 +147,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
         delay(1000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
-        Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
+       // Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
         getManagedAppByPackageIdUseCase(packageId)?.let { app ->
             updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
         }

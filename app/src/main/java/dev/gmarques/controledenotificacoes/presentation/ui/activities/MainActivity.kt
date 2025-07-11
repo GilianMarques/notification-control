@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
-import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -46,7 +45,7 @@ import kotlinx.coroutines.launch
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 @AndroidEntryPoint
-class MainActivity() : AppCompatActivity() {
+class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneControllerCallback {
 
 
     private lateinit var binding: ActivityMainBinding
@@ -55,7 +54,8 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
-    private var slidingPaneController: SlidingPaneController? = null
+    var slidingPaneController: SlidingPaneController? = null
+        private set
 
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
@@ -118,29 +118,14 @@ class MainActivity() : AppCompatActivity() {
             detailId = R.id.nav_host_detail
         )
 
-        /**
-         * Alterna o NavHost padrao que é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
-         * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
-         * contrario o sistema passa a observar o NavHost do painel master
-         * */
-        slidingPaneController?.stateListener = { state ->
+        slidingPaneController?.addStateListener(this@MainActivity, this@MainActivity)
 
-            val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
-            val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
-
-
-            val defaultHost = when (state) {
-                SlidingPaneState.ONLY_MASTER -> masterHost
-                SlidingPaneState.BOTH -> detailHost
-                SlidingPaneState.ONLY_DETAILS -> detailHost
-            }
-
-            if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
-                .setPrimaryNavigationFragment(defaultHost)
-                .commit()
+        when (lastState) {
+            SlidingPaneState.ONLY_MASTER -> slidingPaneController?.showOnlyMaster()
+            SlidingPaneState.BOTH -> slidingPaneController?.showMasterAndDetails()
+            SlidingPaneState.ONLY_DETAILS -> slidingPaneController?.showOnlyDetails()
+            null -> slidingPaneController?.showOnlyMaster()
         }
-
-        toggleSlidingPane(lastState ?: SlidingPaneState.ONLY_MASTER)
 
     }
 
@@ -207,7 +192,7 @@ class MainActivity() : AppCompatActivity() {
     private fun applyDefaultBackgroundColor() {
 
         if (backgroundChanged) return
-        Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
+        //  Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
         val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)
@@ -335,12 +320,25 @@ class MainActivity() : AppCompatActivity() {
     }
 
     /**
-     * Alterna entre as visualizaçoes do painel de detalhes quando em dispositivos de tela grande.
-     *
-     * @param callback Uma função opcional a ser executada após a ação. Será chamada mesmo que o painel não exista (celulares)
+     * Chamado sempre que o [SlidingPaneController] muda de estado.
+     * Alterna o NavHost padrao que é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
+     * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
+     * contrario o sistema passa a observar o NavHost do painel master
      */
-    fun toggleSlidingPane(slidingPaneState: SlidingPaneState, callback: () -> Any = {}) {
-        if (slidingPaneController != null) slidingPaneController?.toggleState(slidingPaneState, callback)
-        else callback.invoke()
+    override fun onSlidingPaneStateChanged(newState: SlidingPaneState) {
+        val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
+        val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
+
+
+        val primaryHost = when (newState) {
+            SlidingPaneState.ONLY_MASTER -> masterHost
+            SlidingPaneState.BOTH -> detailHost
+            SlidingPaneState.ONLY_DETAILS -> detailHost
+        }
+
+        if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
+            .setPrimaryNavigationFragment(primaryHost)
+            .commit()
     }
+
 }
