@@ -89,8 +89,8 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 savedInstanceState?.getSerializable(DETAILS_PANE_STATE, SlidingPaneState::class.java)
             } else {
-                @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState
-            }
+                @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState?
+            } ?: SlidingPaneState.ONLY_MASTER
 
 
         lockOrientation()
