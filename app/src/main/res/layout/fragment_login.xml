@@ -43,11 +43,11 @@
             android:layout_height="wrap_content"
             android:elevation="2dp"
             android:maxWidth="450dp"
-            android:textColor="?colorSecondary"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="@string/Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes"
             android:textAlignment="center"
+            android:textColor="?colorSecondary"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,16 +55,16 @@
 
 
         <TextView
-            android:id="@+id/tv_data_detail"
+            android:id="@+id/tv_guest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_margin="24dp"
             android:elevation="2dp"
             android:fontFamily="@font/urbanist_semibold"
             android:maxWidth="500dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:text="@string/Seus_dados_s_o_usados_apenas_para_personalizar_a_interface_e_nunca_saem_do_seu_dispositivo"
+            android:text="@string/Ou_Entre_como_convidado"
             android:textAlignment="center"
             android:textSize="14sp"
 
@@ -111,7 +111,7 @@
             android:textSize="16sp"
             android:visibility="invisible"
             app:icon="@drawable/vec_try_again"
-            app:layout_constraintBottom_toTopOf="@id/tv_data_detail"
+            app:layout_constraintBottom_toTopOf="@id/tv_guest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -127,7 +127,7 @@
             android:text="@string/Fazer_login"
             android:textSize="16sp"
             app:icon="@drawable/vec_login"
-            app:layout_constraintBottom_toTopOf="@id/tv_data_detail"
+            app:layout_constraintBottom_toTopOf="@id/tv_guest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

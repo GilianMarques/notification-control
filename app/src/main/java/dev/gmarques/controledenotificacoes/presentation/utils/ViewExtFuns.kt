@@ -34,6 +34,16 @@ object ViewExtFuns {
         }, 300)
     }
 
+    /**
+     * Define um drawable à esquerda (start) de um TextView.
+     *
+     * Esta função de extensão simplifica a definição de um drawable no início do texto
+     * de um TextView, mantendo os outros drawables (topo, direita, baixo) como nulos.
+     *
+     * @param adequatedDrawable O Drawable a ser definido à esquerda do texto.
+     *                          Pode ser qualquer objeto Drawable, como um ColorDrawable,
+     *                          BitmapDrawable, etc.
+     */
     fun TextView.setStartDrawable(adequatedDrawable: Drawable) {
         this.setCompoundDrawablesWithIntrinsicBounds(
             adequatedDrawable,
@@ -43,6 +53,14 @@ object ViewExtFuns {
         )
     }
 
+    /**
+     * Remove todos os drawables (esquerda, topo, direita, baixo) de um TextView.
+     *
+     * Esta função de extensão define todos os drawables compostos do TextView como nulos,
+     * efetivamente removendo qualquer imagem ou ícone que estava associado ao texto.
+     *
+     * @see TextView.setCompoundDrawablesWithIntrinsicBounds
+     */
     fun TextView.removeDrawables() {
         this.setCompoundDrawablesWithIntrinsicBounds(
             null,
@@ -52,6 +70,15 @@ object ViewExtFuns {
         )
     }
 
+    /**
+     * Exibe o teclado virtual para a View especificada.
+     *
+     * Esta função de extensão primeiro solicita o foco para a View e, em seguida,
+     * utiliza o InputMethodManager para mostrar o teclado virtual.
+     *
+     * @see InputMethodManager.showSoftInput
+     * @see InputMethodManager.SHOW_IMPLICIT
+     */
     fun View.showKeyboard() {
         this.requestFocus()
 
@@ -59,6 +86,16 @@ object ViewExtFuns {
         imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
     }
 
+    /**
+     * Esconde o teclado virtual se ele estiver atualmente visível e associado a esta View.
+     *
+     * Esta função de extensão primeiro solicita o foco para a View (para garantir que
+     * o contexto do InputMethodManager esteja correto) e, em seguida, utiliza o
+     * InputMethodManager para ocultar o teclado virtual da janela associada à View.
+     *
+     * @see InputMethodManager.hideSoftInputFromWindow
+     * @see InputMethodManager.HIDE_NOT_ALWAYS
+     */
     fun View.hideKeyboard() {
         this.requestFocus()
 

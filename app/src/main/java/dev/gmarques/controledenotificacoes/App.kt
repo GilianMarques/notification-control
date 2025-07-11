@@ -31,8 +31,15 @@ class App() : Application(), CoroutineScope by MainScope() {
     companion object {
         lateinit var instance: App
             private set
-        var deviceIsTablet by Delegates.notNull<Boolean>()
+
+        /**
+         * Necessário verificar sempre porque o ususario pode alterar as configurações de densidade da tela mudando o formato
+         * é um acso extremo mas agora esta coberto
+         * */
+        var largeScreenDevice = false
             private set
+            get() = this.instance.resources.getBoolean(R.bool.device_is_tablet)
+
     }
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
@@ -41,7 +48,6 @@ class App() : Application(), CoroutineScope by MainScope() {
     override fun onCreate() {
 
         instance = this
-        deviceIsTablet = resources.getBoolean(R.bool.device_is_tablet)
 
         setupRemoteConfig()
         setupCrashLytics()
@@ -119,4 +125,3 @@ class App() : Application(), CoroutineScope by MainScope() {
 
 
 }
-

@@ -7,7 +7,7 @@
     tools:context=".presentation.ui.activities.MainActivity">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardBackgroundColor="?colorSurfaceContainer"
@@ -16,7 +16,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="600dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parent"
@@ -44,7 +45,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:elevation="10dp"
-                android:maxWidth="350dp"
                 android:text="@string/Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_"
                 android:textAlignment="textStart"
                 android:textSize="16sp"
@@ -69,7 +69,6 @@
                 app:chipIconTint="?colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/chip_privacy"
                 app:layout_constraintTop_toBottomOf="@id/tv_hint" />
 
             <com.google.android.material.chip.Chip
@@ -90,7 +89,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/chip_give_permission"
-                app:layout_constraintStart_toStartOf="@id/parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_hint" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

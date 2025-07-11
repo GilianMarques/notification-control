@@ -14,10 +14,14 @@ import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieOnCompositionLoadedListener
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentLoginBinding
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import kotlinx.coroutines.tasks.await
 
 /**
  * Criado por Gilian Marques
@@ -45,7 +49,15 @@ class LoginFragment : MyFragment() {
         awaitLottieAnim()
         setupFabTryAgain()
         setupFabLogin()
+        setupTvGuest()
         observeViewModelEvents()
+    }
+
+    private fun setupTvGuest() = with(binding) {
+        tvGuest.setOnClickListener(AnimatedClickListener {
+            startLoginFlow(true)
+        })
+
     }
 
     private fun awaitLottieAnim() {
@@ -106,13 +118,20 @@ class LoginFragment : MyFragment() {
     /**
      * Inicia o fluxo de login usando o FirebaseUI.
      */
-    private fun startLoginFlow() {
+    private fun startLoginFlow(asGuest: Boolean = false) {
 
         binding.tvInfo.isInvisible = true
-        binding.tvDataDetail.isInvisible = true
+        binding.tvGuest.isInvisible = true
         binding.fabLogin.isInvisible = true
         binding.progressBar.isVisible = true
 
+        if (asGuest) {
+            Firebase.auth.signInAnonymously().addOnSuccessListener {
+                onLoginSuccess(viewModel.getGuestUser())
+                // TODO: o fluxo buga qdo da erro e a tela roda ou muda tema
+            }
+            return
+        }
 
         val providers = listOf(AuthUI.IdpConfig.GoogleBuilder().build())
 

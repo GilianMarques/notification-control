@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
-import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +34,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,7 +45,8 @@ import kotlinx.coroutines.launch
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 @AndroidEntryPoint
-class MainActivity() : AppCompatActivity() {
+class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneControllerCallback {
+
 
     private lateinit var binding: ActivityMainBinding
     private var backgroundChanged = false
@@ -53,6 +54,9 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
+    var slidingPaneController: SlidingPaneController? = null
+        private set
+
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
@@ -69,6 +73,7 @@ class MainActivity() : AppCompatActivity() {
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
         private const val UPDATE_REQUEST_CODE = 46251749
+        private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -76,26 +81,57 @@ class MainActivity() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         splashLabel = getString(R.string.Splash_fragment)
         homeLabel = getString(R.string.Fragment_home)
 
-        enableEdgeToEdge()
+        val lastSlidingPaneState =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState?.getSerializable(DETAILS_PANE_STATE, SlidingPaneState::class.java)
+            } else {
+                @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState?
+            } ?: SlidingPaneState.ONLY_MASTER
 
+
+        lockOrientation()
         setContentView(binding.root)
 
+        enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-
-        requestedOrientation = if(App.deviceIsTablet) SCREEN_ORIENTATION_LANDSCAPE
-        else SCREEN_ORIENTATION_PORTRAIT
-
-
         observeNavigationChanges()
         checkForAppUpdate()
+
+        setupForTablet(lastSlidingPaneState)
+
+    }
+
+    private fun setupForTablet(lastState: SlidingPaneState?) {
+        if (!App.largeScreenDevice) return
+        slidingPaneController = SlidingPaneController(
+            activity = this,
+            masterId = R.id.nav_host_master,
+            detailId = R.id.nav_host_detail
+        )
+
+        slidingPaneController?.addStateListener(this@MainActivity, this@MainActivity)
+
+        when (lastState) {
+            SlidingPaneState.ONLY_MASTER -> slidingPaneController?.showOnlyMaster()
+            SlidingPaneState.BOTH -> slidingPaneController?.showMasterAndDetails()
+            SlidingPaneState.ONLY_DETAILS -> slidingPaneController?.showOnlyDetails()
+            null -> slidingPaneController?.showOnlyMaster()
+        }
+
+    }
+
+    private fun lockOrientation() {
+        requestedOrientation = if (App.largeScreenDevice) SCREEN_ORIENTATION_LANDSCAPE
+        else SCREEN_ORIENTATION_PORTRAIT
     }
 
     private fun checkForAppUpdate() {
@@ -123,14 +159,20 @@ class MainActivity() : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable(DETAILS_PANE_STATE, slidingPaneController?.state ?: SlidingPaneState.ONLY_MASTER)
+    }
+
     override fun onStop() {
+        /**impede que a tela de otimização de bateria (a reserva, caso a primeira nao abra) seja aberta se a primeira for*/
         requestIgnoreBatteryOptimizationsJob?.cancel()
         super.onStop()
     }
 
     private fun observeNavigationChanges() {
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_master) as NavHostFragment
 
         val navController = navHostFragment.navController
 
@@ -150,7 +192,7 @@ class MainActivity() : AppCompatActivity() {
     private fun applyDefaultBackgroundColor() {
 
         if (backgroundChanged) return
-        Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
+        //  Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
         val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)
@@ -270,14 +312,33 @@ class MainActivity() : AppCompatActivity() {
     fun launchApp(packageId: String): Boolean {
         val launchIntent = packageManager.getLaunchIntentForPackage(packageId)
 
-        if (launchIntent != null) {
+        return if (launchIntent != null) {
             startActivity(launchIntent)
-            return true
-        } else {
-            return false
-        }
+            true
+        } else false
+
     }
+
+    /**
+     * Chamado sempre que o [SlidingPaneController] muda de estado.
+     * Alterna o NavHost padrao que é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
+     * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
+     * contrario o sistema passa a observar o NavHost do painel master
+     */
+    override fun onSlidingPaneStateChanged(newState: SlidingPaneState) {
+        val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
+        val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
+
+
+        val primaryHost = when (newState) {
+            SlidingPaneState.ONLY_MASTER -> masterHost
+            SlidingPaneState.BOTH -> detailHost
+            SlidingPaneState.ONLY_DETAILS -> detailHost
+        }
+
+        if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
+            .setPrimaryNavigationFragment(primaryHost)
+            .commit()
+    }
+
 }
-
-
-

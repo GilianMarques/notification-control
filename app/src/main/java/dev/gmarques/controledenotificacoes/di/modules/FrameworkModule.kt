@@ -9,11 +9,11 @@ import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
-import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
 import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
-import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
 
@@ -31,7 +31,7 @@ abstract class FrameworkModule {
     abstract fun bindVibrator(impl: VibratorImpl): VibratorInterface
 
     @Binds
-    abstract fun bindRuleStringsProvider(impl: RuleStringsProviderImpl): RuleStringsProvider
+    abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider
 
     @Binds
     abstract fun bindRuleEnforcer(impl: RuleEnforcerImpl): RuleEnforcer

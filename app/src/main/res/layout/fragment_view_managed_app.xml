@@ -7,12 +7,6 @@
     android:animateLayoutChanges="true"
     tools:background="?attr/AppColorBackground">
 
-    <FrameLayout
-        android:id="@+id/empty_app_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?colorPrimary"
-        android:elevation="20dp" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_view"
@@ -36,9 +30,9 @@
         android:elevation="10dp"
         android:fontFamily="@font/urbanist_extrabold"
         android:maxWidth="250dp"
+        android:textColor="?colorSecondary"
         android:text="@string/As_notifica_es_bloqueadas_deste_app_aparecer_o_aqui"
         android:textAlignment="center"
-        android:textColor="?colorSecondary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,9 +90,9 @@
     <TextView
         android:id="@+id/tv_rule_name"
         android:layout_width="0dp"
+        android:ellipsize="end"
         android:layout_height="wrap_content"
         android:drawablePadding="8dp"
-        android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="3"
         android:paddingTop="4dp"
@@ -155,17 +149,18 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHistory"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
         android:contentDescription="@string/Historico_de_notifica_es_do_aplicativo"
         android:paddingStart="4dp"
         android:paddingTop="4dp"
         android:paddingEnd="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         tools:listitem="@layout/item_app_notification"
-        tools:visibility="invisible" />
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

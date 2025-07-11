@@ -11,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
@@ -18,9 +19,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
@@ -40,6 +41,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
@@ -89,8 +91,9 @@ class HomeFragment : MyFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View = FragmentHomeBinding.inflate(inflater, container, false).also {
+
         binding = it
-        setupUiWithUserData()
+        setupActionBar()
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -148,14 +151,18 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+        requireMainActivity().slidingPaneController?.showOnlyMaster() {
+            findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+        }
     }
 
     private fun navigateToSettingsFragment() {
-        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+        requireMainActivity().slidingPaneController?.showOnlyMaster()  {
+            findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+        }
     }
 
-    private fun setupUiWithUserData() = binding.apply {
+    private fun setupActionBar() = binding.apply {
 
         val user = getUserUseCase() ?: error("É necessário estar logado para chegar nesse ponto.")
 
@@ -182,13 +189,16 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
+                requireMainActivity().slidingPaneController?.showOnlyMaster() {
+                    findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
+                }
             })
         }
     }
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
+            requireMainActivity().slidingPaneController?.showOnlyMaster()
 
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
@@ -208,14 +218,25 @@ class HomeFragment : MyFragment() {
             ::navigateToViewManagedAppFragment
         )
 
-        rvApps.layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
+            adapter.spanCount = spanCount
+            rvApps.adapter = null
+            rvApps.adapter = adapter
+        }
+
+        rvApps.layoutManager = layoutManager
         rvApps.adapter = adapter
+
         rvApps.doOnPreDraw {
             startPostponedEnterTransition()
         }
+
     }
 
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+
+        binding.edtSearch.setText("")
+
         val extras = FragmentNavigatorExtras(
             binding.ivProfilePicture to "view_app_icon",
             binding.tvUserName to "view_app_name",
@@ -224,10 +245,23 @@ class HomeFragment : MyFragment() {
             binding.fabAdd to "fab",
         )
 
-        findNavController().navigate(
-            HomeFragmentDirections.toViewManagedAppFragment(app = app), extras
-        )
-        binding.edtSearch.setText("")
+        if (App.largeScreenDevice) lifecycleScope.launch {
+            val navigate = {
+                findNavControllerDetails()!!.navigate(
+                    R.id.viewManagedAppFragment,
+                    bundleOf("app" to app),
+                    NavOptions
+                        .Builder()
+                        .setPopUpTo(R.id.viewManagedAppFragment, true)
+                        .build()
+                )
+            }
+            requireMainActivity().slidingPaneController?.showMasterAndDetails(navigate)
+
+        } else {
+            // Navegação padrão (Celular)
+            findNavControllerMain().navigate(HomeFragmentDirections.toViewManagedAppFragment(app = app), extras)
+        }
     }
 
     /**
@@ -265,6 +299,7 @@ class HomeFragment : MyFragment() {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
 
@@ -288,6 +323,7 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
+
     }
 
     private fun showListenNotificationWarning() {
@@ -346,7 +382,8 @@ class HomeFragment : MyFragment() {
     }
 
     private fun showHowToFeedbackDialog() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback))
+            .setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
                 openPlayStore()

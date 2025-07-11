@@ -10,6 +10,7 @@ Coroutines with Mutex
 Acessibilidade
 Cache de drawables com LRU
 combinar multiplos datasources com flows (home fragment)
-Alarm manager para relatorios de notificações bloqueadas
+Alarm manager para relatorios de notificações bloqueadas e para reiniciar o serviço caso seja fechado
+auto update checker
 
 brainstorm

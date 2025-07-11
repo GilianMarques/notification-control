@@ -121,6 +121,8 @@ dependencies {
     implementation("net.danlew:android.joda:2.13.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+
+
     //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:2.7.2")
     //noinspection KaptUsageInsteadOfKsp
