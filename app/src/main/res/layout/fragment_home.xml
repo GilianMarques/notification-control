@@ -220,7 +220,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_warnings"
-                tools:listitem="@layout/item_managed_app"
+                tools:listitem="@layout/item_managed_app_list"
                 tools:visibility="invisible" />
 
 

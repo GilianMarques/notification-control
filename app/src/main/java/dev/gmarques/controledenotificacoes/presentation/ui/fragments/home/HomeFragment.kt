@@ -4,7 +4,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +40,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.*
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -107,11 +106,6 @@ class HomeFragment : MyFragment() {
             setupFabAddManagedApp()
             setupSearch()
         }
-
-        Log.d(
-            "USUK",
-            "HomeFragment.onViewCreated: -----------------------------------------------\n${requireActivity().resources.displayMetrics.widthPixels}\n---------------------------------"
-        )
     }
 
     private fun setupPopUpMenu() {
@@ -225,12 +219,15 @@ class HomeFragment : MyFragment() {
             ::navigateToViewManagedAppFragment
         )
 
-        val layoutManager = AutoFitGridLayoutManager(requireContext(), 300)
-        // val layoutManager = LinearLayoutManager(requireContext())
+        val layoutManager = AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
+            adapter.spanCount = spanCount
+            rvApps.adapter = null
+            rvApps.adapter = adapter
+        }
 
         rvApps.layoutManager = layoutManager
-
         rvApps.adapter = adapter
+
         rvApps.doOnPreDraw {
             startPostponedEnterTransition()
         }

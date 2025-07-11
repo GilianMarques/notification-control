@@ -106,32 +106,41 @@
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edt_search"
-                    style="@style/Margins_edittext"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="6dp"
-                    android:autofillHints="name"
-                    android:background="@drawable/back_edittext_search"
-                    android:drawableStart="@drawable/vec_search"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorOnBackground"
-                    android:hint="@string/Buscar_aplicativo"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    android:maxWidth="378dp"
-                    android:maxLines="1"
-                    android:padding="12dp"
-                    android:singleLine="true"
-                    android:visibility="invisible"
-                    tools:text="Whatsapp"
-                    tools:visibility="visible" />
+                    android:layout_height="wrap_content">
 
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edt_search"
+                        style="@style/Margins_edittext"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+
+                        android:layout_marginBottom="6dp"
+                        android:autofillHints="name"
+                        android:background="@drawable/back_edittext_search"
+                        android:drawableStart="@drawable/vec_search"
+                        android:drawablePadding="16dp"
+                        android:drawableTint="?colorOnBackground"
+                        android:hint="@string/Buscar_aplicativo"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:maxWidth="38dp"
+                        android:maxLines="1"
+                        android:padding="12dp"
+                        android:singleLine="true"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_max="@dimen/search_field_max_width"
+                        tools:text="Whatsapp"
+                        tools:visibility="visible" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -177,9 +186,9 @@
                     android:elevation="10dp"
                     android:fontFamily="@font/urbanist_extrabold"
                     android:maxWidth="250dp"
-                    android:textColor="?colorSecondary"
                     android:text="@string/Clique_no_bot_o_para_configurar_o_primeiro_app"
                     android:textAlignment="center"
+                    android:textColor="?colorSecondary"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +229,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_warnings"
-                tools:listitem="@layout/item_managed_app"
+                tools:listitem="@layout/item_managed_app_list"
                 tools:visibility="invisible" />
 
 

@@ -7,11 +7,13 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppBinding
+import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppGridBinding
+import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppListBinding
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
@@ -35,11 +37,20 @@ class ManagedAppsAdapter(
     private val iconNotificationIndicator: Drawable,
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val onItemClick: (ManagedAppWithRule) -> Unit,
-) :
-    ListAdapter<ManagedAppWithRule, ManagedAppsAdapter.ViewHolder>(DiffCallback()) {
+) : ListAdapter<ManagedAppWithRule, ManagedAppsAdapter.ViewHolder>(DiffCallback()) {
+
+
+    var spanCount = 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemManagedAppBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+
+        val binding = if (spanCount == 1) {
+            ItemManagedAppListBinding.inflate(inflater, parent, false)
+        } else {
+            ItemManagedAppGridBinding.inflate(inflater, parent, false)
+        }
+
         return ViewHolder(binding)
     }
 
@@ -60,7 +71,35 @@ class ManagedAppsAdapter(
         })
     }
 
-    class ViewHolder(private val binding: ItemManagedAppBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        private val tvAppName
+            get() = when (binding) {
+                is ItemManagedAppListBinding -> binding.tvAppName
+                is ItemManagedAppGridBinding -> binding.tvAppName
+                else -> throw IllegalStateException("Unexpected binding type")
+            }
+
+        private val tvRuleName
+            get() = when (binding) {
+                is ItemManagedAppListBinding -> binding.tvRuleName
+                is ItemManagedAppGridBinding -> binding.tvRuleName
+                else -> throw IllegalStateException("Unexpected binding type")
+            }
+
+        private val tvUninstalled
+            get() = when (binding) {
+                is ItemManagedAppListBinding -> binding.tvUninstalled
+                is ItemManagedAppGridBinding -> binding.tvUninstalled
+                else -> throw IllegalStateException("Unexpected binding type")
+            }
+
+        private val ivAppIcon
+            get() = when (binding) {
+                is ItemManagedAppListBinding -> binding.ivAppIcon
+                is ItemManagedAppGridBinding -> binding.ivAppIcon
+                else -> throw IllegalStateException("Unexpected binding type")
+            }
 
         fun bind(
             iconPermissive: Drawable,
@@ -70,33 +109,38 @@ class ManagedAppsAdapter(
             app: ManagedAppWithRule,
             onItemClick: (ManagedAppWithRule) -> Unit,
         ) {
-            binding.tvAppName.removeDrawables()
-            binding.tvUninstalled.isVisible = app.uninstalled
-            binding.tvAppName.text = app.name
-            if (app.hasPendingNotifications) binding.tvAppName.setStartDrawable(iconNotificationIndicator)
+            tvAppName.removeDrawables()
+            tvUninstalled.isVisible = app.uninstalled
+            tvAppName.text = app.name
 
-            binding.tvRuleName.text = app.rule.nameOrDescription()
-            binding.tvRuleName.setStartDrawable(if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive)
+            if (app.hasPendingNotifications) {
+                tvAppName.setStartDrawable(iconNotificationIndicator)
+            }
 
+            tvRuleName.text = app.rule.nameOrDescription()
+            tvRuleName.setStartDrawable(
+                if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive
+            )
 
             CoroutineScope(Main).launch {
                 Glide.with(App.instance)
                     .load(getInstalledAppIconUseCase(app.packageId))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.vec_app)
-                    .into(binding.ivAppIcon)
-
+                    .into(ivAppIcon)
             }
 
             binding.root.setOnClickListener(AnimatedClickListener {
                 onItemClick(app)
             })
-
         }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<ManagedAppWithRule>() {
-        override fun areItemsTheSame(oldItem: ManagedAppWithRule, newItem: ManagedAppWithRule) = oldItem.name == newItem.name
-        override fun areContentsTheSame(oldItem: ManagedAppWithRule, newItem: ManagedAppWithRule) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: ManagedAppWithRule, newItem: ManagedAppWithRule) =
+            oldItem.name == newItem.name
+
+        override fun areContentsTheSame(oldItem: ManagedAppWithRule, newItem: ManagedAppWithRule) =
+            oldItem == newItem
     }
 }
