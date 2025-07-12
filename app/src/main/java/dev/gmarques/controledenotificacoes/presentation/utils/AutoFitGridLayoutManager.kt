@@ -1,10 +1,15 @@
 package dev.gmarques.controledenotificacoes.presentation.utils
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.max
 
 /**
@@ -18,7 +23,8 @@ class AutoFitGridLayoutManager(
 ) : GridLayoutManager(context, 1) {
 
     private var itemWidthPx = 0
-    private var lastUpdateTime = 0L
+    private var newSpanCount = 1
+    private var timerIsRunning = false
 
     init {
         val displayMetrics: DisplayMetrics = context.resources.displayMetrics
@@ -33,18 +39,24 @@ class AutoFitGridLayoutManager(
     private fun updateSpanCount() {
         if (itemWidthPx <= 0) return
 
-        val currentTime = SystemClock.elapsedRealtime()
-        if (currentTime - lastUpdateTime < 75) return // throttle: necessario pra suavizar a transição  do painel de detalhes
-
         val totalSpace = if (orientation == VERTICAL) width - paddingRight - paddingLeft
         else height - paddingTop - paddingBottom
 
-        val newSpanCount = max(1, totalSpace / itemWidthPx)
-        if (newSpanCount != spanCount) {
-            spanCount = newSpanCount
-            spanCountChangeListener.invoke(spanCount)
-        }
+        newSpanCount = max(1, totalSpace / itemWidthPx)
 
-        lastUpdateTime = currentTime
+        if (timerIsRunning) return
+        else timerIsRunning = true
+
+        val task = object : TimerTask() {
+            override fun run() {
+                timerIsRunning = false
+                if (newSpanCount != spanCount) Handler(Looper.getMainLooper()).post {
+                    spanCount = newSpanCount
+                    spanCountChangeListener.invoke(spanCount)
+                }
+            }
+        }
+        Timer().schedule(task, 100)
+
     }
 }
