@@ -91,7 +91,7 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
     }
 
     /**
-     * Configura um listener para o estado do painel deslizante. Quando o painel está visível apenas
+     * Configura um listener para o estado do painel deslizante (em tablets). Quando o painel está visível apenas
      * no modo "master" o painel de detalhes é fechado, então esse fragmento deve fechar tambem.
      */
     private fun setupDetailsPaneListener() {

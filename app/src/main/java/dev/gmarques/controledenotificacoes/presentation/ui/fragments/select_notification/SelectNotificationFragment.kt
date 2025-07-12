@@ -64,6 +64,7 @@ class SelectNotificationFragment : MyFragment() {
         collectFlow(viewModel.notificationsFlow) { list ->
             binding.progressBar.isVisible = false
             adapter.submitList(list)
+            binding.emptyView.isVisible = list.isEmpty()
         }
     }
 }

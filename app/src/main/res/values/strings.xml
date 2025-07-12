@@ -295,6 +295,7 @@
     <string name="O_echo_est_ligado">O Echo está ligado!</string>
     <string name="Ou_Entre_como_convidado">ou\n\nEntre como convidado</string>
     <string name="Convidado">Convidado</string>
+    <string name="Nenhuma_notifica_o_v_lida_ativa_no_momento">Nenhuma notificação válida ativa no momento</string>
 
 
 </resources>

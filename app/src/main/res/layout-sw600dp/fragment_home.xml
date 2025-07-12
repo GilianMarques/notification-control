@@ -72,7 +72,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="15dp"
         android:background="?android:attr/listDivider"
         android:transitionName="divider"
         app:layout_constraintTop_toBottomOf="@id/iv_profile_picture" />
@@ -166,8 +166,8 @@
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/lottie_view"
-                    android:layout_width="500dp"
-                    android:layout_height="400dp"
+                    android:layout_width="@dimen/empty_view_width"
+                    android:layout_height="@dimen/empty_view_height"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
