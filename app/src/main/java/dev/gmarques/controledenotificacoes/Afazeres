@@ -1,4 +1,6 @@
 Observações do que fazer a seguir:
 emptyview para tela de selecionar notificações
 ajeitar fluxo de login
+adiciona app gerenciado nao esta limpando as notificações na hora
+toggle apps do sisitema nao atualiza lista
 remover livedatas
