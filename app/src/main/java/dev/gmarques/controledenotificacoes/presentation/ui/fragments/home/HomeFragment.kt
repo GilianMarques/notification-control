@@ -132,6 +132,7 @@ class HomeFragment : MyFragment() {
                     }
                 }
             }
+
             section {
 
                 item {
@@ -151,15 +152,16 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-        requireMainActivity().slidingPaneController?.showOnlyMaster() {
-            findNavController().navigate(HomeFragmentDirections.toEchoFragment())
-        }
+        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toEchoFragment()) }
+        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
+        else navigate()
     }
 
     private fun navigateToSettingsFragment() {
-        requireMainActivity().slidingPaneController?.showOnlyMaster()  {
-            findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
-        }
+
+        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toSettingsFragment()) }
+        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
+        else navigate()
     }
 
     private fun setupActionBar() = binding.apply {
@@ -189,9 +191,10 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                requireMainActivity().slidingPaneController?.showOnlyMaster() {
-                    findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
-                }
+                val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toProfileFragment(), extras) }
+                if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
+                else navigate()
+
             })
         }
     }
@@ -204,7 +207,7 @@ class HomeFragment : MyFragment() {
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
             )
-            findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
+            findNavControllerMain().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
         })
     }
 
