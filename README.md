@@ -7,7 +7,7 @@ Esse app permite que você controle quando outros aplicativos podem emitir notif
 É normal perder o foco por causa das notificações que chegam no celular. Para quem usa o mesmo dispositivo para a vida pessoal e profissional, também é normal ser incomodado fora do horário de expediente ou até nos fins de semana com notificações de aplicativos de trabalho.
 
 ## Solução:
-Este app permite que você bloqueie redes sociais, mensageiros, (etc...) enquanto trabalha e apps prefissionais durante os momentos de descanso. Também serve pra lidar com aquelas notificações chatas que alguns apps não deixam (ou dificultam) desativar de forma nativa.
+Este app permite que você bloqueie redes sociais, mensageiros, (etc...) enquanto trabalha e apps profissionais durante os momentos de descanso. Também serve pra lidar com aquelas notificações chatas que alguns apps não deixam (ou dificultam) desativar de forma nativa.
 Isso é feito usando um sistema flexível de regras, onde você pode escolher os dias e horários em que cada app pode ou não enviar notificações. Além disso, é possível criar exceções, personalizando ainda mais o comportamento.
 
 ---
