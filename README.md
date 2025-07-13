@@ -43,7 +43,6 @@ Por fim, implementei **descrições de conteúdo** para tornar o aplicativo aces
      <img src="https://github.com/user-attachments/assets/9a76c384-d13b-4668-9f59-f15a38f879b3" width="320">
      <img src="https://github.com/user-attachments/assets/d9e11998-fd2b-42e6-867b-9c230814527a" width="320">
      <img src="https://github.com/user-attachments/assets/9d4bb920-7b69-412c-820a-5d1334ef1d64" width="320">
-     <img src="https://github.com/user-attachments/assets/bc3f6a17-4eea-4001-b444-e857c55a690e" width="320">
      <img src="https://github.com/user-attachments/assets/a154c6e8-4b37-48ff-b55e-50f27986cfb6" width="320">
      <img src="https://github.com/user-attachments/assets/78a155f7-f085-4936-8d6e-335dfff2824f" width="320">
      <img src="https://github.com/user-attachments/assets/b6a19855-ed50-4be0-87c2-8f92e01559a1" width="320">
