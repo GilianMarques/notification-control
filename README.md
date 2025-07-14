@@ -31,7 +31,7 @@ Usei **Clean Architecture** e **MVVM** para garantir um código modular e escal�
 O layout foi desenvolvido em **XML**, e o **framework Transitions** adiciona animações atraentes e suaves.
 Integrei **Flow** com **Room** para criar uma interface reativa e facilitar a combinação de dados de múltiplas fontes, **DataStore** para armazenar preferências e **LRU** para cache de vetores e bitmaps in-memory.
 O **AlarmManager** foi utilizado para manter o serviço de controle sempre rodando e emitir notificações de alerta ao término dos períodos de bloqueio.
-**Firebase Auth**, **CrashLytics** e **RemoteConfig** também fora usados.
+**Firebase Auth**, **CrashLytics** e **RemoteConfig** também foram usados.
 O projeto também conta com **testes unitários** e **instrumentados**.
 Por fim, implementei **descrições de conteúdo** para tornar o aplicativo acessível a pessoas com deficiência visual.
 
