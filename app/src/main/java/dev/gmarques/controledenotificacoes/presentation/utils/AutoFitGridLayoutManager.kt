@@ -8,6 +8,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.max
@@ -56,7 +57,7 @@ class AutoFitGridLayoutManager(
                 }
             }
         }
-        Timer().schedule(task, 100)
+        Timer().schedule(task, SlidingPaneController.DEFAULT_ANIM_DURATION/2)
 
     }
 }

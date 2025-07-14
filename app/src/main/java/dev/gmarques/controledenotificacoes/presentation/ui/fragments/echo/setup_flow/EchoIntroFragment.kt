@@ -43,7 +43,7 @@ class EchoIntroFragment : MyFragment() {
 
     /**Se o echo ja estiver ligado, navega direto pra tela onde ele pode ser desligado.*/
     private fun navigateToEchoIsEnabledFragIfNeeded() {
-        if (viewModel.isEchoEnabled()) findNavController().navigate(EchoIntroFragmentDirections.toEchoIsEnabled())
+        if (viewModel.isEchoEnabled()) findNavControllerMain().navigate(EchoIntroFragmentDirections.toEchoIsEnabled())
     }
 
 
@@ -52,7 +52,7 @@ class EchoIntroFragment : MyFragment() {
      */
     private fun setupFabEcho() {
         binding.fab.setOnClickListener {
-            findNavController().navigate(EchoIntroFragmentDirections.toEchoStepOneFragment())
+            findNavControllerMain().navigate(EchoIntroFragmentDirections.toEchoStepOneFragment())
         }
     }
 

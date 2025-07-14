@@ -6,6 +6,32 @@
     app:startDestination="@id/splashFragment">
 
     <fragment
+        android:id="@+id/splashFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment"
+        android:label="@string/Splash_fragment"
+        tools:layout="@layout/fragment_splash">
+
+        <action
+            android:id="@+id/to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+        <argument
+            android:name="user"
+            android:defaultValue="@null"
+            app:argType="dev.gmarques.controledenotificacoes.domain.model.User"
+            app:nullable="true" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment"
         android:label="@string/Fragment_home"
@@ -58,32 +84,6 @@
         <action
             android:id="@+id/to_selectRuleFragment"
             app:destination="@id/selectRuleFragment" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/splashFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment"
-        android:label="@string/Splash_fragment"
-        tools:layout="@layout/fragment_splash">
-
-        <action
-            android:id="@+id/to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-
-        <action
-            android:id="@+id/to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-
-        <argument
-            android:name="user"
-            android:defaultValue="@null"
-            app:argType="dev.gmarques.controledenotificacoes.domain.model.User"
-            app:nullable="true" />
 
     </fragment>
 

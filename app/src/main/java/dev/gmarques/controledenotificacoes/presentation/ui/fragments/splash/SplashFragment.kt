@@ -124,7 +124,7 @@ class SplashFragment : MyFragment() {
                 binding.tvUserName to binding.tvUserName.transitionName,
                 binding.ivProfilePicture to binding.ivProfilePicture.transitionName,
             )
-            findNavController().navigate(
+            findNavControllerMain().navigate(
                 SplashFragmentDirections.toHomeFragment(),
                 extras
             )
@@ -133,7 +133,7 @@ class SplashFragment : MyFragment() {
     }
 
     private fun navigateToFragmentLogin() {
-        findNavController().navigate(SplashFragmentDirections.toLoginFragment())
+        findNavControllerMain().navigate(SplashFragmentDirections.toLoginFragment())
     }
 
     private fun setupUiWithUserData(user: User) = lifecycleScope.launch {

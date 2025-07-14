@@ -30,7 +30,7 @@ class PreferenceProperty<T>(
     }
 
     /**Atualiza a preferencia com o valore recebido*/
-    operator fun invoke(value: T) {
+    fun set(value: T) {
         preferenceSaver(key, value)
     }
 }

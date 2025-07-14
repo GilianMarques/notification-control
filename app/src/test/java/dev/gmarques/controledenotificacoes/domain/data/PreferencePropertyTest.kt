@@ -27,14 +27,14 @@ class PreferencePropertyTest {
     fun `ao acessar value deve retornar o valor salvo ou o padrao`() {
         assertEquals("default", preference.value)
 
-        preference("novoValor")
+        preference.set("novoValor")
 
         assertEquals("novoValor", preference.value)
     }
 
     @Test
     fun `ao chamar reset deve restaurar o valor padrao`() {
-        preference("outroValor")
+        preference.set("outroValor")
         assertEquals("outroValor", preference.value)
 
         preference.reset()
@@ -45,7 +45,7 @@ class PreferencePropertyTest {
     fun `isDefault deve retornar true se o valor for padrao`() {
         assertTrue(preference.isDefault())
 
-        preference("modificado")
+        preference.set("modificado")
         assertFalse(preference.isDefault())
 
         preference.reset()

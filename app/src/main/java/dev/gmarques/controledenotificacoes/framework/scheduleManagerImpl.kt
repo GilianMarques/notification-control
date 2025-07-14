@@ -143,7 +143,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        PreferencesImpl.scheduledAlarms(updateJson)
+        PreferencesImpl.scheduledAlarms.set(updateJson)
     }
 
     /**
@@ -159,7 +159,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        PreferencesImpl.scheduledAlarms(updateJson)
+        PreferencesImpl.scheduledAlarms.set(updateJson)
 
     }
 

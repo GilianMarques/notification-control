@@ -92,7 +92,7 @@ class EchoStepOneFragment : MyFragment() {
 
     private fun setupFabEcho() {
         binding.fab.setOnClickListener {
-            findNavController().navigate(EchoStepOneFragmentDirections.toEchoStepTwoFragment())
+            findNavControllerMain().navigate(EchoStepOneFragmentDirections.toEchoStepTwoFragment())
         }
     }
 

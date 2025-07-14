@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 @AndroidEntryPoint
-class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneControllerCallback {
+class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneControllerCallback, PaneResizer.PaneResizeListener {
 
 
     private lateinit var binding: ActivityMainBinding
@@ -56,6 +56,8 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     private lateinit var appUpdateManager: AppUpdateManager
     var slidingPaneController: SlidingPaneController? = null
         private set
+
+    private var paneResizer: PaneResizer? = null
 
 
     private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
@@ -112,6 +114,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     private fun setupForTablet(lastState: SlidingPaneState?) {
         if (!App.largeScreenDevice) return
+        paneResizer = PaneResizer(binding.dragHandle!!, this@MainActivity)
         slidingPaneController = SlidingPaneController(
             activity = this,
             masterId = R.id.nav_host_master,
@@ -216,10 +219,10 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
                     MaterialAlertDialogBuilder(this@MainActivity).setTitle(getString(R.string.Permissao_nao_concedida))
                         .setMessage(getString(R.string.Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes))
                         .setPositiveButton(getString(R.string.Entendi)) { _, _ ->
-                            lifecycleScope.launch { PreferencesImpl.showDialogNotPermissionDenied(false) }
+                            lifecycleScope.launch { PreferencesImpl.showDialogNotPermissionDenied.set(false) }
                         }.setCancelable(false).show()
                 } else {
-                    PreferencesImpl.showWarningCardPostNotification(false)
+                    PreferencesImpl.showWarningCardPostNotification.set(false)
                 }
             } else {
                 App.instance.restartNotificationService()
@@ -339,6 +342,15 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
             .setPrimaryNavigationFragment(primaryHost)
             .commit()
+    }
+
+    /**
+     * Disparada quando o [PaneResizer] detecta alterações no tamanho do painel, para autalizar
+     * os valores no [SlidingPaneController] que por sua vez atualiza a posição do painel e salva em
+     * preferencias o novo valor padrao  do painel
+     */
+    override fun onPaneResized(positionPercent: Float) {
+        slidingPaneController?.onPaneResizedByHand(positionPercent) ?: 0f
     }
 
 }

@@ -43,11 +43,11 @@ class EchoFlowSharedViewModel @Inject constructor(
     }
 
     fun enableEcho() {
-        PreferencesImpl.echoEnabled(true)
+        PreferencesImpl.echoEnabled.set(true)
     }
 
     fun disableEcho() {
-        PreferencesImpl.echoEnabled(false)
+        PreferencesImpl.echoEnabled.set(false)
     }
 
     fun isEchoEnabled(): Boolean {

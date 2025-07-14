@@ -146,7 +146,7 @@ class LoginFragment : MyFragment() {
      * @param user O objeto User do usuário logado.
      */
     private fun onLoginSuccess(user: User) {
-        findNavController().navigate(LoginFragmentDirections.toSplashFragment(user))
+        findNavControllerMain().navigate(LoginFragmentDirections.toSplashFragment(user))
     }
 
     /**

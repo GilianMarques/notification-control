@@ -277,7 +277,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 binding.llConditionParent to "tv_summary",
             )
 
-            findNavController().navigate(
+            findNavControllerMain().navigate(
                 AddOrUpdateRuleFragmentDirections.toAddOrUpdateCondition(
                     viewModel.conditionFlow.value,
                     viewModel.ruleType.value == RuleType.RESTRICTIVE

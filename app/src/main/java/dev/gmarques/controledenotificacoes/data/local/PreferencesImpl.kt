@@ -4,6 +4,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.data.Preferences
 import dev.gmarques.controledenotificacoes.domain.data.Preferences.ResettableDialogHints
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 
 /**
  * Criado por Gilian Marques
@@ -109,6 +110,13 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
             key = "echo_enabled", defaultValue = false, preferenceReader = reader::invoke, preferenceSaver = saver::invoke
         )
     }
-
+    override val detailsPaneScreenPercent: PreferenceProperty<Float> by lazy {
+        PreferenceProperty(
+            key = "details_pane_screen_percent",
+            defaultValue = SlidingPaneController.DEFAULT_TARGET_PERCENT,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
 
 }

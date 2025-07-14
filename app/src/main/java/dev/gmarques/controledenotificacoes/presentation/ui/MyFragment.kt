@@ -332,7 +332,7 @@ open class MyFragment() : Fragment() {
 
         dialogHint = MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
             .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                lifecycleScope.launch { showHintPreference(false) }
+                lifecycleScope.launch { showHintPreference.set(false) }
             }.setNegativeButton(getString(R.string.Lembre_me_da_proxima_vez)) { dialog, _ ->
             }.setCancelable(false).setIcon(R.drawable.vec_hint)
             .show()

@@ -158,7 +158,7 @@ class SelectAppsViewModel @Inject constructor(
     fun toggleIncludeSystemApps() = viewModelScope.launch {
 
         with(PreferencesImpl.prefIncludeSystemApps) {
-            invoke(value.not())
+            set(value.not())
         }
 
         searchApps()
@@ -167,7 +167,7 @@ class SelectAppsViewModel @Inject constructor(
     fun toggleIncludeManagedApps() = viewModelScope.launch {
 
         with(PreferencesImpl.prefIncludeManagedApps) {
-            invoke(value.not())
+            set(value.not())
         }
         searchApps()
     }

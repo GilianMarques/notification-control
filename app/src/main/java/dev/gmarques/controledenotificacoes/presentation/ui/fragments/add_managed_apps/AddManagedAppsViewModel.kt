@@ -52,7 +52,7 @@ class AddManagedAppsViewModel @Inject constructor(
 
     fun setRule(rule: Rule?) = viewModelScope.launch(Main) {
         _selectedRule.value = rule
-        rule?.let { PreferencesImpl.lastSelectedRule(rule.id) }
+        rule?.let { PreferencesImpl.lastSelectedRule.set(rule.id) }
     }
 
     fun getSelectedPackages(): Array<String> {

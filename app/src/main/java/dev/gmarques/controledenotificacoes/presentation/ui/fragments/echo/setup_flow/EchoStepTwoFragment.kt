@@ -44,7 +44,7 @@ class EchoStepTwoFragment : MyFragment() {
         binding.fab.setOnClickListener {
             viewModel.enableEcho()
             viewModel.setupConcluded = true
-            findNavController().navigate(EchoStepTwoFragmentDirections.toEchoIsEnabled())
+            findNavControllerMain().navigate(EchoStepTwoFragmentDirections.toEchoIsEnabled())
         }
     }
 

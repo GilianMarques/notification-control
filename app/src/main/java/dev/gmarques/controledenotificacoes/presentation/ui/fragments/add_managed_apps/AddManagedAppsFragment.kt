@@ -135,7 +135,7 @@ class AddManagedAppsFragment() : MyFragment() {
         tvAddApp.setOnClickListener(AnimatedClickListener {
 
 
-            findNavController().navigate(
+            findNavControllerMain().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()), FragmentNavigatorExtras(
                     fabConclude to fabConclude.transitionName
                 )
@@ -149,7 +149,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
         tvSelectNotification.setOnClickListener(AnimatedClickListener {
 
-            findNavController().navigate(
+            findNavControllerMain().navigate(
                 AddManagedAppsFragmentDirections.toSelectNotificationFragment(), FragmentNavigatorExtras(
                     fabConclude to fabConclude.transitionName
                 )
@@ -207,7 +207,7 @@ class AddManagedAppsFragment() : MyFragment() {
     }
 
     private fun navigateToSelectRule() = with(binding) {
-        findNavController().navigate(
+        findNavControllerMain().navigate(
             AddManagedAppsFragmentDirections.toSelectRuleFragment(), FragmentNavigatorExtras(
                 fabConclude to fabConclude.transitionName,
                 llRule to llRule.transitionName,
@@ -217,7 +217,7 @@ class AddManagedAppsFragment() : MyFragment() {
     }
 
     private fun navigateToAddRule() = with(binding) {
-        findNavController().navigate(
+        findNavControllerMain().navigate(
             AddManagedAppsFragmentDirections.toAddRuleFragment(), FragmentNavigatorExtras(
                 tvRuleTittle to tvRuleTittle.transitionName,
                 tvTargetApp to tvTargetApp.transitionName,

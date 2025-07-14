@@ -19,6 +19,8 @@ interface Preferences {
 
     val echoEnabled: PreferenceProperty<Boolean>
 
+    val detailsPaneScreenPercent: PreferenceProperty<Float>
+
     @Keep
     /**Todas as preferencias dentro dessa interface podem ser resetadas pelo usuario*/
     interface ResettableDialogHints {
