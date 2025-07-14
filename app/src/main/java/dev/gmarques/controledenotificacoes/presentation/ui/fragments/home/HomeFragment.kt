@@ -263,7 +263,7 @@ class HomeFragment : MyFragment() {
      * @see setupManagedAppsAdapter
      */
     private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
-        return AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
+        return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
 
             if (requireMainActivity().slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
 

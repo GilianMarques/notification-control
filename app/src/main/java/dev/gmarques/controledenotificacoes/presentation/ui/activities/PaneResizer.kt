@@ -58,7 +58,7 @@ class PaneResizer(
             alpha = 0f
             animate().alpha(1f)
                 .setInterpolator(AccelerateDecelerateInterpolator())
-                .setDuration(300)
+                .setDuration(150)
                 .start()
         }
     }
@@ -73,7 +73,7 @@ class PaneResizer(
             animate()
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .alpha(0f)
-                .setDuration(300)
+                .setDuration(150)
                 .start()
         }
     }

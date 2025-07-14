@@ -2,7 +2,7 @@
 <resources>
     <dimen name="dp">1dp</dimen>
     <dimen name="search_field_max_width">600dp</dimen>
-    <dimen name="tablet_layout_max_width">900dp</dimen>
+    <dimen name="tablet_layout_max_width">700dp</dimen>
     <dimen name="tablet_card_max_width">600dp</dimen>
     <dimen name="tablet_card_corner_radius">8dp</dimen>
     <dimen name="tablet_card_margin">24dp</dimen>

@@ -14,21 +14,36 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:elevation="1dp"
+        android:elevation="0dp"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+        app:navGraph="@navigation/nav_graph"
+        tools:layout_width="200dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <FrameLayout
         android:id="@+id/drag_handle"
-        android:layout_width="24dp"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:alpha="0"
-        android:background="?colorSurfaceBright"
-        android:elevation="5dp"
-        android:src="@drawable/vec_drag_handle"
         android:transitionName="handle"
         app:layout_constraintEnd_toStartOf="@id/nav_host_detail"
-        app:layout_constraintStart_toEndOf="@id/nav_host_master" />
+        app:layout_constraintStart_toEndOf="@id/nav_host_master"
+        tools:alpha="1">
+
+        <View
+            android:layout_width="18dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/back_degrade" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:src="@drawable/vec_drag_handle" />
+
+    </FrameLayout>
+
 
     <!-- Painel de detalhes -->
     <androidx.fragment.app.FragmentContainerView
@@ -36,7 +51,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:elevation="1dp"
+        android:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/nav_host_master"
         app:navGraph="@navigation/nav_graph_details" />
