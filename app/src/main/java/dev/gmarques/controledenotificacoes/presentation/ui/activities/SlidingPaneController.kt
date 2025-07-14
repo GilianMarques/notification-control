@@ -5,7 +5,6 @@ import android.app.Activity
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.animation.doOnEnd
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.detailsPaneScreenPercent
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.*
@@ -26,6 +25,9 @@ class SlidingPaneController(
         const val MAX_TARGET_PERCENT = 0.7f
         const val DEFAULT_ANIM_DURATION = 200L
     }
+
+    var isAnimating: Boolean = false
+        private set
 
     /**Avisa sempre que o estado muda aberto/fechado*/
     private val stateListener = HashMap<String, SlidingPaneControllerCallback>()
@@ -57,16 +59,15 @@ class SlidingPaneController(
 
         val lastState = state
 
+        stateListener.values.forEach { it.onAnimationStarted(state) }
         state = BOTH
         detailView.visibility = View.VISIBLE
         masterView.visibility = View.VISIBLE
 
-        if (lastState != ONLY_DETAILS) animateAlpha(masterView) // impede que a masterView pisque ao ser reexibida
-
         animateWidth(masterView, masterView.width, screenWidth - detailTargetWidth)
         animateWidth(detailView, detailView.width, detailTargetWidth) {
             callback.invoke()
-            stateListener.values.forEach { it.onSlidingPaneStateChanged(state) }
+            stateListener.values.forEach { it.onAnimationEnd(state) }
         }
 
     }
@@ -78,6 +79,7 @@ class SlidingPaneController(
             return
         }
 
+        stateListener.values.forEach { it.onAnimationStarted(state) }
         state = ONLY_DETAILS
         detailView.visibility = View.VISIBLE
 
@@ -85,9 +87,8 @@ class SlidingPaneController(
         animateWidth(detailView, detailView.width, screenWidth) {
             masterView.visibility = View.GONE
             callback.invoke()
-            stateListener.values.forEach { it.onSlidingPaneStateChanged(state) }
+            stateListener.values.forEach { it.onAnimationEnd(state) }
         }
-        animateAlpha(masterView)
 
     }
 
@@ -98,6 +99,7 @@ class SlidingPaneController(
             return
         }
 
+        stateListener.values.forEach { it.onAnimationStarted(state) }
         state = ONLY_MASTER
         masterView.visibility = View.VISIBLE
 
@@ -105,9 +107,8 @@ class SlidingPaneController(
         animateWidth(detailView, detailView.width, 0) {
             detailView.visibility = View.GONE
             callback.invoke()
-            stateListener.values.forEach { it.onSlidingPaneStateChanged(state) }
+            stateListener.values.forEach { it.onAnimationEnd(state) }
         }
-        animateAlpha(masterView)
     }
 
     private fun animateWidth(
@@ -116,6 +117,7 @@ class SlidingPaneController(
         to: Int,
         onEnd: (() -> Unit)? = null,
     ) {
+        isAnimating = true
         ValueAnimator.ofInt(from, to).apply {
             duration = animDuration
             interpolator = AccelerateDecelerateInterpolator()
@@ -124,21 +126,14 @@ class SlidingPaneController(
                 params.width = animator.animatedValue as Int
                 view.layoutParams = params
             }
-            doOnEnd { onEnd?.invoke() }
-            start()
-        }
-    }
-
-    private fun animateAlpha(view: View) {
-        ValueAnimator.ofFloat(1f, 0f, 1f).apply {
-            duration = (animDuration * 1.5).toLong()
-            interpolator = DecelerateInterpolator()
-            addUpdateListener { animator ->
-                view.alpha = animator.animatedValue as Float
+            doOnEnd {
+                isAnimating = false
+                onEnd?.invoke()
             }
             start()
         }
     }
+
 
     /**
      * Adiciona um ouvinte para ser notificado sobre mudanças no estado do painel deslizante.
@@ -158,21 +153,29 @@ class SlidingPaneController(
         stateListener[caller.javaClass.simpleName] = callback
     }
 
+    /**
+     * Ajusta a largura dos painéis master e details  quando o usuário redimensiona manualmente a divisão.
+     *
+     * Pontos chave:
+     * - Valida se `newPercent` está entre `MIN_TARGET_PERCENT` e `MAX_TARGET_PERCENT`.
+     * - Atualiza a preferência da largura do painel de detalhes
+     * - Se ambos os painéis estiverem visíveis (`state == BOTH`), recalcula e aplica as novas larguras e solicita um novo layout.
+     *
+     * @param newPercent A nova porcentagem da largura da tela que o painel mestre deve ocupar.
+     *                   Este valor deve estar entre `MIN_TARGET_PERCENT` e `MAX_TARGET_PERCENT`.
+     */
     fun onPaneResizedByHand(newPercent: Float) {
 
-        if (newPercent !in MIN_TARGET_PERCENT..MAX_TARGET_PERCENT) return
-
-
+        if (newPercent !in MIN_TARGET_PERCENT..MAX_TARGET_PERCENT || state != BOTH) return
+        // TODO: a largura recebida deve ser referente ao painel de detalhes, corrija
         detailsPaneScreenPercent.set(1 - newPercent)
 
-        if (state == BOTH) {
-            val masterWidth = (screenWidth * newPercent).toInt()
-            val detailWidth = screenWidth - masterWidth
-            masterView.layoutParams.width = masterWidth
-            detailView.layoutParams.width = detailWidth
-            masterView.requestLayout()
-            detailView.requestLayout()
-        }
+        val masterWidth = (screenWidth * newPercent).toInt()
+        val detailWidth = screenWidth - masterWidth
+        masterView.layoutParams.width = masterWidth
+        detailView.layoutParams.width = detailWidth
+        masterView.requestLayout()
+        detailView.requestLayout()
 
     }
 
@@ -181,6 +184,7 @@ class SlidingPaneController(
     }
 
     interface SlidingPaneControllerCallback {
-        fun onSlidingPaneStateChanged(newState: SlidingPaneState)
+        fun onAnimationStarted(currentState: SlidingPaneState)
+        fun onAnimationEnd(newState: SlidingPaneState)
     }
 }

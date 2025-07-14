@@ -363,8 +363,11 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         toggleEmptyState(false)
     }
 
+    override fun onAnimationStarted(currentState: SlidingPaneState) {
+        // sem uso aqui
+    }
 
-    override fun onSlidingPaneStateChanged(newState: SlidingPaneState) {
+    override fun onAnimationEnd(newState: SlidingPaneState) {
         if (newState == SlidingPaneState.ONLY_MASTER) goBackDetails()
     }
 

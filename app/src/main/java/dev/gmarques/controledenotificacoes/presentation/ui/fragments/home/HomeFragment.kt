@@ -21,7 +21,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
@@ -40,6 +39,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -211,21 +212,19 @@ class HomeFragment : MyFragment() {
         })
     }
 
+    /**
+     * Configura o RecyclerView, seu adapter e a lógica de layout adaptativo para alternar
+     * entre visualizações em lista e grade conforme a largura disponível ou estado do painel lateral.
+     *
+     * @see setupManagedAppsAdapter
+     * @see createResponsiveLayoutManager
+     * @see setupPaneAnimationListener
+     */
     private fun setupRecyclerView() = with(binding) {
+        setupManagedAppsAdapter()
 
-        adapter = ManagedAppsAdapter(
-            getDrawable(R.drawable.vec_rule_permissive_small),
-            getDrawable(R.drawable.vec_rule_restrictive_small),
-            getDrawable(R.drawable.vec_dot_notification_indicator),
-            getInstalledAppIconUseCase,
-            ::navigateToViewManagedAppFragment
-        )
-
-        val layoutManager = AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
-            adapter.spanCount = spanCount
-            rvApps.adapter = null
-            rvApps.adapter = adapter
-        }
+        val layoutManager = createResponsiveLayoutManager()
+        setupPaneAnimationListener(layoutManager)
 
         rvApps.layoutManager = layoutManager
         rvApps.adapter = adapter
@@ -233,9 +232,74 @@ class HomeFragment : MyFragment() {
         rvApps.doOnPreDraw {
             startPostponedEnterTransition()
         }
-
     }
 
+    /**
+     * Instancia e configura o adapter que será usado pelo RecyclerView para exibir os apps gerenciados.
+     *
+     * @see createResponsiveLayoutManager
+     */
+    private fun setupManagedAppsAdapter() {
+        adapter = ManagedAppsAdapter(
+            getDrawable(R.drawable.vec_rule_permissive_small),
+            getDrawable(R.drawable.vec_rule_restrictive_small),
+            getDrawable(R.drawable.vec_dot_notification_indicator),
+            getInstalledAppIconUseCase,
+            ::navigateToViewManagedAppFragment
+        )
+    }
+
+    /**
+     * Cria um `AutoFitGridLayoutManager` que calcula automaticamente a quantidade de colunas
+     * com base na largura disponível. Força o RecyclerView a recriar as views ao alternar
+     * entre visualização em lista e em grade.
+     *
+     * Durante as animaçoes do  [SlidingPaneController] as mudanças de SpanCount do [AutoFitGridLayoutManager] são ignoradas
+     * isso acontece porque [setupPaneAnimationListener] sabe quando o painel esta abrindo/fechando e atualiza o
+     * adapter com spancount e o redefine no recyclerview. ISso gera uma transição suave entre as views de lista e grade.
+     *
+     * @return Um layout manager configurado.
+     *
+     * @see setupManagedAppsAdapter
+     */
+    private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
+        return AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
+
+            if (requireMainActivity().slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
+
+            val old = adapter.useGridView
+            adapter.setUseGridView(spanCount)
+            //Só é necessário reatribuir o adapter se tiver que alternar entre views de lista/grade, caso contrario o proprio
+            //layoutmanager ajusta as colunas e tamanhos das views
+            if (old != adapter.useGridView) { // TODO: testar
+                binding.rvApps.adapter = null
+                binding.rvApps.adapter = adapter
+            }
+
+        }
+    }
+
+    /**
+     * Adiciona um listener ao `SlidingPaneController` para reatribuir o adapter nos momentos certos da
+     * animação de abertura ou fechamento do painel, garantindo uma transição visual suave.
+     *
+     * @param layoutManager Layout manager usado no RecyclerView.
+     *
+     * @see createResponsiveLayoutManager
+     */
+    private fun setupPaneAnimationListener(layoutManager: AutoFitGridLayoutManager) {
+        requireMainActivity().slidingPaneController
+            ?.addStateListener(this@HomeFragment, object : SlidingPaneControllerCallback {
+                override fun onAnimationStarted(currentState: SlidingPaneController.SlidingPaneState) {
+                    binding.rvApps.adapter = null
+                }
+
+                override fun onAnimationEnd(newState: SlidingPaneController.SlidingPaneState) {
+                    adapter.setUseGridView(layoutManager.spanCount)
+                    binding.rvApps.adapter = adapter
+                }
+            })
+    }
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
 
         binding.edtSearch.setText("")

@@ -25,7 +25,6 @@ class AutoFitGridLayoutManager(
 
     private var itemWidthPx = 0
     private var newSpanCount = 1
-    private var timerIsRunning = false
 
     init {
         val displayMetrics: DisplayMetrics = context.resources.displayMetrics
@@ -45,19 +44,10 @@ class AutoFitGridLayoutManager(
 
         newSpanCount = max(1, totalSpace / itemWidthPx)
 
-        if (timerIsRunning) return
-        else timerIsRunning = true
-
-        val task = object : TimerTask() {
-            override fun run() {
-                timerIsRunning = false
-                if (newSpanCount != spanCount) Handler(Looper.getMainLooper()).post {
-                    spanCount = newSpanCount
-                    spanCountChangeListener.invoke(spanCount)
-                }
-            }
+        if (newSpanCount != spanCount)  {
+            spanCount = newSpanCount
+            spanCountChangeListener.invoke(spanCount)
         }
-        Timer().schedule(task, SlidingPaneController.DEFAULT_ANIM_DURATION/2)
 
     }
 }

@@ -322,16 +322,19 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     }
 
+    override fun onAnimationStarted(currentState: SlidingPaneState) {
+    }
+
     /**
      * Chamado sempre que o [SlidingPaneController] muda de estado.
      * Alterna o NavHost padrao que é aquele que o sistema observa pra saber se deve dar um popBackStack na pilha
      * ou sair da activity, se o painel esta aberto o sistema passa a observar o NavHost do painel de detalhes, caso
      * contrario o sistema passa a observar o NavHost do painel master
      */
-    override fun onSlidingPaneStateChanged(newState: SlidingPaneState) {
+    override fun onAnimationEnd(newState: SlidingPaneState) {
+
         val masterHost = supportFragmentManager.findFragmentById(R.id.nav_host_master)
         val detailHost = supportFragmentManager.findFragmentById(R.id.nav_host_detail)
-
 
         val primaryHost = when (newState) {
             SlidingPaneState.ONLY_MASTER -> masterHost

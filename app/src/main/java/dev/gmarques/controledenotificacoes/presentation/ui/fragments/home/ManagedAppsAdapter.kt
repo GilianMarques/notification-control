@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
+import android.view.animation.AnimationUtils
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -38,18 +39,18 @@ class ManagedAppsAdapter(
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val onItemClick: (ManagedAppWithRule) -> Unit,
 ) : ListAdapter<ManagedAppWithRule, ManagedAppsAdapter.ViewHolder>(DiffCallback()) {
+    var useGridView = false
+        private set
 
-
-    var spanCount = 1
+    private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        val binding = if (spanCount == 1) {
-            ItemManagedAppListBinding.inflate(inflater, parent, false)
-        } else {
-            ItemManagedAppGridBinding.inflate(inflater, parent, false)
-        }
+        val binding = if (useGridView) ItemManagedAppGridBinding.inflate(inflater, parent, false)
+        else ItemManagedAppListBinding.inflate(inflater, parent, false)
+
+        binding.root.startAnimation(anim)
 
         return ViewHolder(binding)
     }
@@ -69,6 +70,10 @@ class ManagedAppsAdapter(
         submitList(apps.filter {
             it.name.contains(query, ignoreCase = true)
         })
+    }
+
+    fun setUseGridView(spanCount: Int) {
+        useGridView = spanCount > 1
     }
 
     class ViewHolder(private val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
