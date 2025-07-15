@@ -484,12 +484,16 @@ open class MyFragment() : Fragment() {
         return requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_detail)?.findNavController()
     }
 
-    /** Retorna o  Controlador de navegação do painel principal (o da esquerda), é o mesmo que chamar [findNavController]
-     * fiz esse override pra padronizar com [findNavControllerDetails]
+    /** Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets), NÂO é o mesmo que chamar [findNavController].
+     * Chamar essa função sempre retorna  o navController do painel principal, qneuanto que chamar diretamente [findNavController]
+     * retornara o navController padrao definido no sistema que pode ser o master ou details dependendo do estado
+     * do [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController].
      * Esse controlador sempre restará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
      * pois é o principal.
      */
-    protected fun findNavControllerMain() = findNavController()
+    protected fun findNavControllerMain() =
+        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_master)?.findNavController()?:error("Nao deveria ser nulo independente do dispositivo e tamanho da tela")
+
     override fun onResume() {
         if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onResume: ")
         super.onResume()

@@ -3,13 +3,12 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -112,11 +111,24 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     }
 
-    private fun setupForTablet(lastState: SlidingPaneState?) {
-        if (!App.largeScreenDevice) return
-        paneResizer = PaneResizer(binding.dragHandle!!, this@MainActivity)
+    private fun setupForTablet(lastState: SlidingPaneState?) = with(binding) {
+
+        if (!App.largeScreenDevice) return@with
+        if (dragIndicator == null || dragHandle == null) {
+            Log.e(
+                "USUK",
+                "MainActivity.setupForTablet: Essa view nao deve ser nula em dispositivos de tela grande dragIndicator: $dragIndicator dragHandle: $dragHandle"
+            )
+            return@with
+        }
+
+        paneResizer = PaneResizer(
+            handleParent = dragIndicator,
+            dragHandler = dragHandle,
+            listener = this@MainActivity
+        )
         slidingPaneController = SlidingPaneController(
-            activity = this,
+            activity = this@MainActivity,
             masterId = R.id.nav_host_master,
             detailId = R.id.nav_host_detail
         )
@@ -133,8 +145,9 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     }
 
     private fun lockOrientation() {
-        if (App.largeScreenDevice) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
-        // else SCREEN_ORIENTATION_PORTRAIT
+        // TODO: ver io que fazer com isso
+        //  if (App.largeScreenDevice) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
+        //  else SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     private fun checkForAppUpdate() {

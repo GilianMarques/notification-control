@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AnticipateOvershootInterpolator
 
 /**
  * Criado por Gilian Marques
@@ -12,75 +13,85 @@ import android.view.animation.AccelerateDecelerateInterpolator
  * Define um touch listener que calcula a posição X da view-alvo como uma porcentagem da largura do pai
  * e retorna esse valor para o listener registrado. Também aplica animações de fade-in e fade-out durante o toque.
  *
- * @param targetView View que o usuário pode arrastar.
+ * @param handleParent View que o usuário pode arrastar.
  * @param listener Callback que recebe o valor entre 0.0f e 1.0f correspondente à posição horizontal do arrasto.
  */
 class PaneResizer(
-    private val targetView: View,
+    private val handleParent: View,
+    private val dragHandler: View,
     private val listener: PaneResizeListener,
 ) {
 
     private var downEventTimestamp = 0L
+    private val animDuration = 200L
+    private var originalHandleY = 0f
 
     init {
-        targetView.setOnTouchListener { _, event ->
+        handleParent.setOnTouchListener { _, event ->
             when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    downEventTimestamp = System.currentTimeMillis()
-                    fadeIn(targetView)
-                }
-
-                MotionEvent.ACTION_MOVE -> {
-                    val parent = targetView.parent as? View ?: return@setOnTouchListener false
-                    val x = event.rawX - parent.left
-                    val percent = (x / parent.width).coerceIn(0f, 1f)
-                    listener.onPaneResized(percent)
-                }
-
+                MotionEvent.ACTION_DOWN -> onTouchStart()
+                MotionEvent.ACTION_MOVE -> onTouchMove(event)
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     if (System.currentTimeMillis() - downEventTimestamp <= 75) {
-                        targetView.performClick()
+                        handleParent.performClick()
                     }
-                    fadeOut(targetView)
+                    onTouchEnd()
                 }
             }
             true
         }
     }
 
-    /**
-     * Anima a view de forma suave para `alpha = 1` e a torna visível.
-     * @see fadeOut
-     */
+    private fun onTouchStart() {
+        downEventTimestamp = System.currentTimeMillis()
+        originalHandleY = dragHandler.y
+        fadeIn(handleParent)
+    }
+
+    private fun onTouchMove(event: MotionEvent) {
+        val parent = handleParent.parent as? View ?: return
+        val x = event.rawX - parent.left
+        val percent = (x / parent.width).coerceIn(0f, 1f)
+        listener.onPaneResized(percent)
+        moveHandleWithFinger(event.rawY)
+    }
+
+    private fun onTouchEnd() {
+        fadeOut(handleParent)
+        //animateHandleBackToOriginalY()
+    }
+
+    private fun moveHandleWithFinger(rawY: Float) {
+        dragHandler.y = rawY - dragHandler.height / 2f
+    }
+
+    private fun animateHandleBackToOriginalY() {
+        dragHandler.animate()
+            .y(originalHandleY)
+            .setInterpolator(AnticipateOvershootInterpolator())
+            .setDuration(animDuration / 2)
+            .start()
+    }
+
     private fun fadeIn(view: View) {
-        view.apply {
-            clearAnimation()
-            alpha = 0f
-            animate().alpha(1f)
-                .setInterpolator(AccelerateDecelerateInterpolator())
-                .setDuration(150)
-                .start()
-        }
+        view.clearAnimation()
+        view.alpha = 0f
+        view.animate()
+            .alpha(1f)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .setDuration(animDuration)
+            .start()
     }
 
-    /**
-     * Anima a view suavemente para `alpha = 0` e depois a torna `GONE`.
-     * @see fadeIn
-     */
     private fun fadeOut(view: View) {
-        view.apply {
-            clearAnimation()
-            animate()
-                .setInterpolator(AccelerateDecelerateInterpolator())
-                .alpha(0f)
-                .setDuration(150)
-                .start()
-        }
+        view.clearAnimation()
+        view.animate()
+            .alpha(0f)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .setDuration(animDuration)
+            .start()
     }
 
-    /**
-     * Interface para receber a posição percentual horizontal da view durante o arrasto.
-     */
     interface PaneResizeListener {
         fun onPaneResized(positionPercent: Float)
     }
