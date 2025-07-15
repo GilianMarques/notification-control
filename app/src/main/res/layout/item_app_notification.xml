@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/back_container"
         android:foreground="?attr/selectableItemBackground"
         android:paddingStart="8dp"
@@ -76,7 +76,7 @@
             android:paddingStart="4dp"
             android:paddingTop="4dp"
             android:paddingEnd="4dp"
-            android:paddingBottom="4dp"
+            android:paddingBottom="28dp"
             android:textAlignment="gravity"
             android:textSize="14sp"
             android:transitionName="not_content"
@@ -84,7 +84,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_large_icon"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
-            tools:text="Conteudo da notificação\nbla bla bla bla..."
+            tools:text="Conteudo da notificação\nbla bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla..."
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -110,7 +110,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tv_open_notification"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
             tools:ignore="RtlSymmetry"
             tools:text="Hoje as 13:56" />
 

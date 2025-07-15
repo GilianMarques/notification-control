@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="500dp"
-        app:layout_constraintWidth_min="300dp">
+        app:layout_constraintWidth_min="280dp">
 
 
         <androidx.appcompat.widget.AppCompatImageView
