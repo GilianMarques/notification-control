@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.Main
@@ -22,7 +22,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.measureTime
 
 
 @HiltViewModel
@@ -47,7 +46,7 @@ class AddManagedAppsViewModel @Inject constructor(
     fun addNewlySelectedApps(apps: List<InstalledApp>) {
         _selectedApps.value = _selectedApps.value!!.values.toMutableList().apply {
             addAll(apps)
-        }.associate { it.packageId to it }
+        }.associateBy { it.packageId }
     }
 
     fun setRule(rule: Rule?) = viewModelScope.launch(Main) {
@@ -100,16 +99,20 @@ class AddManagedAppsViewModel @Inject constructor(
             return@launch
         }
 
-        val x = measureTime {
-            apps.map {
-                async {
-                    val managedApp = ManagedApp(it.packageId, rule.id, false)
-                    addManagedApp(managedApp)
-                    rescheduleAlarm(it, managedApp, rule)
-                }
-            }.awaitAll()
-        }
-        Log.d("USUK", "AddManagedAppsViewModel.validateSelection: Time: $x millis")
+        apps.map {
+            async {
+                val managedApp = ManagedApp(
+                    packageId = it.packageId,
+                    ruleId = rule.id,
+                    hasPendingNotifications = false
+                )
+                addManagedApp(managedApp)
+                rescheduleAlarm(it, managedApp, rule)
+            }
+        }.awaitAll()
+
+        requestActiveNotificationsEvaluation()
+
         _successCloseFragment.postValue(EventWrapper(Unit))
 
     }
@@ -134,6 +137,19 @@ class AddManagedAppsViewModel @Inject constructor(
     ) {
         if (!installedApp.isBeingManaged) return
         rescheduleAlarmOnAppsRuleChangeUseCase(managedApp, rule)
+    }
+
+    /**
+     * Solicita a reavaliação das notificações ativas.
+     *
+     * Esta função invoca o mét.odo `reEvaluateActiveNotifications` na instância do [NotificationListener].
+     * Isso é útil quando as regras de notificação ou apps gerenciados são alteradas e as notificações ativas precisam ser
+     * reavaliadas para aplicar as novas regras imediatamente.
+     *
+     * Se a instância do [NotificationListener] não estiver disponível, a função não faz nada.
+     */
+    private fun requestActiveNotificationsEvaluation() {
+        NotificationListener.instance?.reEvaluateActiveNotifications()
     }
 
     /**
