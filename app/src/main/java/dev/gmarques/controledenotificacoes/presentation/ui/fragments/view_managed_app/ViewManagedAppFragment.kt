@@ -39,6 +39,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRe
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
@@ -180,7 +181,7 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
     private fun setupRecyclerView() = with(binding) {
         adapter = AppNotificationAdapter(appIcon, ::onNotificationClick)
         rvHistory.adapter = adapter
-        rvHistory.layoutManager = LinearLayoutManager(requireContext())
+        rvHistory.layoutManager = AutoFitGridLayoutManager(requireContext(), 300)
         rvHistory.setHasFixedSize(true)
         hideViewOnRVScroll(binding.rvHistory, binding.fabOpenApp)
 
@@ -353,6 +354,7 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         super.onPause()
     }
 
+    /**Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)*/
     override fun onResume() {
         requireMainActivity().slidingPaneController?.showMasterAndDetails()
         super.onResume()
@@ -363,10 +365,12 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         toggleEmptyState(false)
     }
 
+    /**Callback de [SlidingPaneController.SlidingPaneControllerCallback]*/
     override fun onAnimationStarted(currentState: SlidingPaneState) {
         // sem uso aqui
     }
 
+    /**Callback de [SlidingPaneController.SlidingPaneControllerCallback]*/
     override fun onAnimationEnd(newState: SlidingPaneState) {
         if (newState == SlidingPaneState.ONLY_MASTER) goBackDetails()
     }

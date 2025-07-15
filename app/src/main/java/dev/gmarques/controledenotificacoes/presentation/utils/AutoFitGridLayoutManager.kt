@@ -20,7 +20,7 @@ import kotlin.math.max
 class AutoFitGridLayoutManager(
     context: Context,
     itemWidthDp: Int,
-    private val spanCountChangeListener: (spanCount: Int) -> Unit,
+    private val spanCountChangeListener: (spanCount: Int) -> Unit ={},
 ) : GridLayoutManager(context, 1) {
 
     private var itemWidthPx = 0

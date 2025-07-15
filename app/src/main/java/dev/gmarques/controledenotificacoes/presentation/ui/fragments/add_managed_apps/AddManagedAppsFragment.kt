@@ -8,7 +8,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
@@ -241,7 +240,6 @@ class AddManagedAppsFragment() : MyFragment() {
             viewModel.setRule(rule!!)
         }
     }
-
 
     private fun setupSelectActiveNotificationListener() {
 
