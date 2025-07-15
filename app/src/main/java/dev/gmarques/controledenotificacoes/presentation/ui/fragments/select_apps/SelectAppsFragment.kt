@@ -17,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
-import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -74,18 +73,17 @@ class SelectAppsFragment : MyFragment() {
             PreferencesImpl.showHintSelectFirstApp,
             getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
         )
+        setupPopUpMenu()
 
     }
 
-    override fun setupActionBar(binding: ViewActivityHeaderBinding) {
-        super.setupActionBar(binding)
-        binding.ivMenu.isVisible = true
-        binding.ivMenu.setOnClickListener(AnimatedClickListener {
-
-            showPopUpMenu(binding.ivMenu)
+    private fun setupPopUpMenu() = with(binding.actionbar) {
+        ivMenu.isVisible = true
+        ivMenu.setOnClickListener(AnimatedClickListener {
+            showPopUpMenu(ivMenu)
         })
-
     }
+
 
     /**
      * Carrega os pacotes de apps que devem ser excluidos da busca em
@@ -221,6 +219,7 @@ class SelectAppsFragment : MyFragment() {
                         viewModel.selectAppsAllOrNone(false)
                     }
                 }
+
                 item {
                     label = getString(R.string.Inverter_sele_o)
                     icon = R.drawable.vec_invert_selection

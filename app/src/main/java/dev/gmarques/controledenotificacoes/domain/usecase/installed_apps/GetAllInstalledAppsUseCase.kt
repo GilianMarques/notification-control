@@ -28,7 +28,7 @@ class GetAllInstalledAppsUseCase @Inject constructor(private val repository: Ins
      */
     suspend operator fun invoke(
         targetName: String = "",
-        excludePackages: HashSet<String> = hashSetOf<String>(),
+        excludePackages: HashSet<String> = hashSetOf(),
         includeSystemApps: Boolean = PreferencesImpl.prefIncludeSystemApps.value,
         includeManagedApps: Boolean = PreferencesImpl.prefIncludeManagedApps.value,
     ): List<InstalledApp> {

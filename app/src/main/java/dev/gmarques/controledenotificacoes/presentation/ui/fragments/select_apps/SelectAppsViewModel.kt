@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,14 +35,14 @@ import javax.inject.Inject
 class SelectAppsViewModel @Inject constructor(
     private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
     @ApplicationContext
-    private val context: android.content.Context,
+    private val context: Context,
 ) : ViewModel() {
 
     companion object {
         const val MAX_APPS_PER_RULE = 999
     }
 
-    private val _installedApps = MutableStateFlow<List<SelectableApp>>(listOf<SelectableApp>())
+    private val _installedApps = MutableStateFlow(listOf<SelectableApp>())
     val installedApps: StateFlow<List<SelectableApp>> = _installedApps
 
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
@@ -53,9 +54,7 @@ class SelectAppsViewModel @Inject constructor(
     private var selectedApps = HashSet<InstalledApp>()
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
-
     val onAppCheckedMutex = Mutex()
-
 
     fun searchApps() = viewModelScope.launch(IO) {
 
