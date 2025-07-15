@@ -133,8 +133,8 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     }
 
     private fun lockOrientation() {
-        requestedOrientation = if (App.largeScreenDevice) SCREEN_ORIENTATION_LANDSCAPE
-        else SCREEN_ORIENTATION_PORTRAIT
+        if (App.largeScreenDevice) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
+        // else SCREEN_ORIENTATION_PORTRAIT
     }
 
     private fun checkForAppUpdate() {
