@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
 import android.content.Intent
+import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -35,9 +36,23 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     companion object {
         var instance: NotificationListener? = null
             private set
+        
+        
     }
 
-
+    fun cancelOngoingNotificationBySnooze(sbn: StatusBarNotification) {
+        Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: $sbn\n\n")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && sbn.isOngoing && sbn.id ==220461) {
+            Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: trying to cancel")
+            try {
+                val maxTime =  20_000L
+                snoozeNotification(sbn.key, maxTime)
+            } catch (e: Exception) {
+                Log.e("NotifSnooze", "Erro ao adiar notificação: ${e.message}")
+            }
+        }
+    }
+    
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
@@ -46,6 +61,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerConnected()
         instance = this@NotificationListener
         observeRulesChanges()
+        
+        activeNotifications.forEach { cancelOngoingNotificationBySnooze(it)}
     }
 
     /**
