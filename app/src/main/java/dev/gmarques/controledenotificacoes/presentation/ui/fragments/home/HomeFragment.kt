@@ -45,6 +45,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebindAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -266,16 +267,13 @@ class HomeFragment : MyFragment() {
         return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
 
             if (requireMainActivity().slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
-
-            val old = adapter.useGridView
             adapter.setUseGridView(spanCount)
-            //Só é necessário reatribuir o adapter se tiver que alternar entre views de lista/grade, caso contrario o proprio
-            //layoutmanager ajusta as colunas e tamanhos das views
-            if (old != adapter.useGridView) { // TODO: testar
-                binding.rvApps.adapter = null
-                binding.rvApps.adapter = adapter
-            }
-
+            /*
+            * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
+            * a visualização em lista e em grades com multiplas colunas.
+            * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
+            */
+            binding.rvApps.rebindAdapter()
         }
     }
 
@@ -300,6 +298,7 @@ class HomeFragment : MyFragment() {
                 }
             })
     }
+
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
 
         binding.edtSearch.setText("")

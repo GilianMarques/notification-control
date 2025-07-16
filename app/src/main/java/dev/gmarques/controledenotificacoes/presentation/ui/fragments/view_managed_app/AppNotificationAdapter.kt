@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -30,6 +31,8 @@ import java.io.File
  */
 class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationClick: (AppNotification) -> Unit) :
     ListAdapter<AppNotification, AppNotificationAdapter.ViewHolder>(DiffCallback) {
+
+    private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
 
     inner class ViewHolder(private val binding: ItemAppNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -78,6 +81,7 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
         val binding = ItemAppNotificationBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
+        binding.root.startAnimation(anim)
         return ViewHolder(binding)
     }
 

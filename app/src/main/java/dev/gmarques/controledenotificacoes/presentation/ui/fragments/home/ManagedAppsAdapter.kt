@@ -72,6 +72,10 @@ class ManagedAppsAdapter(
         })
     }
 
+    /**
+     * Ajusta a flag que define qual das views (lista/grade) usar com  base na quantidade de colunas definidas pelo
+     * [dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager]
+     */
     fun setUseGridView(spanCount: Int) {
         useGridView = spanCount > 1
     }

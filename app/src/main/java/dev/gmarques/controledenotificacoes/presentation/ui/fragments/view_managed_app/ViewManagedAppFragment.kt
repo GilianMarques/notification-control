@@ -41,6 +41,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebindAdapter
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -181,10 +182,27 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
     private fun setupRecyclerView() = with(binding) {
         adapter = AppNotificationAdapter(appIcon, ::onNotificationClick)
         rvHistory.adapter = adapter
-        rvHistory.layoutManager = AutoFitGridLayoutManager(requireContext(), 300)
+        rvHistory.layoutManager = createResponsiveLayoutManager()
         rvHistory.setHasFixedSize(true)
         hideViewOnRVScroll(binding.rvHistory, binding.fabOpenApp)
 
+    }
+
+    /**
+     * Cria um `AutoFitGridLayoutManager` que calcula automaticamente a quantidade de colunas
+     * com base na largura disponível.
+     *
+     * @return Um layout manager configurado.
+     */
+    private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
+        return AutoFitGridLayoutManager(requireContext(), 300) { spanCount ->
+            /*
+            * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
+            * a visualização em lista e em grades com multiplas colunas.
+            * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
+            */
+            binding.rvHistory.rebindAdapter()
+        }
     }
 
     private fun onNotificationClick(notification: AppNotification) {

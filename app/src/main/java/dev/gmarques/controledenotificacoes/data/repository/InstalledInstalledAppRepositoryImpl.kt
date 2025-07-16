@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -70,6 +72,7 @@ class InstalledInstalledAppRepositoryImpl @Inject constructor(
                     val appName = packageManager.getApplicationLabel(appInfo).toString()
                     var managedApp = false
 
+                    if (appInfo.packageName.equals(BuildConfig.APPLICATION_ID)) return@async null
                     if (excludePackages.contains(appInfo.packageName)) return@async null
                     if (!includeSystemApps && isSystemApp(appInfo)) return@async null
                     if (isManagedApp(appInfo).also { managedApp = it } && !includeManagedApps) return@async null

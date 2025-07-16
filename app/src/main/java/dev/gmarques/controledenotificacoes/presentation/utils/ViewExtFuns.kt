@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
 
 /**
@@ -103,5 +104,20 @@ object ViewExtFuns {
         imm.hideSoftInputFromWindow(this.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
+    /**
+     * Reatribui o adapter do RecyclerView para forçar a recriação das views.
+     *
+     * Esta função é útil para acionar animações de transição ao mudar o layout do RecyclerView,
+     * por exemplo, ao alternar entre uma visualização em lista e em grade com múltiplas colunas.
+     *
+     * Embora não seja estritamente necessário reatribuir o adapter (o LayoutManager
+     * geralmente ajusta as colunas e tamanhos automaticamente), esta abordagem garante
+     * que as views sejam recriadas, possibilitando a animação de transição desejada.
+     */
+    fun RecyclerView.rebindAdapter() {
+        val adapter = this.adapter
+        this.adapter = null
+        this.adapter = adapter
+    }
 }
 
