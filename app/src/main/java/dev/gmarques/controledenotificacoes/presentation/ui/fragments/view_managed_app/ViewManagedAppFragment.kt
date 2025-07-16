@@ -1,10 +1,12 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
@@ -47,7 +47,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPaneControllerCallback {
+class ViewManagedAppFragment() : MyFragment(),
+    SlidingPaneController.SlidingPaneControllerCallback {
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
@@ -265,13 +266,44 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
                         confirmRemoveRule()
                     }
                 }
+            }
 
-
+            section {
+                title = getString(R.string.Sistema)
+                item {
+                    label = getString(R.string.Historico_de_notifica_es)
+                    icon = R.drawable.vec_open_app
+                    callback = {
+                        openSystemsNotificationHistory()
+                    }
+                }
             }
 
         }
 
         popupMenu.show(this@ViewManagedAppFragment.requireContext(), binding.ivMenu)
+    }
+
+    private fun openSystemsNotificationHistory() {
+        val intent = Intent("android.settings.NOTIFICATION_HISTORY")
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            try {
+                // Fallback: abre as configurações gerais de notificações
+                val fallbackIntent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                fallbackIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(fallbackIntent)
+            } catch (_: Exception) {
+                showErrorSnackBar(
+                    getString(R.string.Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema),
+                    binding.fabOpenApp
+                )
+            }
+        }
+
     }
 
     private fun confirmClearHistory() {

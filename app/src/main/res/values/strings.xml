@@ -296,6 +296,9 @@
     <string name="Ou_Entre_como_convidado">ou\n\nEntre como convidado</string>
     <string name="Convidado">Convidado</string>
     <string name="Nenhuma_notifica_o_v_lida_ativa_no_momento">Nenhuma notificação válida ativa no momento</string>
+    <string name="Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema">Não foi possível abrir o histórico de notificações do sistema</string>
+    <string name="Sistema">Sistema</string>
+    <string name="Historico_de_notifica_es">Histórico de notificações</string>
 
 
 </resources>
