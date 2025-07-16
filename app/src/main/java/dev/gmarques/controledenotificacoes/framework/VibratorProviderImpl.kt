@@ -7,7 +7,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -18,7 +18,7 @@ import javax.inject.Inject
  * Classe responsável por fornecer feedback de interface, como vibração.
  * Suporta APIs abaixo de 26 utilizando o méto_do `vibrate` legada para compatibilidade.
  */
-class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) : VibratorInterface,
+class VibratorProviderImpl @Inject constructor(@ApplicationContext private val context: Context) : VibratorProvider,
     CoroutineScope by MainScope() {
 
     /**

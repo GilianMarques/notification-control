@@ -66,7 +66,7 @@ class ReportNotificationManager @Inject constructor(
             .setGroup("${System.currentTimeMillis()}")
             .setGroupSummary(false)
             .addAction(createOpenTargetAppAction(packageName, notificationId))
-            .addAction(createOpenNotificationHistoryAction(packageName, notificationId))
+            .setContentIntent(createOpenNotificationHistoryPendingIntent(packageName, notificationId))
             .build()
     }
 
@@ -114,7 +114,8 @@ class ReportNotificationManager @Inject constructor(
         ).build()
     }
 
-    private fun createOpenNotificationHistoryAction(packageName: String, notificationId: Int): NotificationCompat.Action {
+    private fun createOpenNotificationHistoryPendingIntent(packageName: String, notificationId: Int): PendingIntent? {
+
         val targetIntent = NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.viewManagedAppFragment)
@@ -123,26 +124,19 @@ class ReportNotificationManager @Inject constructor(
             .intents
             .first()
 
-        return createBroadcastIntentAction(context.getString(R.string.Ver_hist_rico), targetIntent, notificationId)
-    }
-
-    private fun createBroadcastIntentAction(label: String, targetIntent: Intent, notificationId: Int): NotificationCompat.Action {
         val broadcastIntent = Intent(context, ReportNotificationReceiver::class.java).apply {
             putExtra(ReportNotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
             putExtra(ReportNotificationReceiver.EXTRA_ORIGINAL_INTENT, targetIntent)
         }
 
-        val pendingIntent = PendingIntent.getBroadcast(
+        return PendingIntent.getBroadcast(
             context,
             notificationId,
             broadcastIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        return NotificationCompat.Action.Builder(
-            R.drawable.ic_launcher_foreground,
-            label,
-            pendingIntent
-        ).build()
     }
+
+
 }

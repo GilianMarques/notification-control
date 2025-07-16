@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.framework
 
-interface VibratorInterface {
+interface VibratorProvider {
     fun error()
     fun success()
     fun interaction()

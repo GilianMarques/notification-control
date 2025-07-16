@@ -10,11 +10,11 @@ import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotifica
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.StringsProviderImpl
-import dev.gmarques.controledenotificacoes.framework.VibratorImpl
+import dev.gmarques.controledenotificacoes.framework.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
 
 /**
@@ -28,7 +28,7 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
 abstract class FrameworkModule {
 
     @Binds
-    abstract fun bindVibrator(impl: VibratorImpl): VibratorInterface
+    abstract fun bindVibrator(impl: VibratorProviderImpl): VibratorProvider
 
     @Binds
     abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider

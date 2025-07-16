@@ -33,10 +33,10 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.VibratorImpl
+import dev.gmarques.controledenotificacoes.framework.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
@@ -67,15 +67,8 @@ open class MyFragment() : Fragment() {
 
     /**printa as alteraçoes no ciclo de vida dos fragmentos filho, se habilitado*/
     private val enableLifecycleDebugLogs = false
-
     @Inject
-    lateinit var vibrator: VibratorInterface
-
-    @Inject
-    lateinit var savePreferenceUseCase: SavePreferenceUseCase
-
-    @Inject
-    lateinit var readPreferenceUseCase: ReadPreferenceUseCase
+    lateinit var vibrator: VibratorProvider
 
     private var isFabVisible = true
     private var animatingFab = false
@@ -224,7 +217,7 @@ open class MyFragment() : Fragment() {
      *                 explicando a natureza do erro ao usuário.
      *
      * @see Snackbar
-     * @see VibratorImpl
+     * @see VibratorProviderImpl
      */
     protected open fun showErrorSnackBar(errorMsg: String, targetView: View = requireView()) {
         Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).setAnchorView(targetView).show()
@@ -242,7 +235,7 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBack() {
         vibrator.interaction()
-        findNavControllerMain().popBackStack()
+        findNavControllerDefault().popBackStack()
         Log.d("USUK", "MyFragment.goBack: ${this.javaClass.simpleName}")
     }
 
@@ -322,7 +315,7 @@ open class MyFragment() : Fragment() {
     ) = lifecycleScope.launch {
 
 
-        if (showHintPreference.value == false) return@launch
+        if (!showHintPreference.value) return@launch
 
         dialogHint?.dismiss()
 
@@ -484,15 +477,22 @@ open class MyFragment() : Fragment() {
         return requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_detail)?.findNavController()
     }
 
-    /** Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets), NÂO é o mesmo que chamar [findNavController].
-     * Chamar essa função sempre retorna  o navController do painel principal, qneuanto que chamar diretamente [findNavController]
-     * retornara o navController padrao definido no sistema que pode ser o master ou details dependendo do estado
-     * do [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController].
+    /**
+     * Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets)
      * Esse controlador sempre restará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
-     * pois é o principal.
+     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme estado do [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController].
+     * para obter o navegador Default do sistema no momento da chamada use [findNavControllerDefault].
      */
     protected fun findNavControllerMain() =
-        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_master)?.findNavController()?:error("Nao deveria ser nulo independente do dispositivo e tamanho da tela")
+        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_master)?.findNavController()
+            ?: error("Nao deveria ser nulo independente do dispositivo e tamanho da tela")
+
+
+    /**
+     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController]
+     * Use [findNavControllerMain] para obter o navController do painel principal e [findNavControllerDetails] para obter o
+     * navController do painel de detalhes (indisponivel em celulares)*/
+    protected fun findNavControllerDefault() = findNavController()
 
     override fun onResume() {
         if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onResume: ")
