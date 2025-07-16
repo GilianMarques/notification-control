@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase
+package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import android.util.Log
 import androidx.room.withTransaction

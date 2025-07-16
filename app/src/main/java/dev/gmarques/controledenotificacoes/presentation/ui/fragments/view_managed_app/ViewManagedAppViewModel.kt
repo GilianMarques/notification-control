@@ -2,16 +2,15 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_manag
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.CancelAlarmForAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
@@ -27,6 +26,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +50,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
     private val observeManagedApp: ObserveManagedApp,
-    @ApplicationContext private val context: Context,
+    private val cancelAlarmForAppUseCase: CancelAlarmForAppUseCase,
 ) : ViewModel() {
 
     private var initialized = false
@@ -87,7 +87,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
     fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
 
-        if (initialized == false) {
+        if (!initialized) {
             initialized = true
 
             observeAppChanges(app.packageId)
@@ -95,7 +95,7 @@ class ViewManagedAppViewModel @Inject constructor(
         }
 
         notFoundApp = app.uninstalled
-        removeNotificationIndicator(app.packageId)
+        removeNotificationIndicatorAndCancelReportNotification(app.packageId)
         _managedAppFlow.tryEmit(app)
 
     }
@@ -106,7 +106,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     private fun observeAppChanges(pkg: String) = viewModelScope.launch(IO) {
         observeManagedApp(pkg).collect {
-         //   Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
+            //   Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
 
             if (it == null) _eventsFlow.tryEmit(Event.AppRemoved)
             else observeRuleChanges(it.ruleId)
@@ -136,21 +136,32 @@ class ViewManagedAppViewModel @Inject constructor(
             val notifications = it.toMutableList()
                 .apply {
                     reverse() // notificações mais recentes por cima
-                }.distinctBy { it.title to it.content } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
+                }.distinctBy { appNotification ->
+                    appNotification.title to appNotification.content
+                } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
 
             _appNotificationHistoryFlow.tryEmit(notifications)
+            removeNotificationIndicatorAndCancelReportNotification(app.packageId)//se esse frag ta aberto qdo a notificação chegar, o usuario ja viu a notificação
         }
     }
 
-    /** Escreve no DB que o app ja nao tem notificações para serem vistas ja que o fragmento desse viewmodel exibe as notificações.
-     * Deve ser chamado sempre que o fragmento for aberto e recriado pelo sistema
-     */
-    private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
+    /**
+    * Atualiza o estado do aplicativo gerenciado no banco de dados para indicar que não há mais
+    * notificações pendentes, pois o fragmento atual está exibindo as notificações.
+    * Além disso, cancela qualquer notificação de relatório que possa ter sido agendada para
+    * informar sobre notificações recebidas durante um período de bloqueio, já que essas
+    * notificações estão sendo visualizadas enquanto este fragmento está aberto.
+    *
+    * Este mét.odo deve ser invocado sempre que o fragmento for aberto ou recriado pelo sistema,
+    * bem como quando novas notificações chegarem para o aplicativo gerenciado. */
+    private fun removeNotificationIndicatorAndCancelReportNotification(packageId: String) = viewModelScope.launch(IO) {
         delay(1000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
-       // Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
-        getManagedAppByPackageIdUseCase(packageId)?.let { app ->
-            updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
-        }
+        // Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
+        getManagedAppByPackageIdUseCase(packageId)
+            ?.let { app ->
+                updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
+                cancelAlarmForAppUseCase(app.packageId)
+            }
     }
 
     fun deleteApp() = viewModelScope.launch {

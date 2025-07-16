@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase
+package dev.gmarques.controledenotificacoes.domain.usecase.framework
 
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class GetActiveNotificationsUseCase @Inject constructor(
     private val repository: ActiveNotificationRepository,
 ) {
-
+    // TODO: pra que isso? e precisa mesmo? reavalie
     operator fun invoke(): Flow<List<ActiveStatusBarNotification>> = callbackFlow {
         trySend(repository.getActiveNotifications()).isSuccess
         close() // garante emissão única e encerramento do flow
@@ -23,4 +23,3 @@ class GetActiveNotificationsUseCase @Inject constructor(
 
 
 }
-

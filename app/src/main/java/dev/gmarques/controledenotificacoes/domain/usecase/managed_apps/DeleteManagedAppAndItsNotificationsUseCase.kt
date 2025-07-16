@@ -23,7 +23,7 @@ class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
     /**
      * Este UseCase pode ser utilizado tanto dentro quanto fora de uma transação do Room.
      *
-     * Quando chamado por [dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase], a operação já está
+     * Quando chamado por [dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase], a operação já está
      * encapsulada em uma transação externa. No entanto, este UseCase também é reutilizado por outras classes que não iniciam
      * transações, o que exige que ele mesmo controle a atomicidade nesses casos.
      *
