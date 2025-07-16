@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnticipateOvershootInterpolator
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 
 /**
  * Criado por Gilian Marques
@@ -20,6 +21,7 @@ class PaneResizer(
     private val handleParent: View,
     private val dragHandler: View,
     private val listener: PaneResizeListener,
+    private val vibratorProvider: VibratorProvider,
 ) {
 
     private var downEventTimestamp = 0L
@@ -49,16 +51,20 @@ class PaneResizer(
     }
 
     private fun onTouchMove(event: MotionEvent) {
+
         val parent = handleParent.parent as? View ?: return
         val x = event.rawX - parent.left
         val percent = (x / parent.width).coerceIn(0f, 1f)
         listener.onPaneResized(percent)
         moveHandleWithFinger(event.rawY)
+
+        if ((percent * 100).toInt() % 2 == 0) vibratorProvider.interaction()
+
     }
 
     private fun onTouchEnd() {
         fadeOut(handleParent)
-        //animateHandleBackToOriginalY()
+        animateHandleBackToOriginalY()
     }
 
     private fun moveHandleWithFinger(rawY: Float) {

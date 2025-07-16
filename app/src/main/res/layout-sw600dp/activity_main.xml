@@ -21,16 +21,17 @@
 
     <FrameLayout
         android:id="@+id/drag_indicator"
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:alpha="0"
-        android:transitionName="handle"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/nav_host_detail"
         app:layout_constraintStart_toEndOf="@id/nav_host_master"
+        app:layout_constraintTop_toTopOf="parent"
         tools:alpha="1">
 
         <View
-            android:layout_width="6dp"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@drawable/back_degrade" />
@@ -41,10 +42,10 @@
             android:layout_height="72dp"
             android:layout_gravity="center"
             android:background="@drawable/back_round_drag_handle"
-            android:backgroundTint="?colorPrimary"
+            android:backgroundTint="?colorSurfaceContainerHighest"
             android:padding="6dp"
             android:src="@drawable/vec_drag_handle"
-            app:tint="?colorOnPrimary" />
+            app:tint="?colorPrimary" />
 
     </FrameLayout>
 

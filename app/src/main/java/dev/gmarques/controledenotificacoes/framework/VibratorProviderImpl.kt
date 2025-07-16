@@ -50,6 +50,11 @@ class VibratorProviderImpl @Inject constructor(@ApplicationContext private val c
         launch { vibrate(25) }// Duração curta
     }
 
+    /**uma micro vibração*/
+    override fun tick() {
+        vibrate(25)
+    }
+
     override fun sineAnimation() {
         launch {
             val vib = 50L

@@ -33,10 +33,12 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 /**
@@ -46,8 +48,10 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneControllerCallback, PaneResizer.PaneResizeListener {
 
-
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var vibratorProvider: VibratorProvider
     private var backgroundChanged = false
     private lateinit var splashLabel: String
     private lateinit var homeLabel: String
@@ -125,6 +129,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         paneResizer = PaneResizer(
             handleParent = dragIndicator,
             dragHandler = dragHandle,
+            vibratorProvider = vibratorProvider,
             listener = this@MainActivity
         )
         slidingPaneController = SlidingPaneController(
