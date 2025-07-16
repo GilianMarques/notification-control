@@ -16,7 +16,6 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.GetAppNotificationByPkgUseCase
 import javax.inject.Inject
 
 /**
@@ -27,7 +26,6 @@ import javax.inject.Inject
  */
 class ReportNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val getAppNotificationByPkgUseCase: GetAppNotificationByPkgUseCase,
 ) {
 
     private val channelId = "notification_report"
@@ -45,7 +43,7 @@ class ReportNotificationManager @Inject constructor(
     private fun createNotificationChannelIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.Relatorio_de_notificacoes)
-            val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH)
             context.getSystemService(NotificationManager::class.java)
                 .createNotificationChannel(channel)
         }
@@ -65,6 +63,7 @@ class ReportNotificationManager @Inject constructor(
             .setAutoCancel(true)
             .setGroup("${System.currentTimeMillis()}")
             .setGroupSummary(false)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(createOpenTargetAppAction(packageName, notificationId))
             .setContentIntent(createOpenNotificationHistoryPendingIntent(packageName, notificationId))
             .build()
@@ -83,14 +82,14 @@ class ReportNotificationManager @Inject constructor(
             drawable.draw(canvas)
             bitmap
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 
     private fun getAppNameFromPackage(packageName: String): String = try {
         val appInfo = context.packageManager.getApplicationInfo(packageName, 0)
         context.packageManager.getApplicationLabel(appInfo).toString()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         packageName
     }
 

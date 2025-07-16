@@ -75,6 +75,7 @@ class NotificationServiceManager : Service() {
             .setContentTitle(getString(R.string.Monitoramento_de_notificacoes))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentIntent(getPendingIntentForOpenTheApp())
             .addAction(R.drawable.vec_open_app, getString(R.string.Desativar), getPendingIntentForNotificationSettings())
             .build()
