@@ -13,5 +13,5 @@ data class AppNotification(
     val packageId: String,
     val title: String,
     val content: String,
-    val timestamp: Long = System.currentTimeMillis(),
+    val timestamp: Long,
 ) : Serializable
