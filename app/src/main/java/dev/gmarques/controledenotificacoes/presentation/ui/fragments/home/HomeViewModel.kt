@@ -52,7 +52,8 @@ class HomeViewModel @Inject constructor(
             days = listOf(Rule.WeekDay.SUNDAY),
             condition = null,
             timeRanges = listOf(TimeRange(1, 2, 3, 4)),
-            type = Rule.typeDefault
+            type = Rule.typeDefault,
+            action = Rule.actionDefault,
         )
     }
 

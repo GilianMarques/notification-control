@@ -27,6 +27,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.RESTRICTIVE,
                 condition = null,
+                behaviour = Rule.behaviourDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),
@@ -39,6 +40,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.PERMISSIVE,
                 condition = null,
+                behaviour = Rule.behaviourDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.SUNDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),

@@ -15,7 +15,14 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 
-@Database(entities = [RuleEntity::class, ManagedAppEntity::class, AppNotificationEntity::class], version = 3)
+@Database(
+    entities = [
+        RuleEntity::class,
+        ManagedAppEntity::class,
+        AppNotificationEntity::class
+    ],
+    version = 5
+)
 abstract class RoomDatabase : RoomDatabase() {
 
     abstract fun ruleDao(): RuleDao

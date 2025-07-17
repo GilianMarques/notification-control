@@ -1,11 +1,12 @@
+
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -29,6 +30,7 @@ class RuleMapperTest {
             type = Type.PERMISSIVE,
             days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             condition = null,
+            action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
 
@@ -52,6 +54,7 @@ class RuleMapperTest {
             ruleType = Type.RESTRICTIVE,
             days = weekDayAdapter.toJson(listOf(Rule.WeekDay.TUESDAY, Rule.WeekDay.THURSDAY)),
             condition = null,
+            action = Rule.actionDefault,
             timeRanges = timeRangeAdapter.toJson(listOf(range))
         )
 

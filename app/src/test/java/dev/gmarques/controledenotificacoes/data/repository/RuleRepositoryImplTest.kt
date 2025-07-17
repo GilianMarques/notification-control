@@ -40,6 +40,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault
         )
 
         repository.addRuleOrThrow(rule)
@@ -64,6 +65,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
             Rule(
                 "1",
@@ -79,6 +81,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
             Rule(
                 "",
@@ -94,6 +97,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
         )
 
@@ -125,6 +129,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
             Rule(
                 "1",
@@ -140,6 +145,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
             Rule(
                 "",
@@ -155,6 +161,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                action = Rule.actionDefault
             ),
         )
 
@@ -185,6 +192,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault
         )
 
         repository.updateRuleOrThrow(rule)
@@ -208,6 +216,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault
         )
 
         repository.deleteRule(rule)
@@ -234,6 +243,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    action = Rule.actionDefault
                 )
             )
         `when`(ruleDao.getRuleById(ruleId)).thenReturn(ruleEntity)
@@ -262,6 +272,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    action = Rule.actionDefault
                 )
             ),
             RuleMapper.mapToEntity(
@@ -279,6 +290,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    action = Rule.actionDefault
                 )
             )
         )

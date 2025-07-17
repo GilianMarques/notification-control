@@ -118,6 +118,7 @@ class RuleValidatorTest {
             timeRanges = listOf(TimeRange(8, 0, 12, 0)),
             condition = null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault
         )
         RuleValidator.validate(rule) // Se lancar excecão, o teste falha
     }
@@ -129,6 +130,7 @@ class RuleValidatorTest {
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -141,6 +143,7 @@ class RuleValidatorTest {
             days = emptyList(),
             condition = null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -153,6 +156,7 @@ class RuleValidatorTest {
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(8, 0, 12, 0)
@@ -168,6 +172,7 @@ class RuleValidatorTest {
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(11, 0, 13, 0)

@@ -19,6 +19,7 @@ import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
@@ -26,7 +27,6 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValida
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.TimeRangeValidationException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
@@ -247,7 +247,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             type = ruleType,
             days = selectedDays,
             condition = condition,
-            timeRanges = timeRanges.values.toList()
+            timeRanges = timeRanges.values.toList(),
+            action = Rule.actionDefault, // TODO: passar a obehaviour correto aqui
+
         )
 
         if (editingRule == null) saveRule(rule)

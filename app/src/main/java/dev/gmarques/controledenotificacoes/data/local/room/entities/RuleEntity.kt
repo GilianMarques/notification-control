@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.data.local.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Action
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 
 /**
@@ -16,6 +17,7 @@ data class RuleEntity(
     val days: String,
     val timeRanges: String,
     val condition: String?,
-    val ruleType: Type = Type.RESTRICTIVE,
+    val ruleType: Type,
+    val action: Action,
 )
 

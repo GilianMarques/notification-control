@@ -29,7 +29,9 @@ class AddRuleUseCaseTest {
             days = listOf(Rule.WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
             condition = null,
-            type = Rule.typeDefault,            )
+            type = Rule.typeDefault,
+            action = Rule.actionDefault
+        )
 
         useCase(rule)
 

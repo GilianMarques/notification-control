@@ -28,17 +28,18 @@ object RuleMapper {
 
     private val conditionAdapter: JsonAdapter<Condition> = moshi.adapter(Condition::class.java)
 
-    fun mapToEntity(rule: Rule): RuleEntity {
+    fun mapToEntity(model: Rule): RuleEntity {
 
-        RuleValidator.validate(rule)
+        RuleValidator.validate(model)
 
         return RuleEntity(
-            id = rule.id,
-            name = rule.name,
-            ruleType = rule.type,
-            days = daysToString(rule.days),
-            condition = conditionToString(rule.condition),
-            timeRanges = hoursToString(rule.timeRanges),
+            id = model.id,
+            name = model.name,
+            ruleType = model.type,
+            days = daysToString(model.days),
+            condition = conditionToString(model.condition),
+            timeRanges = hoursToString(model.timeRanges),
+            action = model.action
         )
     }
 
@@ -92,6 +93,7 @@ object RuleMapper {
             days = stringToDays(entity.days),
             condition = stringToCondition(entity.condition),
             timeRanges = stringToTimeRange(entity.timeRanges),
+            action = entity.action
 
         )
     }
