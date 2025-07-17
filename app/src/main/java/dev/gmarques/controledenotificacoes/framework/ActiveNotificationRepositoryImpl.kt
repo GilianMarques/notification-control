@@ -1,9 +1,7 @@
 package dev.gmarques.controledenotificacoes.framework
 
 
-import android.content.Context
 import android.service.notification.StatusBarNotification
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
@@ -14,7 +12,7 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em segunda-feira, 30 de junho de 2025 as 15:34.
  */
-class ActiveNotificationRepositoryImpl @Inject constructor(@ApplicationContext private val appContext: Context) :
+class ActiveNotificationRepositoryImpl @Inject constructor() :
     ActiveNotificationRepository {
 
     override fun getActiveNotifications(): List<ActiveStatusBarNotification> {
@@ -47,9 +45,5 @@ class ActiveNotificationRepositoryImpl @Inject constructor(@ApplicationContext p
         }
     }
 
-    companion object {
-        const val INTENT_FILTER_FOR_BROADCAST = "NotificationListener.ActiveNotificationsResponse"
-        const val EXTRA_NOTIFICATIONS = "extra_active_notifications"
-    }
 }
 

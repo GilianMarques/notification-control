@@ -9,9 +9,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import com.airbnb.lottie.LottieComposition
-import com.airbnb.lottie.LottieOnCompositionLoadedListener
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.Firebase
@@ -21,7 +18,6 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentLoginBinding
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import kotlinx.coroutines.tasks.await
 
 /**
  * Criado por Gilian Marques
@@ -61,11 +57,7 @@ class LoginFragment : MyFragment() {
     }
 
     private fun awaitLottieAnim() {
-        binding.lottieView.addLottieOnCompositionLoadedListener(object : LottieOnCompositionLoadedListener {
-            override fun onCompositionLoaded(composition: LottieComposition?) {
-                binding.clContent.isVisible = true
-            }
-        })
+        binding.lottieView.addLottieOnCompositionLoadedListener { binding.clContent.isVisible = true }
     }
 
     /**

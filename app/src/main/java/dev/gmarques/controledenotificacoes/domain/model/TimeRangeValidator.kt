@@ -80,10 +80,10 @@ object TimeRangeValidator {
      *         - [InversedRangeException] Se o horário de início for posterior ao horário de término.
      */
     private fun validateInterval(timeRange: TimeRange): OperationResult<TimeRangeValidatorException, TimeRange> {
-        validateHour("startHour", timeRange.startHour)?.let { return it }
-        validateHour("endHour", timeRange.endHour)?.let { return it }
-        validateMinute("startMinute", timeRange.startMinute)?.let { return it }
-        validateMinute("endMinute", timeRange.endMinute)?.let { return it }
+        validateHour(timeRange.startHour)?.let { return it }
+        validateHour(timeRange.endHour)?.let { return it }
+        validateMinute(timeRange.startMinute)?.let { return it }
+        validateMinute(timeRange.endMinute)?.let { return it }
 
         return validateTimeOrder(timeRange)
     }
@@ -91,12 +91,11 @@ object TimeRangeValidator {
     /**
      * Verifica se o valor de hora está dentro do intervalo [0..23].
      *
-     * @param label Nome do campo para fins de depuração.
      * @param hour Valor da hora a ser validado.
      * @return [OperationResult.failure] com [HourOutOfRangeException] se o valor da hora estiver fora do intervalo [0..23],
      *         ou `null` se válido.
      */
-    private fun validateHour(label: String, hour: Int): OperationResult<HourOutOfRangeException, TimeRange>? {
+    private fun validateHour(hour: Int): OperationResult<HourOutOfRangeException, TimeRange>? {
         return if (hour !in HOUR_RANGE) {
             //   Log.d("USUK", "TimeRangeValidator.validateHour:fail: $label")
             OperationResult.failure(
@@ -108,12 +107,11 @@ object TimeRangeValidator {
     /**
      * Verifica se o valor de minuto está dentro do intervalo [0..59].
      *
-     * @param label Nome do campo para fins de depuração.
      * @param minute Valor do minuto a ser validado.
      * @return [OperationResult.failure] com [MinuteOutOfRangeException] se o valor do minuto estiver fora do intervalo [0..59],
      *         ou `null` se válido.
      */
-    private fun validateMinute(label: String, minute: Int): OperationResult<MinuteOutOfRangeException, TimeRange>? {
+    private fun validateMinute(minute: Int): OperationResult<MinuteOutOfRangeException, TimeRange>? {
         return if (minute !in MINUTE_RANGE) {
             //Log.d("USUK", "TimeRangeValidator.validateMinute: fail: $label")
             OperationResult.failure(
@@ -166,7 +164,7 @@ object TimeRangeValidator {
         if (!isTimeRangeCountValid(ranges)) {
             return OperationResult.failure(RangesOutOfRangeException(MIN_RANGES, MAX_RANGES, ranges.size))
         }
-// TODO: erros retornados nao herdam da classe certa
+
         findDuplicateRanges(ranges)?.let { return OperationResult.failure(it) }
 
         findIntersectedRanges(ranges)?.let { return OperationResult.failure(it) }
@@ -243,8 +241,8 @@ object TimeRangeValidator {
          * Em 20/06/2025 as 17:49
          */
         class RangesOutOfRangeException(
-            val minLength: Int,
-            val maxLength: Int,
+            minLength: Int,
+            maxLength: Int,
             val actual: Int,
         ) : TimeRangeValidatorException("O range valido é de $minLength a $maxLength. valor atual: $actual")
 
@@ -259,14 +257,14 @@ object TimeRangeValidator {
          * Criado por Gilian Marques
          * Em 20/06/2025 as 17:49
          */
-        class HourOutOfRangeException(val minHour: Int, val maxHour: Int, val actualHour: Int) :
+        class HourOutOfRangeException(minHour: Int, maxHour: Int, val actualHour: Int) :
             TimeRangeValidatorException("A hora deve estar entre $minHour e $maxHour. Valor atual: $actualHour")
 
         /**
          * Criado por Gilian Marques
          * Em 20/06/2025 as 17:49
          */
-        class MinuteOutOfRangeException(val minMin: Int, val maxMin: Int, val actualMinute: Int) :
+        class MinuteOutOfRangeException(minMin: Int, maxMin: Int, val actualMinute: Int) :
             TimeRangeValidatorException("Os minutos devem estar entre $minMin e $maxMin. Valor atual: $actualMinute")
 
         /**
@@ -274,8 +272,8 @@ object TimeRangeValidator {
          * Em 20/06/2025 as 17:49
          */
         class InversedRangeException(
-            private val startIntervalMinutes: Int,
-            private val endIntervalMinutes: Int,
+            startIntervalMinutes: Int,
+            endIntervalMinutes: Int,
         ) : TimeRangeValidatorException("O inicio do intervalo nao pode acontecer após o fim do mesmo startIntervalMinutes: $startIntervalMinutes endIntervalMinutes: $endIntervalMinutes")
 
         /**
@@ -283,8 +281,8 @@ object TimeRangeValidator {
          * Em terça-feira, 08 de abril de 2025 as 22:24.
          */
         class DuplicateTimeRangeException(
-            private val interval: TimeRange,
-            private val otherInterval: TimeRange,
+            interval: TimeRange,
+            otherInterval: TimeRange,
         ) : TimeRangeValidatorException("Existem dois ou mais intervalos de tempo iguais na lista:\n$interval\n$otherInterval")
 
         /**
@@ -292,8 +290,8 @@ object TimeRangeValidator {
          * Em domingo, 06 de março de 2025 as 20:54.
          */
         class IntersectedRangeException(
-            private val range1: TimeRange,
-            private val range2: TimeRange,
+            range1: TimeRange,
+            range2: TimeRange,
         ) : TimeRangeValidatorException(
             "Os intervalos fazem interseção entre si, de forma que um intervalo se inicia e/ou se encerra dentro de outro intervalo." +
                     "\n$range1 e \n$range2"

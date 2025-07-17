@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.BuildConfig
@@ -26,7 +25,6 @@ class InstalledInstalledAppRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
 ) : InstalledAppRepository {
-    // TODO: nao to usando o cache ao ler todos os apps?
     private val packageManager: PackageManager = context.packageManager
     private val iconCache = object : LruCache<String, Drawable>(100) {}
     private val appCache = object : LruCache<String, InstalledApp>(100) {}

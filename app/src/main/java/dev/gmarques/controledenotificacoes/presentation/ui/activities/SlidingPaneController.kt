@@ -4,10 +4,11 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.detailsPaneScreenPercent
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.*
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.BOTH
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.ONLY_DETAILS
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.ONLY_MASTER
 
 /**
  * Criado por Gilian Marques
@@ -56,8 +57,6 @@ class SlidingPaneController(
             callback.invoke()
             return
         }
-
-        val lastState = state
 
         stateListener.values.forEach { it.onAnimationStarted(state) }
         state = BOTH
@@ -167,7 +166,6 @@ class SlidingPaneController(
     fun onPaneResizedByHand(newPercent: Float) {
 
         if (newPercent !in MIN_TARGET_PERCENT..MAX_TARGET_PERCENT || state != BOTH) return
-        // TODO: a largura recebida deve ser referente ao painel de detalhes, corrija
         detailsPaneScreenPercent.set(1 - newPercent)
 
         val masterWidth = (screenWidth * newPercent).toInt()
