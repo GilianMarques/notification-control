@@ -19,23 +19,24 @@ import javax.inject.Inject
 class IsAppInBlockPeriodUseCase @Inject constructor() {
 
     /**
-     * Verifica se o aplicativo está dentro de um período de bloqueio com base na regra e horario (momento) da chamada.
+     * Verifica se um aplicativo, regido por uma [Rule] específica, está atualmente em um período de bloqueio.
+     * O momento da verificação é determinado pelo parâmetro [baseDate], que por padrão é o momento atual.
      *
-     * Um aplicativo é considerado "em bloqueio" se:
-     * - A regra for [RuleType.RESTRICTIVE] e o horário atual estiver dentro de um dos [timeRanges] especificados e o dia da semana atual estiver incluído na lista [days].
-     * - A regra for [RuleType.PERMISSIVE] e o horário atual NÃO estiver dentro de NENHUM dos [timeRanges] especificados e o dia da semana atual estiver incluído na lista [days].
-     * - A regra for [RuleType.PERMISSIVE] e o dia da semana atual NÃO estiver incluído na lista [days].
+     * Condições para um aplicativo ser considerado "em bloqueio":
+     * - Se a [Rule.ruleType] for [RuleType.RESTRICTIVE]:
+     *      - O dia da semana atual ([baseDate]) deve estar presente na lista [Rule.days].
+     *      - A hora atual [baseDate] deve estar dentro de algum dos [dev.gmarques.controledenotificacoes.domain.model.TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true`, esta condição é automaticamente satisfeita.
+     * - Se a [Rule.ruleType] for [RuleType.PERMISSIVE]:
+     *      - O dia da semana atual ([baseDate]) NÃO deve estar presente na lista [Rule.days].
+     *      - OU, se o dia da semana atual estiver presente em [Rule.days], a hora atual ([baseDate]) NÃO deve estar dentro de NENHUM dos [dev.gmarques.controledenotificacoes.domain.model.TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true` e o dia estiver presente, esta condição não será satisfeita, indicando que o app não está em bloqueio.
      *
+     * @param rule A [Rule] a ser avaliada.
+     * @param baseDate O [LocalDateTime] usado como referência para a verificação. Por padrão, é o momento atual.
      * @return `true` se o aplicativo estiver em um período de bloqueio de acordo com esta regra, `false` caso contrário.
      *
-     * Exemplo:
-     * Seja uma regra para o app "ExemploApp" com as seguintes configurações:
-     * - [RuleType.RESTRICTIVE]
-     * - [days]: Segunda (2), Terça (3)
-     * - [timeRanges]: [10:00 - 12:00]
-     *
-     * Se for Segunda-feira às 11:00, `isAppInBlockPeriod()` retornará `true`.
-     * Se for Quarta-feira às 11:00, `isAppInBlockPeriod()` retornará `false`.
+     * @see [Rule]
+     * @see [RuleType]
+     * @see [org.joda.time.LocalDateTime]
      */
     operator fun invoke(rule: Rule, baseDate: LocalDateTime = LocalDateTime()): Boolean {
 
@@ -46,16 +47,16 @@ class IsAppInBlockPeriodUseCase @Inject constructor() {
         val isDayMatched = rule.days.any { it.dayNumber == currentDay }
 
         if (!isDayMatched) {
-            //se o dia nao ta na lista de dias aplicados na regra
-            // se a regra for permissiva retorna true: o app esta em periodo de bloqueio.
-            // se a regra for restritiva retorna false: o app nao esta em periodo de bloqueio.
+            // Se o dia atual não está na lista de dias da regra:
+            // - Para regra PERMISSIVA: o app ESTÁ em período de bloqueio (retorna true).
+            // - Para regra RESTRITIVA: o app NÃO ESTÁ em período de bloqueio (retorna false).
             return rule.ruleType == PERMISSIVE
         }
 
+        // Se o dia atual está na lista de dias da regra:
         val isTimeMatched = if (rule.isAllDayRule()) true else rule.timeRanges.any { range ->
-            currentMinutes in range.startInMinutes()..range.endInMinutes()
+            currentMinutes in range.startInMinutes() until range.endInMinutes()
         }
-
         return when (rule.ruleType) {
             RESTRICTIVE -> isTimeMatched
             PERMISSIVE -> !isTimeMatched

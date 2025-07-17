@@ -186,7 +186,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
             val timeRangeRelative = day.at(timeRange.endHour, timeRange.endMinute)
 
             val isEqualOrAfter = !timeRangeRelative.isBefore(day)
-            if (isEqualOrAfter) return timeRangeRelative.plusMinutes(1)
+            if (isEqualOrAfter) return timeRangeRelative
         }
 
         return null

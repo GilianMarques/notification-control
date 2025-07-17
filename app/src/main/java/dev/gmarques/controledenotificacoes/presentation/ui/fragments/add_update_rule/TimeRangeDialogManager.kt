@@ -57,14 +57,7 @@ class TimeRangeDialogManager(
 
         fabAdd.setOnClickListener(AnimatedClickListener {
             clearFocusFromInputs()
-
-            if (startHour == 0
-                && startMinute == 0
-                && endHour == 23
-                && endMinute == 59
-            ) onRangeSelected(TimeRange(true))
-            else onRangeSelected(TimeRange(startHour, startMinute, endHour, endMinute))
-
+            onRangeSelected(TimeRange(startHour, startMinute, endHour, endMinute))
             dialog.dismiss()
         })
 
