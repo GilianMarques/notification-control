@@ -6,10 +6,9 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
-import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.StringsProviderImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,8 +17,8 @@ import org.junit.runner.RunWith
 class GenerateRuleDescriptionUseCaseTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val ruleStringsProvider = RuleStringsProviderImpl(context)
-    private val useCase = GenerateRuleDescriptionUseCase(ruleStringsProvider)
+    private val stringsProvider = StringsProviderImpl(context)
+    private val useCase = GenerateRuleDescriptionUseCase(stringsProvider)
 
     @Test
     fun testReturnedName() {
@@ -27,7 +26,8 @@ class GenerateRuleDescriptionUseCaseTest {
 
             Rule(
                 name = "",
-                ruleType = RuleType.RESTRICTIVE,
+                type = Rule.Type.RESTRICTIVE,
+                condition = null,
                 days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),
@@ -38,7 +38,8 @@ class GenerateRuleDescriptionUseCaseTest {
 
             Rule(
                 name = "",
-                ruleType = RuleType.PERMISSIVE,
+                type = Rule.Type.PERMISSIVE,
+                condition = null,
                 days = listOf(WeekDay.MONDAY, WeekDay.SUNDAY, WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),

@@ -10,7 +10,6 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
@@ -30,7 +29,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     observeAllRulesUseCase: ObserveAllRulesUseCase,
     observeAllManagedApps: ObserveAllManagedApps,
-    private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
     @ApplicationContext context: Context,
 ) : ViewModel() {
@@ -54,7 +52,8 @@ class HomeViewModel @Inject constructor(
             name = context.getString(R.string.Regra_nao_encontrada),
             days = listOf(WeekDay.SUNDAY),
             condition = null,
-            timeRanges = listOf(TimeRange(1, 2, 3, 4))
+            timeRanges = listOf(TimeRange(1, 2, 3, 4)),
+            type = Rule.typeDefault
         )
     }
 

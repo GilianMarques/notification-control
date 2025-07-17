@@ -18,7 +18,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
@@ -82,7 +82,7 @@ class RuleEnforcerImpl @Inject constructor(
         }
 
         val shouldAllowNotification = shouldAllowNotification(
-            ruleType = rule.ruleType,
+            ruleType = rule.type,
             conditionType = condition.type,
             isConditionSatisfied = condition.isSatisfiedBy(notification),
             isAppInBlockPeriod = appInBlockPeriod
@@ -94,20 +94,20 @@ class RuleEnforcerImpl @Inject constructor(
 
     @TestOnly
     fun shouldAllowNotification(
-        ruleType: RuleType,
+        ruleType: Type,
         conditionType: ConditionType,
         isConditionSatisfied: Boolean,
         isAppInBlockPeriod: Boolean,
     ): Boolean {
 
-        if (ruleType == RuleType.RESTRICTIVE && isAppInBlockPeriod) {
+        if (ruleType == Type.RESTRICTIVE && isAppInBlockPeriod) {
             return when (conditionType) {
                 ConditionType.ONLY_IF -> !isConditionSatisfied
                 ConditionType.EXCEPT -> isConditionSatisfied
             }
         }
 
-        if (ruleType == RuleType.PERMISSIVE && !isAppInBlockPeriod) {
+        if (ruleType == Type.PERMISSIVE && !isAppInBlockPeriod) {
             return when (conditionType) {
                 ConditionType.ONLY_IF -> isConditionSatisfied
                 ConditionType.EXCEPT -> !isConditionSatisfied

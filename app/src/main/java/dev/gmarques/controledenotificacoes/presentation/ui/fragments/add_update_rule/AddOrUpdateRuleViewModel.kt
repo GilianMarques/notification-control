@@ -26,7 +26,7 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValida
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.TimeRangeValidationException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
@@ -53,8 +53,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     private var editingRule: Rule? = null
 
-    private val _ruleTypeFlow = MutableStateFlow(RuleType.RESTRICTIVE)
-    val ruleType: StateFlow<RuleType> = _ruleTypeFlow
+    private val _ruleTypeFlow = MutableStateFlow(Type.RESTRICTIVE)
+    val ruleType: StateFlow<Type> = _ruleTypeFlow
 
     private val _ruleNameFlow = MutableStateFlow("")
     val ruleName: StateFlow<String> = _ruleNameFlow
@@ -74,9 +74,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     /**
      * Atualiza o tipo de regra atual e notifica os observadores do LiveData.
      *
-     * @param type O novo [RuleType] a ser definido.
+     * @param type O novo [Type] a ser definido.
      */
-    fun updateRuleType(type: RuleType) {
+    fun updateRuleType(type: Type) {
         _ruleTypeFlow.tryEmit(type)
     }
 
@@ -208,7 +208,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         editingRule = rule
 
         updateRuleName(rule.name)
-        updateRuleType(rule.ruleType)
+        updateRuleType(rule.type)
         updateSelectedDays(rule.days)
         updateCondition(rule.condition)
         viewModelScope.launch {
@@ -245,7 +245,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
         val rule = Rule(
             name = ruleName,
-            ruleType = ruleType,
+            type = ruleType,
             days = selectedDays,
             condition = condition,
             timeRanges = timeRanges.values.toList()

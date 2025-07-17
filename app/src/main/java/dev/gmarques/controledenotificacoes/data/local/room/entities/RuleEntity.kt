@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.data.local.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 
 /**
  * Criado por Gilian Marques
@@ -16,6 +16,6 @@ data class RuleEntity(
     val days: String,
     val timeRanges: String,
     val condition: String?,
-    val ruleType: RuleType = RuleType.RESTRICTIVE,
+    val ruleType: Type = Type.RESTRICTIVE,
 )
 

@@ -16,7 +16,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppGridBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppListBinding
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -128,7 +128,7 @@ class ManagedAppsAdapter(
 
             tvRuleName.text = app.rule.nameOrDescription()
             tvRuleName.setStartDrawable(
-                if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive
+                if (app.rule.type == Type.PERMISSIVE) iconPermissive else iconRestrictive
             )
 
             CoroutineScope(Main).launch {

@@ -17,7 +17,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("boleto"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Novo BOLETO disponível", "verifique o app")
+        val notification = AppNotification(
+            "pkg",
+            "Novo BOLETO disponível",
+            "verifique o app",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -30,7 +35,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("boleto"),
             caseSensitive = true
         )
-        val notification = AppNotification("pkg", "Novo BOLETO disponível", "verifique o app")
+        val notification = AppNotification(
+            "pkg",
+            "Novo BOLETO disponível",
+            "verifique o app",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -43,7 +53,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("disponível"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Titulo qualquer", "Novo boleto disponível")
+        val notification = AppNotification(
+            "pkg",
+            "Titulo qualquer",
+            "Novo boleto disponível",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -56,7 +71,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("urgente"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Pagamento disponível", "Mensagem URGENTE")
+        val notification = AppNotification(
+            "pkg",
+            "Pagamento disponível",
+            "Mensagem URGENTE",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -69,7 +89,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("banco"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Banco atualizou", "Seu banco enviou um aviso")
+        val notification = AppNotification(
+            "pkg",
+            "Banco atualizou",
+            "Seu banco enviou um aviso",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -79,10 +104,19 @@ class ConditionExtensionFunTest {
         val condition = Condition(
             type = ConditionType.ONLY_IF,
             field = NotificationField.TITLE,
-            keywords = listOf("nada", "teste", "boleto"),
+            keywords = listOf(
+                "nada",
+                "teste",
+                "boleto"
+            ),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Você tem um boleto", "mensagem irrelevante")
+        val notification = AppNotification(
+            "pkg",
+            "Você tem um boleto",
+            "mensagem irrelevante",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -92,10 +126,18 @@ class ConditionExtensionFunTest {
         val condition = Condition(
             type = ConditionType.ONLY_IF,
             field = NotificationField.CONTENT,
-            keywords = listOf("urgente", "erro"),
+            keywords = listOf(
+                "urgente",
+                "erro"
+            ),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Titulo qualquer", "tudo certo com seu app")
+        val notification = AppNotification(
+            "pkg",
+            "Titulo qualquer",
+            "tudo certo com seu app",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -108,7 +150,12 @@ class ConditionExtensionFunTest {
             keywords = emptyList(),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Qualquer título", "Qualquer conteúdo")
+        val notification = AppNotification(
+            "pkg",
+            "Qualquer título",
+            "Qualquer conteúdo",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -121,7 +168,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("BOLETO"),
             caseSensitive = true
         )
-        val notification = AppNotification("pkg", "BOLETO gerado", "confira no app")
+        val notification = AppNotification(
+            "pkg",
+            "BOLETO gerado",
+            "confira no app",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -134,7 +186,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("importante"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Notificação vazia", "")
+        val notification = AppNotification(
+            "pkg",
+            "Notificação vazia",
+            "",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -147,7 +204,13 @@ class ConditionExtensionFunTest {
             keywords = listOf("verifique"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Notificação", "Por favor, verifique agora")
+        val notification = AppNotification(
+            "pkg",
+            "Notificação",
+            "Por favor," +
+                    " verifique agora",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -160,7 +223,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("ação"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Nova AÇÃO requerida", "leia com atenção")
+        val notification = AppNotification(
+            "pkg",
+            "Nova AÇÃO requerida",
+            "leia com atenção",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -173,7 +241,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("🚨urgente"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Aviso", "🚨URGENTE! Verifique já")
+        val notification = AppNotification(
+            "pkg",
+            "Aviso",
+            "🚨URGENTE! Verifique já",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -186,7 +259,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("ban"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Banco notificou", "veja os detalhes")
+        val notification = AppNotification(
+            "pkg",
+            "Banco notificou",
+            "veja os detalhes",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -200,7 +278,12 @@ class ConditionExtensionFunTest {
             keywords = keywords,
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Sem importância", "conteúdo com Alvo esperado")
+        val notification = AppNotification(
+            "pkg",
+            "Sem importância",
+            "conteúdo com Alvo esperado",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -213,7 +296,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("qualquer"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "", "")
+        val notification = AppNotification(
+            "pkg",
+            "",
+            "",
+            timestamp = 123456789L
+        )
 
         assertFalse(condition.isSatisfiedBy(notification))
     }
@@ -226,7 +314,13 @@ class ConditionExtensionFunTest {
             keywords = listOf("pague agora"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Por favor, pague agora seu boleto", "Aviso do sistema")
+        val notification = AppNotification(
+            "pkg",
+            "Por favor," +
+                    " pague agora seu boleto",
+            "Aviso do sistema",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }
@@ -239,7 +333,12 @@ class ConditionExtensionFunTest {
             keywords = listOf("teste"),
             caseSensitive = false
         )
-        val notification = AppNotification("pkg", "Titulo", "Este é um teste teste teste")
+        val notification = AppNotification(
+            "pkg",
+            "Titulo",
+            "Este é um teste teste teste",
+            timestamp = 123456789L
+        )
 
         assertTrue(condition.isSatisfiedBy(notification))
     }

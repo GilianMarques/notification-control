@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
     operator fun invoke(rule: Rule): String {
         val formattedDays = formatCondensedDays(rule.days)
         val range = formatTimeRanges(rule)
-        val ruleType = formatRuleType(rule.ruleType)
+        val ruleType = formatRuleType(rule.type)
 
         return "$ruleType $formattedDays $range"
     }
@@ -89,10 +89,10 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
         return "%02d:%02d".format(hour, minute)
     }
 
-    private fun formatRuleType(type: RuleType): String {
+    private fun formatRuleType(type: Type): String {
         return when (type) {
-            RuleType.PERMISSIVE -> stringsProvider.permissive()
-            RuleType.RESTRICTIVE -> stringsProvider.restrictive()
+            Type.PERMISSIVE -> stringsProvider.permissive()
+            Type.RESTRICTIVE -> stringsProvider.restrictive()
         }
     }
 }

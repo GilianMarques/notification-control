@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import androidx.annotation.Keep
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import java.io.Serializable
 import java.util.UUID
@@ -21,5 +20,13 @@ data class Rule(
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
     val condition: Condition?,
-    val ruleType: RuleType = RuleType.RESTRICTIVE,
-) : Serializable
+    val type: Type,
+) : Serializable {
+
+    companion object {
+        val typeDefault = Type.RESTRICTIVE
+    }
+
+    @Keep
+    enum class Type(val value: Int) { PERMISSIVE(1), RESTRICTIVE(0) }
+}

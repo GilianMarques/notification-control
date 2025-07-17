@@ -22,12 +22,13 @@ class UpdateRuleUseCaseTest {
     }
 
     @Test
-    fun `dada uma regra, quando execute for chamado, então repositorio updateRule deve ser invocado`() = runTest {
+    fun `dada uma regra, quando execute for chamado, entao repositorio updateRule deve ser invocado`() = runTest {
         val rule = Rule(
             name = "Regra Teste",
             days = listOf(WeekDay.FRIDAY),
             condition = null,
-            timeRanges = listOf(TimeRange(10, 30, 11, 35))
+            timeRanges = listOf(TimeRange(10, 30, 11, 35)),
+            type = Rule.typeDefault,
         )
         useCase(rule)
 

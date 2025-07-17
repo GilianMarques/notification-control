@@ -5,7 +5,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Test
@@ -27,7 +27,7 @@ class RuleMapperTest {
         val rule = Rule(
             id = "1",
             name = "Regra Teste",
-            ruleType = RuleType.PERMISSIVE,
+            type = Type.PERMISSIVE,
             days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
             condition = null,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
@@ -37,7 +37,7 @@ class RuleMapperTest {
 
         assertEquals(rule.id, entity.id)
         assertEquals(rule.name, entity.name)
-        assertEquals(rule.ruleType, entity.ruleType)
+        assertEquals(rule.type, entity.ruleType)
         assertEquals(weekDayAdapter.toJson(rule.days), entity.days)
         assertEquals(timeRangeAdapter.toJson(rule.timeRanges), entity.timeRanges)
     }
@@ -50,7 +50,7 @@ class RuleMapperTest {
         val entity = RuleEntity(
             id = "2",
             name = "Entidade Teste",
-            ruleType = RuleType.RESTRICTIVE,
+            ruleType = Type.RESTRICTIVE,
             days = weekDayAdapter.toJson(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY)),
             condition = null,
             timeRanges = timeRangeAdapter.toJson(listOf(range))
@@ -60,7 +60,7 @@ class RuleMapperTest {
 
         assertEquals(entity.id, rule.id)
         assertEquals(entity.name, rule.name)
-        assertEquals(entity.ruleType, rule.ruleType)
+        assertEquals(entity.ruleType, rule.type)
         assertEquals(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY), rule.days)
         assertEquals(listOf(range), rule.timeRanges)
     }

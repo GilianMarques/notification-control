@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import junit.framework.TestCase
 import org.joda.time.LocalDateTime
@@ -29,8 +28,8 @@ class IsAppInBlockPeriodUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.SUNDAY,
                 WeekDay.MONDAY,
@@ -62,7 +61,7 @@ class IsAppInBlockPeriodUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
+            type = Rule.Type.PERMISSIVE,
 
             days = listOf(
                 WeekDay.SUNDAY,
@@ -73,6 +72,7 @@ class IsAppInBlockPeriodUseCaseTest {
                 WeekDay.FRIDAY,
                 WeekDay.SATURDAY,
             ),
+            condition = null,
             timeRanges = listOf(
                 TimeRange(true)
             ),
@@ -95,11 +95,12 @@ class IsAppInBlockPeriodUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
+            type = Rule.Type.RESTRICTIVE,
 
             days = listOf(
                 WeekDay.TUESDAY,
             ),
+            condition = null,
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 0),
                 TimeRange(12, 0, 18, 0),
@@ -124,11 +125,12 @@ class IsAppInBlockPeriodUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
+            type = Rule.Type.PERMISSIVE,
 
             days = listOf(
                 WeekDay.TUESDAY,
             ),
+            condition = null,
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),
             ),

@@ -23,15 +23,14 @@ class AddRuleUseCaseTest {
     }
 
     @Test
-    fun `dada uma regra valida, quando execute for chamado, então repositorio addRule deve ser invocado`() = runTest {
+    fun `dada uma regra valida, quando execute for chamado, entao repositorio addRule deve ser invocado`() = runTest {
 
         val rule = Rule(
             name = "Regra Teste",
             days = listOf(WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
-            condition = null
-
-        )
+            condition = null,
+            type = Rule.typeDefault,            )
 
         useCase(rule)
 

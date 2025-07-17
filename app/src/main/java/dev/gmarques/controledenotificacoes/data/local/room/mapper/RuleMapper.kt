@@ -36,7 +36,7 @@ object RuleMapper {
         return RuleEntity(
             id = rule.id,
             name = rule.name,
-            ruleType = rule.ruleType,
+            ruleType = rule.type,
             days = daysToString(rule.days),
             condition = conditionToString(rule.condition),
             timeRanges = hoursToString(rule.timeRanges),
@@ -89,10 +89,11 @@ object RuleMapper {
         return Rule(
             id = entity.id,
             name = entity.name,
-            ruleType = entity.ruleType,
+            type = entity.ruleType,
             days = stringToDays(entity.days),
             condition = stringToCondition(entity.condition),
             timeRanges = stringToTimeRange(entity.timeRanges),
+
         )
     }
 

@@ -1,12 +1,12 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAllDayRule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.sortedRanges
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.INFINITE
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.REPEAT_COUNT
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.at
@@ -23,8 +23,8 @@ import javax.inject.Inject
  *  Classe responsável por calcular o próximo horário em que um aplicativo será desbloqueado
  * com base nas regras de uso configuradas pelo usuário.
  *
- * As regras podem ser do tipo [dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.RESTRICTIVE] (dias/horários de bloqueio)
- * ou [dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.PERMISSIVE] (dias/horários de liberação).
+ * As regras podem ser do tipo [Rule.Type.RESTRICTIVE] (dias/horários de bloqueio)
+ * ou [Rule.Type.PERMISSIVE] (dias/horários de liberação).
  *
  */
 class NextAppUnlockTimeUseCase @Inject constructor() {
@@ -33,7 +33,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
 
         /**
          * Valor de retorno quando não há previsão de desbloqueio (bloqueio permanente).
-         * Isso ocorre, por exemplo, quando a regra é do tipo [dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.RESTRICTIVE]
+         * Isso ocorre, por exemplo, quando a regra é do tipo [Rule.Type.RESTRICTIVE]
          * e bloqueia 24h por dia, 7 dias por semana.
          */
         const val INFINITE = -1L
@@ -63,14 +63,14 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
     operator fun invoke(date: LocalDateTime = LocalDateTime.now(), rule: Rule): Long {
         baseDateTime = date.withSecondsAndMillisSetToZero()
 
-        return when (rule.ruleType) {
-            RuleType.RESTRICTIVE -> nextUnlockTimeRestrictive(rule)
-            RuleType.PERMISSIVE -> nextUnlockTimePermissive(rule)
+        return when (rule.type) {
+            Type.RESTRICTIVE -> nextUnlockTimeRestrictive(rule)
+            Type.PERMISSIVE -> nextUnlockTimePermissive(rule)
         }?.toDate()?.time ?: INFINITE
     }
 
     /**
-     * Calcula a próxima data e hora em que o aplicativo poderá ser desbloqueado com base em uma [Rule] do tipo [RuleType.RESTRICTIVE].
+     * Calcula a próxima data e hora em que o aplicativo poderá ser desbloqueado com base em uma [Rule] do tipo [Type.RESTRICTIVE].
      *
      * A lógica percorre os próximos dias a partir da data base (`baseDateTime`), considerando que a regra define os
      * **intervalos em que o app está bloqueado** (ou seja, fora dos intervalos, o app está desbloqueado).
@@ -119,7 +119,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
     }
 
     /**
-     * Calcula o próximo momento em que o aplicativo poderá ser desbloqueado com base em uma [Rule] do tipo [RuleType.PERMISSIVE].
+     * Calcula o próximo momento em que o aplicativo poderá ser desbloqueado com base em uma [Rule] do tipo [Type.PERMISSIVE].
      *
      * A lógica percorre os próximos 8 dias a partir da data base (`baseDateTime`) para encontrar o **próximo intervalo permitido de uso**,
      * definido na regra. Ou seja, busca o próximo horário dentro dos dias e intervalos permitidos.
@@ -168,7 +168,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
     }
 
     /**
-     * Calcula o próximo instante de liberação em um dia específico para regras [RuleType.RESTRICTIVE].
+     * Calcula o próximo instante de liberação em um dia específico para regras [Type.RESTRICTIVE].
      *
      * A liberação ocorre se o horário atual já ultrapassou o final do último intervalo de bloqueio no dia.
      *
@@ -193,7 +193,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
     }
 
     /**
-     * Calcula o próximo instante de liberação em um dia específico para regras [RuleType.PERMISSIVE].
+     * Calcula o próximo instante de liberação em um dia específico para regras [Type.PERMISSIVE].
      *
      * A liberação ocorre no início do primeiro intervalo de permissão futuro que ainda não começou.
      * Se a regra for válida o dia to.do, retorna o início do dia (00:00).

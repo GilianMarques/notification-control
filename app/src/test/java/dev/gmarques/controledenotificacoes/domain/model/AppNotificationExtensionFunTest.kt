@@ -52,7 +52,8 @@ class AppNotificationExtensionFunTest {
         val notification = AppNotification(
             packageId = "com.exemplo.app",
             title = "Titulo Notificacao!",
-            content = "Conteudo #1"
+            content = "Conteudo #1",
+            timestamp = 123456789L
         )
 
         val result = notification.bitmapId()

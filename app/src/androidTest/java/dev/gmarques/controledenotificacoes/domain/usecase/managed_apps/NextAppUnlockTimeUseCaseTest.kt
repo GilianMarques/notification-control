@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import junit.framework.TestCase
 import org.joda.time.LocalDateTime
@@ -15,13 +14,14 @@ class NextAppUnlockTimeUseCaseTest {
 
 
     @Suppress("PrivatePropertyName")
-    private var tuesday_12_20__20_05_25_day_3_ofWeek = LocalDateTime.now()
-        .withYear(2025)
-        .withMonthOfYear(5)
-        .withDayOfMonth(20)
-        .withHourOfDay(12)
-        .withMinuteOfHour(20)
-        .withSecondOfMinute(0)
+    private var tuesday_12_20__20_05_25_day_3_ofWeek =
+        LocalDateTime.now()
+            .withYear(2025)
+            .withMonthOfYear(5)
+            .withDayOfMonth(20)
+            .withHourOfDay(12)
+            .withMinuteOfHour(20)
+            .withSecondOfMinute(0)
 
 
     @Test
@@ -29,8 +29,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.SUNDAY,
             ),
@@ -40,19 +40,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(12)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(5)
-            .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(12)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(5)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
 
@@ -63,8 +65,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.SUNDAY,
             ),
@@ -73,20 +75,23 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(6)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(6)
 
 
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
 
@@ -96,8 +101,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
             ),
@@ -106,18 +111,20 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(18)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(18)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -126,28 +133,31 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksCurrentDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
-                TimeRange(0, 0, 23, 59),
+                TimeRange(allDay = true),
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(1)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -156,32 +166,33 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksBeforeAndCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
             ),
 
             timeRanges = listOf(
-                TimeRange(8, 0, 11, 45),
-                TimeRange(13, 0, 18, 0),
-                TimeRange(18, 1, 23, 59),
+                TimeRange(allDay = true),
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(1)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -190,8 +201,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksBeforeAndCurrentDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
@@ -201,18 +212,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(1)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -221,8 +235,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksCurrentAndNextDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
                 WeekDay.WEDNESDAY,
@@ -232,19 +246,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(11)
-            .withMinuteOfHour(45)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(1)
-            .plusMinutes(1)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(11)
+                .withMinuteOfHour(45)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -253,8 +269,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksCurrentAndNextDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
                 WeekDay.WEDNESDAY,
@@ -264,18 +280,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(2)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(2)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -284,8 +303,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksAfterCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.FRIDAY,
             ),
@@ -294,7 +313,8 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(3)
@@ -302,11 +322,11 @@ class NextAppUnlockTimeUseCaseTest {
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
-            .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -315,8 +335,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksAfterCurrentDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.FRIDAY,
             ),
@@ -325,18 +345,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(4)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(4)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -345,8 +368,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatBlocksAfterCurrentDayUntil2359() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.WEDNESDAY,
                 WeekDay.SATURDAY,
@@ -357,18 +380,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(2)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(23)
+                .withMinuteOfHour(59)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -378,8 +404,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.RESTRICTIVE,
-
+            type = Rule.Type.RESTRICTIVE,
+            condition = null,
             days = listOf(
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
@@ -395,13 +421,12 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(
-            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod,
-            nextPeriodMillis
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n", expectPeriod, nextPeriodMillis
         )
 
     }
@@ -413,8 +438,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.SUNDAY,
             ),
@@ -424,18 +449,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(8)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(5)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(8)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(5)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
 
@@ -446,8 +474,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.SUNDAY,
             ),
@@ -456,18 +484,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(5)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(5)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
 
@@ -477,8 +508,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
             ),
@@ -487,18 +518,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(8)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(7)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(8)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(7)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -507,8 +541,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsCurrentDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
             ),
@@ -517,18 +551,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(7)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(7)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -537,8 +574,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsBeforeAndCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
@@ -551,17 +588,20 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(18)
-            .withMinuteOfHour(1)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(18)
+                .withMinuteOfHour(1)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -570,8 +610,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsCurrentAndNextDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
                 WeekDay.WEDNESDAY,
@@ -581,18 +621,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(8)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(1)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(8)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(1)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -601,8 +644,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsCurrentAndNextDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.TUESDAY,
                 WeekDay.WEDNESDAY,
@@ -613,18 +656,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(7)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(7)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -633,8 +679,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsAfterCurrentDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.FRIDAY,
             ),
@@ -643,18 +689,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(8)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(3)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(8)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(3)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -663,8 +712,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsAfterCurrentDayAllDay() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.FRIDAY,
             ),
@@ -673,18 +722,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(3)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(3)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -693,8 +745,8 @@ class NextAppUnlockTimeUseCaseTest {
     fun ruleThatAllowsAfterCurrentDayUntil2359() {
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.FRIDAY,
                 WeekDay.SATURDAY,
@@ -704,18 +756,21 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(0)
-            .withMinuteOfHour(0)
-            .withSecondOfMinute(0)
-            .withMillisOfSecond(0)
-            .plusDays(3)
+        val expectPeriod =
+            LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+                .withHourOfDay(0)
+                .withMinuteOfHour(0)
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
+                .plusDays(3)
 
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod.toDate().time,
+            expectPeriod.toDate()
+                .time,
             nextPeriodMillis
         )
     }
@@ -725,8 +780,8 @@ class NextAppUnlockTimeUseCaseTest {
 
         val rule = Rule(
             name = "",
-            ruleType = RuleType.PERMISSIVE,
-
+            type = Rule.Type.PERMISSIVE,
+            condition = null,
             days = listOf(
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
@@ -742,13 +797,12 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+            .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(
-            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
-            expectPeriod,
-            nextPeriodMillis
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n", expectPeriod, nextPeriodMillis
         )
 
     }

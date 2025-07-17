@@ -15,7 +15,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
@@ -30,7 +29,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
@@ -217,8 +216,8 @@ class AddOrUpdateRuleFragment : MyFragment() {
             }
 
             when (group.checkedButtonId) {
-                R.id.btn_permissive -> viewModel.updateRuleType(RuleType.PERMISSIVE)
-                R.id.btn_restritive -> viewModel.updateRuleType(RuleType.RESTRICTIVE)
+                R.id.btn_permissive -> viewModel.updateRuleType(Type.PERMISSIVE)
+                R.id.btn_restritive -> viewModel.updateRuleType(Type.RESTRICTIVE)
             }
             edtName.clearFocus()
         }
@@ -280,7 +279,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             findNavControllerMain().navigate(
                 AddOrUpdateRuleFragmentDirections.toAddOrUpdateCondition(
                     viewModel.conditionFlow.value,
-                    viewModel.ruleType.value == RuleType.RESTRICTIVE
+                    viewModel.ruleType.value == Type.RESTRICTIVE
                 ), transitionExtras
             )
         })
@@ -300,13 +299,13 @@ class AddOrUpdateRuleFragment : MyFragment() {
      *
      * Modifica o estado do [MaterialButtonToggleGroup] e do TextView de acordo com [ruleType].
      *
-     * @param ruleType O tipo de regra a ser aplicada ([RuleType.PERMISSIVE] ou [RuleType.RESTRICTIVE]).
+     * @param ruleType O tipo de regra a ser aplicada ([Type.PERMISSIVE] ou [Type.RESTRICTIVE]).
      *
-     * @see RuleType
+     * @see Type
      */
-    private fun updateButtonTypeRule(ruleType: RuleType) = with(binding) {
+    private fun updateButtonTypeRule(ruleType: Type) = with(binding) {
 
-        if (ruleType == RuleType.PERMISSIVE) {
+        if (ruleType == Type.PERMISSIVE) {
             mbtTypeRule.check(R.id.btn_permissive)
             tvRuleTypeInfo.text = getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
 

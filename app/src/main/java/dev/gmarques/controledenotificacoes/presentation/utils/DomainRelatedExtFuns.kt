@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.utils
 
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 
 /**
  * Criado por Gilian Marques
@@ -11,13 +11,13 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
  */
 object DomainRelatedExtFuns {
 
-    fun Rule.getAdequateIconReference() = when (this.ruleType) {
-        RuleType.RESTRICTIVE -> R.drawable.vec_rule_restrictive
-        RuleType.PERMISSIVE -> R.drawable.vec_rule_permissive
+    fun Rule.getAdequateIconReference() = when (this.type) {
+        Type.RESTRICTIVE -> R.drawable.vec_rule_restrictive
+        Type.PERMISSIVE -> R.drawable.vec_rule_permissive
     }
 
-    fun Rule.getAdequateIconReferenceSmall() = when (this.ruleType) {
-        RuleType.RESTRICTIVE -> R.drawable.vec_rule_restrictive_small
-        RuleType.PERMISSIVE -> R.drawable.vec_rule_permissive_small
+    fun Rule.getAdequateIconReferenceSmall() = when (this.type) {
+        Type.RESTRICTIVE -> R.drawable.vec_rule_restrictive_small
+        Type.PERMISSIVE -> R.drawable.vec_rule_permissive_small
     }
 }
