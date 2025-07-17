@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import junit.framework.TestCase
 import org.joda.time.LocalDateTime
 import org.junit.Test
@@ -31,13 +30,13 @@ class IsAppInBlockPeriodUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.SUNDAY,
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
-                WeekDay.THURSDAY,
-                WeekDay.FRIDAY,
-                WeekDay.SATURDAY,
+                Rule.WeekDay.SUNDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
+                Rule.WeekDay.THURSDAY,
+                Rule.WeekDay.FRIDAY,
+                Rule.WeekDay.SATURDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true)
@@ -64,13 +63,13 @@ class IsAppInBlockPeriodUseCaseTest {
             type = Rule.Type.PERMISSIVE,
 
             days = listOf(
-                WeekDay.SUNDAY,
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
-                WeekDay.THURSDAY,
-                WeekDay.FRIDAY,
-                WeekDay.SATURDAY,
+                Rule.WeekDay.SUNDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
+                Rule.WeekDay.THURSDAY,
+                Rule.WeekDay.FRIDAY,
+                Rule.WeekDay.SATURDAY,
             ),
             condition = null,
             timeRanges = listOf(
@@ -98,7 +97,7 @@ class IsAppInBlockPeriodUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
 
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             condition = null,
             timeRanges = listOf(
@@ -128,7 +127,7 @@ class IsAppInBlockPeriodUseCaseTest {
             type = Rule.Type.PERMISSIVE,
 
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             condition = null,
             timeRanges = listOf(

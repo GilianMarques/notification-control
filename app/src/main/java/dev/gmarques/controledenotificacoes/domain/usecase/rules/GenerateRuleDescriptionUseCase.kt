@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.rules
 import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import javax.inject.Inject
 
 /**
@@ -22,14 +21,14 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
         return "$ruleType $formattedDays $range"
     }
 
-    private fun formatCondensedDays(days: List<WeekDay>): String {
+    private fun formatCondensedDays(days: List<Rule.WeekDay>): String {
         if (days.isEmpty()) return ""
         if (days.size == 7) return stringsProvider.everyDay()
 
         val sortedDays = days.sortedBy { it.dayNumber }
 
-        val sequences = mutableListOf<List<WeekDay>>()
-        var currentSequence = mutableListOf<WeekDay>()
+        val sequences = mutableListOf<List<Rule.WeekDay>>()
+        var currentSequence = mutableListOf<Rule.WeekDay>()
 
         for ((index, day) in sortedDays.withIndex()) {
             if (currentSequence.isEmpty()) {
@@ -57,15 +56,15 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
         }
     }
 
-    private fun abbreviatedDay(day: WeekDay): String {
+    private fun abbreviatedDay(day: Rule.WeekDay): String {
         return when (day) {
-            WeekDay.MONDAY -> stringsProvider.monday()
-            WeekDay.TUESDAY -> stringsProvider.tuesday()
-            WeekDay.WEDNESDAY -> stringsProvider.wednesday()
-            WeekDay.THURSDAY -> stringsProvider.thursday()
-            WeekDay.FRIDAY -> stringsProvider.friday()
-            WeekDay.SATURDAY -> stringsProvider.saturday()
-            WeekDay.SUNDAY -> stringsProvider.sunday()
+            Rule.WeekDay.MONDAY -> stringsProvider.monday()
+            Rule.WeekDay.TUESDAY -> stringsProvider.tuesday()
+            Rule.WeekDay.WEDNESDAY -> stringsProvider.wednesday()
+            Rule.WeekDay.THURSDAY -> stringsProvider.thursday()
+            Rule.WeekDay.FRIDAY -> stringsProvider.friday()
+            Rule.WeekDay.SATURDAY -> stringsProvider.saturday()
+            Rule.WeekDay.SUNDAY -> stringsProvider.sunday()
         }
     }
 

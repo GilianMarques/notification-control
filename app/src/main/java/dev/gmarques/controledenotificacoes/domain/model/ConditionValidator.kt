@@ -2,12 +2,15 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException.EmptyKeywordsException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException.MaxKeywordsExceededException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.BlankKeywordException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.InvalidKeywordLengthException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KEYWORD_MAX_LENGTH
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.EmptyKeywordsException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.MaxKeywordsExceededException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.BlankKeywordException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.InvalidKeywordLengthException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.validateKeyword
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.validateKeywords
 
 /**
  * Criado por Gilian Marques
@@ -23,6 +26,16 @@ object ConditionValidator {
     const val MAX_VALUES = 50
     const val KEYWORD_MAX_LENGTH = 30
 
+    /**
+     * Valida uma instância de [Condition].
+     *
+     * Este mét.odo chama [validateKeywords] para validar a lista de palavras-chave da condição.
+     * Se a validação falhar, uma exceção será lançada.
+     *
+     * @param condition A instância de [Condition] a ser validada.
+     * @throws KeywordsValidationException Se a lista de palavras-chave estiver vazia ou exceder o número máximo permitido.
+     * @throws SingleKeywordValidationException Se alguma palavra-chave individual for inválida (em branco ou exceder o comprimento máximo).
+     */
     fun validate(condition: Condition) {
         validateKeywords(condition.keywords).getOrThrow()
     }
@@ -97,29 +110,36 @@ object ConditionValidator {
         }
 
         if (sanitizedKeyword.length > KEYWORD_MAX_LENGTH) {
-            return OperationResult.failure(InvalidKeywordLengthException(sanitizedKeyword.length, MAX_VALUES))
+            return OperationResult.failure(
+                InvalidKeywordLengthException(
+                    sanitizedKeyword.length,
+                    MAX_VALUES
+                )
+            )
         }
 
         return OperationResult.success(sanitizedKeyword)
     }
 
 
-    sealed class KeywordsValidationException(message: String) : Exception(message) {
+    sealed class ConditionValidatorException(message: String) : Exception(message) {
+        sealed class KeywordsValidationException(message: String) : ConditionValidatorException(message) {
 
-        class EmptyKeywordsException : KeywordsValidationException("A lista de valores não pode estar vazia.")
+            class EmptyKeywordsException : KeywordsValidationException("A lista de valores não pode estar vazia.")
 
-        class MaxKeywordsExceededException(val max: Int, val found: Int) :
-            KeywordsValidationException("Número máximo de valores excedido: $found/$max")
+            class MaxKeywordsExceededException(val max: Int, val found: Int) :
+                KeywordsValidationException("Número máximo de valores excedido: $found/$max")
 
 
-    }
+        }
 
-    sealed class SingleKeywordValidationException(message: String) : Exception(message) {
+        sealed class SingleKeywordValidationException(message: String) : ConditionValidatorException(message) {
 
-        class BlankKeywordException(val value: String) :
-            SingleKeywordValidationException("A palavra-chave está em branco ou é inválida: \"$value\"")
+            class BlankKeywordException(val value: String) :
+                SingleKeywordValidationException("A palavra-chave está em branco ou é inválida: \"$value\"")
 
-        class InvalidKeywordLengthException(val length: Int, val max: Int) :
-            SingleKeywordValidationException("A palavra-chave tem comprimento inválido (máximo $max): \"$length\"")
+            class InvalidKeywordLengthException(val length: Int, max: Int) :
+                SingleKeywordValidationException("A palavra-chave tem comprimento inválido (máximo $max): \"$length\"")
+        }
     }
 }

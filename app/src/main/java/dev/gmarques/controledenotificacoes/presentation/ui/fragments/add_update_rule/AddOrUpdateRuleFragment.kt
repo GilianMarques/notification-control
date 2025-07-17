@@ -30,7 +30,6 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -156,7 +155,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
         }
 
-        val weekDayByNumber = WeekDay.entries.associateBy { it.dayNumber }
+        val weekDayByNumber = Rule.WeekDay.entries.associateBy { it.dayNumber }
 
         for (view in chipGroupDays.children) {
             val chip = view as Chip
@@ -317,13 +316,13 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
     /**
-     * Atualiza o estado de seleção dos chips no chipGroupDays` com base na lista de `WeekDay`.
+     * Atualiza o estado de seleção dos chips no chipGroupDays` com base na lista de `Rule.WeekDay`.
      *
      * Cada chip é identificado pelo número do dia (0 a 6) definido em sua tag.
      *
-     * @param days Lista de objetos `WeekDay` representando os dias selecionados.
+     * @param days Lista de objetos `Rule.WeekDay` representando os dias selecionados.
      */
-    private fun updateSelectedDaysChips(days: List<WeekDay>) = with(binding) {
+    private fun updateSelectedDaysChips(days: List<Rule.WeekDay>) = with(binding) {
         val numberDaysSet = days.map { it.dayNumber }.toSet()
 
         chipGroupDays.children.forEach { chip ->

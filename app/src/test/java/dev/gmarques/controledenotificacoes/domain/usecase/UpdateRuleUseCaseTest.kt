@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +24,7 @@ class UpdateRuleUseCaseTest {
     fun `dada uma regra, quando execute for chamado, entao repositorio updateRule deve ser invocado`() = runTest {
         val rule = Rule(
             name = "Regra Teste",
-            days = listOf(WeekDay.FRIDAY),
+            days = listOf(Rule.WeekDay.FRIDAY),
             condition = null,
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
             type = Rule.typeDefault,

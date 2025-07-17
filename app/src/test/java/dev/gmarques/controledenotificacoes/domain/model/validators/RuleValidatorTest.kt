@@ -4,7 +4,6 @@ import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -38,7 +37,7 @@ class RuleValidatorTest {
 
     @Test
     fun `ao passar lista de dias valida a funcao validadora deve retornar sucesso`() {
-        val dias = listOf(WeekDay.MONDAY, WeekDay.FRIDAY)
+        val dias = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY)
         val result = RuleValidator.validateDays(dias)
         assertTrue(result.isSuccess)
     }
@@ -46,14 +45,14 @@ class RuleValidatorTest {
     @Test
     fun `ao passar um intervalo de dias muito longo a validacao deve falhar`() {
         val eightDaysInAWeek = listOf(
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
-            WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
+            Rule.WeekDay.SUNDAY,
         )
         val result = RuleValidator.validateDays(eightDaysInAWeek)
         assertTrue(result.isFailure)
@@ -115,7 +114,7 @@ class RuleValidatorTest {
     fun `ao validar uma regra completa com todos os dados corretos deve retornar sucesso`() {
         val rule = Rule(
             name = "Regra Válida",
-            days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
+            days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(8, 0, 12, 0)),
             condition = null,
             type = Rule.typeDefault,
@@ -127,7 +126,7 @@ class RuleValidatorTest {
     fun `ao validar uma regra com nome invalido deve lancar excecao`() {
         val rule = Rule(
             name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
-            days = listOf(WeekDay.MONDAY),
+            days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
@@ -151,7 +150,7 @@ class RuleValidatorTest {
     fun `ao validar uma regra com intervalos duplicados deve lancar excecao`() {
         val rule = Rule(
             name = "Regra",
-            days = listOf(WeekDay.MONDAY),
+            days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
             timeRanges = listOf(
@@ -166,7 +165,7 @@ class RuleValidatorTest {
     fun `ao validar uma regra com intervalos que se interseccionam deve lancar excecao`() {
         val rule = Rule(
             name = "Regra",
-            days = listOf(WeekDay.MONDAY),
+            days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
             type = Rule.typeDefault,
             timeRanges = listOf(

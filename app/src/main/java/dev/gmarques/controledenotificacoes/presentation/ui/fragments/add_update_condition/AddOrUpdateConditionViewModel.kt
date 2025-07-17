@@ -8,10 +8,9 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.EmptyKeywordsException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.MaxKeywordsExceededException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.BlankKeywordException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.InvalidKeywordLengthException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException.MaxKeywordsExceededException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.BlankKeywordException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.InvalidKeywordLengthException
 import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
 import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
 import kotlinx.coroutines.channels.Channel
@@ -92,7 +91,7 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
 
         if (keywordsListValidationResult.isFailure) {
             when (val baseException = keywordsListValidationResult.exceptionOrNull()) {
-                is EmptyKeywordsException -> notify(context.getString(R.string.A_lista_de_palavras_chave_n_o_pode_estar_vazia))
+                is ConditionValidator.ConditionValidatorException.KeywordsValidationException.EmptyKeywordsException -> notify(context.getString(R.string.A_lista_de_palavras_chave_n_o_pode_estar_vazia))
                 is MaxKeywordsExceededException -> notify(
                     context.getString(
                         R.string.Numero_m_ximo_de_palavras_chave_aceito_atual,

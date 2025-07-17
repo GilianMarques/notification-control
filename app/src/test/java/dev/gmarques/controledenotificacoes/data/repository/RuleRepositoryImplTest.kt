@@ -3,7 +3,6 @@ import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +29,7 @@ class RuleRepositoryImplTest {
         val rule = Rule(
             "1",
             "Teste",
-            listOf(WeekDay.MONDAY),
+            listOf(Rule.WeekDay.MONDAY),
             listOf(
                 TimeRange(
                     8,
@@ -69,7 +68,7 @@ class RuleRepositoryImplTest {
             Rule(
                 "1",
                 "Teste2",
-                listOf(WeekDay.TUESDAY),
+                listOf(Rule.WeekDay.TUESDAY),
                 listOf(
                     TimeRange(
                         8,
@@ -84,7 +83,7 @@ class RuleRepositoryImplTest {
             Rule(
                 "",
                 "Teste3",
-                listOf(WeekDay.TUESDAY),
+                listOf(Rule.WeekDay.TUESDAY),
                 listOf(
                     TimeRange(
                         8,
@@ -130,7 +129,7 @@ class RuleRepositoryImplTest {
             Rule(
                 "1",
                 "Teste2",
-                listOf(WeekDay.TUESDAY),
+                listOf(Rule.WeekDay.TUESDAY),
                 listOf(
                     TimeRange(
                         8,
@@ -145,7 +144,7 @@ class RuleRepositoryImplTest {
             Rule(
                 "",
                 "Teste3",
-                listOf(WeekDay.TUESDAY),
+                listOf(Rule.WeekDay.TUESDAY),
                 listOf(
                     TimeRange(
                         8,
@@ -175,7 +174,7 @@ class RuleRepositoryImplTest {
         val rule = Rule(
             "1",
             "Teste",
-            listOf(WeekDay.MONDAY),
+            listOf(Rule.WeekDay.MONDAY),
             listOf(
                 TimeRange(
                     8,
@@ -198,7 +197,7 @@ class RuleRepositoryImplTest {
         val rule = Rule(
             "1",
             "Teste",
-            listOf(WeekDay.MONDAY),
+            listOf(Rule.WeekDay.MONDAY),
             listOf(
                 TimeRange(
                     8,
@@ -224,7 +223,7 @@ class RuleRepositoryImplTest {
                 Rule(
                     ruleId,
                     "Teste",
-                    listOf(WeekDay.MONDAY),
+                    listOf(Rule.WeekDay.MONDAY),
                     listOf(
                         TimeRange(
                             8,
@@ -252,7 +251,7 @@ class RuleRepositoryImplTest {
                 Rule(
                     "1",
                     "Teste 1",
-                    listOf(WeekDay.MONDAY),
+                    listOf(Rule.WeekDay.MONDAY),
                     listOf(
                         TimeRange(
                             8,
@@ -269,7 +268,7 @@ class RuleRepositoryImplTest {
                 Rule(
                     "2",
                     "Teste 2",
-                    listOf(WeekDay.TUESDAY),
+                    listOf(Rule.WeekDay.TUESDAY),
                     listOf(
                         TimeRange(
                             10,

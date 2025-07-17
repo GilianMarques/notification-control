@@ -3,9 +3,9 @@ package dev.gmarques.controledenotificacoes.domain.model
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.description
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
-import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 
 /**
  * Criado por Gilian Marques
@@ -38,16 +38,16 @@ object RuleExtensionFun {
      * Verifica se o aplicativo está dentro de um período de bloqueio com base na regra e horario (momento) da chamada.
      *
      * Um aplicativo é considerado "em bloqueio" se:
-     * - A regra for [Type.RESTRICTIVE] e o horário atual estiver dentro de um dos [TimeRange]s especificados e o dia da semana atual estiver incluído na lista [dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay].
-     * - A regra for [Type.PERMISSIVE] e o horário atual NÃO estiver dentro de NENHUM dos [TimeRange]s especificados e o dia da semana atual estiver incluído na lista [dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay].
-     * - A regra for [Type.PERMISSIVE] e o dia da semana atual NÃO estiver incluído na lista [dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay]s.
+     * - A regra for [Type.RESTRICTIVE] e o horário atual estiver dentro de um dos [TimeRange]s especificados e o dia da semana atual estiver incluído na lista [Rule.WeekDay].
+     * - A regra for [Type.PERMISSIVE] e o horário atual NÃO estiver dentro de NENHUM dos [TimeRange]s especificados e o dia da semana atual estiver incluído na lista [Rule.WeekDay].
+     * - A regra for [Type.PERMISSIVE] e o dia da semana atual NÃO estiver incluído na lista [Rule.WeekDay]s.
      *
      * @return `true` se o aplicativo estiver em um período de bloqueio de acordo com esta regra, `false` caso contrário.
      *
      * Exemplo:
      * Seja uma regra para o app "ExemploApp" com as seguintes configurações:
      * - [Type.RESTRICTIVE]
-     * - [dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay]: Segunda (2), Terça (3)
+     * - [Rule.WeekDay]: Segunda (2), Terça (3)
      * - [TimeRange]s: [10:00 - 12:00]
      *
      * Se for Segunda-feira às 11:00, `isAppInBlockPeriod()` retornará `true`.

@@ -9,7 +9,6 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDa
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateId
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateName
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateTimeRanges
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import java.util.Locale
 
 /**
@@ -101,7 +100,7 @@ object RuleValidator {
      *
      * @throws NameOutOfRangeException Se a quantidade de dias na lista estiver fora do intervalo permitido (entre 1 e 7, inclusive).
      */
-    fun validateDays(days: List<WeekDay>): OperationResult<RuleValidatorException, List<WeekDay>> {
+    fun validateDays(days: List<Rule.WeekDay>): OperationResult<RuleValidatorException, List<Rule.WeekDay>> {
         val minDays = 1
         val maxDays = 7
         return if (days.size !in minDays..maxDays) {
@@ -140,7 +139,7 @@ object RuleValidator {
         try {
             ConditionValidator.validate(condition)
             return OperationResult.success(condition)
-        } catch (ex: ConditionValidationException) {
+        } catch (ex: ConditionValidator.ConditionValidatorException) {
             return OperationResult.failure(ConditionValidationException(ex))
         }
 
@@ -159,7 +158,7 @@ object RuleValidator {
         class NameOutOfRangeException(
             val minLength: Int,
             val maxLength: Int,
-            val actual: Int,
+            actual: Int,
         ) : RuleValidatorException("O range valido é de $minLength a $maxLength. valor atual: $actual")
 
         /**
@@ -167,9 +166,9 @@ object RuleValidator {
          * Em 23/06/2025 as 17:31
          */
         class DaysOutOfRangeException(
-            val minDays: Int,
-            val maxDays: Int,
-            val actual: Int,
+            minDays: Int,
+            maxDays: Int,
+            actual: Int,
         ) : RuleValidatorException("A quantidade de dias deve estar entre $minDays e $maxDays. Valor atual: $actual")
 
         /**
@@ -192,7 +191,7 @@ object RuleValidator {
          * Criado por Gilian Marques
          * Em 29/06/2025 as 10:47
          * */
-        class ConditionValidationException(val exception: ConditionValidationException) :
+        class ConditionValidationException(val exception: ConditionValidator.ConditionValidatorException) :
             RuleValidatorException("Erro durante a validação da condição: ${exception.message}")
 
     }

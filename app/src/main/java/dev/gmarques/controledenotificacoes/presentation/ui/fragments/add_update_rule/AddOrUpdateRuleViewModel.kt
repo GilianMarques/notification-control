@@ -27,7 +27,6 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValida
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.TimeRangeValidationException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
@@ -59,8 +58,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private val _ruleNameFlow = MutableStateFlow("")
     val ruleName: StateFlow<String> = _ruleNameFlow
 
-    private val _selectedDaysFlow = MutableStateFlow<List<WeekDay>>(emptyList())
-    val selectedDays: StateFlow<List<WeekDay>> = _selectedDaysFlow
+    private val _selectedDaysFlow = MutableStateFlow<List<Rule.WeekDay>>(emptyList())
+    val selectedDays: StateFlow<List<Rule.WeekDay>> = _selectedDaysFlow
 
     private val _conditionFlow = MutableStateFlow<Condition?>(null)
     val conditionFlow: StateFlow<Condition?> = _conditionFlow
@@ -107,10 +106,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     /**
      * Atualiza a lista de dias selecionados e notifica os observadores.
      *
-     * @param days Nova lista de `WeekDay` representando os dias selecionados.
+     * @param days Nova lista de `Rule.WeekDay` representando os dias selecionados.
      * @throws IllegalArgumentException Se a lista `days` for nula.
      */
-    fun updateSelectedDays(days: List<WeekDay>) {
+    fun updateSelectedDays(days: List<Rule.WeekDay>) {
         _selectedDaysFlow.tryEmit(days)
     }
 
@@ -304,23 +303,23 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     }
 
     /**
-     * Valida uma lista de objetos WeekDay.
+     * Valida uma lista de objetos Rule.WeekDay.
      *
      * Utiliza [RuleValidator.validateDays] para verificar a validade dos dias.
      * Em caso de falha, envia um evento UI para exibir uma mensagem de erro.
      *
-     * @param days A lista de [WeekDay] a ser validada.
+     * @param days A lista de [Rule.WeekDay] a ser validada.
      * @return Um [Result] contendo:
-     *         - Sucesso: A lista de [WeekDay] se a validação passar.
+     *         - Sucesso: A lista de [Rule.WeekDay] se a validação passar.
      *         - Falha: Uma exceção, se a validação falhar. O tipo da exceção é determinado por [RuleValidator.validateDays].
      *           Nesse caso, um evento de erro [EventWrapper] é enviado para `_uiEvents`.
      * @throws 'Qualquer exceção lançada por [RuleValidator.validateDays].
      *
      * @see RuleValidator.validateDays
-     * @see WeekDay
+     * @see Rule.WeekDay
      * @see Result
      */
-    fun validateDays(days: List<WeekDay>): OperationResult<RuleValidatorException, List<WeekDay>> {
+    fun validateDays(days: List<Rule.WeekDay>): OperationResult<RuleValidatorException, List<Rule.WeekDay>> {
 
         val result = RuleValidator.validateDays(days)
 

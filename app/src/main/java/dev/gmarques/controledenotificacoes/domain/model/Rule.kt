@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import androidx.annotation.Keep
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import java.io.Serializable
 import java.util.UUID
 
@@ -29,4 +28,17 @@ data class Rule(
 
     @Keep
     enum class Type(val value: Int) { PERMISSIVE(1), RESTRICTIVE(0) }
+
+    @Keep
+    enum class WeekDay(val dayNumber: Int) {
+
+        SUNDAY(1),
+        MONDAY(2),
+        TUESDAY(3),
+        WEDNESDAY(4),
+        THURSDAY(5),
+        FRIDAY(6),
+        SATURDAY(7),
+
+    }
 }

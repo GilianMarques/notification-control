@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import junit.framework.TestCase
 import org.joda.time.LocalDateTime
 import org.junit.Test
@@ -32,7 +31,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.SUNDAY,
+                Rule.WeekDay.SUNDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
@@ -68,7 +67,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.SUNDAY,
+                Rule.WeekDay.SUNDAY,
             ),
             timeRanges = listOf(
                 TimeRange(allDay = true)
@@ -104,7 +103,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),
@@ -136,7 +135,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(allDay = true),
@@ -169,8 +168,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
             ),
 
             timeRanges = listOf(
@@ -204,8 +203,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true),
@@ -238,8 +237,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 45),
@@ -272,8 +271,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true),
@@ -306,7 +305,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.FRIDAY,
+                Rule.WeekDay.FRIDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),
@@ -338,7 +337,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.FRIDAY,
+                Rule.WeekDay.FRIDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true),
@@ -371,8 +370,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.WEDNESDAY,
-                WeekDay.SATURDAY,
+                Rule.WeekDay.WEDNESDAY,
+                Rule.WeekDay.SATURDAY,
             ),
 
             timeRanges = listOf(
@@ -407,13 +406,13 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.RESTRICTIVE,
             condition = null,
             days = listOf(
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
-                WeekDay.THURSDAY,
-                WeekDay.FRIDAY,
-                WeekDay.SATURDAY,
-                WeekDay.SUNDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
+                Rule.WeekDay.THURSDAY,
+                Rule.WeekDay.FRIDAY,
+                Rule.WeekDay.SATURDAY,
+                Rule.WeekDay.SUNDAY,
             ),
 
             timeRanges = listOf(
@@ -441,7 +440,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.SUNDAY,
+                Rule.WeekDay.SUNDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
@@ -477,7 +476,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.SUNDAY,
+                Rule.WeekDay.SUNDAY,
             ),
             timeRanges = listOf(
                 TimeRange(allDay = true)
@@ -511,7 +510,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),
@@ -544,7 +543,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
+                Rule.WeekDay.TUESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true),
@@ -577,8 +576,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
             ),
 
             timeRanges = listOf(
@@ -613,8 +612,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 45),
@@ -647,8 +646,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
             ),
 
             timeRanges = listOf(
@@ -682,7 +681,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.FRIDAY,
+                Rule.WeekDay.FRIDAY,
             ),
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),
@@ -715,7 +714,7 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.FRIDAY,
+                Rule.WeekDay.FRIDAY,
             ),
             timeRanges = listOf(
                 TimeRange(true),
@@ -748,8 +747,8 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.FRIDAY,
-                WeekDay.SATURDAY,
+                Rule.WeekDay.FRIDAY,
+                Rule.WeekDay.SATURDAY,
             ),
             timeRanges = listOf(
                 TimeRange(0, 0, 23, 59),
@@ -783,13 +782,13 @@ class NextAppUnlockTimeUseCaseTest {
             type = Rule.Type.PERMISSIVE,
             condition = null,
             days = listOf(
-                WeekDay.MONDAY,
-                WeekDay.TUESDAY,
-                WeekDay.WEDNESDAY,
-                WeekDay.THURSDAY,
-                WeekDay.FRIDAY,
-                WeekDay.SATURDAY,
-                WeekDay.SUNDAY,
+                Rule.WeekDay.MONDAY,
+                Rule.WeekDay.TUESDAY,
+                Rule.WeekDay.WEDNESDAY,
+                Rule.WeekDay.THURSDAY,
+                Rule.WeekDay.FRIDAY,
+                Rule.WeekDay.SATURDAY,
+                Rule.WeekDay.SUNDAY,
             ),
 
             timeRanges = listOf(

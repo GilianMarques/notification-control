@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +26,7 @@ class AddRuleUseCaseTest {
 
         val rule = Rule(
             name = "Regra Teste",
-            days = listOf(WeekDay.FRIDAY),
+            days = listOf(Rule.WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
             condition = null,
             type = Rule.typeDefault,            )

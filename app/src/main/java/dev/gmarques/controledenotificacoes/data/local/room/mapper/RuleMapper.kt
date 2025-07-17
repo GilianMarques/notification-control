@@ -9,7 +9,6 @@ import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 
 /**
  * Criado por Gilian Marques
@@ -21,8 +20,8 @@ object RuleMapper {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
-    private val weekDayAdapter: JsonAdapter<List<WeekDay>> = moshi.adapter(weekDayType)
+    private val weekDayType = Types.newParameterizedType(List::class.java, Rule.WeekDay::class.java)
+    private val weekDayAdapter: JsonAdapter<List<Rule.WeekDay>> = moshi.adapter(weekDayType)
 
     private val timeRangeType = Types.newParameterizedType(List::class.java, TimeRange::class.java)
     private val timeRangeAdapter: JsonAdapter<List<TimeRange>> = moshi.adapter(timeRangeType)
@@ -57,15 +56,15 @@ object RuleMapper {
     }
 
     /**
-     * Converte uma lista de enums [WeekDay] em uma string JSON.
+     * Converte uma lista de enums [Rule.WeekDay] em uma string JSON.
      *
-     * Esta função usa um adaptador Moshi para serializar uma lista de enums [WeekDay]
+     * Esta função usa um adaptador Moshi para serializar uma lista de enums [Rule.WeekDay]
      * em sua representação de string JSON.
      *
-     * @param days A lista de enums [WeekDay] a ser convertida.
-     * @return Uma string JSON representando a lista de [WeekDay]s.
+     * @param days A lista de enums [Rule.WeekDay] a ser convertida.
+     * @return Uma string JSON representando a lista de [Rule.WeekDay]s.
      */
-    private fun daysToString(days: List<WeekDay>): String {
+    private fun daysToString(days: List<Rule.WeekDay>): String {
         return weekDayAdapter.toJson(days)
     }
 
@@ -113,17 +112,17 @@ object RuleMapper {
     }
 
     /**
-     * Converte uma string JSON representando uma lista de [WeekDay]s em uma lista de enums [WeekDay].
+     * Converte uma string JSON representando uma lista de [Rule.WeekDay]s em uma lista de enums [Rule.WeekDay].
      *
      * Esta função usa um adaptador Moshi para desserializar uma string JSON de volta
-     * em uma lista de enums [WeekDay].
+     * em uma lista de enums [Rule.WeekDay].
      *
      * @param days A string JSON a ser convertida.
-     * @return Uma lista de enums [WeekDay].
+     * @return Uma lista de enums [Rule.WeekDay].
      * @throws NullPointerException se a string de entrada não puder ser desserializada
-     * em uma lista de [WeekDay].
+     * em uma lista de [Rule.WeekDay].
      */
-    private fun stringToDays(days: String): List<WeekDay> {
+    private fun stringToDays(days: String): List<Rule.WeekDay> {
         return weekDayAdapter.fromJson(days)!!
     }
 

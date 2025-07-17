@@ -6,7 +6,6 @@ import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -18,8 +17,8 @@ class RuleMapperTest {
     private val timeRangeType = Types.newParameterizedType(List::class.java, TimeRange::class.java)
     private val timeRangeAdapter = moshi.adapter<List<TimeRange>>(timeRangeType)
 
-    private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
-    private val weekDayAdapter = moshi.adapter<List<WeekDay>>(weekDayType)
+    private val weekDayType = Types.newParameterizedType(List::class.java, Rule.WeekDay::class.java)
+    private val weekDayAdapter = moshi.adapter<List<Rule.WeekDay>>(weekDayType)
 
 
     @Test
@@ -28,7 +27,7 @@ class RuleMapperTest {
             id = "1",
             name = "Regra Teste",
             type = Type.PERMISSIVE,
-            days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
+            days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             condition = null,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
@@ -51,7 +50,7 @@ class RuleMapperTest {
             id = "2",
             name = "Entidade Teste",
             ruleType = Type.RESTRICTIVE,
-            days = weekDayAdapter.toJson(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY)),
+            days = weekDayAdapter.toJson(listOf(Rule.WeekDay.TUESDAY, Rule.WeekDay.THURSDAY)),
             condition = null,
             timeRanges = timeRangeAdapter.toJson(listOf(range))
         )
@@ -61,7 +60,7 @@ class RuleMapperTest {
         assertEquals(entity.id, rule.id)
         assertEquals(entity.name, rule.name)
         assertEquals(entity.ruleType, rule.type)
-        assertEquals(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY), rule.days)
+        assertEquals(listOf(Rule.WeekDay.TUESDAY, Rule.WeekDay.THURSDAY), rule.days)
         assertEquals(listOf(range), rule.timeRanges)
     }
 
