@@ -10,7 +10,6 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.CancelAlarmForAppUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
@@ -19,14 +18,13 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteMan
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveManagedApp
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +53,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
     private var initialized = false
 
-    /**indica que o app gerenciado recebido não existe na lista de apps instalados. Veja [InstalledApp.NOT_FOUND_APP_PKG]*/
+    /**indica que o app gerenciado recebido não existe na lista de apps instalados.*/
     var notFoundApp = false
         private set
 
@@ -190,7 +188,7 @@ class ViewManagedAppViewModel @Inject constructor(
         _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
-                NotificationListener.instance?.reEvaluateActiveNotifications()
+                NotificationListener.instance?.evaluateActiveNotifications()
             }
         }
     }

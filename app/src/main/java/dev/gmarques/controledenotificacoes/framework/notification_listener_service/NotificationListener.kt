@@ -74,12 +74,12 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Observa mudanças nas regras de notificação.
      * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
-     * o mét.odo [reEvaluateActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * o mét.odo [evaluateActiveNotifications] é chamado para reavaliar todas as notificações ativas
      * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
      */
     private fun observeRulesChanges() = launch(IO) {
         HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            reEvaluateActiveNotifications()
+            evaluateActiveNotifications()
         }
     }
 
@@ -92,12 +92,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
 
-    fun reEvaluateActiveNotifications() {
+    fun evaluateActiveNotifications() {
         val active = activeNotifications ?: return
         active.forEach { sbn ->
             manageNotification(sbn)
         }
-
     }
 
     fun getFilteredActiveNotifications(): List<StatusBarNotification> {

@@ -25,10 +25,10 @@ data class InstalledApp(
          */
         fun uninstalledApp(targetPackage: String): InstalledApp {
             return InstalledApp(
-                extractNameFromPkg(targetPackage),
-                targetPackage,
-                true,
-                true,
+                name = extractNameFromPkg(targetPackage),
+                packageId = targetPackage,
+                isBeingManaged = true,
+                uninstalled = true,
             )
         }
 
@@ -42,7 +42,7 @@ data class InstalledApp(
         private fun extractNameFromPkg(pkg: String): String {
             return try {
                 pkg.split(".").last().lowercase().replaceFirstChar { it.uppercase() }
-            } catch (ex: Exception) {
+            } catch (_: Exception) {
                 pkg
             }
         }
