@@ -68,7 +68,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         instance = this@NotificationListener
         observeRulesChanges()
 
-        activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) }
+      //  activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) } todo    implementar
     }
 
     /**
