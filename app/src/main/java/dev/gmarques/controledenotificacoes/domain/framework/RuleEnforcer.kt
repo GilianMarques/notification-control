@@ -21,6 +21,8 @@ interface RuleEnforcer {
 
     interface Callback {
         fun cancelNotification(appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
+
+        fun snoozeNotification(sbn: StatusBarNotification, snoozePeriod: Long)
         fun appNotManaged()
         fun allowNotification()
     }

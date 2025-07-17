@@ -76,7 +76,7 @@ class RuleEnforcerImpl @Inject constructor(
         val appInBlockPeriod = rule.isAppInBlockPeriod()
 
         if (condition == null) {
-            if (appInBlockPeriod) saveAndCancelNotification(rule, managedApp, sbn, notification)
+            if (appInBlockPeriod) saveAndBlockNotification(rule, managedApp, sbn, notification)
             else callback.allowNotification()
             return
         }
@@ -89,13 +89,13 @@ class RuleEnforcerImpl @Inject constructor(
         )
 
         if (shouldAllowNotification) callback.allowNotification()
-        else saveAndCancelNotification(rule, managedApp, sbn, notification)
+        else saveAndBlockNotification(rule, managedApp, sbn, notification)
     }
 
     @TestOnly
     fun shouldAllowNotification(
         ruleType: Type,
-        conditionType:  Condition.Type,
+        conditionType: Condition.Type,
         isConditionSatisfied: Boolean,
         isAppInBlockPeriod: Boolean,
     ): Boolean {
@@ -122,15 +122,26 @@ class RuleEnforcerImpl @Inject constructor(
         return true
     }
 
-    private fun saveAndCancelNotification(
+    private fun saveAndBlockNotification(
         rule: Rule,
         managedApp: ManagedApp,
         sbn: StatusBarNotification,
         notification: AppNotification,
     ) {
-        callback.cancelNotification(notification, rule, managedApp)
+        val nxtUnlockTime = rule.nextAppUnlockPeriodFromNow()
+
+        when (rule.action) {
+            Rule.Action.SNOOZE -> {
+                // TODO: nao chamar snooze se api<26, chamar cancel . continuar aqui, ver rulevalidator, e schedulemanager 
+                val snoozeUntil = nxtUnlockTime - System.currentTimeMillis()
+                callback.snoozeNotification(sbn, nxtUnlockTime)
+            }
+
+            Rule.Action.CANCEL -> callback.cancelNotification(notification, rule, managedApp)
+        }
+
         launch {
-            alarmScheduler.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
+            alarmScheduler.scheduleAlarm(notification.packageId, nxtUnlockTime)
             updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
             saveNotificationOnHistory(sbn, notification)
         }

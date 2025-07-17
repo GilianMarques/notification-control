@@ -47,12 +47,12 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             try {
                 val maxTime = 60_000L
                 snoozeNotification(sbn.key, maxTime)
-             /*   launch {
-                    delay(5000)
-                    snoozedNotifications.forEach {
-                        snoozeNotification(sbn.key, 100L)
-                    }
-                }*/
+                /*   launch {
+                       delay(5000)
+                       snoozedNotifications.forEach {
+                           snoozeNotification(sbn.key, 100L)
+                       }
+                   }*/
             } catch (e: Exception) {
                 Log.e("NotifSnooze", "Erro ao adiar notificação: ${e.message}")
             }
@@ -68,7 +68,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         instance = this@NotificationListener
         observeRulesChanges()
 
-      //  activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) } todo    implementar
+        //  activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) } todo    implementar
     }
 
     /**
@@ -134,8 +134,20 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                 ) {
                     Log.d("USUK", "NotificationListener.cancelNotification: ${sbn.packageName} ")
                     cancelValidationCallbackTimer()
-                    crashIfNotificationWasNotRemovedInDebugBuild(sbn)
+                    crashIfNotificationDoesNotRemoveInDebugBuild(sbn)
                     cancelNotification(sbn.key)
+                }
+
+                override fun snoozeNotification(
+                    sbn: StatusBarNotification,
+                    snoozePeriod: Long,
+                ) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Log.d("USUK", "NotificationListener.snoozeNotification: ${sbn.packageName} ")
+                        cancelValidationCallbackTimer()
+                        crashIfNotificationDoesNotRemoveInDebugBuild(sbn)
+                        snoozeNotification(sbn.key, 1L)
+                    } else error("Essa função nao deve estar disponivel em versões anteriores ao Oreo")
                 }
 
                 override fun appNotManaged() {
@@ -158,7 +170,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Esta função é usada em conjunto com [crashIfCallbackNotCalled] para garantir que,
      * em builds de debug, o aplicativo falhe se o callback não for invocado dentro de um
      * período esperado. Isso ajuda a identificar problemas onde o RuleEnforcer não está
-     * chamando o callback corretamente, o que poderia afetar a função de eco.
+     * chamando o callback corretamente, (BUG) o que poderia afetar a função de eco.
      */
     private fun cancelValidationCallbackTimer() = validationCallbackErrorJob?.cancel()
 
@@ -186,9 +198,9 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
      * essa função vai crashar o app para que o jumento do desenvolvedor (eu :-] ) possa ajeitar a cagada que ele fez
      */
-    private fun crashIfNotificationWasNotRemovedInDebugBuild(sbn: StatusBarNotification) {
+    private fun crashIfNotificationDoesNotRemoveInDebugBuild(sbn: StatusBarNotification) {
         if (BuildConfig.DEBUG) {
-            if (sbn.isOngoing) return // nao da pra cancelar notificaçoes ongoing
+            if (sbn.isOngoing) return // nao se considera esse tipo de notificação
 
             cancelingNotificationKey = sbn.key
             errorJob?.cancel()
@@ -200,7 +212,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     /**
-     * Ajuda  a  [crashIfNotificationWasNotRemovedInDebugBuild] a determinar se a notificação foi de fato cancelada
+     * Ajuda  a  [crashIfNotificationDoesNotRemoveInDebugBuild] a determinar se a notificação foi de fato cancelada
      */
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
 

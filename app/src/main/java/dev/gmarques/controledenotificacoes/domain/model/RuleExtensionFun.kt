@@ -4,6 +4,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.description
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAllDayRule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 
@@ -27,6 +28,8 @@ object RuleExtensionFun {
      * Esta função itera sobre os [TimeRange]s associados à regra.
      * - Para regras [Type.PERMISSIVE], ela busca o próximo início de período de permissão.
      * - Para regras [Type.RESTRICTIVE], ela busca o próximo fim de período de restrição.
+     *
+     * @return o timestamp representando o a data e hora do próximo período de desbloqueio.
      *
      */
     fun Rule.nextAppUnlockPeriodFromNow(): Long {
@@ -88,6 +91,23 @@ object RuleExtensionFun {
      * @return `true` se a regra contiver ao menos um intervalo com flag `allDay = true`
      */
     fun Rule.isAllDayRule(): Boolean = timeRanges.any { it.allDay }
+
+
+    /**
+     * Verifica se a regra representa um bloqueio permanente (PermaBlock).
+     *
+     * Uma regra é considerada um bloqueio permanente se:
+     * 1. O tipo da regra é [Type.RESTRICTIVE].
+     * 2. A regra se aplica a todos os dias da semana (`days.size == Rule.WeekDay.entries.size`).
+     * 3. A regra é para o dia inteiro ([isAllDayRule] retorna `true`).
+     *
+     * @return `true` se a regra for um bloqueio permanente, `false` caso contrário.
+     *
+     * @see Type.RESTRICTIVE
+     * @see Rule.WeekDay
+     * @see isAllDayRule
+     */
+    fun Rule.isPermaBlock() = type == Type.RESTRICTIVE && days.size == Rule.WeekDay.entries.size && isAllDayRule()
 
     /**
      * Retorna a lista de [TimeRange]s ordenada pelo horário de início.

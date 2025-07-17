@@ -2,9 +2,11 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isPermaBlock
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.ConditionValidationException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.PermaBlockWithSnoozeActionException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDays
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateId
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateName
@@ -48,8 +50,24 @@ object RuleValidator {
 
         validateId(rule.id).getOrThrow()
 
-        validateCondition(rule.condition)
+        validateCondition(rule.condition).getOrThrow()
 
+        validateRuleItSelf(rule).getOrThrow()
+
+    }
+
+    /**Valida se as configurações da regra nao se contradizem/anulam de alguma forma*/
+    private fun validateRuleItSelf(rule: Rule): OperationResult<RuleValidatorException, Rule> {
+        /**
+         * Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas.
+         * Nao tem porque adiar notificações que nunca devem ser mostradas.
+         */
+        if (rule.action == Rule.Action.SNOOZE && rule.isPermaBlock())
+            return OperationResult.failure<RuleValidatorException>(
+                PermaBlockWithSnoozeActionException(rule)
+            )
+
+        return OperationResult.success(rule)
     }
 
 
@@ -177,6 +195,9 @@ object RuleValidator {
          */
         class BlankIdException() :
             RuleValidatorException("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
+
+        class PermaBlockWithSnoozeActionException(rule: Rule) :
+            RuleValidatorException("Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas. Nao tem porque adiar notificações que nunca devem ser mostradas. \nregra: $rule")
 
         /**
          * Criado por Gilian Marques
