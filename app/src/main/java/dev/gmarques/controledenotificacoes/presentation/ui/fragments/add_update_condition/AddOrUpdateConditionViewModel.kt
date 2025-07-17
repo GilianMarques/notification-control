@@ -7,12 +7,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.model.Condition
+import dev.gmarques.controledenotificacoes.domain.model.Condition.Type
+import dev.gmarques.controledenotificacoes.domain.model.Condition.NotificationField
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException.MaxKeywordsExceededException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.BlankKeywordException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.InvalidKeywordLengthException
-import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
+ 
+ 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +34,8 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
     private val _keywordsFlow = MutableStateFlow<List<String>>(emptyList())
     val keywordsFlow: StateFlow<List<String>> get() = _keywordsFlow
 
-    private val _conditionTypeFlow = MutableStateFlow<ConditionType?>(null)
-    val conditionTypeFlow: StateFlow<ConditionType?> get() = _conditionTypeFlow
+    private val _conditionTypeFlow = MutableStateFlow<Type?>(null)
+    val conditionTypeFlow: StateFlow<Type?> get() = _conditionTypeFlow
 
     private val _fieldFlow = MutableStateFlow<NotificationField?>(null)
     val fieldFlow: StateFlow<NotificationField?> get() = _fieldFlow
@@ -112,7 +114,7 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
         _keywordsFlow.tryEmit(_keywordsFlow.value - keyword)
     }
 
-    fun setConditionType(type: ConditionType) {
+    fun setConditionType(type: Type) {
         _conditionTypeFlow.tryEmit(type)
     }
 
@@ -160,8 +162,8 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
         else context.getString(R.string.Permitir_notifica_es)
 
         hint += when (conditionTypeFlow.value) {
-            ConditionType.ONLY_IF -> context.getString(R.string.apenas_se)
-            ConditionType.EXCEPT -> context.getString(R.string.exceto_se)
+            Type.ONLY_IF -> context.getString(R.string.apenas_se)
+            Type.EXCEPT -> context.getString(R.string.exceto_se)
             null -> return "$hint..."
         }
 

@@ -12,13 +12,13 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
+import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
-import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
@@ -95,22 +95,22 @@ class RuleEnforcerImpl @Inject constructor(
     @TestOnly
     fun shouldAllowNotification(
         ruleType: Type,
-        conditionType: ConditionType,
+        conditionType:  Condition.Type,
         isConditionSatisfied: Boolean,
         isAppInBlockPeriod: Boolean,
     ): Boolean {
 
         if (ruleType == Type.RESTRICTIVE && isAppInBlockPeriod) {
             return when (conditionType) {
-                ConditionType.ONLY_IF -> !isConditionSatisfied
-                ConditionType.EXCEPT -> isConditionSatisfied
+                Condition.Type.ONLY_IF -> !isConditionSatisfied
+                Condition.Type.EXCEPT -> isConditionSatisfied
             }
         }
 
         if (ruleType == Type.PERMISSIVE && !isAppInBlockPeriod) {
             return when (conditionType) {
-                ConditionType.ONLY_IF -> isConditionSatisfied
-                ConditionType.EXCEPT -> !isConditionSatisfied
+                Condition.Type.ONLY_IF -> isConditionSatisfied
+                Condition.Type.EXCEPT -> !isConditionSatisfied
             }
         }
 

@@ -2,8 +2,8 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import android.content.Context
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
+ 
+
 
 
 /**
@@ -23,16 +23,16 @@ object ConditionExtensionFun {
 
         hintBuilder.append(
             when (type) {
-                ConditionType.ONLY_IF -> context.getString(R.string.apenas_se)
-                ConditionType.EXCEPT -> context.getString(R.string.exceto_se)
+                Condition.Type.ONLY_IF -> context.getString(R.string.apenas_se)
+                Condition.Type.EXCEPT -> context.getString(R.string.exceto_se)
             }
         )
 
         hintBuilder.append(
             when (field) {
-                NotificationField.TITLE -> context.getString(R.string.o_t_tulo_da_notificacao_contiver)
-                NotificationField.CONTENT -> context.getString(R.string.o_conte_do_da_notificacao_contiver)
-                NotificationField.BOTH -> context.getString(R.string.o_t_tulo_ou_o_conte_do_da_notificacao_contiverem)
+                Condition.NotificationField.TITLE -> context.getString(R.string.o_t_tulo_da_notificacao_contiver)
+                Condition.NotificationField.CONTENT -> context.getString(R.string.o_conte_do_da_notificacao_contiver)
+                Condition.NotificationField.BOTH -> context.getString(R.string.o_t_tulo_ou_o_conte_do_da_notificacao_contiverem)
             }
         )
 
@@ -84,9 +84,9 @@ object ConditionExtensionFun {
     fun Condition.isSatisfiedBy(notification: AppNotification): Boolean {
 
         val textToCheck = when (field) {
-            NotificationField.TITLE -> notification.title
-            NotificationField.CONTENT -> notification.content
-            NotificationField.BOTH -> "${notification.title} ${notification.content}"
+            Condition.NotificationField.TITLE -> notification.title
+            Condition.NotificationField.CONTENT -> notification.content
+            Condition.NotificationField.BOTH -> "${notification.title} ${notification.content}"
         }
 
         val normalizedNotificationText = if (caseSensitive) textToCheck else textToCheck.lowercase()

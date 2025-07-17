@@ -1,8 +1,8 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
-import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
+ 
+ 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -12,8 +12,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando palavra chave esta no titulo com sensibilidade desligada`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("boleto"),
             caseSensitive = false
         )
@@ -30,8 +30,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso quando palavra chave esta no titulo mas com case sensitive ligado`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("boleto"),
             caseSensitive = true
         )
@@ -48,8 +48,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando palavra chave esta no conteudo`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = listOf("disponível"),
             caseSensitive = false
         )
@@ -66,8 +66,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso quando palavra chave nao esta no campo especificado`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("urgente"),
             caseSensitive = false
         )
@@ -84,8 +84,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando palavra chave esta tanto no titulo quanto no conteudo`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.BOTH,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.BOTH,
             keywords = listOf("banco"),
             caseSensitive = false
         )
@@ -102,8 +102,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro se ao menos uma palavra chave corresponder`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf(
                 "nada",
                 "teste",
@@ -124,8 +124,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso quando nenhuma palavra chave corresponde`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = listOf(
                 "urgente",
                 "erro"
@@ -145,8 +145,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso quando lista de palavras chave esta vazia`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.BOTH,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.BOTH,
             keywords = emptyList(),
             caseSensitive = false
         )
@@ -163,8 +163,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro com case sensitive ativado e correspondencia exata`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("BOLETO"),
             caseSensitive = true
         )
@@ -181,8 +181,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso quando campo especificado e vazio`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = listOf("importante"),
             caseSensitive = false
         )
@@ -199,8 +199,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando titulo e conteudo combinados contem a palavra chave`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.BOTH,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.BOTH,
             keywords = listOf("verifique"),
             caseSensitive = false
         )
@@ -218,8 +218,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro com acentuacao mesmo com case insensitive`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("ação"),
             caseSensitive = false
         )
@@ -236,8 +236,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando palavra chave possui emoji`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = listOf("🚨urgente"),
             caseSensitive = false
         )
@@ -254,8 +254,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro mesmo quando palavra chave e substring de outra`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("ban"),
             caseSensitive = false
         )
@@ -273,8 +273,8 @@ class ConditionExtensionFunTest {
     fun `retorna verdadeiro com grande volume de palavras chave`() {
         val keywords = List(1000) { "chave$it" } + "alvo"
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = keywords,
             caseSensitive = false
         )
@@ -291,8 +291,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna falso com campo titulo e conteudo vazios`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.BOTH,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.BOTH,
             keywords = listOf("qualquer"),
             caseSensitive = false
         )
@@ -309,8 +309,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro quando palavra chave e composta e esta no titulo`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.TITLE,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.TITLE,
             keywords = listOf("pague agora"),
             caseSensitive = false
         )
@@ -328,8 +328,8 @@ class ConditionExtensionFunTest {
     @Test
     fun `retorna verdadeiro mesmo com repeticoes da palavra chave`() {
         val condition = Condition(
-            type = ConditionType.ONLY_IF,
-            field = NotificationField.CONTENT,
+            type = Condition.Type.ONLY_IF,
+            field = Condition.NotificationField.CONTENT,
             keywords = listOf("teste"),
             caseSensitive = false
         )

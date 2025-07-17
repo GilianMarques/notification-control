@@ -16,8 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateConditionBinding
 import dev.gmarques.controledenotificacoes.domain.model.Condition
-import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
-import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
+import dev.gmarques.controledenotificacoes.domain.model.Condition.Type
+import dev.gmarques.controledenotificacoes.domain.model.Condition.NotificationField
+
+
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
@@ -71,8 +73,8 @@ class AddOrUpdateConditionFragment : MyFragment() {
     private fun setupConditionType() = with(binding) {
         mbtTypeCondition.addOnButtonCheckedListener { group: MaterialButtonToggleGroup, btnId: Int, checked: Boolean ->
             when (group.checkedButtonId) {
-                R.id.btn_only_if -> viewModel.setConditionType(ConditionType.ONLY_IF)
-                R.id.btn_except_if -> viewModel.setConditionType(ConditionType.EXCEPT)
+                R.id.btn_only_if -> viewModel.setConditionType(Type.ONLY_IF)
+                R.id.btn_except_if -> viewModel.setConditionType(Type.EXCEPT)
             }
         }
     }
@@ -192,10 +194,10 @@ class AddOrUpdateConditionFragment : MyFragment() {
 
     }
 
-    private fun updateConditionType(type: ConditionType?) = with(binding) {
+    private fun updateConditionType(type: Type?) = with(binding) {
         when (type) {
-            ConditionType.ONLY_IF -> mbtTypeCondition.check(R.id.btn_only_if)
-            ConditionType.EXCEPT -> mbtTypeCondition.check(R.id.btn_except_if)
+            Type.ONLY_IF -> mbtTypeCondition.check(R.id.btn_only_if)
+            Type.EXCEPT -> mbtTypeCondition.check(R.id.btn_except_if)
             null -> mbtTypeCondition.check(0)
         }
     }
