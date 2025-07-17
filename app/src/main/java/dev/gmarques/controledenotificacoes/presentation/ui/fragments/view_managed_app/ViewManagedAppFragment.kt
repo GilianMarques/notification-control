@@ -1,12 +1,8 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
 import android.app.PendingIntent
-import android.content.ActivityNotFoundException
-import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -174,9 +170,7 @@ class ViewManagedAppFragment() : MyFragment(),
             goBack()
         })
 
-        ivMenu.setOnClickListener(AnimatedClickListener {
-            showMenu()
-        })
+        setupPopUpMenu(ivMenu)
 
     }
 
@@ -216,7 +210,7 @@ class ViewManagedAppFragment() : MyFragment(),
         }
     }
 
-    private fun showMenu() {
+    private fun setupPopUpMenu(ivMenu: View) {
         val popupMenu = popupMenu {
             if (!viewModel.notFoundApp) section {
                 title = getString(R.string.Notificacoes)
@@ -268,43 +262,14 @@ class ViewManagedAppFragment() : MyFragment(),
                 }
             }
 
-            section {
-                title = getString(R.string.Sistema)
-                item {
-                    label = getString(R.string.Historico_de_notifica_es)
-                    icon = R.drawable.vec_open_app
-                    callback = {
-                        openSystemsNotificationHistory()
-                    }
-                }
-            }
-
         }
 
-        popupMenu.show(this@ViewManagedAppFragment.requireContext(), binding.ivMenu)
+
+        ivMenu.setOnClickListener(AnimatedClickListener {
+            popupMenu.show(this@ViewManagedAppFragment.requireContext(), binding.ivMenu)
+        })
     }
 
-    private fun openSystemsNotificationHistory() {
-        val intent = Intent("android.settings.NOTIFICATION_HISTORY")
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-        try {
-            startActivity(intent)
-        } catch (_: ActivityNotFoundException) {
-            try {
-                // Fallback: abre as configurações gerais de notificações
-                val fallbackIntent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                fallbackIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(fallbackIntent)
-            } catch (_: Exception) {
-                showErrorSnackBar(
-                    getString(R.string.Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema),
-                    binding.fabOpenApp
-                )
-            }
-        }
-
-    }
 
     private fun confirmClearHistory() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Por_favor_confirme))
@@ -320,15 +285,10 @@ class ViewManagedAppFragment() : MyFragment(),
         MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme)).setMessage(
             getString(R.string.Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento)
         ).setPositiveButton(
-            getString(R.string.Remover), object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    viewModel.deleteApp()
-                }
-            }).setNegativeButton(
-            getString(R.string.Cancelar), object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                }
-            }).setCancelable(false).setIcon(R.drawable.vec_alert).show()
+            getString(R.string.Remover)
+        ) { dialog, which -> viewModel.deleteApp() }.setNegativeButton(
+            getString(R.string.Cancelar)
+        ) { dialog, which -> }.setCancelable(false).setIcon(R.drawable.vec_alert).show()
     }
 
     private fun navigateToEditRule() {

@@ -1,6 +1,8 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings
 
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,17 +65,30 @@ class SettingsFragment : MyFragment() {
         setupActionBar(binding.actionbar)
         setupResetHintsButton()
         setupRequestNotificationAccessPermission()
+        setupOpenSystemsNotificationHistory()
         observeEvents()
         setupVersion()
     }
 
+    private fun setupOpenSystemsNotificationHistory() = with(binding) {
+        tvSystemHistory.setOnClickListener(AnimatedClickListener {
+
+            val intent = Intent("android.settings.NOTIFICATION_HISTORY")
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+            try {
+                startActivity(intent)
+            } catch (_: ActivityNotFoundException) {
+                showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema))
+            }
+        })
+    }
 
     private fun setupResetHintsButton() = with(binding) {
         tvResetHints.setOnClickListener(AnimatedClickListener {
             viewModel.resetHints()
         })
     }
-
 
     private fun setupRequestNotificationAccessPermission() = with(binding) {
 

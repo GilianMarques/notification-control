@@ -159,6 +159,8 @@ class HomeFragment : MyFragment() {
         else navigate()
     }
 
+
+
     private fun navigateToSettingsFragment() {
 
         val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toSettingsFragment()) }
