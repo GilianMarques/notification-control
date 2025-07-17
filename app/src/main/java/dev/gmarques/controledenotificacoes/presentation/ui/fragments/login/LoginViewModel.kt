@@ -2,16 +2,17 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.login
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.firebase.ui.auth.IdpResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.text.MessageFormat
 import javax.inject.Inject
 
@@ -28,28 +29,42 @@ class LoginViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
 ) : ViewModel() {
 
+    private val _statesFlow = MutableStateFlow<State>(State.Idle)
+    val statesFlow: StateFlow<State> get() = _statesFlow
 
-    private val _eventFlow = MutableSharedFlow<LoginEvent>(replay = 1)
-    val eventFlow: SharedFlow<LoginEvent> get() = _eventFlow
+    private val _eventsChannel = Channel<LoginEvent>(Channel.BUFFERED)
+    val eventsFlow: Flow<LoginEvent> get() = _eventsChannel.receiveAsFlow()
+
+
+    fun getGuestUser(): User {
+        return getUserUseCase() ?: error("deveria retornar o usuario convidado aqui, e nao nulo.")
+    }
+
+    fun notifyLoginSuccess() {
+        _eventsChannel.trySend(LoginEvent.Success(getGuestUser()))
+    }
+
+    fun startLoginFlow(asGuest: Boolean) {
+        _statesFlow.tryEmit(State.LoginIn)
+        _eventsChannel.trySend(LoginEvent.StartFlow(asGuest))
+    }
 
     /**
-     * Lida com o resultado do fluxo de autenticação FirebaseUI.
-     * Emite eventos de sucesso ou erro com base no resultado.
+     * Notifica a interface de usuário que o processo de login falhou.
+     * O evento dispara a vibração de erro uma unica vez, e o estado seta a mensagem de erro na tela de maneira persistente
+     * até que o estado mude
+     *
+     * @param idpResponse A resposta do provedor de identidade, contendo informações sobre o erro.
      */
-    fun handleLoginResult(resultCode: Int, response: IdpResponse?) = viewModelScope.launch {
-
-        if (resultCode == android.app.Activity.RESULT_OK) {
-            val user = getUserUseCase() ?: error("user nao pode ser nulo se o login foi bem sucedido")
-            _eventFlow.emit(LoginEvent.Success(user))
-        } else {
-            _eventFlow.emit(LoginEvent.Error(response.toErrorMessage()))
-        }
+    fun notifyLoginFailed(idpResponse: IdpResponse?) {
+        _statesFlow.tryEmit(State.Error(idpResponse.toErrorMessage()))
+        _eventsChannel.trySend(LoginEvent.Error)
     }
 
     /**
      * Converte um objeto IdpResponse em uma mensagem de erro legível.
      */
-    private fun IdpResponse?.toErrorMessage(): String {
+    fun IdpResponse?.toErrorMessage(): String {
         if (this == null) return context.getString(R.string.Voce_cancelou_o_login)
 
         return when (error?.errorCode) {
@@ -68,16 +83,22 @@ class LoginViewModel @Inject constructor(
             )
         }
     }
+}
 
-    fun getGuestUser(): User {
-        return getUserUseCase() ?: error("deveria retornar o usuario convidado aqui, e nao nulo.")
-    }
+
+sealed class LoginEvent {
+    data class StartFlow(val asGuest: Boolean) : LoginEvent()
+    data class Success(val user: User) : LoginEvent()
+    object Error : LoginEvent()
 
 }
 
-sealed class LoginEvent {
-    object StartFlow : LoginEvent()
-    data class Success(val user: User) : LoginEvent()
-    data class Error(val message: String) : LoginEvent()
+/**
+ * Representa os estados da interface
+ */
+sealed class State {
+    object Idle : State()
+    data class Error(val message: String) : State()
+    object LoginIn : State()
 }
 

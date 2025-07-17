@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -15,7 +13,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentLoginBinding
-import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
@@ -27,7 +24,6 @@ class LoginFragment : MyFragment() {
 
     private val viewModel: LoginViewModel by viewModels()
     private lateinit var binding: FragmentLoginBinding
-
     private val signInLauncher = setupSignInLauncher()
 
     override fun onCreateView(
@@ -43,21 +39,24 @@ class LoginFragment : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         awaitLottieAnim()
-        setupFabTryAgain()
-        setupFabLogin()
+        setupFabs()
         setupTvGuest()
         observeViewModelEvents()
+        observeStates()
     }
 
     private fun setupTvGuest() = with(binding) {
         tvGuest.setOnClickListener(AnimatedClickListener {
-            startLoginFlow(true)
+            viewModel.startLoginFlow(true)
         })
 
     }
 
+    /**
+     * Exibe a UI apenas quando a animação do lotie esta carregada
+     */
     private fun awaitLottieAnim() {
-        binding.lottieView.addLottieOnCompositionLoadedListener { binding.clContent.isVisible = true }
+        binding.lottieView.addLottieOnCompositionLoadedListener { binding.clContent.visibility = View.VISIBLE }
     }
 
     /**
@@ -67,92 +66,110 @@ class LoginFragment : MyFragment() {
     private fun setupSignInLauncher(): ActivityResultLauncher<Intent?> {
         return registerForActivityResult(
             FirebaseAuthUIActivityResultContract()
-        ) { res ->
-            viewModel.handleLoginResult(res.resultCode, res.idpResponse)
+        ) { result ->
+
+            if (result.resultCode == android.app.Activity.RESULT_OK) viewModel.notifyLoginSuccess()
+            else viewModel.notifyLoginFailed(result.idpResponse)
         }
     }
+
 
     /**
      * Observa os eventos do ViewModel para reagir a diferentes estados do fluxo de login.
      */
     private fun observeViewModelEvents() {
-        collectFlow(viewModel.eventFlow) { event ->
+        collectFlow(viewModel.eventsFlow) { event ->
             when (event) {
 
-                is LoginEvent.StartFlow -> startLoginFlow()
-                is LoginEvent.Success -> onLoginSuccess(event.user)
-                is LoginEvent.Error -> onLoginError(event.message)
+                is LoginEvent.StartFlow -> {
+                    startLogin(event.asGuest)
+                }
+
+                is LoginEvent.Success -> {
+                    findNavControllerMain().navigate(
+                        LoginFragmentDirections.toSplashFragment(event.user)
+                    )
+                }
+
+                is LoginEvent.Error -> {
+                    vibrator.error()
+                }
             }
         }
     }
 
     /**
-     * Configura o listener para o botão de tentar novamente.
+     * Adequa a interface de acordo com o estado do fluxo de login
      */
-    private fun setupFabTryAgain() {
-        binding.fabTryAgain.setOnClickListener {
-            binding.fabTryAgain.isInvisible = true
-            binding.progressBar.isVisible = true
-            binding.tvInfo.text = ""
-            startLoginFlow()
+    private fun observeStates() {
+        collectFlow(viewModel.statesFlow) { state ->
+            when (state) {
+                is State.Error -> {
+                    binding.fabTryAgain.visibility = View.VISIBLE
+                    binding.tvInfo.visibility = View.VISIBLE
+                    binding.fabLogin.visibility = View.INVISIBLE
+                    binding.tvGuest.visibility = View.INVISIBLE
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.tvInfo.text = state.message
+                }
+
+                State.Idle -> {
+                    binding.fabTryAgain.visibility = View.INVISIBLE
+                    binding.tvInfo.visibility = View.INVISIBLE
+                    binding.fabLogin.visibility = View.VISIBLE
+                    binding.tvGuest.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.INVISIBLE
+
+                }
+
+                State.LoginIn -> {
+                    binding.tvInfo.visibility = View.INVISIBLE
+                    binding.tvGuest.visibility = View.INVISIBLE
+                    binding.fabLogin.visibility = View.INVISIBLE
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.fabTryAgain.visibility = View.INVISIBLE
+
+                }
+            }
         }
     }
 
+
     /**
-     * Configura o listener para o botão de login.
+     * Configura os botões de ação flutuante (FABs) para iniciar o fluxo de login.
      */
-    private fun setupFabLogin() {
-        binding.fabLogin.setOnClickListener {
-            startLoginFlow()
-        }
+    private fun setupFabs() {
+        binding.fabLogin.setOnClickListener { viewModel.startLoginFlow(false) }
+        binding.fabTryAgain.setOnClickListener { viewModel.startLoginFlow(false) }
     }
+
 
     /**
      * Inicia o fluxo de login usando o FirebaseUI.
      */
-    private fun startLoginFlow(asGuest: Boolean = false) {
-
-        binding.tvInfo.isInvisible = true
-        binding.tvGuest.isInvisible = true
-        binding.fabLogin.isInvisible = true
-        binding.progressBar.isVisible = true
+    private fun startLogin(asGuest: Boolean) {
 
         if (asGuest) {
-            Firebase.auth.signInAnonymously().addOnSuccessListener {
-                onLoginSuccess(viewModel.getGuestUser())
-                // TODO: o fluxo buga qdo da erro e a tela roda ou muda tema
-            }
+            Firebase.auth.signInAnonymously()
+                .addOnSuccessListener {
+                    viewModel.notifyLoginSuccess()
+                }
             return
         }
 
-        val providers = listOf(AuthUI.IdpConfig.GoogleBuilder().build())
+        val providers = listOf(
+            AuthUI.IdpConfig.GoogleBuilder()
+                .build()
+        )
 
-        val signInIntent = AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers)
-            .setLogo(R.drawable.ic_launcher_foreground).setTheme(R.style.AppTheme).build()
+        val signInIntent = AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .setLogo(R.drawable.ic_launcher_foreground)
+            .setTheme(R.style.AppTheme)
+            .build()
 
         signInLauncher.launch(signInIntent)
-    }
-
-    /**
-     * Manipula o sucesso do login, configurando a UI com os dados do usuário.
-     * @param user O objeto User do usuário logado.
-     */
-    private fun onLoginSuccess(user: User) {
-        findNavControllerMain().navigate(LoginFragmentDirections.toSplashFragment(user))
-    }
-
-    /**
-     * Manipula o erro do login, exibindo uma mensagem e o botão de tentar novamente.
-     * @param message A mensagem de erro a ser exibida.
-     */
-    private fun onLoginError(message: String) {
-
-        vibrator.error()
-        binding.fabTryAgain.isVisible = true
-        binding.progressBar.isInvisible = true
-        binding.tvInfo.text = message
-        binding.tvInfo.isVisible = true
-
     }
 
 
