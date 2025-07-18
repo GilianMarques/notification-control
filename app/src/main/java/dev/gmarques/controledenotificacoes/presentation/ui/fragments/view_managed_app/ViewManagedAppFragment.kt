@@ -65,12 +65,12 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pkg = if (args.packageId != null) {
-            viewModel.setup(args.packageId!!)
-            args.packageId!!
+        val pkg = if (args.packageName != null) {
+            viewModel.setup(args.packageName!!)
+            args.packageName!!
         } else if (args.app != null) {
             viewModel.setup(args.app!!)
-            args.app!!.packageId
+            args.app!!.packageName
         } else {
             goBack()
             null
@@ -144,8 +144,8 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         hideViewOnRVScroll(rvHistory, fabOpenApp)
         fabOpenApp.setOnClickListener(AnimatedClickListener {
 
-            val packageId = viewModel.managedAppFlow.value!!.packageId
-            val launched = requireMainActivity().launchApp(packageId)
+            val packageName = viewModel.managedAppFlow.value!!.packageName
+            val launched = requireMainActivity().launchApp(packageName)
             if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), fabOpenApp)
 
         })

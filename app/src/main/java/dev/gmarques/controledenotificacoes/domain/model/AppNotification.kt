@@ -10,7 +10,7 @@ import java.io.Serializable
  * Use a Factory [AppNotificationFactory.create] para instanciar o objeto com segurança todo como bloquear  o contrutor?
  */
 data class AppNotification(
-    val packageId: String,
+    val packageName: String,
     val title: String,
     val content: String,
     val timestamp: Long,

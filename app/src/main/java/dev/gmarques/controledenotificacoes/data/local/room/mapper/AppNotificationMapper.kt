@@ -11,7 +11,7 @@ object AppNotificationMapper {
         AppNotificationValidator.validate(model)
 
         return AppNotificationEntity(
-            packageId = model.packageId,
+            packageName = model.packageName,
             title = model.title,
             content = model.content,
             timestamp = model.timestamp,
@@ -20,7 +20,7 @@ object AppNotificationMapper {
 
     fun toModel(entity: AppNotificationEntity): AppNotification {
         return AppNotification(
-            packageId = entity.packageId,
+            packageName = entity.packageName,
             title = entity.title,
             content = entity.content,
             timestamp = entity.timestamp,

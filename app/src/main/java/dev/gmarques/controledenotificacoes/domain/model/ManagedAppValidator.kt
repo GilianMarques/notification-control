@@ -15,17 +15,17 @@ object ManagedAppValidator {
     /**
      * Valida um objeto ManagedApp.
      *
-     * Esta função verifica a validade das propriedades `packageId` e `ruleId` do objeto [ManagedApp] fornecido.
+     * Esta função verifica a validade das propriedades `packageName` e `ruleId` do objeto [ManagedApp] fornecido.
      * Ela utiliza as funções `validatePackageId` e `validateRuleId` para realizar a validação.
      * Caso qualquer validação falhe, uma exceção será lançada.
      *
      * @param managedApp O objeto [ManagedApp] a ser validado.
-     * @throws BlankStringException Se o `packageId` ou `ruleId` for inválido.
+     * @throws [BlankPackageIdException] ou [BlankRuleIdException] Se o `packageName` ou `ruleId` for inválido.
      * @see validatePackageId
      * @see validateRuleId
      */
     fun validate(managedApp: ManagedApp) {
-        validatePackageId(managedApp.packageId).getOrThrow()
+        validatePackageId(managedApp.packageName).getOrThrow()
         validateRuleId(managedApp.ruleId).getOrThrow()
     }
 
@@ -36,13 +36,13 @@ object ManagedAppValidator {
      * Se estiver vazio, retorna `Result.failure` com `BlankStringException`.
      * Caso contrário, retorna `Result.success` com o ID de pacote original.
      *
-     * @param packageId O ID de pacote a ser validado.
-     * @return Um objeto `Result`. Sucesso contém o `packageId`. Falha contém `BlankStringException`.
-     * @throws BlankPackageIdException se o `packageId` for vazio.
+     * @param packageName O ID de pacote a ser validado.
+     * @return Um objeto `Result`. Sucesso contém o `packageName`. Falha contém `BlankStringException`.
+     * @throws BlankPackageIdException se o `packageName` for vazio.
      */
-    fun validatePackageId(packageId: String): Result<String> {
-        return if (packageId.isEmpty()) Result.failure(BlankPackageIdException())
-        else Result.success(packageId)
+    fun validatePackageId(packageName: String): Result<String> {
+        return if (packageName.isEmpty()) Result.failure(BlankPackageIdException())
+        else Result.success(packageName)
     }
 
     /**

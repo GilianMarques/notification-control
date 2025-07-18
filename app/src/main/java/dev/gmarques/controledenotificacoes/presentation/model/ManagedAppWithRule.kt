@@ -14,7 +14,7 @@ import java.io.Serializable
 @Keep
 data class ManagedAppWithRule(
     val name: String,
-    val packageId: String,
+    val packageName: String,
     val rule: Rule,
     val hasPendingNotifications: Boolean,
     val uninstalled: Boolean,
@@ -25,7 +25,7 @@ data class ManagedAppWithRule(
         fun from(installedApp: InstalledApp, managedApp: ManagedApp, rule: Rule): ManagedAppWithRule {
             return ManagedAppWithRule(
                 name = installedApp.name,
-                packageId = installedApp.packageId,
+                packageName = installedApp.packageName,
                 rule = rule,
                 hasPendingNotifications = managedApp.hasPendingNotifications,
                 installedApp.uninstalled,

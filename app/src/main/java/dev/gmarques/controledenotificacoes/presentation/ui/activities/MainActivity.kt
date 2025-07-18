@@ -327,11 +327,11 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     /**
      * Tenta abrir um app com base no id do pacote
-     * @param packageId id do pacote do app a ser aberto ex: com.google.android.youtube
+     * @param packageName id do pacote do app a ser aberto ex: com.google.android.youtube
      * @return true se o app foi aberto com sucesso, false caso contrario
      */
-    fun launchApp(packageId: String): Boolean {
-        val launchIntent = packageManager.getLaunchIntentForPackage(packageId)
+    fun launchApp(packageName: String): Boolean {
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
         return if (launchIntent != null) {
             startActivity(launchIntent)

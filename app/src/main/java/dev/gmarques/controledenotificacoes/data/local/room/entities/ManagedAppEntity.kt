@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "managed_apps")
 data class ManagedAppEntity(
     @PrimaryKey
-    val packageId: String,
+    val packageName: String,
     val ruleId: String,
     val hasPendingNotifications: Boolean,
 )

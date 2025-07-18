@@ -64,11 +64,11 @@ class SelectAppsViewModel @Inject constructor(
         val installedApps = getAllInstalledAppsUseCase(
             excludePackages = preSelectedAppsToHide,
         ).map { installedApp ->
-            SelectableApp(installedApp, selectedApps.any { it.packageId == installedApp.packageId })
+            SelectableApp(installedApp, selectedApps.any { it.packageName == installedApp.packageName })
         }
 
         selectedApps = selectedApps.filter { selectedApp ->
-            installedApps.any { selectedApp.packageId == it.installedApp.packageId }
+            installedApps.any { selectedApp.packageName == it.installedApp.packageName }
         }.toHashSet()
 
         _statesFlow.tryEmit(Idle)
@@ -102,7 +102,7 @@ class SelectAppsViewModel @Inject constructor(
 
             val apps = installedApps.value.toMutableList()
 
-            val index = apps.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
+            val index = apps.indexOfFirst { it.installedApp.packageName == app.installedApp.packageName }
             apps[index] = app.copy(isSelected = checked)
             _installedApps.tryEmit(apps.toList())
 

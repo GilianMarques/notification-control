@@ -13,7 +13,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
-        const val PACKAGE_ID = "packageId"
+        const val PACKAGE_ID = "packageName"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {

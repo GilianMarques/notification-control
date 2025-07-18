@@ -16,8 +16,8 @@ class AppNotificationRepositoryImpl @Inject constructor(
         AppNotificationMapper.toEntity(notification).let { dao.insert(it) }
     }
 
-    override suspend fun deleteAll(packageId: String) {
-        dao.deleteAll(packageId)
+    override suspend fun deleteAll(packageName: String) {
+        dao.deleteAll(packageName)
     }
 
     override suspend fun getByPkg(pkg: String): AppNotification? {

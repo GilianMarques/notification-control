@@ -60,7 +60,7 @@ class NotificationRuleProcessorImpl @Inject constructor(
         this@NotificationRuleProcessorImpl.callback = callback
 
 
-        val managedApp = getManagedAppByPackageIdUseCase(appNotification.packageId)
+        val managedApp = getManagedAppByPackageIdUseCase(appNotification.packageName)
 
         if (managedApp != null) {
             val rule =
@@ -147,7 +147,7 @@ class NotificationRuleProcessorImpl @Inject constructor(
             }
         }
 // TODO: se for notificar só pra cancel, considerar o uso compulsivo de cancel em nougat e inferiores
-        alarmScheduler.scheduleAlarm(appNotification.packageId, nextUnlockTime)
+        alarmScheduler.scheduleAlarm(appNotification.packageName, nextUnlockTime)
         runBlocking { updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true)) }
         saveNotificationOnHistory()
         saveLargeIconOnStorage()

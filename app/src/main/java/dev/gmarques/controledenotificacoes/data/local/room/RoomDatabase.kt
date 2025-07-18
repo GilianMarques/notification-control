@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
 /**
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 14:39.
+ * @see dev.gmarques.controledenotificacoes.di.modules.RoomDatabaseModule
  */
 
 @Database(
@@ -21,7 +22,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
         ManagedAppEntity::class,
         AppNotificationEntity::class
     ],
-    version = 5
+    version = 1
 )
 abstract class RoomDatabase : RoomDatabase() {
 

@@ -11,7 +11,7 @@ import java.io.Serializable
  */
 data class InstalledApp(
     val name: String,
-    val packageId: String,
+    val packageName: String,
     val isBeingManaged: Boolean,
     val uninstalled: Boolean = false,
 ) : Serializable {
@@ -26,7 +26,7 @@ data class InstalledApp(
         fun uninstalledApp(targetPackage: String): InstalledApp {
             return InstalledApp(
                 name = extractNameFromPkg(targetPackage),
-                packageId = targetPackage,
+                packageName = targetPackage,
                 isBeingManaged = true,
                 uninstalled = true,
             )

@@ -19,7 +19,7 @@ import dev.gmarques.controledenotificacoes.framework.NotificationParser
 data class ParsedNotificationData(
     val title: String,
     val content: String,
-    val packageId: String,
+    val packageName: String,
     val timestamp: Long,
     val smallIcon: Icon?,
     val largeIcon: Icon?,

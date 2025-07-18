@@ -52,7 +52,7 @@ class AddManagedAppsViewModel @Inject constructor(
     fun addNewlySelectedApps(apps: List<InstalledApp>) {
         _selectedApps.value = _selectedApps.value!!.values.toMutableList().apply {
             addAll(apps)
-        }.associateBy { it.packageId }
+        }.associateBy { it.packageName }
     }
 
     fun setRule(rule: Rule?) = viewModelScope.launch(Main) {
@@ -61,21 +61,21 @@ class AddManagedAppsViewModel @Inject constructor(
     }
 
     fun getSelectedPackages(): Array<String> {
-        return selectedApps.value!!.values.map { it.packageId }.toTypedArray()
+        return selectedApps.value!!.values.map { it.packageName }.toTypedArray()
     }
 
     /**
      * Remove um aplicativo da lista de aplicativos atualmente selecionados.
      *
      * A função recebe um objeto [InstalledApp] representando o aplicativo a ser removido.
-     * Ela localiza o aplicativo na lista usando o packageId do aplicativo e o remove.
+     * Ela localiza o aplicativo na lista usando o packageName do aplicativo e o remove.
      * A remoção atualiza o [LiveData] `_selectedApps`, que notifica os observadores
      * sobre a mudança na lista de aplicativos selecionados.
      *
      * @param app O [InstalledApp] a ser removido da lista de aplicativos selecionados.
      */
     fun deleteApp(app: InstalledApp) {
-        _selectedApps.value = _selectedApps.value!!.toMutableMap().apply { remove(app.packageId) }
+        _selectedApps.value = _selectedApps.value!!.toMutableMap().apply { remove(app.packageName) }
     }
 
     /**
@@ -108,7 +108,7 @@ class AddManagedAppsViewModel @Inject constructor(
         apps.map {
             async {
                 val managedApp = ManagedApp(
-                    packageId = it.packageId,
+                    packageName = it.packageName,
                     ruleId = rule.id,
                     hasPendingNotifications = false
                 )
@@ -169,8 +169,8 @@ class AddManagedAppsViewModel @Inject constructor(
         addManagedAppUseCase(app)
     }
 
-    fun addSelectedAppByPkgId(pkgId: String) = viewModelScope.launch {
-        val installedApp = getInstalledAppByPackageOrDefaultUseCase(pkgId)
+    fun addSelectedAppByPkgId(packageName: String) = viewModelScope.launch {
+        val installedApp = getInstalledAppByPackageOrDefaultUseCase(packageName)
 
         if (installedApp.uninstalled) {
             _showError.postValue(EventWrapper(context.getString(R.string.O_aplicativo_n_o_pode_ser_selecionado)))
@@ -188,8 +188,8 @@ class AddManagedAppsViewModel @Inject constructor(
         return getRuleByIdUseCase(id)
     }
 
-    suspend fun getInstalledAppIcon(packageId: String): Drawable? {
-        return getInstalledAppIconUseCase(packageId)
+    suspend fun getInstalledAppIcon(packageName: String): Drawable? {
+        return getInstalledAppIconUseCase(packageName)
     }
 
 }

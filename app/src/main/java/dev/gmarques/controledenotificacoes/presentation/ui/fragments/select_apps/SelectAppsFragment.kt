@@ -151,7 +151,7 @@ class SelectAppsFragment : MyFragment() {
         collectFlow(viewModel.installedApps) {
             lifecycleScope.launch {
                 adapter.submitList(it, binding.tietSearch.text.toString().trim())
-                it.forEach { Log.d("USUK", "SelectAppsFragment.observeStates: ${it.installedApp.packageId}") }
+                it.forEach { Log.d("USUK", "SelectAppsFragment.observeStates: ${it.installedApp.packageName}") }
             }
         }
 

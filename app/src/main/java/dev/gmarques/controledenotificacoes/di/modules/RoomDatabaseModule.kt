@@ -7,19 +7,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.data.local.room.dao.AppNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_1_2
-
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_2_3
-
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_3_4
-
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_4_5
-
 import javax.inject.Singleton
 
 /**
@@ -44,7 +39,8 @@ object RoomDatabaseModule {
                 /**Nao esquece de aumentar a versão do DB em [RoomDatabase]*/
             )
 
-            .fallbackToDestructiveMigrationOnDowngrade(BuildConfig.DEBUG)
+            .fallbackToDestructiveMigrationOnDowngrade(true)
+            // TODO:  voltar a essa opçao ao mudar a versao para 28 .fallbackToDestructiveMigrationOnDowngrade(BuildConfig.DEBUG)
             .build()
     }
 

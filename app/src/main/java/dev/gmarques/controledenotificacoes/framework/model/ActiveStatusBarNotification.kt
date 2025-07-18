@@ -15,7 +15,7 @@ import android.graphics.drawable.Icon
 data class ActiveStatusBarNotification(
     val title: String,
     val content: String,
-    val packageId: String,
+    val packageName: String,
     val smallIcon: Icon?,
     val largeIcon: Icon?,
     val postTime: Long,

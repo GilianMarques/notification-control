@@ -39,7 +39,7 @@ class AppNotificationExtensionFunTest {
     }
 
     @Test
-    fun pendingIntentId_deve_retornar_packageId_mais_timestamp() {
+    fun pendingIntentId_deve_retornar_packageName_mais_timestamp() {
         val notification = AppNotification("com.app", "titulo", "conteudo", 123456789L)
 
         val result = notification.pendingIntentId()
@@ -50,7 +50,7 @@ class AppNotificationExtensionFunTest {
     @Test
     fun bitmapId_deve_gerar_id_com_caracteres_validos() {
         val notification = AppNotification(
-            packageId = "com.exemplo.app",
+            packageName = "com.exemplo.app",
             title = "Titulo Notificacao!",
             content = "Conteudo #1",
             timestamp = 123456789L

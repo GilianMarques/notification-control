@@ -55,7 +55,7 @@ class SelectNotificationFragment : MyFragment() {
     }
 
     private fun onNotificationSelected(notification: ActiveStatusBarNotification) {
-        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to notification.packageId)
+        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to notification.packageName)
         setFragmentResult(RESULT_LISTENER_KEY, result)
         goBack()
     }

@@ -5,7 +5,7 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotificationValidator
 
 object AppNotificationValidator {
     fun validate(notification: AppNotification) {
-        ManagedAppValidator.validatePackageId(notification.packageId).getOrThrow()
+        ManagedAppValidator.validatePackageId(notification.packageName).getOrThrow()
     }
 
     /**
@@ -20,6 +20,7 @@ object AppNotificationValidator {
      * @throws BlankIdException se a string de entrada estiver vazia.
      */
     fun validateRuleId(ruleId: String): Result<String> {
+        // TODO: nao é usado? é util? 
         return if (ruleId.isEmpty()) Result.failure(BlankIdException())
         else Result.success(ruleId)
     }

@@ -62,7 +62,7 @@ class GetInstalledAppsUseCaseTest {
             verify(repository).getInstalledApps(targetName, true, true, excludedPackages)
     }
 
-    private fun mockApp(name: String, packageId: String): InstalledApp {
-        return InstalledApp(name, packageId, false)
+    private fun mockApp(name: String, packageName: String): InstalledApp {
+        return InstalledApp(name, packageName, false)
     }
 }

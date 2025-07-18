@@ -96,7 +96,7 @@ class HomeViewModel @Inject constructor(
         return managedApps.map { managedApp ->
 
             val installedApp = runBlocking {
-                getInstalledAppByPackageOrDefaultUseCase(managedApp.packageId)
+                getInstalledAppByPackageOrDefaultUseCase(managedApp.packageName)
             }
 
             ManagedAppWithRule.from(installedApp, managedApp, rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound)

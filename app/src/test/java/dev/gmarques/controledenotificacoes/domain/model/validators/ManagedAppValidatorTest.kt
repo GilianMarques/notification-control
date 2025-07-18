@@ -9,13 +9,13 @@ import org.junit.Test
 class ManagedAppValidatorTest {
 
     @Test
-    fun `ao validar packageId valido deve retornar sucesso`() {
+    fun `ao validar packageName valido deve retornar sucesso`() {
         val result = ManagedAppValidator.validatePackageId("com.exemplo.app")
         assertTrue(result.isSuccess)
     }
 
     @Test
-    fun `ao validar packageId vazio deve retornar falha com BlankStringException`() {
+    fun `ao validar packageName vazio deve retornar falha com BlankStringException`() {
         val result = ManagedAppValidator.validatePackageId("")
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException)
@@ -36,7 +36,7 @@ class ManagedAppValidatorTest {
 
     @Test
     fun `ao validar managedApp com dados validos deve passar sem excecao`() {
-        val managedApp = ManagedApp(packageId = "com.exemplo.app", ruleId = "regra123", hasPendingNotifications = false)
+        val managedApp = ManagedApp(packageName = "com.exemplo.app", ruleId = "regra123", hasPendingNotifications = false)
         try {
             ManagedAppValidator.validate(managedApp)
         } catch (e: Exception) {
@@ -45,8 +45,8 @@ class ManagedAppValidatorTest {
     }
 
     @Test
-    fun `ao validar managedApp com packageId invalido deve lancar BlankStringException`() {
-        val managedApp = ManagedApp(packageId = "", ruleId = "regra123", hasPendingNotifications = false)
+    fun `ao validar managedApp com packageName invalido deve lancar BlankStringException`() {
+        val managedApp = ManagedApp(packageName = "", ruleId = "regra123", hasPendingNotifications = false)
         try {
             ManagedAppValidator.validate(managedApp)
             fail("Era esperada uma BlankStringException")
@@ -57,7 +57,7 @@ class ManagedAppValidatorTest {
 
     @Test
     fun `ao validar managedApp com ruleId invalido deve lancar BlankStringException`() {
-        val managedApp = ManagedApp(packageId = "com.exemplo.app", ruleId = "", hasPendingNotifications = false)
+        val managedApp = ManagedApp(packageName = "com.exemplo.app", ruleId = "", hasPendingNotifications = false)
         try {
             ManagedAppValidator.validate(managedApp)
             fail("Era esperada uma BlankStringException")

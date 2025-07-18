@@ -27,7 +27,7 @@ object ActiveStatusBarNotificationFactory {
         return ActiveStatusBarNotification(
             title = parsed.title,
             content = parsed.content,
-            packageId = parsed.packageId,
+            packageName = parsed.packageName,
             postTime = parsed.timestamp,
             smallIcon = parsed.smallIcon,
             largeIcon = parsed.largeIcon,

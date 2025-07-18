@@ -185,7 +185,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         rule: Rule,
         managedApp: ManagedApp,
     ) {
-        Log.d("USUK", "NotificationListener.cancelNotification: ${activeNotification.packageId} ")
+        Log.d("USUK", "NotificationListener.cancelNotification: ${activeNotification.packageName} ")
         cancelValidationCallbackTimer()
         crashIfNotificationDoesNotRemoveInDebugBuild(activeNotification)
         cancelNotification(activeNotification.key)
@@ -195,7 +195,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onNotificationSnoozed(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
 
-        Log.d("USUK", "NotificationListener.snoozeNotification: ${activeNotification.packageId} ")
+        Log.d("USUK", "NotificationListener.snoozeNotification: ${activeNotification.packageName} ")
         cancelValidationCallbackTimer()
         crashIfNotificationDoesNotRemoveInDebugBuild(activeNotification)
         snoozeNotification(activeNotification.key, snoozePeriod) // TODO: testar isso! 
@@ -204,14 +204,14 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     /** Callback do [NotificationRuleProcessor]*/
     override fun onAppNotManaged(activeNotification: ActiveStatusBarNotification) {
-        Log.d("USUK", "NotificationListener.appNotManaged: ${activeNotification.packageId}")
+        Log.d("USUK", "NotificationListener.appNotManaged: ${activeNotification.packageName}")
         cancelValidationCallbackTimer()
         echoImpl.repostIfNotification(activeNotification)
     }
 
     /** Callback do [NotificationRuleProcessor]*/
     override fun onNotificationAllowed(activeNotification: ActiveStatusBarNotification) {
-        Log.d("USUK", "NotificationListener.allowNotification: ${activeNotification.packageId}")
+        Log.d("USUK", "NotificationListener.allowNotification: ${activeNotification.packageName}")
         cancelValidationCallbackTimer()
         echoImpl.repostIfNotification(activeNotification)
     }

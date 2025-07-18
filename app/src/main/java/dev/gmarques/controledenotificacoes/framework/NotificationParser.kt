@@ -52,7 +52,7 @@ object NotificationParser {
         return ParsedNotificationData(
             title = title,
             content = content,
-            packageId = sbn.packageName,
+            packageName = sbn.packageName,
             timestamp = sbn.postTime,
             smallIcon = notification.smallIcon,
             largeIcon = notification.getLargeIcon(),

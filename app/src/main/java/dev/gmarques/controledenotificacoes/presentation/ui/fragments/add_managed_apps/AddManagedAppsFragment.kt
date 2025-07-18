@@ -232,12 +232,12 @@ class AddManagedAppsFragment() : MyFragment() {
 
         setFragmentResultListener(SelectNotificationFragment.RESULT_LISTENER_KEY) { _, bundle ->
 
-            val pkgId = requireSerializableOf(
+            val packageName = requireSerializableOf(
                 bundle, SelectNotificationFragment.BUNDLED_PACKAGE_NAME_KEY, String()::class.java
             ) as String
 
             lifecycleScope.launch {
-                viewModel.addSelectedAppByPkgId(pkgId)
+                viewModel.addSelectedAppByPkgId(packageName)
             }
 
         }
@@ -286,13 +286,13 @@ class AddManagedAppsFragment() : MyFragment() {
 
                 val itemBinding = ItemAppSmallBinding.inflate(layoutInflater).apply {
                     name.text = app.name
-                    ivAppIcon.setImageDrawable(viewModel.getInstalledAppIcon(app.packageId))
+                    ivAppIcon.setImageDrawable(viewModel.getInstalledAppIcon(app.packageName))
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.deleteApp(app)
                     })
                 }
 
-                ContainerController.Child(app.packageId, app.name, itemBinding)
+                ContainerController.Child(app.packageName, app.name, itemBinding)
             }
 
             containerController.submitList(children)

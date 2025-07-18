@@ -21,8 +21,8 @@ object PendingIntentCache {
     /**
      * Removes from cache all pendingIntents related to a specific package
      */
-    fun removeAllFrom(packageId: String) {
-        cache.keys.filter { it.contains(packageId) }
+    fun removeAllFrom(packageName: String) {
+        cache.keys.filter { it.contains(packageName) }
             .forEach {
                 cache.remove(it)
                 Log.d("USUK", "PendingIntentCache.clearAllFrom: removing pendingIntent with key: ${it}")

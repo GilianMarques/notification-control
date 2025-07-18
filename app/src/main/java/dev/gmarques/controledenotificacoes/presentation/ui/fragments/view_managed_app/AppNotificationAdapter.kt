@@ -91,7 +91,7 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
 
     companion object DiffCallback : DiffUtil.ItemCallback<AppNotification>() {
         override fun areItemsTheSame(oldItem: AppNotification, newItem: AppNotification): Boolean {
-            return oldItem.timestamp == newItem.timestamp && oldItem.packageId == newItem.packageId
+            return oldItem.timestamp == newItem.timestamp && oldItem.packageName == newItem.packageName
         }
 
         override fun areContentsTheSame(oldItem: AppNotification, newItem: AppNotification): Boolean {

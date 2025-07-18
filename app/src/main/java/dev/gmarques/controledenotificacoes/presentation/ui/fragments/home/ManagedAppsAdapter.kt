@@ -2,8 +2,8 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
-import android.view.animation.AnimationUtils
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,8 +15,8 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppGridBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppListBinding
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -133,7 +133,7 @@ class ManagedAppsAdapter(
 
             CoroutineScope(Main).launch {
                 Glide.with(App.instance)
-                    .load(getInstalledAppIconUseCase(app.packageId))
+                    .load(getInstalledAppIconUseCase(app.packageName))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.vec_app)
                     .into(ivAppIcon)

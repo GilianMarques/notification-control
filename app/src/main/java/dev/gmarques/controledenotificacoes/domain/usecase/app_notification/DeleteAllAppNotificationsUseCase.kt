@@ -22,22 +22,22 @@ class DeleteAllAppNotificationsUseCase @Inject constructor(
      * Limpa o cache de intents e de bitmaps relacionado ao app e por fim apaga as notificaçoes do db
      * de forma que o cache bao fique orfao se houver algum erro entre as operações
      */
-    suspend operator fun invoke(packageId: String) {
-        removeBitmapsFromCache(packageId)
-        removePendingIntentsFromCache(packageId)
-        repository.deleteAll(packageId)
+    suspend operator fun invoke(packageName: String) {
+        removeBitmapsFromCache(packageName)
+        removePendingIntentsFromCache(packageName)
+        repository.deleteAll(packageName)
     }
 
-    private fun removeBitmapsFromCache(packageId: String) {
+    private fun removeBitmapsFromCache(packageName: String) {
         context.cacheDir.listFiles()?.forEach {
-            if (it.name.contains(packageId)) {
+            if (it.name.contains(packageName)) {
                 Log.d("USUK", "DeleteAllAppNotificationsUseCase.removeBitmapsFromCache: removing bitmap:  ${it.name}")
                 it.delete()
             }
         }
     }
 
-    private fun removePendingIntentsFromCache(packageId: String) {
-        PendingIntentCache.removeAllFrom(packageId)
+    private fun removePendingIntentsFromCache(packageName: String) {
+        PendingIntentCache.removeAllFrom(packageName)
     }
 }

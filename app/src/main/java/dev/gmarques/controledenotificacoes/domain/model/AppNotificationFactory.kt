@@ -27,7 +27,7 @@ object AppNotificationFactory {
         val parsed = NotificationParser.parse(sbn)
 
         return AppNotification(
-            packageId = parsed.packageId,
+            packageName = parsed.packageName,
             title = parsed.title,
             content = parsed.content,
             timestamp = parsed.timestamp

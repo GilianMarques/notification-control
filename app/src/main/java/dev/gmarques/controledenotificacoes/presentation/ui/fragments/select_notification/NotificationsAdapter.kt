@@ -51,13 +51,13 @@ class NotificationsAdapter(
 
     class DiffCallback : DiffUtil.ItemCallback<ActiveStatusBarNotification>() {
         override fun areItemsTheSame(oldItem: ActiveStatusBarNotification, newItem: ActiveStatusBarNotification): Boolean {
-            return oldItem.postTime == newItem.postTime && oldItem.packageId == newItem.packageId
+            return oldItem.postTime == newItem.postTime && oldItem.packageName == newItem.packageName
         }
 
         override fun areContentsTheSame(oldItem: ActiveStatusBarNotification, newItem: ActiveStatusBarNotification): Boolean {
             return oldItem.title == newItem.title &&
                     oldItem.content == newItem.content &&
-                    oldItem.packageId == newItem.packageId &&
+                    oldItem.packageName == newItem.packageName &&
                     oldItem.postTime == newItem.postTime
         }
     }

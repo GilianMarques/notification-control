@@ -89,7 +89,7 @@ class ViewManagedAppViewModel @Inject constructor(
         if (!initialized) {
             initialized = true
 
-            observeAppChanges(app.packageId)
+            observeAppChanges(app.packageName)
             observeAppNotifications(app)
         }
 
@@ -129,7 +129,7 @@ class ViewManagedAppViewModel @Inject constructor(
     }
 
     private fun observeAppNotifications(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
-        observeAppNotificationsByPkgIdUseCase(app.packageId).collect {
+        observeAppNotificationsByPkgIdUseCase(app.packageName).collect {
 
             val notifications = it.toMutableList()
                 .apply {
@@ -157,20 +157,20 @@ class ViewManagedAppViewModel @Inject constructor(
 
         delay(1500) // pra "dar tempo do usuario ler as notificações"
 
-        val packageId = _managedAppFlow.value?.packageId
+        val packageName = _managedAppFlow.value?.packageName
 
-        packageId?.let {
-            getManagedAppByPackageIdUseCase(packageId)
+        packageName?.let {
+            getManagedAppByPackageIdUseCase(packageName)
                 ?.let { app ->
                     updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
-                    cancelAlarmForAppUseCase(app.packageId)
+                    cancelAlarmForAppUseCase(app.packageName)
                 }
         }
     }
 
 
     fun deleteApp() = viewModelScope.launch {
-        deleteManagedAppAndItsNotificationsUseCase(_managedAppFlow.value!!.packageId)
+        deleteManagedAppAndItsNotificationsUseCase(_managedAppFlow.value!!.packageName)
         _eventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 
@@ -180,7 +180,7 @@ class ViewManagedAppViewModel @Inject constructor(
     }
 
     fun clearHistory() = viewModelScope.launch {
-        deleteAllAppNotificationsUseCase(managedAppFlow.value!!.packageId)
+        deleteAllAppNotificationsUseCase(managedAppFlow.value!!.packageName)
     }
 
     fun loadAppIcon(pkg: String, context: Context): Drawable = runBlocking {
@@ -193,7 +193,7 @@ class ViewManagedAppViewModel @Inject constructor(
     fun updateAppsRule(newRule: Rule) = viewModelScope.launch {
 
         _managedAppFlow.value?.let {
-            getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
+            getManagedAppByPackageIdUseCase(it.packageName)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
                 NotificationListener.instance?.evaluateActiveNotifications()
             }

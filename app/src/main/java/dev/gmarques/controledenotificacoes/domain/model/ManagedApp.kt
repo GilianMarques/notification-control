@@ -9,11 +9,11 @@ import java.io.Serializable
  *
  * Representa um aplicativo que está sob controle de uma regra específica.
  *
- * @param packageId O identificador do pacote do aplicativo instalado (ex: com.whatsapp).
+ * @param packageName O identificador do pacote do aplicativo instalado (ex: com.whatsapp).
  * @param ruleId O identificador único da regra que está sendo aplicada a esse aplicativo.
  */
 data class ManagedApp(
-    val packageId: String,
+    val packageName: String,
     val ruleId: String,
     val hasPendingNotifications: Boolean,
 ) : Serializable

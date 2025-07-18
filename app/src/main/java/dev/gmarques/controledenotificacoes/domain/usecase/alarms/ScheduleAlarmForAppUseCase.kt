@@ -26,20 +26,15 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
      * @param rule A regra associada ao aplicativo.
      */
     operator fun invoke(app: ManagedApp, rule: Rule) {
-        Log.d("USUK", "ScheduleAlarmForAppUseCase.invoke: rescheduled ${app.packageId}")
+        Log.d("USUK", "ScheduleAlarmForAppUseCase.invoke: rescheduled ${app.packageName}")
 
         val scheduleTimeMillis =
             if (rule.isAppInBlockPeriod()) rule.nextAppUnlockPeriodFromNow()
             else System.currentTimeMillis() + 2_000L
 
-        if (scheduleTimeMillis == NextAppUnlockTimeUseCase.INFINITE) return.also {
-            Log.d(
-                "USUK",
-                "ScheduleAlarmForAppUseCase.invoke: wont schedule notification for package ${app.packageId} 'cause the app is always block"
-            )
-        }
+        if (scheduleTimeMillis == NextAppUnlockTimeUseCase.INFINITE) return
 
-        alarmScheduler.scheduleAlarm(app.packageId, scheduleTimeMillis)
+        alarmScheduler.scheduleAlarm(app.packageName, scheduleTimeMillis)
 
 
     }

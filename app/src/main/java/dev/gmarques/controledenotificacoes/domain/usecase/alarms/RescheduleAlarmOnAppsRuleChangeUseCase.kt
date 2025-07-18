@@ -25,7 +25,7 @@ class RescheduleAlarmOnAppsRuleChangeUseCase @Inject constructor(
      */
     suspend operator fun invoke(app: ManagedApp, rule: Rule) = withContext(IO) {
 
-        if (alarmScheduler.isThereAnyAlarmSetForPackage(app.packageId)) scheduleAlarmForAppUseCase(app, rule)
+        if (alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)) scheduleAlarmForAppUseCase(app, rule)
 
     }
 

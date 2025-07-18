@@ -77,7 +77,7 @@ class InstalledInstalledAppRepositoryImpl @Inject constructor(
                     if (!isAppNameMatchingSearchQuery(lowerTargetName, appName)) return@async null
 
                     InstalledApp(
-                        packageId = appInfo.packageName,
+                        packageName = appInfo.packageName,
                         name = appName,
                         isBeingManaged = managedApp
                     )
@@ -151,7 +151,7 @@ class InstalledInstalledAppRepositoryImpl @Inject constructor(
             val appName = packageManager.getApplicationLabel(appInfo).toString()
 
             val installedApp = InstalledApp(
-                packageId = pkg,
+                packageName = pkg,
                 name = appName,
                 isBeingManaged = getManagedAppByPackageIdUseCase(pkg) != null
             )

@@ -60,7 +60,7 @@ class AppsAdapter(
                 tvAppName.text = selectedApp.installedApp.name
 
                 Glide.with(binding.ivAppIcon.context)
-                    .load(getInstalledAppIconUseCase(selectedApp.installedApp.packageId))
+                    .load(getInstalledAppIconUseCase(selectedApp.installedApp.packageName))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(binding.ivAppIcon)
             }
@@ -89,7 +89,7 @@ class AppsAdapter(
     class DiffCallback : DiffUtil.ItemCallback<SelectableApp>() {
 
         override fun areItemsTheSame(oldItem: SelectableApp, newItem: SelectableApp): Boolean {
-            return oldItem.installedApp.packageId == newItem.installedApp.packageId
+            return oldItem.installedApp.packageName == newItem.installedApp.packageName
                     && oldItem.isSelected == newItem.isSelected
 
         }

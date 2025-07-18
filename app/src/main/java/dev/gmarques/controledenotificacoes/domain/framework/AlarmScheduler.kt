@@ -12,25 +12,25 @@ interface AlarmScheduler {
      * Agenda uma alarme para disparar em determinado horario e
      * escreve o dados do agendamento nas preferencias.
      */
-    fun scheduleAlarm(packageId: String, millis: Long)
+    fun scheduleAlarm(packageName: String, millis: Long)
     fun scheduleAutoTurnOnAlarm(millis: Long)
 
     /**
      * Cancela o agendamento de um alarme alarme  e
      * remove o dados do agendamento das preferencias.
      */
-    fun cancelAlarm(packageId: String)
+    fun cancelAlarm(packageName: String)
 
     /**
      * Remove das preferências do pacote referente ao alarme.
      * Use essa função para remover o registro do agendamento depois que o alarme for disparado ou cancelado.
      */
-    fun deleteScheduleData(packageId: String)
+    fun deleteScheduleData(packageName: String)
 
     /**
      * Verifica se existe algum alarme agendado para o aplicativo especificado.
      */
-    fun isThereAnyAlarmSetForPackage(packageId: String): Boolean
+    fun isThereAnyAlarmSetForPackage(packageName: String): Boolean
 
     /**
      * Retorna todos os agendamentos ativos no momento

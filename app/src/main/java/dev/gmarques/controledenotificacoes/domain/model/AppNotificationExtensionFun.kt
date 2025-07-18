@@ -33,7 +33,7 @@ object AppNotificationExtensionFun {
     }
 
     fun AppNotification.pendingIntentId(): String {
-        return "${this.packageId}_${this.timestamp}"
+        return "${this.packageName}_${this.timestamp}"
     }
 
     /**
@@ -45,7 +45,7 @@ object AppNotificationExtensionFun {
      * é  atualizada e um novo bitmap é gerado mesmo que o bitmap seja o mesmo ja que a musica nao mudou. Entendeu?
      * */
     fun AppNotification.bitmapId(): String {
-        return "${this.packageId}_${this.title}_${this.content}"
+        return "${this.packageName}_${this.title}_${this.content}"
             .replace(Regex("[^a-zA-Z0-9]"), "") +
                 ".png"
 

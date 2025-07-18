@@ -92,7 +92,7 @@ class EchoStepOneFragment : MyFragment() {
 
     private fun setupFabEcho() {
         binding.fab.setOnClickListener {
-            findNavControllerMain().navigate(EchoStepOneFragmentDirections.toEchoStepTwoFragment())
+            findNavController().navigate(EchoStepOneFragmentDirections.toEchoStepTwoFragment())
         }
     }
 
@@ -122,9 +122,9 @@ class EchoStepOneFragment : MyFragment() {
                 val itemBinding = ItemAppSmartWatchBinding.inflate(layoutInflater)
                     .apply {
                         tvName.text = getString(R.string.Abrir_X_app, app.name)
-                        ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                        ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageName))
                         tvName.setOnClickListener(AnimatedClickListener {
-                            val launched = requireMainActivity().launchApp(app.packageId)
+                            val launched = requireMainActivity().launchApp(app.packageName)
                             if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), binding.fab)
                             else lifecycleScope.launch {
                                 delay(500)
@@ -133,7 +133,7 @@ class EchoStepOneFragment : MyFragment() {
                         })
                     }
 
-                ContainerController.Child(app.packageId, app.name, itemBinding)
+                ContainerController.Child(app.packageName, app.name, itemBinding)
             }
 
             containerController.submitList(children)

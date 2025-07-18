@@ -41,10 +41,10 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
         app: ManagedApp,
         rule: Rule,
     ) {
-        val isThereAnyActiveAlarm = alarmScheduler.isThereAnyAlarmSetForPackage(app.packageId)
+        val isThereAnyActiveAlarm = alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)
 
         if (isThereAnyActiveAlarm) {
-            alarmScheduler.cancelAlarm(app.packageId)
+            alarmScheduler.cancelAlarm(app.packageName)
             scheduleAlarmForAppUseCase(app, rule)
         }
     }

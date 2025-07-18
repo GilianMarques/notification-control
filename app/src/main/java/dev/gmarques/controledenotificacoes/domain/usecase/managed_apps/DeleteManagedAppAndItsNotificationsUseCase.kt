@@ -32,7 +32,7 @@ class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
      * transação interna ou assumem que o contexto já está transacional.
      */
 
-    suspend operator fun invoke(packageId: String, doInsideTransaction: Boolean = true) {
+    suspend operator fun invoke(packageName: String, doInsideTransaction: Boolean = true) {
 
         val action: suspend () -> Unit = {
             /*
@@ -41,8 +41,8 @@ class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
                 * sejam apagadas primeiro e um erro impeça que eles sejam removidos, permanecendo em cache por tempo indefinido.
                 * Por fim se algo der errado, o cache foi limpo mas os dados do banco sao restaurados pela transação e aí é só tentar apagar de novo.
                 */
-            deleteAllAppNotificationsUseCase(packageId)
-            repository.deleteManagedAppByPackageId(packageId)
+            deleteAllAppNotificationsUseCase(packageName)
+            repository.deleteManagedAppByPackageId(packageName)
         }
 
         try {
