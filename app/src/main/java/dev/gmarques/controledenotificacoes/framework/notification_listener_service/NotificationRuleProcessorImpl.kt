@@ -33,6 +33,9 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:16.
  */
+// TODO: converter essa classe em um legitimo processador que recebe dados de dominio e retorna uma decisao
+// TODO: usar um usecase ProcessIncomingNotificationUseCase para receber a sbn, criar os objetos de domino e passar pro processor
+// TODO: com base da decisao do processor o usecase vai salvar historico, btitmpa, etcc. e retornar um result pro service dizendo se deve cancelar, adiar, etc... use um sealed class para isso
 class NotificationRuleProcessorImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
