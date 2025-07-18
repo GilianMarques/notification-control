@@ -336,6 +336,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             is TimeRangeValidationException -> throw exception
             is NameOutOfRangeException -> throw exception
             is RuleValidatorException.ConditionValidationException -> throw exception
+            is RuleValidatorException.PermaBlockWithSnoozeActionException -> throw exception
             null -> throw CantBeNullException()
         }
 
@@ -368,8 +369,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             is DaysOutOfRangeException -> throw exception
             is TimeRangeValidationException -> throw exception
             is RuleValidatorException.ConditionValidationException -> throw exception
+            is RuleValidatorException.PermaBlockWithSnoozeActionException -> throw exception
             null -> throw CantBeNullException()
-
         }
 
 

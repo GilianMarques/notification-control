@@ -9,15 +9,14 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:10.
  *
- * Interface de contrato para a implementação de um `RuleEnforcer`.
- * O `RuleEnforcer` é responsável por:
+ * Interface de contrato para a implementação de um `NotificationRuleProcessor`.
+ * O `NotificationRuleProcessor` é responsável por:
  * - Verificar a existência de regras para um determinado aplicativo.
  * - Avaliar se uma notificação emitida por esse aplicativo deve ser bloqueada ou não, com base nas regras existentes.
  * - Manter um histórico das notificações de aplicativos gerenciados, utilizando os casos de uso apropriados.
  */
-interface RuleEnforcer {
-    // TODO: arrumar nome melhor  
-    fun enforceOnNotification(
+interface NotificationRuleProcessor {
+    fun evaluateNotification(
         activeNotification: ActiveStatusBarNotification,
         appNotification: AppNotification,
         callback: Callback,
@@ -27,17 +26,22 @@ interface RuleEnforcer {
         /**
          * Cancela uma notificação. Não funciona com notificações persistentes
          */
-        fun cancelNotification(activeNotification: ActiveStatusBarNotification,appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
+        fun onNotificationCancelled(
+            activeNotification: ActiveStatusBarNotification,
+            appNotification: AppNotification,
+            rule: Rule,
+            managedApp: ManagedApp,
+        )
 
         /**
          * Adia uma notificação mesmo que seja Persistente
-         * @param sbn a notificação que será adiada
-         * @param snoozePeriod o tempo pelo qual a notificaçã oficará adiada em millisegundos.
+         * @param activeNotification a notificação que será adiada
+         * @param snoozePeriod o tempo pelo qual a notificação ficará adiada em millisegundos.
          * Ex: Se for 60_000L a notificação sera adiada por 1 minuto antes de ser reexbida
          * */
-        fun snoozeNotification(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long)
-        fun appNotManaged(activeNotification: ActiveStatusBarNotification)
-        fun allowNotification(activeNotification: ActiveStatusBarNotification)
+        fun onNotificationSnoozed(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long)
+        fun onAppNotManaged(activeNotification: ActiveStatusBarNotification)
+        fun onNotificationAllowed(activeNotification: ActiveStatusBarNotification)
     }
 
 }

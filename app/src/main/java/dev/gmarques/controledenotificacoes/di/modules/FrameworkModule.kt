@@ -8,14 +8,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.implementations.ActiveNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationRuleProcessorImpl
 
 /**
  * Criado por Gilian Marques
@@ -34,7 +34,7 @@ abstract class FrameworkModule {
     abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider
 
     @Binds
-    abstract fun bindRuleEnforcer(impl: RuleEnforcerImpl): RuleEnforcer
+    abstract fun bindNotificationRuleProcessor(impl: NotificationRuleProcessorImpl): NotificationRuleProcessor
 
     @Binds
     abstract fun bindScheduleManager(impl: AlarmSchedulerImpl): AlarmScheduler

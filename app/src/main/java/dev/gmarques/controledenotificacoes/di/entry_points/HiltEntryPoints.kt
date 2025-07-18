@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
@@ -30,7 +30,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
      *
      * Esta função é genérica e pode ser utilizada para acessar qualquer interface de
      * EntryPoint previamente definida, como por exemplo `UseCasesEntryPoint`,
-     * `RuleEnforcerEntryPoint`, `ScheduleManagerEntryPoint`, etc.
+     * `NotificationRuleProcessorEntryPoint`, `ScheduleManagerEntryPoint`, etc.
      *
      * O parâmetro genérico [T] é automaticamente inferido no momento da chamada,
      * dispensando a necessidade de passar a classe explicitamente.
@@ -48,8 +48,8 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
     }
 
-    override fun ruleEnforcer(): RuleEnforcer {
-        return entryPoint<FrameworkEntryPoint>().ruleEnforcer()
+    override fun notificationRuleProcessor(): NotificationRuleProcessor {
+        return entryPoint<FrameworkEntryPoint>().notificationRuleProcessor()
     }
 
     override fun scheduleManager(): AlarmSchedulerImpl {

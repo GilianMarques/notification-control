@@ -7,7 +7,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
@@ -27,9 +27,9 @@ import kotlinx.coroutines.launch
  * Criado por Gilian Marques
  * Em sábado, 03 de maio de 2025 as 16:18.
  */
-class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope(), RuleEnforcer.Callback {
+class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope(), NotificationRuleProcessor.Callback {
 
-    private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
+    private val notificationRuleProcessor = HiltEntryPoints.notificationRuleProcessor()
     private val echoImpl = HiltEntryPoints.echo()
     private var cancelingNotificationKey = ""
     private var errorJob: Job? = null
@@ -117,7 +117,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Processa uma notificação recebida.
      * Extrai informações relevantes e as encapsula em um objeto AppNotification.
-     * Em seguida, utiliza o RuleEnforcer para aplicar as regras configuradas.
+     * Em seguida, utiliza o NotificationRuleProcessor para aplicar as regras configuradas.
      *
      */
     private fun manageNotification(sbn: StatusBarNotification) {
@@ -127,7 +127,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         crashIfCallbackNotCalled()
         // TODO: continuar aqui, valide o fluxo e continue a implementação
-        ruleEnforcer.enforceOnNotification(
+        notificationRuleProcessor.evaluateNotification(
             ActiveStatusBarNotificationFactory.create(sbn),
             AppNotificationFactory.create(sbn),
             this@NotificationListener
@@ -139,14 +139,14 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Cancela o temporizador que monitora se o callback de validação da notificação foi chamado.
      * Esta função é usada em conjunto com [crashIfCallbackNotCalled] para garantir que,
      * em builds de debug, o aplicativo falhe se o callback não for invocado dentro de um
-     * período esperado. Isso ajuda a identificar problemas onde o RuleEnforcer não está
+     * período esperado. Isso ajuda a identificar problemas onde o NotificationRuleProcessor não está
      * chamando o callback corretamente, (BUG) o que poderia afetar a função de eco.
      */
     private fun cancelValidationCallbackTimer() = validationCallbackErrorJob?.cancel()
 
     /**
      * Inicia um temporizador que, se não for cancelado a tempo, causará uma falha no aplicativo.
-     * Esta função é destinada a evitar bugs. Ela garante que alterações no RuleEnforcer
+     * Esta função é destinada a evitar bugs. Ela garante que alterações no NotificationRuleProcessor
      * não impeçam que o callback seja chamado nos casos onde:
      * - A notificação deve ser bloqueada.
      * - A notificação não deve ser bloqueada.
@@ -159,7 +159,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private fun crashIfCallbackNotCalled() {
         validationCallbackErrorJob = CoroutineScope(Main).launch {
             delay(3000)
-            error("O callback de validação passado para o RuleEnforcer não foi chamado.")
+            error("O callback de validação passado para o NotificationRuleProcessor não foi chamado.")
         }
     }
 
@@ -199,8 +199,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerDisconnected()
     }
 
-    /** Callback do [RuleEnforcer]*/
-    override fun cancelNotification(
+    /** Callback do [NotificationRuleProcessor]*/
+    override fun onNotificationCancelled(
         activeNotification: ActiveStatusBarNotification,
         appNotification: AppNotification,
         rule: Rule,
@@ -212,8 +212,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         cancelNotification(activeNotification.key)
     }
 
-    /** Callback do [RuleEnforcer]*/
-    override fun snoozeNotification(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long) {
+    /** Callback do [NotificationRuleProcessor]*/
+    override fun onNotificationSnoozed(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve estar disponivel em versões anteriores ao Oreo")
 
         Log.d("USUK", "NotificationListener.snoozeNotification: ${activeNotification.packageId} ")
@@ -223,15 +223,15 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     }
 
-    /** Callback do [RuleEnforcer]*/
-    override fun appNotManaged(activeNotification: ActiveStatusBarNotification) {
+    /** Callback do [NotificationRuleProcessor]*/
+    override fun onAppNotManaged(activeNotification: ActiveStatusBarNotification) {
         Log.d("USUK", "NotificationListener.appNotManaged: ${activeNotification.packageId}")
         cancelValidationCallbackTimer()
         echoImpl.repostIfNotification(activeNotification)
     }
 
-    /** Callback do [RuleEnforcer]*/
-    override fun allowNotification(activeNotification: ActiveStatusBarNotification) {
+    /** Callback do [NotificationRuleProcessor]*/
+    override fun onNotificationAllowed(activeNotification: ActiveStatusBarNotification) {
         Log.d("USUK", "NotificationListener.allowNotification: ${activeNotification.packageId}")
         cancelValidationCallbackTimer()
         echoImpl.repostIfNotification(activeNotification)

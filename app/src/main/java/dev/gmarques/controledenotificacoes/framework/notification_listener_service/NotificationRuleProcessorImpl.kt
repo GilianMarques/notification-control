@@ -7,7 +7,7 @@ import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
@@ -33,28 +33,28 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:16.
  */
-class RuleEnforcerImpl @Inject constructor(
+class NotificationRuleProcessorImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val alarmScheduler: AlarmScheduler,
     private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     @ApplicationContext private val context: Context,
-) : RuleEnforcer {
+) : NotificationRuleProcessor {
 
     private lateinit var appNotification: AppNotification
     private lateinit var activeNotification: ActiveStatusBarNotification
-    private lateinit var callback: RuleEnforcer.Callback
+    private lateinit var callback: NotificationRuleProcessor.Callback
 
-    override fun enforceOnNotification(
+    override fun evaluateNotification(
         activeNotification: ActiveStatusBarNotification,
         appNotification: AppNotification,
-        callback: RuleEnforcer.Callback,
+        callback: NotificationRuleProcessor.Callback,
     ) = runBlocking {
 
-        this@RuleEnforcerImpl.activeNotification = activeNotification
-        this@RuleEnforcerImpl.appNotification = appNotification
-        this@RuleEnforcerImpl.callback = callback
+        this@NotificationRuleProcessorImpl.activeNotification = activeNotification
+        this@NotificationRuleProcessorImpl.appNotification = appNotification
+        this@NotificationRuleProcessorImpl.callback = callback
 
 
         val managedApp = getManagedAppByPackageIdUseCase(appNotification.packageId)
@@ -65,7 +65,7 @@ class RuleEnforcerImpl @Inject constructor(
 
             enforceRuleAndCondition(rule, managedApp)
 
-        } else callback.appNotManaged(activeNotification)
+        } else callback.onAppNotManaged(activeNotification)
 
     }
 
@@ -79,7 +79,7 @@ class RuleEnforcerImpl @Inject constructor(
 
         if (condition == null) {
             if (appInBlockPeriod) saveAndBlockNotification(rule, managedApp)
-            else callback.allowNotification(activeNotification)
+            else callback.onNotificationAllowed(activeNotification)
             return
         }
 
@@ -90,7 +90,7 @@ class RuleEnforcerImpl @Inject constructor(
             isAppInBlockPeriod = appInBlockPeriod
         )
 
-        if (shouldAllowNotification) callback.allowNotification(activeNotification)
+        if (shouldAllowNotification) callback.onNotificationAllowed(activeNotification)
         else saveAndBlockNotification(rule, managedApp)
     }
 
@@ -118,7 +118,7 @@ class RuleEnforcerImpl @Inject constructor(
 
         Log.w(
             "USUK",
-            "RuleEnforcerImpl.shouldAllowNotification: notificaçção permitida pq nao caiu em nenhuma pré-condição"
+            "NotificationRuleProcessorImpl.shouldAllowNotification: notificaçção permitida pq nao caiu em nenhuma pré-condição"
         )
 
         return true
@@ -132,16 +132,16 @@ class RuleEnforcerImpl @Inject constructor(
 
         // snooze isnt supported in this sdk, calling cancel
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            callback.cancelNotification(activeNotification, appNotification, rule, managedApp)
+            callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
         } else when (rule.action) {
 
             Rule.Action.SNOOZE -> {
                 val snoozeFor = nextUnlockTime - System.currentTimeMillis()
-                callback.snoozeNotification(activeNotification, snoozeFor)
+                callback.onNotificationSnoozed(activeNotification, snoozeFor)
             }
 
             Rule.Action.CANCEL -> {
-                callback.cancelNotification(activeNotification, appNotification, rule, managedApp)
+                callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
             }
         }
 
@@ -179,9 +179,9 @@ class RuleEnforcerImpl @Inject constructor(
             FileOutputStream(file).use { out ->
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
-            // Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${activeNotification.packageName} saved")
+            // Log.d("USUK", "NotificationRuleProcessorImpl.saveLargeIcon: largeIcon for ${activeNotification.packageName} saved")
         } catch (e: Exception) {
-            // Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: failure while saving notification's large icon from ${activeNotification.packageName}")
+            // Log.e("USUK", "NotificationRuleProcessorImpl.saveLargeIcon: failure while saving notification's large icon from ${activeNotification.packageName}")
             e.stackTrace
         }
 
