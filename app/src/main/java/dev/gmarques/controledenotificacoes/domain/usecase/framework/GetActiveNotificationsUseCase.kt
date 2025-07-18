@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.framework
 
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
-import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

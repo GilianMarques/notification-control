@@ -7,7 +7,7 @@ import java.io.Serializable
  * Em domingo, 04 de maio de 2025 as 14:21.
  *
  * Representa a notificação bloqueada de um app
- * Voce pode usar  [AppNotificationExtensionFun.createFromStatusBarNotification]
+ * Use a Factory [AppNotificationFactory.create] para instanciar o objeto com segurança todo como bloquear  o contrutor?
  */
 data class AppNotification(
     val packageId: String,

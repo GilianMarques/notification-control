@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -12,6 +12,7 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import javax.inject.Inject
 
@@ -98,7 +99,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager].
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AlarmReceiver].
      *
      * @param packageId O ID do pacote a ser incluído como extra no [Intent] do [PendingIntent].
      * @return Um [PendingIntent] configurado para enviar um broadcast.
@@ -116,7 +117,7 @@ class AlarmSchedulerImpl @Inject constructor(
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager] para ligar o serviço de escuta
      * de notificações.
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AutoTurnOnReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver].
      *
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */

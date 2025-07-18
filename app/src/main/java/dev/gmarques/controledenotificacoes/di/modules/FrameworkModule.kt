@@ -11,10 +11,10 @@ import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
-import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
-import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
-import dev.gmarques.controledenotificacoes.framework.StringsProviderImpl
-import dev.gmarques.controledenotificacoes.framework.VibratorProviderImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.ActiveNotificationRepositoryImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
 
 /**

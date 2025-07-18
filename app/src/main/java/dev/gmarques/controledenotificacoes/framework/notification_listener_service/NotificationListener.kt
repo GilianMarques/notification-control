@@ -9,8 +9,11 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -19,13 +22,12 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 /**
  * Criado por Gilian Marques
  * Em sábado, 03 de maio de 2025 as 16:18.
  */
-class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
+class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope(), RuleEnforcer.Callback {
 
     private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
     private val echoImpl = HiltEntryPoints.echo()
@@ -120,49 +122,17 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     private fun manageNotification(sbn: StatusBarNotification) {
 
-        if (sbn.isOngoing) return
+        if (sbn.isOngoing) return // TODO: tratar isso, agora vai!
         if (sbn.packageName.contains(BuildConfig.APPLICATION_ID)) return
 
-        runBlocking {
-            crashIfCallbackNotCalled()
-            ruleEnforcer.enforceOnNotification(sbn, object : RuleEnforcer.Callback {
+        crashIfCallbackNotCalled()
+        // TODO: continuar aqui, valide o fluxo e continue a implementação
+        ruleEnforcer.enforceOnNotification(
+            ActiveStatusBarNotificationFactory.create(sbn),
+            AppNotificationFactory.create(sbn),
+            this@NotificationListener
+        )
 
-                override fun cancelNotification(
-                    appNotification: AppNotification,
-                    rule: Rule,
-                    managedApp: ManagedApp,
-                ) {
-                    Log.d("USUK", "NotificationListener.cancelNotification: ${sbn.packageName} ")
-                    cancelValidationCallbackTimer()
-                    crashIfNotificationDoesNotRemoveInDebugBuild(sbn)
-                    cancelNotification(sbn.key)
-                }
-
-                override fun snoozeNotification(
-                    sbn: StatusBarNotification,
-                    snoozePeriod: Long,
-                ) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        Log.d("USUK", "NotificationListener.snoozeNotification: ${sbn.packageName} ")
-                        cancelValidationCallbackTimer()
-                        crashIfNotificationDoesNotRemoveInDebugBuild(sbn)
-                        snoozeNotification(sbn.key, 1L)
-                    } else error("Essa função nao deve estar disponivel em versões anteriores ao Oreo")
-                }
-
-                override fun appNotManaged() {
-                    Log.d("USUK", "NotificationListener.appNotManaged: ${sbn.packageName}")
-                    cancelValidationCallbackTimer()
-                    echoImpl.repostIfNotification(sbn)
-                }
-
-                override fun allowNotification() {
-                    Log.d("USUK", "NotificationListener.allowNotification: ${sbn.packageName}")
-                    cancelValidationCallbackTimer()
-                    echoImpl.repostIfNotification(sbn)
-                }
-            })
-        }
     }
 
     /**
@@ -198,15 +168,15 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
      * essa função vai crashar o app para que o jumento do desenvolvedor (eu :-] ) possa ajeitar a cagada que ele fez
      */
-    private fun crashIfNotificationDoesNotRemoveInDebugBuild(sbn: StatusBarNotification) {
+    private fun crashIfNotificationDoesNotRemoveInDebugBuild(activeNotification: ActiveStatusBarNotification) {
         if (BuildConfig.DEBUG) {
-            if (sbn.isOngoing) return // nao se considera esse tipo de notificação
+            if (activeNotification.isOngoing) return // nao se considera esse tipo de notificação
 
-            cancelingNotificationKey = sbn.key
+            cancelingNotificationKey = activeNotification.key
             errorJob?.cancel()
             errorJob = CoroutineScope(Main).launch {
                 delay(1000)
-                error("A notificaçao nao foi cancelada: OnGoing?${sbn.isOngoing}\nMais detalhes:$sbn")
+                error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
             }
         }
     }
@@ -227,6 +197,44 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         instance = null
         cancel()
         super.onListenerDisconnected()
+    }
+
+    /** Callback do [RuleEnforcer]*/
+    override fun cancelNotification(
+        activeNotification: ActiveStatusBarNotification,
+        appNotification: AppNotification,
+        rule: Rule,
+        managedApp: ManagedApp,
+    ) {
+        Log.d("USUK", "NotificationListener.cancelNotification: ${activeNotification.packageId} ")
+        cancelValidationCallbackTimer()
+        crashIfNotificationDoesNotRemoveInDebugBuild(activeNotification)
+        cancelNotification(activeNotification.key)
+    }
+
+    /** Callback do [RuleEnforcer]*/
+    override fun snoozeNotification(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve estar disponivel em versões anteriores ao Oreo")
+
+        Log.d("USUK", "NotificationListener.snoozeNotification: ${activeNotification.packageId} ")
+        cancelValidationCallbackTimer()
+        crashIfNotificationDoesNotRemoveInDebugBuild(activeNotification)
+        snoozeNotification(activeNotification.key, snoozePeriod) // TODO: testar isso! 
+
+    }
+
+    /** Callback do [RuleEnforcer]*/
+    override fun appNotManaged(activeNotification: ActiveStatusBarNotification) {
+        Log.d("USUK", "NotificationListener.appNotManaged: ${activeNotification.packageId}")
+        cancelValidationCallbackTimer()
+        echoImpl.repostIfNotification(activeNotification)
+    }
+
+    /** Callback do [RuleEnforcer]*/
+    override fun allowNotification(activeNotification: ActiveStatusBarNotification) {
+        Log.d("USUK", "NotificationListener.allowNotification: ${activeNotification.packageId}")
+        cancelValidationCallbackTimer()
+        echoImpl.repostIfNotification(activeNotification)
     }
 
 }

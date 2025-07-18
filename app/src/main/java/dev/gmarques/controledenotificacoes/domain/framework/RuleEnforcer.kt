@@ -1,30 +1,43 @@
 package dev.gmarques.controledenotificacoes.domain.framework
 
-import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:10.
  *
- * Abstração na camada de domínio que serve como contrato para a implementação de uma classe que vai verificar a existência de
- * regras para um determinado app, e avaliar, se a notificação emitida por esse app
- * deve ou não ser bloqueada assim como manter histórico das notificações de apps gerenciados, Através dos usecases.
+ * Interface de contrato para a implementação de um `RuleEnforcer`.
+ * O `RuleEnforcer` é responsável por:
+ * - Verificar a existência de regras para um determinado aplicativo.
+ * - Avaliar se uma notificação emitida por esse aplicativo deve ser bloqueada ou não, com base nas regras existentes.
+ * - Manter um histórico das notificações de aplicativos gerenciados, utilizando os casos de uso apropriados.
  */
 interface RuleEnforcer {
-    suspend fun enforceOnNotification(
-        sbn: StatusBarNotification,
+    // TODO: arrumar nome melhor  
+    fun enforceOnNotification(
+        activeNotification: ActiveStatusBarNotification,
+        appNotification: AppNotification,
         callback: Callback,
     )
 
     interface Callback {
-        fun cancelNotification(appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
+        /**
+         * Cancela uma notificação. Não funciona com notificações persistentes
+         */
+        fun cancelNotification(activeNotification: ActiveStatusBarNotification,appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
 
-        fun snoozeNotification(sbn: StatusBarNotification, snoozePeriod: Long)
-        fun appNotManaged()
-        fun allowNotification()
+        /**
+         * Adia uma notificação mesmo que seja Persistente
+         * @param sbn a notificação que será adiada
+         * @param snoozePeriod o tempo pelo qual a notificaçã oficará adiada em millisegundos.
+         * Ex: Se for 60_000L a notificação sera adiada por 1 minuto antes de ser reexbida
+         * */
+        fun snoozeNotification(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long)
+        fun appNotManaged(activeNotification: ActiveStatusBarNotification)
+        fun allowNotification(activeNotification: ActiveStatusBarNotification)
     }
 
 }

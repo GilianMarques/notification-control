@@ -26,7 +26,7 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtension
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
-import dev.gmarques.controledenotificacoes.framework.model.ShakeDetectorHelper
+import dev.gmarques.controledenotificacoes.framework.ShakeDetectorHelper
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController

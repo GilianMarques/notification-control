@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.framework
 
-import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Criado por Gilian Marques
@@ -8,6 +8,6 @@ import android.service.notification.StatusBarNotification
  */
 interface Echo {
 
-    fun repostIfNotification(sbn: StatusBarNotification)
+    fun repostIfNotification(activeNotification: ActiveStatusBarNotification)
 
 }

@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.data.repository
 
-import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Criado por Gilian Marques

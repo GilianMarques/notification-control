@@ -1,11 +1,11 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.implementations
 
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
 import javax.inject.Inject
 
 /**
@@ -20,6 +20,7 @@ class ActiveNotificationRepositoryImpl @Inject constructor() :
         val nots = NotificationListener.instance?.getFilteredActiveNotifications() ?: emptyList()
         return mapStatusBarNotificationsToActiveStatusBarNotifications(nots)
     }
+
     /**
      * Mapeia uma lista de [StatusBarNotification] para uma lista de [ActiveStatusBarNotification].
      *
@@ -31,17 +32,7 @@ class ActiveNotificationRepositoryImpl @Inject constructor() :
     ): List<ActiveStatusBarNotification> {
         return statusBarNotifications.map { sbn ->
             sbn.notification.extras
-
-            val appNot = AppNotificationExtensionFun.createFromStatusBarNotification(sbn)
-
-            ActiveStatusBarNotification(
-                title = appNot.title,
-                content = appNot.content,
-                packageId = appNot.packageId,
-                postTime = appNot.timestamp,
-                smallIcon = sbn.notification.smallIcon,
-                largeIcon = sbn.notification.getLargeIcon(),
-            )
+            ActiveStatusBarNotificationFactory.create(sbn)
         }
     }
 

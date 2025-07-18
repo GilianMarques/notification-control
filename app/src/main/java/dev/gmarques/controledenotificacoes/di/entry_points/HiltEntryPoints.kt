@@ -14,8 +14,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePrefer
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
-import dev.gmarques.controledenotificacoes.framework.EchoImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**

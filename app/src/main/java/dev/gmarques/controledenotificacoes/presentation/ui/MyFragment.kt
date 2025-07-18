@@ -34,9 +34,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
-import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.VibratorProviderImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment

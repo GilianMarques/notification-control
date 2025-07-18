@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext

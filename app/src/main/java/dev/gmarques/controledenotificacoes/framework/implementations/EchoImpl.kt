@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -8,12 +8,12 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.framework.Echo
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import javax.inject.Inject
 
 /**
@@ -28,14 +28,14 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
      * A notificação é republicada com as mesmas informações da original, mas com um id e tag
      * diferentes para que o sistema a identifique como uma nova notificação.
      * A notificação é cancelada automaticamente apos um segundo.*/
-    override fun repostIfNotification(sbn: StatusBarNotification) {
+    override fun repostIfNotification(activeNotification: ActiveStatusBarNotification) {
 
         if (!isEchoEnabled()) return
-        if (!isNotificationValid(sbn)) return
+        if (!isNotificationValid(activeNotification)) return
 
-        val original = sbn.notification
-        val notificationId = sbn.id + 10000
-        val notificationTag = sbn.tag
+        val original = activeNotification.notification
+        val notificationId = activeNotification.id + 10000
+        val notificationTag = activeNotification.tag
 
         val notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val echoChannel = "echo_channel_id"
@@ -69,13 +69,13 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
     }
 
     /**Retorna true se a notificação for valida, false caso contrario */
-    private fun isNotificationValid(sbn: StatusBarNotification): Boolean {
+    private fun isNotificationValid(sbn: ActiveStatusBarNotification): Boolean {
         return !isMediaPlaybackNotification(sbn)
     }
 
     /**Não reposta notificações de apps de musica ou video
      * Retorna true se a notificação for de um app de midia, false caso contrario */
-    private fun isMediaPlaybackNotification(sbn: StatusBarNotification): Boolean {
+    private fun isMediaPlaybackNotification(sbn: ActiveStatusBarNotification): Boolean {
         // Verifica se há estilo de media (MediaStyle)
         return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework.model
+package dev.gmarques.controledenotificacoes.framework
 
 import android.content.Context
 import android.hardware.Sensor
