@@ -43,8 +43,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ViewManagedAppFragment() : MyFragment(),
-    SlidingPaneController.SlidingPaneControllerCallback {
+class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPaneControllerCallback {
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
@@ -270,7 +269,6 @@ class ViewManagedAppFragment() : MyFragment(),
         })
     }
 
-
     private fun confirmClearHistory() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Por_favor_confirme))
             .setMessage(getString(R.string.Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao))
@@ -364,9 +362,13 @@ class ViewManagedAppFragment() : MyFragment(),
         super.onPause()
     }
 
-    /**Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)*/
+    /**
+     * Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)
+     * e mais...
+     */
     override fun onResume() {
         requireMainActivity().slidingPaneController?.showMasterAndDetails()
+        viewModel.markNotificationsAsRead()
         super.onResume()
     }
 

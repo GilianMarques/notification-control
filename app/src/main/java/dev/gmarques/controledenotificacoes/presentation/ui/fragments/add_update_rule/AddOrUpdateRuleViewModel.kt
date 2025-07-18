@@ -10,6 +10,7 @@ import TimeRangeValidator.TimeRangeValidatorException.InversedRangeException
 import TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
 import TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,12 +20,14 @@ import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Action
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.PermaBlockWithSnoozeActionException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.TimeRangeValidationException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
@@ -55,6 +58,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private val _ruleTypeFlow = MutableStateFlow(Type.RESTRICTIVE)
     val ruleType: StateFlow<Type> = _ruleTypeFlow
 
+    private val _ruleActionFlow = MutableStateFlow<Action>(Action.SNOOZE)
+    val ruleAction: StateFlow<Action> = _ruleActionFlow
+
     private val _ruleNameFlow = MutableStateFlow("")
     val ruleName: StateFlow<String> = _ruleNameFlow
 
@@ -77,6 +83,30 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     fun updateRuleType(type: Type) {
         _ruleTypeFlow.tryEmit(type)
+    }
+
+    /**
+     * Atualiza a ação da regra e notifica os observadores do `_ruleActionFlow`.
+     *
+     * Esta função define a ação da regra (por exemplo, SNOOZE, CANCEL).
+     * Se a ação for SNOOZE e a versão do Android for inferior à Oreo (API 26),
+     * um evento de erro é enviado para a UI, e a ação não é definida (`null`).
+     * Caso contrário, a nova ação é emitida para o `_ruleActionFlow`.
+     *
+     * @param action O novo [Action] a ser definido.
+     * @see Action
+     */
+    fun updateRuleAction(action: Action) {
+
+        when (action) {
+            Action.SNOOZE -> {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) _eventsChannel
+                    .trySend(SimpleErrorMessage(context.getString(R.string.Essa_acao_esta_dispon_vel_apenas_em_android_8_0_oreo_ou_superior)))
+                _ruleActionFlow.tryEmit(action)
+            }
+
+            Action.CANCEL -> _ruleActionFlow.tryEmit(action)
+        }
     }
 
     /**
@@ -210,6 +240,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         updateRuleType(rule.type)
         updateSelectedDays(rule.days)
         updateCondition(rule.condition)
+        updateRuleAction(rule.action)
         viewModelScope.launch {
             rule.timeRanges.forEach {
                 addTimeRange(it)
@@ -237,10 +268,12 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val timeRanges = _timeRangesFlow.value
         val ruleType = _ruleTypeFlow.value
         val condition = _conditionFlow.value
+        val action = _ruleActionFlow.value
 
         if (validateName(ruleName).isFailure) return
         if (validateDays(selectedDays).isFailure) return
         if (validateRanges(timeRanges.map { it.value }).isFailure) return
+
 
         val rule = Rule(
             name = ruleName,
@@ -248,9 +281,11 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             days = selectedDays,
             condition = condition,
             timeRanges = timeRanges.values.toList(),
-            action = Rule.actionDefault, // TODO: passar a obehaviour correto aqui
+            action = action
 
         )
+
+        if (validateRule(rule).isFailure) return
 
         if (editingRule == null) saveRule(rule)
         else updateRule(rule)
@@ -292,16 +327,39 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         _eventsChannel.trySend(Event.SetResultAndClose(rule))
     }
 
-    /**
-     * Valida todos os ranges antes de criar um [Rule]
-     * */
-    private fun validateRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
-        val result = TimeRangeValidator.validateTimeRanges(ranges)
 
-        if (result.isFailure) notifyErrorValidatingRanges(result)
+    /**
+     * Valida o nome de uma regra.
+     *
+     * @param name O nome a ser validado.
+     * @return [OperationResult] indicando sucesso com o nome validado ou falha com [RuleValidator.RuleValidatorException].
+     * Em caso de sucesso, atualiza o nome da regra internamente.
+     * Em caso de falha do tipo [NameOutOfRangeException], envia um evento de erro para a UI.
+     */
+    fun validateName(name: String): OperationResult<RuleValidatorException, String> {
+
+        val result = RuleValidator.validateName(name)
+
+        if (result.isSuccess) {
+            updateRuleName(result.getOrThrow())
+        } else when (val exception = result.exceptionOrNull()) {
+            is NameOutOfRangeException -> {
+                val errorMessage = context.getString(
+                    R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
+                )
+                _eventsChannel.trySend(NameErrorMessage(errorMessage))
+            }
+
+            is BlankIdException -> throw exception
+            is DaysOutOfRangeException -> throw exception
+            is TimeRangeValidationException -> throw exception
+            is RuleValidatorException.ConditionValidationException -> throw exception
+            is PermaBlockWithSnoozeActionException -> throw exception
+            null -> throw CantBeNullException()
+        }
+
 
         return result
-
     }
 
     /**
@@ -336,7 +394,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             is TimeRangeValidationException -> throw exception
             is NameOutOfRangeException -> throw exception
             is RuleValidatorException.ConditionValidationException -> throw exception
-            is RuleValidatorException.PermaBlockWithSnoozeActionException -> throw exception
+            is PermaBlockWithSnoozeActionException -> throw exception
             null -> throw CantBeNullException()
         }
 
@@ -344,37 +402,36 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     }
 
     /**
-     * Valida o nome de uma regra.
-     *
-     * @param name O nome a ser validado.
-     * @return [OperationResult] indicando sucesso com o nome validado ou falha com [RuleValidator.RuleValidatorException].
-     * Em caso de sucesso, atualiza o nome da regra internamente.
-     * Em caso de falha do tipo [NameOutOfRangeException], envia um evento de erro para a UI.
-     */
-    fun validateName(name: String): OperationResult<RuleValidatorException, String> {
+     * Valida todos os ranges antes de criar um [Rule]
+     * */
+    private fun validateRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
+        val result = TimeRangeValidator.validateTimeRanges(ranges)
 
-        val result = RuleValidator.validateName(name)
-
-        if (result.isSuccess) {
-            updateRuleName(result.getOrThrow())
-        } else when (val exception = result.exceptionOrNull()) {
-            is NameOutOfRangeException -> {
-                val errorMessage = context.getString(
-                    R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
-                )
-                _eventsChannel.trySend(NameErrorMessage(errorMessage))
-            }
-
-            is BlankIdException -> throw exception
-            is DaysOutOfRangeException -> throw exception
-            is TimeRangeValidationException -> throw exception
-            is RuleValidatorException.ConditionValidationException -> throw exception
-            is RuleValidatorException.PermaBlockWithSnoozeActionException -> throw exception
-            null -> throw CantBeNullException()
-        }
-
+        if (result.isFailure) notifyErrorValidatingRanges(result)
 
         return result
+
+    }
+
+    /**Valida se as configurações da regra nao se contradizem/anulam de alguma forma*/
+    private fun validateRule(rule: Rule): OperationResult<RuleValidatorException, Rule> {
+
+        val result = RuleValidator.validateRuleItSelf(rule)
+
+        if (result.isFailure) {
+            when (val ex = result.exceptionOrNull()) {
+                is BlankIdException -> throw ex
+                is RuleValidatorException.ConditionValidationException -> throw ex
+                is DaysOutOfRangeException -> throw ex
+                is NameOutOfRangeException -> throw ex
+                is PermaBlockWithSnoozeActionException -> _eventsChannel.trySend(SimpleErrorMessage(context.getString(R.string.Nao_poss_vel_usar_o_comoprtamento_adiar_em_regras_que_bloqueiam_permanentemente)))
+                is TimeRangeValidationException -> throw ex
+                null -> throw CantBeNullException()
+            }
+
+            return OperationResult.failure(result.exceptionOrNull()!!)
+        }
+        return OperationResult.success(rule)
     }
 
     fun setCondition(condition: Condition) {

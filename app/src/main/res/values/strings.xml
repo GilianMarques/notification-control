@@ -3,7 +3,7 @@
     <string name="app_name">Controle de notificações</string>
     <string name="O_nome_n_o_pode_ficar_em_branco">O nome não pode ficar em branco.</string>
     <string name="O_nome_deve_ter_entre_e_caracteres">O nome deve ter entre %1$d e %2$d caracteres.</string>
-    <string name="Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados">Notificações serão exibidas apenas nos dias e horários selecionados.</string>
+    <string name="Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados">As notificações serão exibidas apenas nos dias e horários selecionados.</string>
     <string name="Permissiva">Permissiva</string>
     <string name="Tipo_de_regra">Tipo de regra</string>
     <string name="Restritiva">Restritiva</string>
@@ -22,7 +22,7 @@
     <string name="_11_30">11:30</string>
     <string name="as">às</string>
     <string name="Bot_o_para_remover_o_intervalo_de_tempo">Remover o intervalo de tempo</string>
-    <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Notificações serão bloqueadas nos dias e horários selecionados.</string>
+    <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">As notificações serão bloqueadas nos dias e horários selecionados.</string>
     <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
     <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
     <string name="format_time">%1$s:%2$s</string>
@@ -299,6 +299,13 @@
     <string name="Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema">Não foi possível abrir o histórico de notificações do sistema</string>
     <string name="Sistema">Sistema</string>
     <string name="Historico_de_notifica_es">Histórico de notificações</string>
+    <string name="Acao_da_regra">Comportamento</string>
+    <string name="Adiar">Adiar</string>
+    <string name="As_notifica_es_ser_o_adiadas_at_o_pr_ximo_periodo_de_desbloqueio_do_app">As notificações serão adiadas até o próximo periodo de desbloqueio.</string>
+    <string name="Essa_acao_esta_dispon_vel_apenas_em_android_8_0_oreo_ou_superior">Este comportamento só funcionará em Android 8.0 (Oreo) ou superior, para android 7.1 (Nougat) e anteriores, CANCELAR será usado.</string>
+    <string name="As_notificacoes_serao_canceladas_e_ao_fim_do_bloqueio_um_alerta_avisar_se_o_app_recebeu_novas_notifica_es">As notificações serão canceladas e, ao fim do bloqueio, um alerta avisará caso hajam novas notificações.</string>
+    <string name="Selecione_um_comportamento">Selecione um comportamento</string>
+    <string name="Nao_poss_vel_usar_o_comoprtamento_adiar_em_regras_que_bloqueiam_permanentemente">Não é possível usar o comportamento Adiar em regras que atuam indefinidamente (24/7).</string>
 
 
 </resources>

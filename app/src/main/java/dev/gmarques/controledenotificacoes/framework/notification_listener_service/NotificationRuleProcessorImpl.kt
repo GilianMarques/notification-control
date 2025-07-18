@@ -134,7 +134,7 @@ class NotificationRuleProcessorImpl @Inject constructor(
         val nextUnlockTime = rule.nextAppUnlockPeriodFromNow()
 
         // snooze isnt supported in this sdk, calling cancel
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (rule.action == Rule.Action.SNOOZE && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
         } else when (rule.action) {
 

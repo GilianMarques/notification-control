@@ -152,6 +152,70 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_rule_action_parent"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="apps_container">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Acao_da_regra"
+                    android:textSize="20sp"
+                    android:transitionName="tv_target_app" />
+
+                <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/mbt_action_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <Button
+                        android:id="@+id/btn_cancel"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Cancelar" />
+
+                    <Button
+                        android:id="@+id/btn_snooze"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Adiar" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+                <TextView
+                    android:id="@+id/tv_rule_action_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:drawablePadding="8dp"
+                    android:text="@string/As_notifica_es_ser_o_adiadas_at_o_pr_ximo_periodo_de_desbloqueio_do_app"
+                    app:drawableStartCompat="@drawable/vec_info"
+                    app:drawableTint="?attr/colorPrimary" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:id="@+id/ll_weekdays_parent"
                 style="@style/containers_margins_no_padding"
                 android:layout_width="match_parent"

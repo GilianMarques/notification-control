@@ -51,6 +51,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val cancelAlarmForAppUseCase: CancelAlarmForAppUseCase,
 ) : ViewModel() {
 
+
     private var initialized = false
 
     /**indica que o app gerenciado recebido não existe na lista de apps instalados.*/
@@ -93,7 +94,6 @@ class ViewManagedAppViewModel @Inject constructor(
         }
 
         notFoundApp = app.uninstalled
-        removeNotificationIndicatorAndCancelReportNotification(app.packageId)
         _managedAppFlow.tryEmit(app)
 
     }
@@ -139,28 +139,35 @@ class ViewManagedAppViewModel @Inject constructor(
                 } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
 
             _appNotificationHistoryFlow.tryEmit(notifications)
-            removeNotificationIndicatorAndCancelReportNotification(app.packageId)//se esse frag ta aberto qdo a notificação chegar, o usuario ja viu a notificação
         }
     }
 
     /**
-    * Atualiza o estado do aplicativo gerenciado no banco de dados para indicar que não há mais
-    * notificações pendentes, pois o fragmento atual está exibindo as notificações.
-    * Além disso, cancela qualquer notificação de relatório que possa ter sido agendada para
-    * informar sobre notificações recebidas durante um período de bloqueio, já que essas
-    * notificações estão sendo visualizadas enquanto este fragmento está aberto.
-    *
-    * Este mét.odo deve ser invocado sempre que o fragmento for aberto ou recriado pelo sistema,
-    * bem como quando novas notificações chegarem para o aplicativo gerenciado. */
-    private fun removeNotificationIndicatorAndCancelReportNotification(packageId: String) = viewModelScope.launch(IO) {
-        delay(1000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
-        // Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
-        getManagedAppByPackageIdUseCase(packageId)
-            ?.let { app ->
-                updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
-                cancelAlarmForAppUseCase(app.packageId)
-            }
+     * Marca as notificações  como lidas para o app gerenciado e cancela a notificação de relatório
+     * que alertaria sobre pendências.
+     *
+     * Deve ser chamado quando:
+     * - O fragmento for aberto ou recriado (usuário está visualizando as notificações).
+     *
+     * Só atua quando o fragmento abrir, esse comportamento nao é um bug, serve pra evitar que
+     * a falta de atençao do usuario o faça perder notificaçoes pedentes
+     */
+
+    fun markNotificationsAsRead() = viewModelScope.launch(IO) {
+
+        delay(1500) // pra "dar tempo do usuario ler as notificações"
+
+        val packageId = _managedAppFlow.value?.packageId
+
+        packageId?.let {
+            getManagedAppByPackageIdUseCase(packageId)
+                ?.let { app ->
+                    updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
+                    cancelAlarmForAppUseCase(app.packageId)
+                }
+        }
     }
+
 
     fun deleteApp() = viewModelScope.launch {
         deleteManagedAppAndItsNotificationsUseCase(_managedAppFlow.value!!.packageId)

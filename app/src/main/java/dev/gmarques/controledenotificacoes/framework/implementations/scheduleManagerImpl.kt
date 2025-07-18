@@ -42,7 +42,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
         if (millis == NextAppUnlockTimeUseCase.INFINITE) return
 
-        //    Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
+        //  Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         val pIntent = createPendingIntent(packageId)
 
@@ -106,7 +106,7 @@ class AlarmSchedulerImpl @Inject constructor(
      */
     private fun createPendingIntent(packageId: String): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("packageId", packageId)
+            putExtra(AlarmReceiver.PACKAGE_ID, packageId)
         }
 
         return PendingIntent.getBroadcast(
@@ -191,7 +191,7 @@ class AlarmSchedulerImpl @Inject constructor(
          * @return A lista de strings desserializada, uma lista vazia se a string estivee vazia ou `null` se a conversão falhar.
          */
         fun fromJson(json: String): MutableList<String>? {
-            return if (json.isEmpty()) mutableListOf<String>() else adapter.fromJson(json)!!
+            return if (json.isEmpty()) mutableListOf() else adapter.fromJson(json)!!
         }
     }
 

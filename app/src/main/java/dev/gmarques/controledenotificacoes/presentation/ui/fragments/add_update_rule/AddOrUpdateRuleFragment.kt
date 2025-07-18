@@ -26,10 +26,13 @@ import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.description
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Action
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Action.CANCEL
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Action.SNOOZE
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
-import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -43,6 +46,7 @@ import kotlin.math.min
 class AddOrUpdateRuleFragment : MyFragment() {
 
     private var doNotNotifyViewModelTypeRule: Boolean = true
+    private var doNotNotifyViewModelActionRule: Boolean = true
 
     private val viewModel: AddOrUpdateRuleViewModel by viewModels()
     private val args: AddOrUpdateRuleFragmentArgs by navArgs()
@@ -68,6 +72,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         lifecycleScope.launch {
             setupNameInput()
             setupButtonTypeRule()
+            setupButtonActionRule()
             setupChipDays()
             setupChipDaysShortcuts()
             setupBtnAddTimeRange()
@@ -76,6 +81,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             setupFabAddRule()
             setupEditingModeIfNeeded()
             observeRuleType()
+            observeRuleAction()
             observeTimeRanges()
             observeSelectedDays()
             observeRuleName()
@@ -222,6 +228,22 @@ class AddOrUpdateRuleFragment : MyFragment() {
         }
     }
 
+    private fun setupButtonActionRule() = with(binding) {
+        mbtActionRule.addOnButtonCheckedListener { group: MaterialButtonToggleGroup, btnId: Int, checked: Boolean ->
+
+            if (doNotNotifyViewModelActionRule) {
+                doNotNotifyViewModelActionRule = false
+                return@addOnButtonCheckedListener
+            }
+
+            when (group.checkedButtonId) {
+                R.id.btn_cancel -> viewModel.updateRuleAction(CANCEL)
+                R.id.btn_snooze -> viewModel.updateRuleAction(SNOOZE)
+            }
+            edtName.clearFocus()
+        }
+    }
+
     /**
      * Configura o listener de clique para o botão "Adicionar Intervalo" (ivAddInterval).
      *
@@ -304,14 +326,50 @@ class AddOrUpdateRuleFragment : MyFragment() {
      */
     private fun updateButtonTypeRule(ruleType: Type) = with(binding) {
 
-        if (ruleType == Type.PERMISSIVE) {
-            mbtTypeRule.check(R.id.btn_permissive)
-            tvRuleTypeInfo.text = getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
+        when (ruleType) {
+            Type.PERMISSIVE -> {
+                mbtTypeRule.check(R.id.btn_permissive)
+                tvRuleTypeInfo.text = getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
+            }
 
-        } else {
-            mbtTypeRule.check(R.id.btn_restritive)
-            tvRuleTypeInfo.text = getString(R.string.As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados)
+            Type.RESTRICTIVE -> {
+                mbtTypeRule.check(R.id.btn_restritive)
+                tvRuleTypeInfo.text = getString(R.string.As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados)
+            }
         }
+
+    }
+
+    /**
+     * Atualiza, com base nos updates do viewmodel a interface com base na açao da regra.
+     *
+     * Modifica o estado do [MaterialButtonToggleGroup] e do TextView de acordo com [ruleAction].
+     *
+     * @param ruleAction O tipo de regra a ser aplicada ([Action.CANCEL] ou [Action.SNOOZE]).
+     *
+     * @see Action
+     */
+    private fun updateButtonActionRule(ruleAction: Action?) = with(binding) {
+
+        when (ruleAction) {
+            SNOOZE -> {
+                mbtActionRule.check(R.id.btn_snooze)
+                tvRuleActionInfo.text =
+                    getString(R.string.As_notifica_es_ser_o_adiadas_at_o_pr_ximo_periodo_de_desbloqueio_do_app)
+            }
+
+            CANCEL -> {
+                mbtActionRule.check(R.id.btn_cancel)
+                tvRuleActionInfo.text =
+                    getString(R.string.As_notificacoes_serao_canceladas_e_ao_fim_do_bloqueio_um_alerta_avisar_se_o_app_recebeu_novas_notifica_es)
+            }
+
+            null -> {
+                mbtActionRule.clearChecked()
+                tvRuleActionInfo.text = getString(R.string.Selecione_um_comportamento)
+            }
+        }
+
 
     }
 
@@ -381,6 +439,13 @@ class AddOrUpdateRuleFragment : MyFragment() {
         collectFlow(viewModel.ruleType) { type ->
             doNotNotifyViewModelTypeRule = true
             updateButtonTypeRule(type)
+        }
+    }
+
+    private fun observeRuleAction() {
+        collectFlow(viewModel.ruleAction) { action ->
+            doNotNotifyViewModelActionRule = true
+            updateButtonActionRule(action)
         }
     }
 

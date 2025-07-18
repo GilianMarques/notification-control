@@ -5,6 +5,7 @@ import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isPermaBlock
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.ConditionValidationException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.PermaBlockWithSnoozeActionException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDays
@@ -57,7 +58,7 @@ object RuleValidator {
     }
 
     /**Valida se as configurações da regra nao se contradizem/anulam de alguma forma*/
-    private fun validateRuleItSelf(rule: Rule): OperationResult<RuleValidatorException, Rule> {
+    fun validateRuleItSelf(rule: Rule): OperationResult<RuleValidatorException, Rule> {
         /**
          * Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas.
          * Nao tem porque adiar notificações que nunca devem ser mostradas.
@@ -122,7 +123,7 @@ object RuleValidator {
         val minDays = 1
         val maxDays = 7
         return if (days.size !in minDays..maxDays) {
-            OperationResult.failure(RuleValidatorException.DaysOutOfRangeException(minDays, maxDays, days.size))
+            OperationResult.failure(DaysOutOfRangeException(minDays, maxDays, days.size))
         } else OperationResult.success(days)
     }
 
@@ -163,12 +164,13 @@ object RuleValidator {
 
     }
 
+
     /**
      * Criado por Gilian Marques
      * Em 20/06/2025 as 17:18
      */
     sealed class RuleValidatorException(msg: String) : Exception(msg) {
-
+// TODO: agrupar exceptions por funçao de validação
         /**
          * Criado por Gilian Marques
          * Em domingo, 30 de março de 2025 as 14:21.
