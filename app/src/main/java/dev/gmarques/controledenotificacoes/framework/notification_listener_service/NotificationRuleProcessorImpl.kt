@@ -63,8 +63,8 @@ class NotificationRuleProcessorImpl @Inject constructor(
         val managedApp = getManagedAppByPackageIdUseCase(appNotification.packageId)
 
         if (managedApp != null) {
-            val rule = getRuleByIdUseCase(managedApp.ruleId)
-                ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
+            val rule =
+                getRuleByIdUseCase(managedApp.ruleId) ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
             enforceRuleAndCondition(rule, managedApp)
 
@@ -133,7 +133,6 @@ class NotificationRuleProcessorImpl @Inject constructor(
     ) {
         val nextUnlockTime = rule.nextAppUnlockPeriodFromNow()
 
-        // snooze isnt supported in this sdk, calling cancel
         if (rule.action == Rule.Action.SNOOZE && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
         } else when (rule.action) {
@@ -147,14 +146,11 @@ class NotificationRuleProcessorImpl @Inject constructor(
                 callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
             }
         }
-
-        runBlocking {
-            alarmScheduler.scheduleAlarm(appNotification.packageId, nextUnlockTime)
-            updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
-            saveNotificationOnHistory()
-            saveLargeIconOnStorage()
-        }
-
+// TODO: se for notificar só pra cancel, considerar o uso compulsivo de cancel em nougat e inferiores
+        alarmScheduler.scheduleAlarm(appNotification.packageId, nextUnlockTime)
+        runBlocking { updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true)) }
+        saveNotificationOnHistory()
+        saveLargeIconOnStorage()
     }
 
     fun saveNotificationOnHistory() = runBlocking {
