@@ -23,5 +23,5 @@ data class ActiveStatusBarNotification(
     val key: String,
     val isOngoing: Boolean,
     val notification: Notification,
-    val tag: String,
+    val tag: String?,
     )

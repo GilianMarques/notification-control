@@ -24,5 +24,5 @@ data class ParsedNotificationData(
     val smallIcon: Icon?,
     val largeIcon: Icon?,
     val notification: Notification,
-    val tag: String,
+    val tag: String?,
 )

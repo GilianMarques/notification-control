@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +14,10 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -30,8 +34,10 @@ class AddManagedAppsViewModel @Inject constructor(
     private val addManagedAppUseCase: AddManagedAppUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
-
-    ) : ViewModel() {
+    private val getAllRulesUseCase: GetAllRulesUseCase,
+    private val getRuleByIdUseCase: GetRuleByIdUseCase,
+    private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
+) : ViewModel() {
 
 
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
@@ -172,6 +178,18 @@ class AddManagedAppsViewModel @Inject constructor(
         }
 
         addNewlySelectedApps(listOf(installedApp))
+    }
+
+    suspend fun getAllRules(): List<Rule> {
+        return getAllRulesUseCase()
+    }
+
+    suspend fun getRuleById(id: String): Rule? {
+        return getRuleByIdUseCase(id)
+    }
+
+    suspend fun getInstalledAppIcon(packageId: String): Drawable? {
+        return getInstalledAppIconUseCase(packageId)
     }
 
 }

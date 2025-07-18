@@ -16,9 +16,6 @@ import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemRuleSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -32,22 +29,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
 class AddManagedAppsFragment() : MyFragment() {
 
     private val maxAppsViews = 5
-
-    @Inject
-    lateinit var getAllRulesUseCase: GetAllRulesUseCase
-
-    @Inject
-    lateinit var getRuleByIdUseCase: GetRuleByIdUseCase
-
-    @Inject
-    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -100,14 +87,14 @@ class AddManagedAppsFragment() : MyFragment() {
 
         val pref = PreferencesImpl.lastSelectedRule
         if (!pref.isDefault()) {
-            getRuleByIdUseCase(pref.value).let { rule ->
+            viewModel.getRuleById(pref.value).let { rule ->
                 if (rule == null) pref.reset()
                 else viewModel.setRule(rule)
                 return@launch
             }
         }
 
-        val rules = getAllRulesUseCase()
+        val rules = viewModel.getAllRules()
         if (!rules.isEmpty()) viewModel.setRule(rules.last())
     }
 
@@ -117,7 +104,7 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private suspend fun removeSelectedRuleIfItWasDeletedByUser() {
         viewModel.selectedRule.value?.id?.let {
-            if (getRuleByIdUseCase(it) == null) viewModel.setRule(null)
+            if (viewModel.getRuleById(it) == null) viewModel.setRule(null)
         }
     }
 
@@ -299,7 +286,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
                 val itemBinding = ItemAppSmallBinding.inflate(layoutInflater).apply {
                     name.text = app.name
-                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                    ivAppIcon.setImageDrawable(viewModel.getInstalledAppIcon(app.packageId))
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.deleteApp(app)
                     })

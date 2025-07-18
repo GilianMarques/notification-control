@@ -30,7 +30,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
             ),
@@ -67,7 +67,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
             ),
@@ -104,7 +104,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
             ),
@@ -137,7 +137,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
             ),
@@ -171,7 +171,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
                 Rule.WeekDay.TUESDAY,
@@ -207,7 +207,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
                 Rule.WeekDay.TUESDAY,
@@ -242,7 +242,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
                 Rule.WeekDay.WEDNESDAY,
@@ -277,7 +277,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
                 Rule.WeekDay.WEDNESDAY,
@@ -312,7 +312,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
             ),
@@ -345,7 +345,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
             ),
@@ -379,7 +379,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.WEDNESDAY,
                 Rule.WeekDay.SATURDAY,
@@ -416,7 +416,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
                 Rule.WeekDay.TUESDAY,
@@ -451,7 +451,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
             ),
@@ -488,7 +488,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
             ),
@@ -523,7 +523,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
             ),
@@ -557,7 +557,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
             ),
@@ -591,7 +591,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
                 Rule.WeekDay.TUESDAY,
@@ -628,7 +628,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
                 Rule.WeekDay.WEDNESDAY,
@@ -663,7 +663,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
                 Rule.WeekDay.WEDNESDAY,
@@ -699,7 +699,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
             ),
@@ -733,7 +733,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
             ),
@@ -767,7 +767,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
                 Rule.WeekDay.SATURDAY,
@@ -803,7 +803,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
-            behaviour = Rule.behaviourDefault,
+            action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
                 Rule.WeekDay.TUESDAY,

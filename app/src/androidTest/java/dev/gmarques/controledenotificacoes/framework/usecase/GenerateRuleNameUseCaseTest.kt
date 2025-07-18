@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
-import dev.gmarques.controledenotificacoes.framework.StringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +27,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.RESTRICTIVE,
                 condition = null,
-                behaviour = Rule.behaviourDefault,
+                action = Rule.actionDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),
@@ -40,7 +40,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.PERMISSIVE,
                 condition = null,
-                behaviour = Rule.behaviourDefault,
+                action = Rule.actionDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.SUNDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
                     TimeRange(8, 0, 12, 0),

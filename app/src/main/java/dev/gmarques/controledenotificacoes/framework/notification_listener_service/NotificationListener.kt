@@ -42,25 +42,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     }
 
-    fun cancelOngoingNotificationBySnooze(sbn: StatusBarNotification) {
-        Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: $sbn\n\n")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && sbn.isOngoing && sbn.id == 220461) {
-            Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: trying to cancel")
-            try {
-                val maxTime = 60_000L
-                snoozeNotification(sbn.key, maxTime)
-                /*   launch {
-                       delay(5000)
-                       snoozedNotifications.forEach {
-                           snoozeNotification(sbn.key, 100L)
-                       }
-                   }*/
-            } catch (e: Exception) {
-                Log.e("NotifSnooze", "Erro ao adiar notificação: ${e.message}")
-            }
-        }
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
@@ -69,8 +50,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerConnected()
         instance = this@NotificationListener
         observeRulesChanges()
-
-        //  activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) } todo    implementar
     }
 
     /**
@@ -214,7 +193,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     /** Callback do [NotificationRuleProcessor]*/
     override fun onNotificationSnoozed(activeNotification: ActiveStatusBarNotification, snoozePeriod: Long) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve estar disponivel em versões anteriores ao Oreo")
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
 
         Log.d("USUK", "NotificationListener.snoozeNotification: ${activeNotification.packageId} ")
         cancelValidationCallbackTimer()
