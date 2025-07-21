@@ -12,6 +12,7 @@ import kotlin.math.sqrt
 /**
  * Criado por Gilian Marques
  * Em quinta-feira, 12 de junho de 2025 as 10:49.
+ * Detecta um chacoalhado no dispositivo que é usado para executar uma animação lottie
  */
 class ShakeDetectorHelper @Inject constructor(
     @ApplicationContext context: Context,

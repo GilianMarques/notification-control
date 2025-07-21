@@ -23,6 +23,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCa
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
+import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRuleFactory
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -81,7 +82,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
         val installedApp = getInstalledAppByPackageOrDefaultUseCase(pkg)
 
-        setup(ManagedAppWithRule.from(installedApp, managedApp, rule))
+        setup(ManagedAppWithRuleFactory.create(installedApp, managedApp, rule))
     }
 
     fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {

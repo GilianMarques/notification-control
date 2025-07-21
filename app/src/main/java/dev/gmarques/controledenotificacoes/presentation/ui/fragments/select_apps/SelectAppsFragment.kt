@@ -233,7 +233,7 @@ class SelectAppsFragment : MyFragment() {
             section {
 
                 item {
-                    label = if (PreferencesImpl.prefIncludeSystemApps.value) getString(R.string.Excluir_apps_do_sistema)
+                    label = if (PreferencesImpl.includeSystemApps.value) getString(R.string.Excluir_apps_do_sistema)
                     else getString(R.string.Incluir_apps_do_sistema)
                     icon = R.drawable.vec_app
                     callback = {
@@ -242,7 +242,7 @@ class SelectAppsFragment : MyFragment() {
                 }
 
                 item {
-                    label = if (PreferencesImpl.prefIncludeManagedApps.value)
+                    label = if (PreferencesImpl.includeManagedApps.value)
                         getString(R.string.Excluir_apps_gerenciados)
                     else getString(R.string.Incluir_apps_gerenciados)
                     icon = R.drawable.vec_app

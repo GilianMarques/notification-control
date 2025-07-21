@@ -7,7 +7,8 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 22 de abril de 2025 as 20:26.
- * Aqui ficam as funçoes de extençao relacionadas aos modelos de objetos de dominio dos quais a aplicação depende
+ * Aqui ficam as funçoes de extençao relacionadas aos modelos de objetos de dominio dos quais a aplicação depende mas que nao podem
+ * ficar nas classes de extfuns no pacote de dominio porque envolvem recursos da plataforma.
  */
 object DomainRelatedExtFuns {
 

@@ -7,10 +7,10 @@ import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarm
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 
@@ -19,8 +19,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 interface UseCasesEntryPoint {
     fun getAppUserUseCase(): GetUserUseCase
     fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase
-    fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase
-    fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase
+    fun nextAppUnlockUseCase(): NextRuleUnlockTimeUseCase
+    fun isAppInBlockPeriodUseCase(): IsRuleInBlockPeriodUseCase
     fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase
     fun updateManagedAppUseCase(): UpdateManagedAppUseCase
     fun insertAppNotificationUseCase(): InsertAppNotificationUseCase

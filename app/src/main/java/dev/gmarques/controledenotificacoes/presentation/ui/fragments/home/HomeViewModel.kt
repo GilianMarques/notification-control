@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
+import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRuleFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -99,7 +100,7 @@ class HomeViewModel @Inject constructor(
                 getInstalledAppByPackageOrDefaultUseCase(managedApp.packageName)
             }
 
-            ManagedAppWithRule.from(installedApp, managedApp, rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound)
+            ManagedAppWithRuleFactory.create(installedApp, managedApp, rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound)
 
         }.sortedWith(compareByDescending<ManagedAppWithRule> { it.hasPendingNotifications }.thenBy { it.name.lowercase() })
 

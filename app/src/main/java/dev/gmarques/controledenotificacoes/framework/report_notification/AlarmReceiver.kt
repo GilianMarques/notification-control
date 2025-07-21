@@ -7,7 +7,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 
 /**
  * É executado mediante agendamento no sistema para  emitir notificações ao usuario.
- * Usa [ReportNotificationManager] para exibir a notificação de relatório e [dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler]
+ * Usa [ReportNotificationManager] para exibir a notificação de relatório e [dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler]
  * para limpar os dados de agendamento após a emissao das notificações.
  */
 class AlarmReceiver : BroadcastReceiver() {

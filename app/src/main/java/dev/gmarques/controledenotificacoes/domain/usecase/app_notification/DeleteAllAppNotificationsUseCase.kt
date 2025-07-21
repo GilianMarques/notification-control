@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.app_notification
 
 import android.content.Context
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
@@ -11,7 +10,7 @@ import javax.inject.Inject
  * Remove todas as notificações de um determinado aplicativo  assim como as PendingIntents e Imagens em cache referentes à essas
  * notificações
  *
- * Este usecase é usando em uma Transação do Room. Não crie corrotinas ou mude o escopo do contexto para que a
+ * Atençao: Este usecase é usando em uma Transação do Room. Não crie corrotinas ou mude o escopo do contexto para que a
  * transação não perca o efeito.
  * */
 class DeleteAllAppNotificationsUseCase @Inject constructor(
@@ -20,7 +19,7 @@ class DeleteAllAppNotificationsUseCase @Inject constructor(
 ) {
     /**
      * Limpa o cache de intents e de bitmaps relacionado ao app e por fim apaga as notificaçoes do db
-     * de forma que o cache bao fique orfao se houver algum erro entre as operações
+     * de forma que o cache nao fique orfao se houver algum erro entre as operações
      */
     suspend operator fun invoke(packageName: String) {
         removeBitmapsFromCache(packageName)
@@ -31,7 +30,6 @@ class DeleteAllAppNotificationsUseCase @Inject constructor(
     private fun removeBitmapsFromCache(packageName: String) {
         context.cacheDir.listFiles()?.forEach {
             if (it.name.contains(packageName)) {
-                Log.d("USUK", "DeleteAllAppNotificationsUseCase.removeBitmapsFromCache: removing bitmap:  ${it.name}")
                 it.delete()
             }
         }

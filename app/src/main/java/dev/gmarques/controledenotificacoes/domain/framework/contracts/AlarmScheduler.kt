@@ -1,10 +1,10 @@
-package dev.gmarques.controledenotificacoes.domain.framework
+package dev.gmarques.controledenotificacoes.domain.framework.contracts
 
 /**
  * Criado por Gilian Marques
  * Em sexta-feira, 16 de maio de 2025 as 11:00.
  *
- * gerencia o agendamento e cancelamento de alarmes no sistema
+ * gerencia o agendamento e cancelamento de alarmes no sistema, é usada para agendar as notificações de relatório
  */
 interface AlarmScheduler {
 
@@ -13,6 +13,7 @@ interface AlarmScheduler {
      * escreve o dados do agendamento nas preferencias.
      */
     fun scheduleAlarm(packageName: String, millis: Long)
+
     fun scheduleAutoTurnOnAlarm(millis: Long)
 
     /**

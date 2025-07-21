@@ -10,7 +10,8 @@ import javax.inject.Inject
 /**
  * Criado por Gilian Marques
  * Em segunda-feira, 30 de junho de 2025 as 15:36.
- * Obtem e converte as notificações ativas (filtradas - vide repositorio) para serem usadas dentro da aplicação
+ *
+ * Obtem e converte as notificações ativas direto do sistema para serem usadas dentro da aplicação
  *
  */
 class GetActiveNotificationsUseCase @Inject constructor(

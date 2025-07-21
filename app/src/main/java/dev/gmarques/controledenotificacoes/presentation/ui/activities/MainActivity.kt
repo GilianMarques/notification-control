@@ -33,7 +33,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

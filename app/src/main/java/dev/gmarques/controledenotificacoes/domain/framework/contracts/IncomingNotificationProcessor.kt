@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase.framework
+package dev.gmarques.controledenotificacoes.domain.framework.contracts
 
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -7,9 +7,11 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
 /**
  * Criado por Gilian Marques
  * Em sexta-feira, 18 de julho de 2025 as 17:41.
+ *
+ * A implementação dessa interface é usada para processar notificações recebidas pelo sistema e determinar como trata-las de
+ * acordo com as regras definidas pelo usuario. Após determinar a ação, retorna um [PerformAction] indicando a ação a ser tomada.
  */
-// TODO: mover para domain/framework depois de remover RuleEnforcer
-interface NotificationProcessor {
+interface IncomingNotificationProcessor {
 
     fun processNotification(
         activeNotification: ActiveStatusBarNotification,

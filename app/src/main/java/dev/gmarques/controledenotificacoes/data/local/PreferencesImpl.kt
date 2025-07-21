@@ -57,7 +57,7 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val prefIncludeSystemApps: PreferenceProperty<Boolean> by lazy {
+    override val includeSystemApps: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "pref_include_system_apps",
             defaultValue = false,
@@ -66,7 +66,7 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val prefIncludeManagedApps: PreferenceProperty<Boolean> by lazy {
+    override val includeManagedApps: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "pref_include_managed_apps",
             defaultValue = false,

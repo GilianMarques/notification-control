@@ -16,7 +16,6 @@ import javax.inject.Inject
  */
 class GetSmartWatchInstalledAppsUseCase @Inject constructor(
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
-    private val a: GetAllInstalledAppsUseCase,
 ) {
 
     private val smartwatchAppPackages = listOf(
@@ -38,9 +37,6 @@ class GetSmartWatchInstalledAppsUseCase @Inject constructor(
     suspend operator fun invoke(): List<InstalledApp> {
 
         val apps = mutableListOf<InstalledApp>()
-
-        // return apps
-        // apps.addAll(a.invoke())
 
         smartwatchAppPackages.forEach {
             val app = getInstalledAppByPackageOrDefaultUseCase(it)

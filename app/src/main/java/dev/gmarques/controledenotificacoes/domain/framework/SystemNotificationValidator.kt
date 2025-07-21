@@ -5,8 +5,8 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 
 /**
  * Usado pra validar as notificações do sistema diretamente.
- * Valida se as notificações atende às regras de negócio para saber se e como processa-las
- * */
+ * Valida se as notificações atendem às regras de negócio para saber se, e como processa-las
+ */
 object SystemNotificationValidator {
 
     fun isValidToProcess(notification: StatusBarNotification) =

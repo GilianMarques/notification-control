@@ -6,7 +6,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Allow
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Cancel
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Snooze
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
@@ -14,9 +18,6 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Allow
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Cancel
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Snooze
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
@@ -31,8 +32,11 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em sexta-feira, 18 de julho de 2025 as 16:39.
  *
- * Processa uma notificação para determinar se ela deve ser permitada ou bloqueada e executa as ações relacionadas
+ * Processa uma notificação recebida no dispositivo pelo [dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener]
+ * para determinar se ela deve ser permitida ou bloqueada e executa as ações relacionadas
  * ao processo como manter historico, fazer cache de bitmap, agendar alarme, etc...
+ *
+ * usa [dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImpl] para o processamento da notificação
  *
  * todo A natureza desse usecase de rodar com  RunBlocking Pode impedir que as notificações sejam bloqueadas a tempo
  * Se esse problema começar a aparecer execute as ações de salvar os dados em uma thread separada ou  depois de retornar
@@ -43,7 +47,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
-    private val notificationProcessor: NotificationProcessor,
+    private val incomingNotificationProcessor: IncomingNotificationProcessor,
     @ApplicationContext private val context: Context,
 ) {
 
@@ -58,7 +62,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
         val rule = getRule(managedApp)
 
 
-        val actionToPerform = notificationProcessor.processNotification(
+        val actionToPerform = incomingNotificationProcessor.processNotification(
             targetNotification,
             rule,
             managedApp,
