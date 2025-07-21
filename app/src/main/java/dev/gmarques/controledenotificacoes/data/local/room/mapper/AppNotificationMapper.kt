@@ -14,7 +14,7 @@ object AppNotificationMapper {
             packageName = model.packageName,
             title = model.title,
             content = model.content,
-            timestamp = model.timestamp,
+            postTime = model.postTime,
         )
     }
 
@@ -23,7 +23,7 @@ object AppNotificationMapper {
             packageName = entity.packageName,
             title = entity.title,
             content = entity.content,
-            timestamp = entity.timestamp,
+            postTime = entity.postTime,
         )
     }
 }

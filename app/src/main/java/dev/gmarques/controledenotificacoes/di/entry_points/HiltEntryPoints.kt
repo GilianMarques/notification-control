@@ -2,10 +2,11 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
+import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
@@ -25,12 +26,11 @@ import dev.gmarques.controledenotificacoes.framework.report_notification.ReportN
 object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     /**
-     * Recupera uma instância de um EntryPoint Hilt registrado no `AndroidManifest.xml`
-     * a partir do contexto da aplicação.
+     * Recupera uma instância de um EntryPoint Hilt a partir do contexto da aplicação.
      *
      * Esta função é genérica e pode ser utilizada para acessar qualquer interface de
      * EntryPoint previamente definida, como por exemplo `UseCasesEntryPoint`,
-     * `NotificationRuleProcessorEntryPoint`, `ScheduleManagerEntryPoint`, etc.
+     * `RuleEnforcerEntryPoint`, `ScheduleManagerEntryPoint`, etc.
      *
      * O parâmetro genérico [T] é automaticamente inferido no momento da chamada,
      * dispensando a necessidade de passar a classe explicitamente.
@@ -48,8 +48,8 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
     }
 
-    override fun notificationRuleProcessor(): NotificationRuleProcessor {
-        return entryPoint<FrameworkEntryPoint>().notificationRuleProcessor()
+    override fun ruleEnforcer(): RuleEnforcer {
+        return entryPoint<FrameworkEntryPoint>().ruleEnforcer()
     }
 
     override fun scheduleManager(): AlarmSchedulerImpl {
@@ -102,6 +102,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun scheduleAutoTurnOnUseCase(): ScheduleAutoTurnOnUseCase {
         return entryPoint<UseCasesEntryPoint>().scheduleAutoTurnOnUseCase()
+    }
+
+    override fun processIncomingNotificationUseCase(): ProcessIncomingNotificationUseCase {
+        return entryPoint<UseCasesEntryPoint>().processIncomingNotificationUseCase()
     }
 
 }

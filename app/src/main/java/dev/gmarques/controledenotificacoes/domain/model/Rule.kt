@@ -18,6 +18,7 @@ data class Rule(
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
     val condition: Condition?,
+    val keepFullHistory: Boolean=false, // TODO: quando implementar remova esse valor padrao!
     val type: Type,
     val action: Action,
 ) : Serializable {

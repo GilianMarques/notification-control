@@ -1,0 +1,14 @@
+package dev.gmarques.controledenotificacoes.domain.framework
+
+import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.BuildConfig
+
+/**
+ * Usado pra validar as notificações do sistema diretamente.
+ * Valida se as notificações atende às regras de negócio para saber se e como processa-las
+ * */
+object SystemNotificationValidator {
+
+    fun isValidToProcess(notification: StatusBarNotification) =
+        !notification.isOngoing && notification.packageName != BuildConfig.APPLICATION_ID
+}

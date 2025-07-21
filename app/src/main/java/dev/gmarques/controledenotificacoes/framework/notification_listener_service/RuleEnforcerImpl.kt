@@ -7,7 +7,7 @@ import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.NotificationRuleProcessor
+import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
@@ -36,28 +36,28 @@ import javax.inject.Inject
 // TODO: converter essa classe em um legitimo processador que recebe dados de dominio e retorna uma decisao
 // TODO: usar um usecase ProcessIncomingNotificationUseCase para receber a sbn, criar os objetos de domino e passar pro processor
 // TODO: com base da decisao do processor o usecase vai salvar historico, btitmpa, etcc. e retornar um result pro service dizendo se deve cancelar, adiar, etc... use um sealed class para isso
-class NotificationRuleProcessorImpl @Inject constructor(
+class RuleEnforcerImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val alarmScheduler: AlarmScheduler,
     private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     @ApplicationContext private val context: Context,
-) : NotificationRuleProcessor {
+) : RuleEnforcer {
 
     private lateinit var appNotification: AppNotification
     private lateinit var activeNotification: ActiveStatusBarNotification
-    private lateinit var callback: NotificationRuleProcessor.Callback
+    private lateinit var callback: RuleEnforcer.Callback
 
     override fun evaluateNotification(
         activeNotification: ActiveStatusBarNotification,
         appNotification: AppNotification,
-        callback: NotificationRuleProcessor.Callback,
+        callback: RuleEnforcer.Callback,
     ) = runBlocking {
 
-        this@NotificationRuleProcessorImpl.activeNotification = activeNotification
-        this@NotificationRuleProcessorImpl.appNotification = appNotification
-        this@NotificationRuleProcessorImpl.callback = callback
+        this@RuleEnforcerImpl.activeNotification = activeNotification
+        this@RuleEnforcerImpl.appNotification = appNotification
+        this@RuleEnforcerImpl.callback = callback
 
 
         val managedApp = getManagedAppByPackageIdUseCase(appNotification.packageName)
@@ -121,7 +121,7 @@ class NotificationRuleProcessorImpl @Inject constructor(
 
         Log.w(
             "USUK",
-            "NotificationRuleProcessorImpl.shouldAllowNotification: notificaçção permitida pq nao caiu em nenhuma pré-condição"
+            "RuleEnforcerImpl.shouldAllowNotification: notificaçção permitida pq nao caiu em nenhuma pré-condição"
         )
 
         return true
@@ -146,6 +146,7 @@ class NotificationRuleProcessorImpl @Inject constructor(
                 callback.onNotificationCancelled(activeNotification, appNotification, rule, managedApp)
             }
         }
+
 // TODO: se for notificar só pra cancel, considerar o uso compulsivo de cancel em nougat e inferiores
         alarmScheduler.scheduleAlarm(appNotification.packageName, nextUnlockTime)
         runBlocking { updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true)) }
@@ -178,9 +179,9 @@ class NotificationRuleProcessorImpl @Inject constructor(
             FileOutputStream(file).use { out ->
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
-            // Log.d("USUK", "NotificationRuleProcessorImpl.saveLargeIcon: largeIcon for ${activeNotification.packageName} saved")
+            // Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${activeNotification.packageName} saved")
         } catch (e: Exception) {
-            // Log.e("USUK", "NotificationRuleProcessorImpl.saveLargeIcon: failure while saving notification's large icon from ${activeNotification.packageName}")
+            // Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: failure while saving notification's large icon from ${activeNotification.packageName}")
             e.stackTrace
         }
 

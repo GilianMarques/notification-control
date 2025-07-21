@@ -20,20 +20,20 @@ object AppNotificationExtensionFun {
     fun AppNotification.timeFormatted(): String {
         val now = Calendar.getInstance()
         val notificationTime = Calendar.getInstance().apply {
-            timeInMillis = timestamp
+            timeInMillis = postTime
         }
 
         return if (now.get(Calendar.YEAR) == notificationTime.get(Calendar.YEAR)
             && now.get(Calendar.DAY_OF_YEAR) == notificationTime.get(Calendar.DAY_OF_YEAR)
         ) {
-            SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(timestamp))
+            SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(postTime))
         } else {
-            SimpleDateFormat("EEEE, dd/MM HH:mm", Locale.getDefault()).format(Date(timestamp))
+            SimpleDateFormat("EEEE, dd/MM HH:mm", Locale.getDefault()).format(Date(postTime))
         }
     }
 
     fun AppNotification.pendingIntentId(): String {
-        return "${this.packageName}_${this.timestamp}"
+        return "${this.packageName}_${this.postTime}"
     }
 
     /**

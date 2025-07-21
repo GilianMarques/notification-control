@@ -57,7 +57,7 @@ object RuleExtensionFun {
      * Se for Quarta-feira às 11:00, `isAppInBlockPeriod()` retornará `false`.
      */
     fun Rule.isAppInBlockPeriod(): Boolean {
-
+// TODO: remvoer se possivel 
         val isAppInBlockPeriodUseCase = HiltEntryPoints.isAppInBlockPeriodUseCase()
 
         return isAppInBlockPeriodUseCase(rule = this)
@@ -88,9 +88,9 @@ object RuleExtensionFun {
     /**
      * Verifica se a regra representa um dia de permissão/bloqueio integral, ou seja, 24 horas.
      *
-     * @return `true` se a regra contiver ao menos um intervalo com flag `allDay = true`
+     * @return `true` se a regra contiver um intervalo com flag `allDay = true`
      */
-    fun Rule.isAllDayRule(): Boolean = timeRanges.any { it.allDay }
+    fun Rule.isAllDayRule(): Boolean = timeRanges.first().allDay
 
 
     /**
@@ -102,12 +102,13 @@ object RuleExtensionFun {
      * 3. A regra é para o dia inteiro ([isAllDayRule] retorna `true`).
      *
      * @return `true` se a regra for um bloqueio permanente, `false` caso contrário.
-     *
      * @see Type.RESTRICTIVE
      * @see Rule.WeekDay
      * @see isAllDayRule
      */
-    fun Rule.isPermaBlock() = type == Type.RESTRICTIVE && days.size == Rule.WeekDay.entries.size && isAllDayRule()
+    fun Rule.blocksAllDayWholeWeek() = type == Type.RESTRICTIVE
+            && days.size == Rule.WeekDay.entries.size
+            && isAllDayRule()
 
     /**
      * Retorna a lista de [TimeRange]s ordenada pelo horário de início.

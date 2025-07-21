@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -45,8 +46,12 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logOff() {
-        AuthUI.getInstance().signOut(context).await()
-        FirebaseAuth.getInstance().signOut()
+      try {
+              AuthUI.getInstance().signOut(context).await()
+              FirebaseAuth.getInstance().signOut()
+      } catch (ex: Exception) {
+          Log.e("USUK", "UserRepositoryImpl.logOff: $ex")
+      }
     }
 
     override fun deleteAccount() {

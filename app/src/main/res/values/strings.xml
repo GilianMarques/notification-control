@@ -305,7 +305,7 @@
     <string name="Essa_acao_esta_dispon_vel_apenas_em_android_8_0_oreo_ou_superior">Este comportamento só funcionará em Android 8.0 (Oreo) ou superior, para android 7.1 (Nougat) e anteriores, CANCELAR será usado.</string>
     <string name="As_notificacoes_serao_canceladas_e_ao_fim_do_bloqueio_um_alerta_avisar_se_o_app_recebeu_novas_notifica_es">As notificações serão canceladas e, ao fim do bloqueio, um alerta avisará caso hajam novas notificações.</string>
     <string name="Selecione_um_comportamento">Selecione um comportamento</string>
-    <string name="Nao_poss_vel_usar_o_comoprtamento_adiar_em_regras_que_bloqueiam_permanentemente">Não é possível usar o comportamento Adiar em regras que atuam indefinidamente (24/7).</string>
+    <string name="Nao_poss_vel_usar_o_comoprtamento_adiar_em_regras_que_bloqueiam_permanentemente">Não é possível usar \"Adiar\" em regras sem período de desbloqueio.</string>
 
 
 </resources>

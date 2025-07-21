@@ -21,7 +21,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Novo BOLETO disponível",
             "verifique o app",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -39,7 +39,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Novo BOLETO disponível",
             "verifique o app",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -57,7 +57,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Titulo qualquer",
             "Novo boleto disponível",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -75,7 +75,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Pagamento disponível",
             "Mensagem URGENTE",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -93,7 +93,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Banco atualizou",
             "Seu banco enviou um aviso",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -115,7 +115,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Você tem um boleto",
             "mensagem irrelevante",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -136,7 +136,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Titulo qualquer",
             "tudo certo com seu app",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -154,7 +154,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Qualquer título",
             "Qualquer conteúdo",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -172,7 +172,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "BOLETO gerado",
             "confira no app",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -190,7 +190,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Notificação vazia",
             "",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -209,7 +209,7 @@ class ConditionExtensionFunTest {
             "Notificação",
             "Por favor," +
                     " verifique agora",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -227,7 +227,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Nova AÇÃO requerida",
             "leia com atenção",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -245,7 +245,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Aviso",
             "🚨URGENTE! Verifique já",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -263,7 +263,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Banco notificou",
             "veja os detalhes",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -282,7 +282,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Sem importância",
             "conteúdo com Alvo esperado",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -300,7 +300,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "",
             "",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertFalse(condition.isSatisfiedBy(notification))
@@ -319,7 +319,7 @@ class ConditionExtensionFunTest {
             "Por favor," +
                     " pague agora seu boleto",
             "Aviso do sistema",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))
@@ -337,7 +337,7 @@ class ConditionExtensionFunTest {
             "pkg",
             "Titulo",
             "Este é um teste teste teste",
-            timestamp = 123456789L
+            postTime = 123456789L
         )
 
         assertTrue(condition.isSatisfiedBy(notification))

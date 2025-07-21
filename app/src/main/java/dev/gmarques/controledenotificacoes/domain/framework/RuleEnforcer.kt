@@ -9,13 +9,13 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:10.
  *
- * Interface de contrato para a implementação de um `NotificationRuleProcessor`.
- * O `NotificationRuleProcessor` é responsável por:
+ * Interface de contrato para a implementação de um `RuleEnforcer`.
+ * O `RuleEnforcer` é responsável por:
  * - Verificar a existência de regras para um determinado aplicativo.
  * - Avaliar se uma notificação emitida por esse aplicativo deve ser bloqueada ou não, com base nas regras existentes.
  * - Manter um histórico das notificações de aplicativos gerenciados, utilizando os casos de uso apropriados.
  */
-interface NotificationRuleProcessor {
+interface RuleEnforcer {
     fun evaluateNotification(
         activeNotification: ActiveStatusBarNotification,
         appNotification: AppNotification,

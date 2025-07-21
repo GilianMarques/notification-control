@@ -1,15 +1,30 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.framework
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Allow
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Cancel
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction.Snooze
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
+import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import kotlinx.coroutines.runBlocking
+import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 /**
@@ -19,7 +34,8 @@ import javax.inject.Inject
  * Processa uma notificação para determinar se ela deve ser permitada ou bloqueada e executa as ações relacionadas
  * ao processo como manter historico, fazer cache de bitmap, agendar alarme, etc...
  *
- *
+ * todo A natureza desse usecase de rodar com  RunBlocking Pode impedir que as notificações sejam bloqueadas a tempo
+ * Se esse problema começar a aparecer execute as ações de salvar os dados em uma thread separada ou  depois de retornar
  */
 class ProcessIncomingNotificationUseCase @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
@@ -27,27 +43,144 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
+    private val notificationProcessor: NotificationProcessor,
     @ApplicationContext private val context: Context,
 ) {
-// TODO: continuar conversao https://chatgpt.com/share/687ab1a3-f120-8006-822a-6be7488b92df
 
-    operator fun invoke(targetNotification: StatusBarNotification) = runBlocking<Unit> {
+    operator fun invoke(sbn: StatusBarNotification): ProcessingResult = runBlocking {
 
-        val managedApp = getManagedAppByPackageIdUseCase(targetNotification.packageName)
+        val targetNotification = ActiveStatusBarNotificationFactory.create(sbn)
 
-        if (managedApp == null) {
-            Log.d("USUK", "ProcessIncomingNotificationUseCase.invoke: ")
-            //callback.onAppNotManaged(activeNotification)
-            return@runBlocking
+        val managedApp = getManagedAppByPackageIdUseCase(sbn.packageName) ?: run {
+            return@runBlocking ProcessingResult.AppNotManaged(targetNotification)
         }
 
-        val rule = getRuleByIdUseCase(managedApp.ruleId)
+        val rule = getRule(managedApp)
+
+
+        val actionToPerform = notificationProcessor.processNotification(
+            targetNotification,
+            rule,
+            managedApp,
+
+            )
+
+        return@runBlocking when (actionToPerform) {
+            Allow -> {
+                if (rule.keepFullHistory) saveNotification(targetNotification)
+                ProcessingResult.AllowNotification(targetNotification)
+            }
+
+            Cancel -> {
+                saveNotification(targetNotification)
+                scheduleReportNotification(rule, targetNotification)
+                setHasPendingNotificationsForManagedApp(managedApp)
+                ProcessingResult.CancelNotification(targetNotification)
+            }
+
+            Snooze -> {
+                saveNotification(targetNotification)
+                setHasPendingNotificationsForManagedApp(managedApp)
+                val snoozeFor = rule.nextAppUnlockPeriodFromNow() - System.currentTimeMillis()
+                if (snoozeFor < 0) error("O periodo de adiamento deve ser positivo. verifique se a regra é permablock e o proximo periodo. rule: $rule ")
+                ProcessingResult.SnoozeNotification(targetNotification, snoozeFor)
+            }
+        }
+
+    }
+
+
+    /**Retorna uma regra ou lança uma exceção*/
+    private fun getRule(managedApp: ManagedApp): Rule = runBlocking {
+        return@runBlocking getRuleByIdUseCase(managedApp.ruleId)
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
+    }
 
 
-        val condition = rule.condition
-        val appInBlockPeriod = rule.isAppInBlockPeriod()
+    /**
+     * Salva a notificação no banco de dados, armazena em cache seu `PendingIntent` e
+     * salva uma cópia em cache do bitmap do ícone grande da notificação, se houver.
+     *
+     * Esta função é executada em um `runBlocking` para garantir que as operações de banco de dados e
+     * sistema de arquivos sejam concluídas antes que a função retorne.
+     * As exceções durante o salvamento do bitmap são registradas, mas não interrompem o fluxo.
+     *
+     * @param targetNotification A notificação a ser salva.
+     */
+    private fun saveNotification(targetNotification: ActiveStatusBarNotification) = runBlocking {
 
+        if (!isValidNotification(targetNotification)) return@runBlocking
+
+        val appNotification = AppNotificationFactory.create(targetNotification)
+
+        insertAppNotificationUseCase(appNotification)
+
+        targetNotification.notification.contentIntent?.let {
+            PendingIntentCache.add(appNotification.pendingIntentId(), it)
+        }
+
+        try {
+            val bitmap = (targetNotification.largeIcon?.loadDrawable(context) as BitmapDrawable).bitmap
+            val file = File(context.cacheDir, appNotification.bitmapId())
+
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            }
+
+        } catch (e: Exception) {
+            Log.w(
+                "USUK",
+                "ProcessIncomingNotificationUseCase.saveNotification: error saving largeIcon from:\n$targetNotification\nerror: ${e.stackTrace} "
+            )
+        }
+
+    }
+
+    /**
+     * Verifica se uma notificação é válida para ser salva.
+     * Uma notificação é considerada inválida se não tiver título, conteúdo e ícone grande.
+     * @param appNotification A notificação a ser validada.
+     * @return True se a notificação for válida, false caso contrário.
+     */
+    private fun isValidNotification(appNotification: ActiveStatusBarNotification): Boolean {
+        return !(appNotification.title.isEmpty() &&
+                appNotification.content.isEmpty() &&
+                appNotification.largeIcon == null)
+    }
+
+    /**
+     * Define o sinalizador `hasPendingNotifications` como verdadeiro para o aplicativo gerenciado fornecido.
+     *
+     * Esta função é executada em um `runBlocking` para garantir que a atualização do banco de dados
+     * seja concluída antes que a função retorne.
+     *
+     * @param managedApp O aplicativo gerenciado a ser atualizado.
+     */
+    private fun setHasPendingNotificationsForManagedApp(managedApp: ManagedApp) = runBlocking {
+        updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
+    }
+
+    /**
+     * Agenda uma notificação de relatório para a regra e notificação de destino fornecidas.
+     *
+     * A notificação de relatório será acionada no próximo período de desbloqueio do aplicativo,
+     * conforme definido pela regra.
+     *
+     * @param rule A regra que define o período de desbloqueio do aplicativo.
+     * @param targetNotification A notificação de destino para a qual o relatório será agendado.
+     */
+    private fun scheduleReportNotification(rule: Rule, targetNotification: ActiveStatusBarNotification) {
+        val nextUnlockTime = rule.nextAppUnlockPeriodFromNow()
+        alarmScheduler.scheduleAlarm(targetNotification.packageName, nextUnlockTime)
+    }
+
+    sealed class ProcessingResult {
+        data class AllowNotification(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()
+        data class CancelNotification(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()
+        data class SnoozeNotification(val targetNotification: ActiveStatusBarNotification, val snoozeFor: Long) :
+            ProcessingResult()
+
+        data class AppNotManaged(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()
 
     }
 }

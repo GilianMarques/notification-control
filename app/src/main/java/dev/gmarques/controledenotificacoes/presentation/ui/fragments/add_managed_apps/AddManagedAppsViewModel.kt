@@ -155,7 +155,7 @@ class AddManagedAppsViewModel @Inject constructor(
      * Se a instância do [NotificationListener] não estiver disponível, a função não faz nada.
      */
     private fun requestActiveNotificationsEvaluation() {
-        NotificationListener.instance?.evaluateActiveNotifications()
+        NotificationListener.processActiveNotifications()
     }
 
     /**

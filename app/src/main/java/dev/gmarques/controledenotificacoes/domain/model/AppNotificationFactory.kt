@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.NotificationParser
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ParsedNotificationData
 
 /**
@@ -30,7 +31,18 @@ object AppNotificationFactory {
             packageName = parsed.packageName,
             title = parsed.title,
             content = parsed.content,
-            timestamp = parsed.timestamp
+            postTime = parsed.timestamp
+        )
+    }
+
+    /**Cria uma [AppNotification] a partir de um [ActiveStatusBarNotification]*/
+    fun create(act: ActiveStatusBarNotification): AppNotification {
+
+        return AppNotification(
+            packageName = act.packageName,
+            title = act.title,
+            content = act.content,
+            postTime = act.postTime
         )
     }
 }

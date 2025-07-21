@@ -9,5 +9,5 @@ data class AppNotificationEntity(
     val title: String,
     val content: String,
     @PrimaryKey
-    val timestamp: Long,
+    val postTime: Long,
 )

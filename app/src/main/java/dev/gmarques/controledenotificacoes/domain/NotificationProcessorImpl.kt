@@ -1,14 +1,125 @@
 package dev.gmarques.controledenotificacoes.domain
 
+import android.os.Build
+import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
+import dev.gmarques.controledenotificacoes.domain.model.Condition
+import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.NotificationProcessor.PerformAction
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import javax.inject.Inject
 
-class NotificationProcessorImpl : NotificationProcessor {
+class NotificationProcessorImpl @Inject constructor(
+    private val isAppInBlockPeriodUseCase: IsAppInBlockPeriodUseCase,
+) : NotificationProcessor {
+
     override fun processNotification(
         activeNotification: ActiveStatusBarNotification,
-        appNotification: AppNotification,
-        callback: NotificationProcessor.ResultCallback
-    ) {
-        TODO("Not yet implemented")
+        rule: Rule,
+        managedApp: ManagedApp,
+    ): PerformAction {
+
+        val condition = rule.condition
+        val isAppInBlockPeriod = isAppInBlockPeriodUseCase(rule)
+
+        return if (condition != null) processRuleWithCondition(
+            isAppInBlockPeriod,
+            rule,
+            AppNotificationFactory.create(activeNotification),
+        ) else processRuleWithoutCondition(isAppInBlockPeriod, rule)
+
     }
+
+    /**
+     * Processa uma regra sem condição, decidindo se a notificação deve ser bloqueada ou permitida.
+     * Se o aplicativo estiver em período de bloqueio, chama [decideHowToBlockNotification] para determinar
+     * a ação a ser tomada com base na regra. Caso contrário, permite a notificação.
+     *
+     * @param isAppInBlockPeriod Indica se o aplicativo está atualmente em um período de bloqueio.
+     * @param rule A regra a ser processada.
+     */
+    private fun processRuleWithoutCondition(
+        isAppInBlockPeriod: Boolean,
+        rule: Rule,
+    ): PerformAction {
+        return if (isAppInBlockPeriod) decideHowToBlockNotification(rule)
+        else PerformAction.Allow
+    }
+
+    /**
+     * Decide como bloquear uma notificação com base na ação da regra e na versão do SDK do Android.
+     * Se a ação da regra for [Rule.Action.SNOOZE] e a versão do SDK for inferior a [Build.VERSION_CODES.O],
+     * a notificação é cancelada, pois o adiamento não é suportado. Caso contrário, a ação especificada
+     * na regra ([Rule.Action.SNOOZE] ou [Rule.Action.CANCEL]) é executada.
+     *
+     * @param rule A regra que define a ação de bloqueio.
+     */
+    private fun decideHowToBlockNotification(rule: Rule): PerformAction {
+        return if (rule.action == Rule.Action.SNOOZE && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            PerformAction.Cancel // snooze isn't supported
+        } else when (rule.action) {
+            Rule.Action.SNOOZE -> PerformAction.Snooze
+            Rule.Action.CANCEL -> PerformAction.Cancel
+        }
+    }
+
+    /**
+     * Processa uma regra com condição, avaliando se a notificação deve ser permitida ou bloqueada.
+     *
+     * Esta função analisa o tipo da regra (RESTRICTIVE ou PERMISSIVE) e se o aplicativo está
+     * em um período de bloqueio para determinar o comportamento.
+     *
+     * - Para regras RESTRICTIVE durante o período de bloqueio:
+     *     - Se a condição for do tipo ONLY_IF, a notificação é permitida se a condição NÃO for satisfeita.
+     *     - Se a condição for do tipo EXCEPT, a notificação é permitida se a condição FOR satisfeita.
+     * - Para regras PERMISSIVE fora do período de bloqueio:
+     *     - Se a condição for do tipo ONLY_IF, a notificação é permitida se a condição FOR satisfeita.
+     *     - Se a condição for do tipo EXCEPT, a notificação é permitida se a condição NÃO for satisfeita.
+     * - Em outros casos (por exemplo, regra RESTRICTIVE fora do período de bloqueio ou regra PERMISSIVE
+     *   dentro do período de bloqueio), a notificação é permitida por padrão.
+     *
+     */
+    private fun processRuleWithCondition(
+        isAppInBlockPeriod: Boolean,
+        rule: Rule,
+        appNotification: AppNotification,
+    ): PerformAction {
+        val ruleType = rule.type
+        val condition = rule.condition ?: error("Condição não pode ser nula neste ponto")
+
+        val isConditionSatisfied = condition.isSatisfiedBy(appNotification)
+
+        val blockNotification =
+            if (ruleType == Type.RESTRICTIVE && isAppInBlockPeriod) {
+                when (condition.type) {
+                    Condition.Type.ONLY_IF -> isConditionSatisfied
+                    Condition.Type.EXCEPT -> !isConditionSatisfied
+                }
+
+            } else if (ruleType == Type.PERMISSIVE && !isAppInBlockPeriod) {
+                when (condition.type) {
+                    Condition.Type.ONLY_IF -> !isConditionSatisfied
+                    Condition.Type.EXCEPT -> isConditionSatisfied
+                }
+
+            } else {
+
+                Log.w(
+                    "USUK",
+                    "NotificationProcessorImpl.processCondition: notificação permitida pq nao caiu em nenhuma pré-condição"
+                )
+                false
+            }
+
+        return if (blockNotification) decideHowToBlockNotification(rule)
+        else PerformAction.Cancel
+    }
+
+
 }

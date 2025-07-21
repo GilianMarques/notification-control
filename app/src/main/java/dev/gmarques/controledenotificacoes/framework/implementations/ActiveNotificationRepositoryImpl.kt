@@ -17,7 +17,7 @@ class ActiveNotificationRepositoryImpl @Inject constructor() :
 
     override fun getActiveNotifications(): List<ActiveStatusBarNotification> {
 
-        val nots = NotificationListener.instance?.getFilteredActiveNotifications() ?: emptyList()
+        val nots = NotificationListener.getActiveNotifications()
         return mapStatusBarNotificationsToActiveStatusBarNotifications(nots)
     }
 

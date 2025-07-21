@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.OperationResult
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isPermaBlock
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.blocksAllDayWholeWeek
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.ConditionValidationException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
@@ -63,7 +63,7 @@ object RuleValidator {
          * Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas.
          * Nao tem porque adiar notificações que nunca devem ser mostradas.
          */
-        if (rule.action == Rule.Action.SNOOZE && rule.isPermaBlock())
+        if (rule.action == Rule.Action.SNOOZE && rule.blocksAllDayWholeWeek())
             return OperationResult.failure<RuleValidatorException>(
                 PermaBlockWithSnoozeActionException(rule)
             )

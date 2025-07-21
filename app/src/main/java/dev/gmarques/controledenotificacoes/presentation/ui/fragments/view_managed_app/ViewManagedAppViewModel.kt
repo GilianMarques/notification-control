@@ -195,7 +195,7 @@ class ViewManagedAppViewModel @Inject constructor(
         _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageName)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
-                NotificationListener.instance?.evaluateActiveNotifications()
+                NotificationListener.processActiveNotifications()
             }
         }
     }
