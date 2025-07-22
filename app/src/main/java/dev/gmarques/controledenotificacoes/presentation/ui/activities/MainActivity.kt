@@ -19,6 +19,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -57,6 +58,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
+
     var slidingPaneController: SlidingPaneController? = null
         private set
 
@@ -79,6 +81,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
         private const val UPDATE_REQUEST_CODE = 46251749
         private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
+        private const val WAS_LARGE_SCREEN_DEVICE = "was_large_screen_device"
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -98,7 +101,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             } ?: SlidingPaneState.ONLY_MASTER
 
 
-        lockOrientation()
         setContentView(binding.root)
 
         enableEdgeToEdge()
@@ -110,9 +112,29 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
         observeNavigationChanges()
         checkForAppUpdate()
-
         setupForTablet(lastSlidingPaneState)
 
+        val wasLargeScreenDevice = savedInstanceState?.getBoolean(WAS_LARGE_SCREEN_DEVICE)
+        popMasterNavControllerIfScreenExpanded(wasLargeScreenDevice)
+
+
+    }
+
+    /**
+     * Se o dispositivo alternou entre celular e foldable/tablet o navhost master deve  oltar ao inicio do grafo, pois
+     * agora parte do fluxo de navegação sera feito pelo navhost details
+     */
+    private fun popMasterNavControllerIfScreenExpanded(wasLargeScreenDevice: Boolean?) {
+        if (wasLargeScreenDevice == null) return
+        binding.navHostMaster.post {
+            if (App.largeScreenDevice && !wasLargeScreenDevice) {
+                try {
+                    findNavController(binding.navHostMaster).popBackStack()
+                } catch (ex: Exception) {
+
+                }
+            }
+        }
     }
 
     private fun setupForTablet(lastState: SlidingPaneState?) = with(binding) {
@@ -149,12 +171,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     }
 
-    private fun lockOrientation() {
-        // TODO: ver io que fazer com isso
-        //  if (App.largeScreenDevice) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
-        //  else SCREEN_ORIENTATION_UNSPECIFIED
-    }
-
     private fun checkForAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         appUpdateManager.registerListener(installStateUpdatedListener)
@@ -183,6 +199,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable(DETAILS_PANE_STATE, slidingPaneController?.state ?: SlidingPaneState.ONLY_MASTER)
+        outState.putSerializable(WAS_LARGE_SCREEN_DEVICE, App.largeScreenDevice)
     }
 
     override fun onStop() {
