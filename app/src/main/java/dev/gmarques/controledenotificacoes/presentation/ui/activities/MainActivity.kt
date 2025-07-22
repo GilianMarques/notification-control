@@ -360,9 +360,13 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             SlidingPaneState.ONLY_DETAILS -> detailHost
         }
 
-        if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
-            .setPrimaryNavigationFragment(primaryHost)
-            .commit()
+        if (!supportFragmentManager.isStateSaved
+            && !supportFragmentManager.isDestroyed
+        ) {
+            supportFragmentManager.beginTransaction()
+                .setPrimaryNavigationFragment(primaryHost)
+                .commit()
+        } else Log.e("USUK", "MainActivity.onAnimationEnd: default navhost not changed")
     }
 
     /**
