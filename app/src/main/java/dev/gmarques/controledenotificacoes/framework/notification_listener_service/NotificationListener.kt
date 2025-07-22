@@ -96,7 +96,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     /**
-     * Processa uma notificação recebida pra sabr se ela sera cancelada, adiada, permitida, ecoada, etc...
+     * Processa uma notificação recebida pra saber se ela sera cancelada, adiada, permitida, ecoada, etc...
      * Ao fim do processamento executa a ação necessario com base na regra, caso exista uma.
      * Usa o [ProcessIncomingNotificationUseCase]
      * para processar os dados e salvar a notificação se necessario.

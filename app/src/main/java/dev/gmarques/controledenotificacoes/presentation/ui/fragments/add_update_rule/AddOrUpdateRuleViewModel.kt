@@ -67,11 +67,14 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private val _selectedDaysFlow = MutableStateFlow<List<Rule.WeekDay>>(emptyList())
     val selectedDays: StateFlow<List<Rule.WeekDay>> = _selectedDaysFlow
 
+    private val _timeRangesFlow = MutableStateFlow(LinkedHashMap<String, TimeRange>())
+    val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRangesFlow
+
     private val _conditionFlow = MutableStateFlow<Condition?>(null)
     val conditionFlow: StateFlow<Condition?> = _conditionFlow
 
-    private val _timeRangesFlow = MutableStateFlow(LinkedHashMap<String, TimeRange>())
-    val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRangesFlow
+    private val _keepFullHistoryFlow = MutableStateFlow(Rule.keepFullHistoryDefault)
+    val keepFullHistoryFlow: StateFlow<Boolean> = _keepFullHistoryFlow
 
     private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
     val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
@@ -269,6 +272,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val ruleType = _ruleTypeFlow.value
         val condition = _conditionFlow.value
         val action = _ruleActionFlow.value
+        val keepFullHistory = _keepFullHistoryFlow.value
 
         if (validateName(ruleName).isFailure) return
         if (validateDays(selectedDays).isFailure) return
@@ -281,6 +285,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             days = selectedDays,
             condition = condition,
             timeRanges = timeRanges.values.toList(),
+            keepFullHistory = keepFullHistory,
             action = action
 
         )
@@ -440,6 +445,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     fun removeCondition() {
         _conditionFlow.value = null
+    }
+
+    fun setKeepFullHistory(keep: Boolean) {
+        _keepFullHistoryFlow.tryEmit(keep)
     }
 }
 

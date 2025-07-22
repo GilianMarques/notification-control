@@ -69,8 +69,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
             targetNotification,
             rule,
             managedApp,
-
-            )
+        )
 
         return@runBlocking when (actionToPerform) {
             Allow -> {

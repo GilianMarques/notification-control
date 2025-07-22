@@ -19,5 +19,6 @@ data class RuleEntity(
     val condition: String?,
     val ruleType: Type,
     val action: Action,
+    val keepFullHistory: Boolean,
 )
 

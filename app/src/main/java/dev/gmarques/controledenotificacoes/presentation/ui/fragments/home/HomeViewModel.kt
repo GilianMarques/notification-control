@@ -55,6 +55,7 @@ class HomeViewModel @Inject constructor(
             timeRanges = listOf(TimeRange(1, 2, 3, 4)),
             type = Rule.typeDefault,
             action = Rule.actionDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
         )
     }
 

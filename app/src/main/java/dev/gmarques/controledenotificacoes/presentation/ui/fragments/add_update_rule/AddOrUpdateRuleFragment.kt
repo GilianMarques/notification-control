@@ -78,6 +78,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             setupBtnAddTimeRange()
             setupBtnAddCondition()
             setupBtnRemoveCondition()
+            setupSwFullHistory()
             setupFabAddRule()
             setupEditingModeIfNeeded()
             observeRuleType()
@@ -86,6 +87,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             observeSelectedDays()
             observeRuleName()
             observeCondition()
+            observeKeepFullHistory()
             observeEvents()
         }
     }
@@ -275,6 +277,12 @@ class AddOrUpdateRuleFragment : MyFragment() {
         ivRemoveCondition.setOnClickListener(AnimatedClickListener {
             viewModel.removeCondition()
         })
+    }
+
+    private fun setupSwFullHistory() = with(binding) {
+        swFullHistory.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setKeepFullHistory(isChecked)
+        }
     }
 
     private fun setupBtnAddCondition() = with(binding) {
@@ -488,6 +496,20 @@ class AddOrUpdateRuleFragment : MyFragment() {
                     requireContext()
                 )
             }
+        }
+    }
+
+    private fun observeKeepFullHistory() {
+        collectFlow(viewModel.keepFullHistoryFlow) { keepFullHistory ->
+            binding.swFullHistory.isChecked = keepFullHistory
+
+            val hint =
+                if (keepFullHistory) getString(R.string.Todas_as_notifica_es_dos_apps_gerenciados_por_essa_regra_ser_o_mantidas_em_hist_rico) else getString(
+                    R.string.Apenas_as_notifica_es_bloqueadas_dos_apps_gerenciados_por_essa_regra_ser_o_mantidas_em_hist_rico
+                )
+
+            binding.tvFullHistoryInfo.text = hint
+
         }
     }
 

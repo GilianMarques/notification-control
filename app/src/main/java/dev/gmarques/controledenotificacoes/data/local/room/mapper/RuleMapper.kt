@@ -39,7 +39,8 @@ object RuleMapper {
             days = daysToString(model.days),
             condition = conditionToString(model.condition),
             timeRanges = hoursToString(model.timeRanges),
-            action = model.action
+            action = model.action,
+            keepFullHistory = model.keepFullHistory,
         )
     }
 
@@ -93,6 +94,7 @@ object RuleMapper {
             days = stringToDays(entity.days),
             condition = stringToCondition(entity.condition),
             timeRanges = stringToTimeRange(entity.timeRanges),
+            keepFullHistory = entity.keepFullHistory,
             action = entity.action
 
         )

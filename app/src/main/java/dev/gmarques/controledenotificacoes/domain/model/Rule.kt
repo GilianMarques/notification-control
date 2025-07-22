@@ -21,7 +21,7 @@ data class Rule(
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
     val condition: Condition?,
-    val keepFullHistory: Boolean = false, // TODO: quando implementar remova esse valor padrao!
+    val keepFullHistory: Boolean,
     val type: Type,
     val action: Action,
 ) : Serializable {
@@ -29,6 +29,8 @@ data class Rule(
     companion object {
         val typeDefault = Type.RESTRICTIVE
         val actionDefault = Action.SNOOZE
+
+        val keepFullHistoryDefault = false
     }
 
     /**Indica se a regra deve permitir ou bloquear a notificação quando as condições da regra forem satisfeitas*/
