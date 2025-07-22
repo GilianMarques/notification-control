@@ -1,7 +1,9 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -47,7 +49,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         fun getActiveNotifications(): List<StatusBarNotification> {
             val notifications = mutableListOf<StatusBarNotification>()
-
+            if (instance?.isListenerConnected() == false) return notifications
             instance?.activeNotifications?.let {
                 notifications.addAll(it)
             }
@@ -61,6 +63,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
          * Usa [processNotification]. para processar todas as notificações ativas validas
          */
         fun processActiveNotifications() {
+            if (instance?.isListenerConnected() == false) return
             val active = instance?.activeNotifications ?: return
             active.forEach { sbn ->
                 instance?.processNotification(sbn)
@@ -105,7 +108,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         if (!SystemNotificationValidator.isValidToProcess(sbn)) return
 
-        debugTests?.crashIfCallbackNotCalled()
+        debugTests?.crashIfCallbackNotCalled(sbn)
 
         val result = processIncomingNotificationUseCase(sbn)
 
@@ -158,59 +161,67 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerDisconnected()
     }
 
-    /**
-     * Esta classe encapsula funcionalidades de teste e depuração destinadas a serem usadas
-     * exclusivamente durante o desenvolvimento (builds de debug).
-     * Ela fornece métodos para simular cenários de falha e verificar o comportamento
-     * esperado do aplicativo em relação ao gerenciamento de notificações.
-     *
-     */
-    class DebugTests {
-
-        init {
-            if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de begug")
-        }
-
-        private var cancelingNotificationKey = ""
-        private var errorJob: Job? = null
-        private var validationCallbackErrorJob: Job? = null
-
-        /**
-         *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
-         * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
-         * @see processNotification
-         */
-        fun crashIfCallbackNotCalled() {
-            validationCallbackErrorJob = CoroutineScope(Main).launch {
-                delay(3000)
-                error("O callback de validação passado para o RuleEnforcer não foi chamado.")
-            }
-        }
-
-        fun cancelCrashIfCallbackNotCalled() {
-            validationCallbackErrorJob?.cancel()
-        }
-
-        /**
-         * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
-         * essa função vai crashar o app para que o jumento do desenvolvedor (eu ;-] ) possa ajeitar a cagada que ele fez
-         */
-        fun crashIfNotificationDoesNotRemove(activeNotification: ActiveStatusBarNotification) {
-            if (BuildConfig.DEBUG) {
-                if (activeNotification.isOngoing) return // nao se considera esse tipo de notificação
-
-                cancelingNotificationKey = activeNotification.key
-                errorJob?.cancel()
-                errorJob = CoroutineScope(Main).launch {
-                    delay(1000)
-                    error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
-                }
-            }
-        }
-
-        fun cancelCrashIfNotificationDoesNotRemove(sbn: StatusBarNotification?) {
-            if (BuildConfig.DEBUG) if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
-        }
+    fun isListenerConnected(): Boolean {
+        val cn = ComponentName(baseContext, NotificationListener::class.java)
+        val enabledListeners = Settings.Secure.getString(
+            baseContext.contentResolver,
+            "enabled_notification_listeners"
+        )
+        return (enabledListeners?.contains(cn.flattenToString()) == true)
     }
 }
 
+/**
+ * Esta classe encapsula funcionalidades de teste e depuração destinadas a serem usadas
+ * exclusivamente durante o desenvolvimento (builds de debug).
+ * Ela fornece métodos para simular cenários de falha e verificar o comportamento
+ * esperado do aplicativo em relação ao gerenciamento de notificações.
+ *
+ */
+class DebugTests {
+
+    init {
+        if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de begug")
+    }
+
+    private var cancelingNotificationKey = ""
+    private var errorJob: Job? = null
+    private var validationCallbackErrorJob: Job? = null
+
+    /**
+     *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
+     * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
+     * @see processNotification
+     */
+    fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
+        validationCallbackErrorJob = CoroutineScope(Main).launch {
+            delay(3000)
+            error("O callback de validação passado para o RuleEnforcer não foi chamado. sbn: $sbn")
+        }
+    }
+
+    fun cancelCrashIfCallbackNotCalled() {
+        validationCallbackErrorJob?.cancel()
+    }
+
+    /**
+     * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
+     * essa função vai crashar o app para que o jumento do desenvolvedor (eu ;-] ) possa ajeitar a cagada que ele fez
+     */
+    fun crashIfNotificationDoesNotRemove(activeNotification: ActiveStatusBarNotification) {
+        if (BuildConfig.DEBUG) {
+            if (activeNotification.isOngoing) return // nao se considera esse tipo de notificação
+
+            cancelingNotificationKey = activeNotification.key
+            errorJob?.cancel()
+            errorJob = CoroutineScope(Main).launch {
+                delay(1000)
+                error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
+            }
+        }
+    }
+
+    fun cancelCrashIfNotificationDoesNotRemove(sbn: StatusBarNotification?) {
+        if (BuildConfig.DEBUG) if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
+    }
+}

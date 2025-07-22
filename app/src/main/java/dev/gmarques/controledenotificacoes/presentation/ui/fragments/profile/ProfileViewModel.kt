@@ -1,10 +1,20 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
+import dev.gmarques.controledenotificacoes.domain.model.User
+import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -12,10 +22,27 @@ import javax.inject.Inject
  * Em sexta-feira, 09 de maio de 2025 as 10:12.
  */
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: SavePreferenceUseCase) : ViewModel() {
+class ProfileViewModel @Inject constructor(
+    private val roomDatabase: RoomDatabase,
+    private val logOffUserUseCase: LogOffUserUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    @ApplicationContext private val context: Context,
+) : ViewModel() {
 
-    private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
-    val eventsFlow: SharedFlow<Event> get() = _eventsFlow
+    private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
+    val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
+
+    fun getUser(): User {
+        return getUserUseCase() ?: error("usuario nao pode ser nulo aqui")
+    }
+
+    fun performLogOff() = viewModelScope.launch(IO) {
+
+        logOffUserUseCase()
+        roomDatabase.clearAllTables()
+        NotificationServiceManager.stopSelf()
+        _eventsChannel.trySend(Event.LogoffDone)
+    }
 
 }
 
@@ -24,4 +51,5 @@ class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: Sa
  */
 sealed class Event {
     class PreferencesCleaned(val success: Boolean) : Event()
+    object LogoffDone : Event()
 }
