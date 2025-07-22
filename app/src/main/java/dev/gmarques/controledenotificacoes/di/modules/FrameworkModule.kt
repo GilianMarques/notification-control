@@ -7,15 +7,15 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
-import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.implementations.ActiveNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
+import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcer
+import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcerImpl
 
 /**
  * Criado por Gilian Marques

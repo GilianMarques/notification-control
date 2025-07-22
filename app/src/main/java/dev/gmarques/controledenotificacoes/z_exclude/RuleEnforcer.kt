@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.framework
+package dev.gmarques.controledenotificacoes.z_exclude
 
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp

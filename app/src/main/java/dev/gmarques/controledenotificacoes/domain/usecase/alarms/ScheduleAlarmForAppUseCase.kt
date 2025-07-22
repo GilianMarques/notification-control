@@ -1,12 +1,12 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import android.util.Log
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import javax.inject.Inject
 
 /**
@@ -32,7 +32,7 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
             if (rule.isAppInBlockPeriod()) rule.nextAppUnlockPeriodFromNow()
             else System.currentTimeMillis() + 2_000L
 
-        if (scheduleTimeMillis == NextAppUnlockTimeUseCase.INFINITE) return
+        if (scheduleTimeMillis == NextRuleUnlockTimeUseCase.INFINITE) return
 
         alarmScheduler.scheduleAlarm(app.packageName, scheduleTimeMillis)
 

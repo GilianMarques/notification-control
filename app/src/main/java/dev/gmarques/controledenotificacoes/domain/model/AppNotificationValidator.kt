@@ -1,28 +1,17 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import dev.gmarques.controledenotificacoes.domain.model.AppNotificationValidator.AppNotificationValidatorException.BlankIdException
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationValidator.AppNotificationValidatorException.BlankPackageNameException
 
 
 object AppNotificationValidator {
     fun validate(notification: AppNotification) {
-        ManagedAppValidator.validatePackageId(notification.packageName).getOrThrow()
+        validatePackageName(notification.packageName).getOrThrow()
     }
 
-    /**
-     * Valida um ID de regra.
-     *
-     * Verifica se o `ruleId` fornecido é válido, garantindo que não esteja vazio.
-     *
-     * @param ruleId O ID da regra a ser validado.
-     * @return Um objeto `Result`.
-     *         - `Result.success(ruleId)` se o `ruleId` for válido (não vazio), contendo o `ruleId`.
-     *         - `Result.failure(BlankStringException)` se o `ruleId` estiver vazio, contendo a exceção `BlankStringException`.
-     * @throws BlankIdException se a string de entrada estiver vazia.
-     */
-    fun validateRuleId(ruleId: String): Result<String> {
-        // TODO: nao é usado? é util? 
-        return if (ruleId.isEmpty()) Result.failure(BlankIdException())
-        else Result.success(ruleId)
+
+    fun validatePackageName(packageName: String): Result<String> {
+        return if (packageName.isEmpty()) Result.failure(BlankPackageNameException())
+        else Result.success(packageName)
     }
 
     /**
@@ -31,7 +20,7 @@ object AppNotificationValidator {
      */
     sealed class AppNotificationValidatorException {
 
-        class BlankIdException() :
-            Exception("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
+        class BlankPackageNameException() :
+            Exception("Em hipótese alguma o packageName de um objeto pode ficar vazio.")
     }
 }

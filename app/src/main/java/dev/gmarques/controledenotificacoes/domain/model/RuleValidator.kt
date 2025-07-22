@@ -142,7 +142,7 @@ object RuleValidator {
      * @param id A string de ID a ser validada.
      * @return Um objeto [Result]:
      *         - [OperationResult.success] contendo a string de ID se ela não estiver vazia.
-     *         - [OperationResult.failure] contendo uma [BlankIdException] se a string de ID estiver vazia.
+     *         - [OperationResult.failure] contendo uma [BlankPackageNameException] se a string de ID estiver vazia.
      */
     fun validateId(id: String): OperationResult<RuleValidatorException, String> {
         if (id.isEmpty()) {

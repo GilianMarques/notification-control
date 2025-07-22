@@ -5,11 +5,16 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import java.io.Serializable
 
+
 /**
+ *
  * Criado por Gilian Marques
  * Em sábado, 26 de abril de 2025 as 17:41.
  *
- * Use a função estática interna para instanciar essa classe ao inves de usar este construtor.
+ * Representa um [ManagedApp] com mais alguns dados que devem ser obtidos em runtime como nomeda aplicação
+ * e uma instancia de [Rule]  pra facilitar o uso na UI e otimizar o processamento.
+ *
+ * Use [ManagedAppWithRuleFactory] para criar instancias seguras dessa classe.
  */
 @Keep
 data class ManagedAppWithRule(
@@ -18,19 +23,4 @@ data class ManagedAppWithRule(
     val rule: Rule,
     val hasPendingNotifications: Boolean,
     val uninstalled: Boolean,
-) : Serializable {
-
-    companion object {
-
-        fun from(installedApp: InstalledApp, managedApp: ManagedApp, rule: Rule): ManagedAppWithRule {
-            return ManagedAppWithRule(
-                name = installedApp.name,
-                packageName = installedApp.packageName,
-                rule = rule,
-                hasPendingNotifications = managedApp.hasPendingNotifications,
-                installedApp.uninstalled,
-            )
-        }
-
-    }
-}
+) : Serializable

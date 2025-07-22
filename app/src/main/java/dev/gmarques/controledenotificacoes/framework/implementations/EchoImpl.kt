@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.Echo
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.Echo
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import javax.inject.Inject
 
@@ -28,7 +28,7 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
      * A notificação é republicada com as mesmas informações da original, mas com um id e tag
      * diferentes para que o sistema a identifique como uma nova notificação.
      * A notificação é cancelada automaticamente apos um segundo.*/
-    override fun repostIfNotification(activeNotification: ActiveStatusBarNotification) {
+    override fun repostNotification(activeNotification: ActiveStatusBarNotification) {
 
         if (!isEchoEnabled()) return
         if (!isNotificationValid(activeNotification)) return

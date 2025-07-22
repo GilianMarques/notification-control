@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnticipateOvershootInterpolator
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 
 /**
  * Criado por Gilian Marques

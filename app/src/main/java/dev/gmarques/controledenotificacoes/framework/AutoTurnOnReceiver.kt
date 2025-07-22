@@ -9,7 +9,11 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
  * Criado por Gilian Marques
  * Em 05/07/2025 as 19:22
  *
- * responsavel por, de tempos em tempos, ligar o serviço caso seja fechado por erro ou sistema
+ * Responsavel por, de tempos em tempos, ligar o serviço caso seja fechado por erro ou sistema.
+ *
+ * Após ligar o serviço, reagenda um alarme para reabrir este receiver em um outro intervalo de tempo futuro definido em
+ * [dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase] criando um loop nifinito que é
+ * executado de tempos em tempos.
  */
 class AutoTurnOnReceiver : BroadcastReceiver() {
 

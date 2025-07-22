@@ -22,6 +22,8 @@ import java.util.TimerTask
 /**
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 09:07.
+
+ * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
 class NotificationServiceManager : Service() {
 

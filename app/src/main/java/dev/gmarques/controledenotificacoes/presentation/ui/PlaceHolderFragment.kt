@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation
+package dev.gmarques.controledenotificacoes.presentation.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

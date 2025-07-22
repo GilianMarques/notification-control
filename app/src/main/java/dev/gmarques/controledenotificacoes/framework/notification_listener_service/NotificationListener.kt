@@ -26,6 +26,9 @@ import kotlinx.coroutines.launch
 /**
  * Criado por Gilian Marques
  * Em sábado, 03 de maio de 2025 as 16:18.
+ * Serviço responsavel por  escutar as notificações do dispositivo, assim que o usuario da permissão de acesso às notificações.
+ * Usa-se o [NotificationServiceManager] em primeiro plano pra ver se este listener está concetado e iniciar caso não esteja.
+ *
  */
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
@@ -36,7 +39,9 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private var debugTests: DebugTests? = null
 
     companion object {
-        /**Ao nao expor a instancia publicamente eu consigo garantir que asm notificações extraidas daqui seguem as regras de negocio.*/
+        /**
+         * Ao NÃO expor a instancia publicamente eu consigo garantir que as notificações extraidas daqui seguem as regras de negócio.
+         */
         private var instance: NotificationListener? = null
 
         fun getActiveNotifications(): List<StatusBarNotification> {
@@ -52,7 +57,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
 
         /**
-         * Processa toas as notificaçõesa tivas validas  usando o mét.odo [processNotification].
+         * Usa [processNotification]. para processar todas as notificações ativas validas
          */
         fun processActiveNotifications() {
             val active = instance?.activeNotifications ?: return
@@ -107,13 +112,13 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             is AllowNotification -> {
                 Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
-                echoImpl.repostIfNotification(result.targetNotification)
+                echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
                 Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
-                echoImpl.repostIfNotification(result.targetNotification)
+                echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
@@ -124,7 +129,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             }
 
             is SnoozeNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: SnoozeNotification: snoozeFor: ${result.snoozeFor} not: ${result.targetNotification} ")
+                Log.d(
+                    "USUK",
+                    "NotificationListener.processNotification: SnoozeNotification: snoozeFor: ${result.snoozeFor} not: ${result.targetNotification} "
+                )
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
@@ -167,7 +175,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         private var validationCallbackErrorJob: Job? = null
 
         /**
-         *Esta função é usada para garantir que em builds de debug, o aplicativo falhe se o callback não for invocado dentro de um
+         *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
          * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
          * @see processNotification
          */
@@ -183,9 +191,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
 
         /**
-         * Essa função serve pra testes apenas e nao sera usada em produção.
          * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
-         * essa função vai crashar o app para que o jumento do desenvolvedor (eu :-] ) possa ajeitar a cagada que ele fez
+         * essa função vai crashar o app para que o jumento do desenvolvedor (eu ;-] ) possa ajeitar a cagada que ele fez
          */
         fun crashIfNotificationDoesNotRemove(activeNotification: ActiveStatusBarNotification) {
             if (BuildConfig.DEBUG) {

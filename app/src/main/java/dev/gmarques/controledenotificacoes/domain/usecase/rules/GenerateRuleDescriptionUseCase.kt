@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
-import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes

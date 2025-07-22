@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.framework
+package dev.gmarques.controledenotificacoes.domain.framework.contracts
 
 /**
  *

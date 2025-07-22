@@ -6,6 +6,9 @@ import android.util.Log
 /**
  * Criado por Gilian Marques
  * Em segunda-feira, 02 de junho de 2025 as 09:21.
+ *
+ * Armazena na memoria ram as referencias das pendin intents das notificações, o que permite
+ * 'abrir' as notificações de dentro do app.
  */
 
 object PendingIntentCache {

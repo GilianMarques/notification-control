@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import androidx.annotation.Keep
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import java.io.Serializable
 import java.util.UUID
 
@@ -8,7 +9,8 @@ import java.util.UUID
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 14:39.
  *
- * Obtenha uma descrição legível dessa regra usando [dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase] caso o nome esteja vazio
+ * Obtenha uma descrição legível dessa regra usando [RuleExtensionFun.nameOrDescription]
+ * ou [dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase] caso o nome esteja vazio
  *
  */
 
@@ -18,7 +20,7 @@ data class Rule(
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
     val condition: Condition?,
-    val keepFullHistory: Boolean=false, // TODO: quando implementar remova esse valor padrao!
+    val keepFullHistory: Boolean = false, // TODO: quando implementar remova esse valor padrao!
     val type: Type,
     val action: Action,
 ) : Serializable {

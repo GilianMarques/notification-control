@@ -6,7 +6,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
-import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

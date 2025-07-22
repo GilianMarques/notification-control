@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase

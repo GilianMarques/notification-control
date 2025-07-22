@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

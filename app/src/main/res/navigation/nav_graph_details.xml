@@ -83,7 +83,7 @@
 
     <fragment
         android:id="@+id/placeHolderFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.PlaceHolderFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.PlaceHolderFragment"
         android:label="fragment_place_holder"
         tools:layout="@layout/fragment_place_holder" >
         <action

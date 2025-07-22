@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework.notification_listener_service
+package dev.gmarques.controledenotificacoes.z_exclude
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,8 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
@@ -15,11 +14,11 @@ import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
@@ -33,14 +32,14 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:16.
  */
-// TODO: converter essa classe em um legitimo processador que recebe dados de dominio e retorna uma decisao
-// TODO: usar um usecase ProcessIncomingNotificationUseCase para receber a sbn, criar os objetos de domino e passar pro processor
-// TODO: com base da decisao do processor o usecase vai salvar historico, btitmpa, etcc. e retornar um result pro service dizendo se deve cancelar, adiar, etc... use um sealed class para isso
+// Converter essa classe em um legitimo processador que recebe dados de dominio e retorna uma decisao
+//  usar um usecase ProcessIncomingNotificationUseCase para receber a sbn, criar os objetos de domino e passar pro processor
+//  com base da decisao do processor o usecase vai salvar historico, btitmpa, etcc. e retornar um result pro service dizendo se deve cancelar, adiar, etc... use um sealed class para isso
 class RuleEnforcerImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val alarmScheduler: AlarmScheduler,
-    private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
+    private val updateManagedAppUseCase: UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     @ApplicationContext private val context: Context,
 ) : RuleEnforcer {
@@ -99,20 +98,20 @@ class RuleEnforcerImpl @Inject constructor(
 
     @TestOnly
     fun shouldAllowNotification(
-        ruleType: Type,
+        ruleType: Rule.Type,
         conditionType: Condition.Type,
         isConditionSatisfied: Boolean,
         isAppInBlockPeriod: Boolean,
     ): Boolean {
 
-        if (ruleType == Type.RESTRICTIVE && isAppInBlockPeriod) {
+        if (ruleType == Rule.Type.RESTRICTIVE && isAppInBlockPeriod) {
             return when (conditionType) {
                 Condition.Type.ONLY_IF -> !isConditionSatisfied
                 Condition.Type.EXCEPT -> isConditionSatisfied
             }
         }
 
-        if (ruleType == Type.PERMISSIVE && !isAppInBlockPeriod) {
+        if (ruleType == Rule.Type.PERMISSIVE && !isAppInBlockPeriod) {
             return when (conditionType) {
                 Condition.Type.ONLY_IF -> isConditionSatisfied
                 Condition.Type.EXCEPT -> !isConditionSatisfied
@@ -189,4 +188,3 @@ class RuleEnforcerImpl @Inject constructor(
 
 
 }
-

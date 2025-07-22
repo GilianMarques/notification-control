@@ -9,9 +9,9 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import javax.inject.Inject
@@ -40,7 +40,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
         cancelAlarm(packageName) // avoid multiple schedules for the same package
 
-        if (millis == NextAppUnlockTimeUseCase.INFINITE) return
+        if (millis == NextRuleUnlockTimeUseCase.INFINITE) return
 
         //  Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
 

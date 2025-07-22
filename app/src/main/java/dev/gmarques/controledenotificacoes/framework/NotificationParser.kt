@@ -2,11 +2,16 @@ package dev.gmarques.controledenotificacoes.framework
 
 import android.app.Notification
 import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.model.ParsedNotificationData
 
 /**
  * Criado por Gilian Marques
  * Em quinta-feira, 17 de julho de 2025 as 22:32.
+ *
+ * Converte uma [StatusBarNotification] em uma instância de [ParsedNotificationData] que por sua vez é usada em factories
+ * como [AppNotificationFactory] ou [ActiveStatusBarNotificationFactory] para instanciar objetos que representam notificações dentro do app.
  *
  * Responsável por isolar e centralizar a lógica de extração de dados relevantes de uma [StatusBarNotification],
  * evitando repetição de código e facilitando a manutenção.
