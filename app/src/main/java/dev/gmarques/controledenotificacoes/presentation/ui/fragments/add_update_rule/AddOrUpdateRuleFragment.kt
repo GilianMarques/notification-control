@@ -261,7 +261,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         tvAddRange.setOnClickListener(AnimatedClickListener {
 
             if (viewModel.canAddMoreRanges()) {
-                showTimeRangeDialog()
+                showAddTimeRangeDialog()
             } else {
                 showErrorSnackBar(
                     getString(
@@ -314,12 +314,34 @@ class AddOrUpdateRuleFragment : MyFragment() {
         })
     }
 
-    private fun showTimeRangeDialog() {
+    private fun showAddTimeRangeDialog() {
         TimeRangeDialogManager(
             context = requireContext(),
             inflater = layoutInflater,
+            defaultRange = null,
         ) { timeRange ->
             viewModel.validateRangesWithSequenceAndAdd(timeRange)
+        }.show()
+    }
+
+
+    /**
+     * Exibe um diálogo para atualizar um intervalo de tempo existente.
+     *
+     * Utiliza `TimeRangeDialogManager` para a edição. Ao confirmar, o intervalo original
+     * (`toReplaceTimeRange`) é substituído pelo novo (`newTimeRange`) após validação.
+     * Se a validação falhar, a alteração é revertida.
+     * @param toReplaceTimeRange O objeto `TimeRange` que será editado.
+     */
+    private fun showUpdateTimeRangeDialog(toReplaceTimeRange: TimeRange) {
+        TimeRangeDialogManager(
+            context = requireContext(),
+            inflater = layoutInflater,
+            toReplaceTimeRange,
+        ) { newTimeRange ->
+            viewModel.deleteTimeRange(toReplaceTimeRange)
+            val result = viewModel.validateRangesWithSequenceAndAdd(newTimeRange)
+            if (result.isFailure) viewModel.validateRangesWithSequenceAndAdd(toReplaceTimeRange)
         }.show()
     }
 
@@ -436,6 +458,10 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 ivRemove.setOnClickListener(AnimatedClickListener {
 
                     viewModel.deleteTimeRange(range)
+                })
+
+                ivEdit.setOnClickListener(AnimatedClickListener {
+                    showUpdateTimeRangeDialog(range)
                 })
                 root.tag = range.id
                 parent.addViewWithTwoStepsAnimation(root, min(index, parent.childCount))

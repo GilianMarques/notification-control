@@ -214,6 +214,36 @@
             </LinearLayout>
 
             <LinearLayout
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="ll_ignore_case">
+
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/sw_full_history"
+                    style="@style/Widget.Material3.CompoundButton.Switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@string/Manter_historico_completo" />
+
+                <TextView
+                    android:id="@+id/tv_full_history_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:drawablePadding="8dp"
+                    app:drawableStartCompat="@drawable/vec_info"
+                    app:drawableTint="?attr/colorPrimary"
+                    tools:text="O app vai manter historico de todas as notificações" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_weekdays_parent"
                 style="@style/containers_margins_no_padding"
                 android:layout_width="match_parent"
@@ -558,36 +588,6 @@
 
                 </LinearLayout>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/containers_margins"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:background="@drawable/back_container"
-                android:orientation="vertical"
-                android:transitionName="ll_ignore_case">
-
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/sw_full_history"
-                    style="@style/Widget.Material3.CompoundButton.Switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="@string/Manter_historico_completo" />
-
-                <TextView
-                    android:id="@+id/tv_full_history_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:drawablePadding="8dp"
-                    app:drawableStartCompat="@drawable/vec_info"
-                    app:drawableTint="?attr/colorPrimary"
-                    tools:text="O app vai manter historico de todas as notificações" />
 
             </LinearLayout>
 

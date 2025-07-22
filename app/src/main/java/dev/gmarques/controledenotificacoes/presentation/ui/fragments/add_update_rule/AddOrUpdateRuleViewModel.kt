@@ -197,7 +197,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         if (result.isSuccess) addTimeRange(range)
         else notifyErrorValidatingRanges(result)
 
-
         return result
     }
 

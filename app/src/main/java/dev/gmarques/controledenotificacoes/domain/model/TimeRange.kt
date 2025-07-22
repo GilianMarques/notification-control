@@ -17,8 +17,8 @@ data class TimeRange(
     val startMinute: Int,
     val endHour: Int,
     val endMinute: Int,
-    val id: String = UUID.randomUUID().toString(), // TODO: remover valor padrao e deifna [defaultId] maunalmente
-    val allDay: Boolean = false,
+    val id: String = UUID.randomUUID().toString(), // TODO: remover valor padrao e defina [defaultId] maunalmente
+    val allDay: Boolean = false, // TODO: remover valor padrao e defina [defaultId] maunalmente
 ) : Serializable {
     constructor(allDay: Boolean) : this(startHour = 0, startMinute = 0, endHour = 0, endMinute = 0, allDay = allDay)
 
