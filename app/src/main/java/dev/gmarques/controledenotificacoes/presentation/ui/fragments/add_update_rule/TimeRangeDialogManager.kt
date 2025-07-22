@@ -69,14 +69,12 @@ class TimeRangeDialogManager(
     }
 
     /** Configura os campos de entrada de horário para responder a eventos de texto e foco. */
-    @SuppressLint("SetTextI18n")
     private fun setupEditTexts() = with(binding) {
         setupTimeEditText(edtStart) { hour, min ->
             startHour = hour
             startMinute = min
             edtEnd.requestFocus()
         }
-
         setupTimeEditText(edtEnd) { hour, min ->
             endHour = hour
             endMinute = min
@@ -131,7 +129,7 @@ class TimeRangeDialogManager(
     /** Solicita o foco e exibe o teclado para o campo inicial após breve atraso. */
     private fun requestKeyboardFocus() {
         CoroutineScope(Main).launch {
-            delay(200)
+            delay(120)
             binding.edtStart.showKeyboard()
         }
     }

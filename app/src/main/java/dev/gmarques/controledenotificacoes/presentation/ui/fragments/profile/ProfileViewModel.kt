@@ -1,12 +1,12 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.domain.model.User
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ClearPreferencesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
@@ -26,7 +26,7 @@ class ProfileViewModel @Inject constructor(
     private val roomDatabase: RoomDatabase,
     private val logOffUserUseCase: LogOffUserUseCase,
     private val getUserUseCase: GetUserUseCase,
-    @ApplicationContext private val context: Context,
+    private val clearPreferencesUseCase: ClearPreferencesUseCase,
 ) : ViewModel() {
 
     private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
@@ -39,7 +39,10 @@ class ProfileViewModel @Inject constructor(
     fun performLogOff() = viewModelScope.launch(IO) {
 
         logOffUserUseCase()
-        roomDatabase.clearAllTables()
+        if (!BuildConfig.DEBUG) {
+            roomDatabase.clearAllTables()
+            clearPreferencesUseCase()
+        }
         NotificationServiceManager.stopSelf()
         _eventsChannel.trySend(Event.LogoffDone)
     }
