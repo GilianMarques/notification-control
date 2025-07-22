@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.blocksAllDayWholeWeek
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException

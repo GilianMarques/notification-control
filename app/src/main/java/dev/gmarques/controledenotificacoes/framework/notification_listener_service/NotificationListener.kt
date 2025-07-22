@@ -8,6 +8,7 @@ import android.util.Log
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AppNotManaged
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification
@@ -97,7 +98,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Processa uma notificação recebida pra sabr se ela sera cancelada, adiada, permitida, ecoada, etc...
      * Ao fim do processamento executa a ação necessario com base na regra, caso exista uma.
-     * Usa o [dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase]
+     * Usa o [ProcessIncomingNotificationUseCase]
      * para processar os dados e salvar a notificação se necessario.
      */
     private fun processNotification(sbn: StatusBarNotification) {

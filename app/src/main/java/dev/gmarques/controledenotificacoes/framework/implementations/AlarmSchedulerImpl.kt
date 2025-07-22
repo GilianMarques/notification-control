@@ -117,7 +117,7 @@ class AlarmSchedulerImpl @Inject constructor(
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager] para ligar o serviço de escuta
      * de notificações.
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AutoTurnOnReceiver].
      *
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */

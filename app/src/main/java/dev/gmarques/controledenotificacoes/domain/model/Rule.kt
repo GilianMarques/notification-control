@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import androidx.annotation.Keep
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import java.io.Serializable
 import java.util.UUID
 
@@ -10,7 +11,7 @@ import java.util.UUID
  * Em sábado, 29 de março de 2025 às 14:39.
  *
  * Obtenha uma descrição legível dessa regra usando [RuleExtensionFun.nameOrDescription]
- * ou [dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase] caso o nome esteja vazio
+ * ou [GenerateRuleDescriptionUseCase] caso o nome esteja vazio
  *
  */
 

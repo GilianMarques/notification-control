@@ -1,9 +1,9 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

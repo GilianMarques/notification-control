@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 
 /**
  * Criado por Gilian Marques
@@ -12,7 +13,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
  * Responsavel por, de tempos em tempos, ligar o serviço caso seja fechado por erro ou sistema.
  *
  * Após ligar o serviço, reagenda um alarme para reabrir este receiver em um outro intervalo de tempo futuro definido em
- * [dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase] criando um loop nifinito que é
+ * [ScheduleAutoTurnOnUseCase] criando um loop nifinito que é
  * executado de tempos em tempos.
  */
 class AutoTurnOnReceiver : BroadcastReceiver() {

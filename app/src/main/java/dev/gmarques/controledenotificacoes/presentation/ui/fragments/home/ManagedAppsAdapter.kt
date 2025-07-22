@@ -20,12 +20,12 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrD
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.removeDrawables
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-
 
 /**
  * Adapter responsável por exibir a lista de aplicativos controlados na RecyclerView.
@@ -74,7 +74,7 @@ class ManagedAppsAdapter(
 
     /**
      * Ajusta a flag que define qual das views (lista/grade) usar com  base na quantidade de colunas definidas pelo
-     * [dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager]
+     * [AutoFitGridLayoutManager]
      */
     fun setUseGridView(spanCount: Int) {
         useGridView = spanCount > 1

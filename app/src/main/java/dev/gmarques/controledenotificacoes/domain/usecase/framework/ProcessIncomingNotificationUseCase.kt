@@ -11,6 +11,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNo
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Allow
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Cancel
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Snooze
+import dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImpl
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
@@ -24,6 +25,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCa
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
@@ -33,11 +35,11 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em sexta-feira, 18 de julho de 2025 as 16:39.
  *
- * Processa uma notificação recebida no dispositivo pelo [dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener]
+ * Processa uma notificação recebida no dispositivo pelo [NotificationListener]
  * para determinar se ela deve ser permitida ou bloqueada e executa as ações relacionadas
  * ao processo como manter historico, fazer cache de bitmap, agendar alarme, etc...
  *
- * usa [dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImpl] para o processamento da notificação
+ * usa [IncomingNotificationProcessorImpl] para o processamento da notificação
  *
  * todo A natureza desse usecase de rodar com  RunBlocking Pode impedir que as notificações sejam bloqueadas a tempo
  * Se esse problema começar a aparecer execute as ações de salvar os dados em uma thread separada ou  depois de retornar

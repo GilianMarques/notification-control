@@ -5,13 +5,12 @@ import androidx.room.withTransaction
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
  * Em sexta-feira, 02 de maio de 2025 as 22:34.
- *
-
  *
  */
 class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
@@ -23,7 +22,7 @@ class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
     /**
      * Este UseCase pode ser utilizado tanto dentro quanto fora de uma transação do Room.
      *
-     * Quando chamado por [dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase], a operação já está
+     * Quando chamado por [DeleteRuleWithAppsUseCase], a operação já está
      * encapsulada em uma transação externa. No entanto, este UseCase também é reutilizado por outras classes que não iniciam
      * transações, o que exige que ele mesmo controle a atomicidade nesses casos.
      *

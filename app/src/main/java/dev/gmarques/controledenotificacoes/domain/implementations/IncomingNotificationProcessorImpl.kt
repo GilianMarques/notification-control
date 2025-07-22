@@ -10,19 +10,21 @@ import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import javax.inject.Inject
 
+
 /**
- * Implementação da interface [dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor].
+ * Implementação da interface [IncomingNotificationProcessor].
  *
  * Esta classe é responsável por processar notificações com base em regras definidas,
  * determinando se uma notificação deve ser permitida, bloqueada ou adiada.
  * Ela considera o tipo de regra (restritiva ou permissiva), a presença de condições
  * e se o aplicativo associado à notificação está em um período de bloqueio.
  *
- * Usada em comjunto com [dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase]
+ * Usada em comjunto com [ProcessIncomingNotificationUseCase]
  *
  */
 class IncomingNotificationProcessorImpl @Inject constructor(

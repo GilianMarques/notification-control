@@ -36,6 +36,7 @@ import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -477,8 +478,8 @@ open class MyFragment() : Fragment() {
 
     /**
      * Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets)
-     * Esse controlador sempre restará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
-     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme estado do [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController].
+     * Esse controlador sempre estará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
+     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme [SlidingPaneController.SlidingPaneState] do [SlidingPaneController].
      * para obter o navegador Default do sistema no momento da chamada use [findNavControllerDefault].
      */
     protected fun findNavControllerMain() =
@@ -487,7 +488,7 @@ open class MyFragment() : Fragment() {
 
 
     /**
-     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController]
+     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [SlidingPaneController]
      * Use [findNavControllerMain] para obter o navController do painel principal e [findNavControllerDetails] para obter o
      * navController do painel de detalhes (indisponivel em celulares)*/
     protected fun findNavControllerDefault() = findNavController()

@@ -25,10 +25,10 @@ class IsRuleInBlockPeriodUseCase @Inject constructor() {
      * Condições para um aplicativo ser considerado "em bloqueio":
      * - Se a [Rule.type] for [Type.RESTRICTIVE]:
      *      - O dia da semana atual ([baseDate]) deve estar presente na lista [Rule.days].
-     *      - A hora atual [baseDate] deve estar dentro de algum dos [dev.gmarques.controledenotificacoes.domain.model.TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true`, esta condição é automaticamente satisfeita.
+     *      - A hora atual [baseDate] deve estar dentro de algum dos [TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true`, esta condição é automaticamente satisfeita.
      * - Se a [Rule.type] for [Type.PERMISSIVE]:
      *      - O dia da semana atual ([baseDate]) NÃO deve estar presente na lista [Rule.days].
-     *      - OU, se o dia da semana atual estiver presente em [Rule.days], a hora atual ([baseDate]) NÃO deve estar dentro de NENHUM dos [dev.gmarques.controledenotificacoes.domain.model.TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true` e o dia estiver presente, esta condição não será satisfeita, indicando que o app não está em bloqueio.
+     *      - OU, se o dia da semana atual estiver presente em [Rule.days], a hora atual ([baseDate]) NÃO deve estar dentro de NENHUM dos [TimeRange] definidos em [Rule.timeRanges]. Se [Rule.isAllDayRule] for `true` e o dia estiver presente, esta condição não será satisfeita, indicando que o app não está em bloqueio.
      *
      * @param rule A [Rule] a ser avaliada.
      * @param baseDate O [LocalDateTime] usado como referência para a verificação. Por padrão, é o momento atual.
