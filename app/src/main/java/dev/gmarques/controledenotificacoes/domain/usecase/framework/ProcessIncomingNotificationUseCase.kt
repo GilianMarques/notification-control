@@ -19,6 +19,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
@@ -45,7 +46,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val alarmScheduler: AlarmScheduler,
-    private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
+    private val updateManagedAppUseCase: UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     private val incomingNotificationProcessor: IncomingNotificationProcessor,
     @ApplicationContext private val context: Context,

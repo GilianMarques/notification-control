@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.domain.implementations
 import android.os.Build
 import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.Condition
@@ -32,7 +33,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         activeNotification: ActiveStatusBarNotification,
         rule: Rule,
         managedApp: ManagedApp,
-    ): IncomingNotificationProcessor.PerformAction {
+    ): PerformAction {
 
         val condition = rule.condition
         val isAppInBlockPeriod = isRuleInBlockPeriodUseCase(rule)
@@ -66,7 +67,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         isAppInBlockPeriod: Boolean,
         rule: Rule,
         appNotification: AppNotification,
-    ): IncomingNotificationProcessor.PerformAction {
+    ): PerformAction {
         val ruleType = rule.type
         val condition = rule.condition ?: error("Condição não pode ser nula neste ponto")
 
@@ -86,7 +87,6 @@ class IncomingNotificationProcessorImpl @Inject constructor(
                 }
 
             } else {
-
                 Log.w(
                     "USUK",
                     "IncomingNotificationProcessorImpl.processCondition: notificação permitida pq nao caiu em nenhuma pré-condição"
@@ -95,7 +95,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
             }
 
         return if (blockNotification) decideHowToBlockNotification(rule)
-        else IncomingNotificationProcessor.PerformAction.Cancel
+        else PerformAction.Cancel
     }
 
 
@@ -110,9 +110,9 @@ class IncomingNotificationProcessorImpl @Inject constructor(
     private fun processRuleWithoutCondition(
         isAppInBlockPeriod: Boolean,
         rule: Rule,
-    ): IncomingNotificationProcessor.PerformAction {
+    ): PerformAction {
         return if (isAppInBlockPeriod) decideHowToBlockNotification(rule)
-        else IncomingNotificationProcessor.PerformAction.Allow
+        else PerformAction.Allow
     }
 
     /**
@@ -123,12 +123,12 @@ class IncomingNotificationProcessorImpl @Inject constructor(
      *
      * @param rule A regra que define a ação de bloqueio.
      */
-    private fun decideHowToBlockNotification(rule: Rule): IncomingNotificationProcessor.PerformAction {
+    private fun decideHowToBlockNotification(rule: Rule): PerformAction {
         return if (rule.action == Rule.Action.SNOOZE && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            IncomingNotificationProcessor.PerformAction.Cancel // snooze isn't supported
+            PerformAction.Cancel // snooze isn't supported
         } else when (rule.action) {
-            Rule.Action.SNOOZE -> IncomingNotificationProcessor.PerformAction.Snooze
-            Rule.Action.CANCEL -> IncomingNotificationProcessor.PerformAction.Cancel
+            Rule.Action.SNOOZE -> PerformAction.Snooze
+            Rule.Action.CANCEL -> PerformAction.Cancel
         }
     }
 
