@@ -282,7 +282,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         }
     }
 
-    fun isNotificationListenerEnabled(): Boolean {
+    fun isListenNotificationEnabled(): Boolean {
 
         val enabledListeners = Settings.Secure.getString(
             contentResolver, "enabled_notification_listeners"

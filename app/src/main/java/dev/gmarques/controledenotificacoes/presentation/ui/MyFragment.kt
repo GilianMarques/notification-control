@@ -313,7 +313,7 @@ open class MyFragment() : Fragment() {
         parent: ViewGroup,
         showHintPreference: PreferenceProperty<Boolean>,
         msg: String,
-        delay: Long = 0L,
+        delay: Long = 100L,
     ) = lifecycleScope.launch {
 
 

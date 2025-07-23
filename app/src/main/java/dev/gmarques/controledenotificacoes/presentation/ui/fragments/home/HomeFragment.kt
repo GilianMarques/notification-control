@@ -363,7 +363,7 @@ class HomeFragment : MyFragment() {
         if (binding.containerWarnings.isEmpty()) lifecycleScope.launch {
             delay(500)
 
-            if (!requireMainActivity().isNotificationListenerEnabled()) {
+            if (!requireMainActivity().isListenNotificationEnabled()) {
                 showListenNotificationWarning()
                 return@launch
             }
