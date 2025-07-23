@@ -69,8 +69,9 @@ class SelectAppsFragment : MyFragment() {
         observeEvents()
         setupFabConclude()
         showHintDialog(
-            PreferencesImpl.showHintSelectFirstApp,
-            getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
+            parent = binding.llHintParent,
+            showHintPreference = PreferencesImpl.showHintSelectFirstApp,
+            msg = getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
         )
         setupPopUpMenu()
 
@@ -173,9 +174,10 @@ class SelectAppsFragment : MyFragment() {
 
                 Event.SelectedAlreadyManagedApp -> {
                     showHintDialog(
-                        PreferencesImpl.showHintSelectedAppsAlreadyManaged,
-                        getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
-                        100
+                        parent = binding.llHintParent,
+                        showHintPreference = PreferencesImpl.showHintSelectedAppsAlreadyManaged,
+                        msg = getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
+                        delay = 100
                     )
                 }
 

@@ -110,8 +110,9 @@ class AddOrUpdateRuleFragment : MyFragment() {
             binding.actionbar.tvTitle.text = getString(R.string.Editar_regra)
 
             showHintDialog(
-                PreferencesImpl.showHintEditFirstRule,
-                getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos)
+                parent = binding.llHintParent,
+                showHintPreference = PreferencesImpl.showHintEditFirstRule,
+                msg = getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos),
             )
 
         }
