@@ -37,10 +37,6 @@ import org.joda.time.LocalDateTime
  */
 class NotificationListener : NotificationListenerService(), SystemNotificationRepository, CoroutineScope by MainScope() {
 
-    init {
-        instance = this@NotificationListener
-    }
-
     private val echoImpl = HiltEntryPoints.echo()
 
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
@@ -49,10 +45,10 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
 
     companion object {
 
-        private lateinit var instance: NotificationListener
+        private var instance: NotificationListener? = null
 
-        fun instance(): SystemNotificationRepository {
-            return instance as SystemNotificationRepository
+        fun instance(): SystemNotificationRepository? {
+            return if (instance != null) instance as SystemNotificationRepository else null
         }
     }
 
@@ -62,6 +58,7 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
 
     override fun onListenerConnected() {
         super.onListenerConnected()
+        instance = this@NotificationListener
         if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
     }
@@ -141,6 +138,7 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
 
     override fun onListenerDisconnected() {
         cancel()
+        instance = null
         super.onListenerDisconnected()
     }
 

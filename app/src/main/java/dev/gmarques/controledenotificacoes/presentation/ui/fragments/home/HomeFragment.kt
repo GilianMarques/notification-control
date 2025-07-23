@@ -112,9 +112,9 @@ class HomeFragment : MyFragment() {
         }
 
         Log.d("USUK", "HomeFragment.onViewCreated: ------------------------")
-        NotificationListener.instance().getSnoozedNots().forEach { not ->
+        NotificationListener.instance()?.getSnoozedNots()?.forEach { not ->
             Log.d("USUK", "HomeFragment.Snoozed: ${AppNotificationFactory.create(not)}")
-            NotificationListener.instance().snoozeNot(not, 100L)
+            NotificationListener.instance()?.snoozeNot(not, 100L)
         }
     }
 

@@ -19,8 +19,8 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor() {
     operator fun invoke(app: ManagedApp) {
         val notificationListener = NotificationListener.instance()
 
-        notificationListener.getSnoozedNots()
-            .filter { it.packageName == app.packageName }
-            .onEach { notificationListener.postSnoozedNotification(it) }
+        notificationListener?.getSnoozedNots()
+            ?.filter { it.packageName == app.packageName }
+            ?.onEach { notificationListener.postSnoozedNotification(it) }
     }
 }
