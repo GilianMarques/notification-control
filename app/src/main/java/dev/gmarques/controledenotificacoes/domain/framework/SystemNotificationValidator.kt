@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.domain.framework
 import android.app.Notification
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.BuildConfig
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Usado pra validar as notificações do sistema diretamente.
@@ -10,14 +11,19 @@ import dev.gmarques.controledenotificacoes.BuildConfig
  */
 object SystemNotificationValidator {
 
-    fun isValidToProcess(notification: StatusBarNotification) =
-        !notification.isOngoing
+    fun isValidToProcess(notification: StatusBarNotification): Boolean {
+        return !notification.isOngoing
                 && notification.packageName != BuildConfig.APPLICATION_ID
-                && !isMediaPlaybackNotification(notification)
-
-
-    private fun isMediaPlaybackNotification(sbn: StatusBarNotification): Boolean {
-        // Verifica se há estilo de media (MediaStyle)
-        return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }
+
+    fun isValidToEcho(notification: ActiveStatusBarNotification): Boolean {
+        return !notification.isOngoing
+                && !isMediaPlaybackNotification(notification)
+    }
+
+    private fun isMediaPlaybackNotification(notification: ActiveStatusBarNotification): Boolean {
+        // Verifica se há estilo de media (MediaStyle)
+        return notification.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
+    }
+
 }

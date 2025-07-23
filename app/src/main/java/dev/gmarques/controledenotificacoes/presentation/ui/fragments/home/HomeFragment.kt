@@ -4,7 +4,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,10 +35,6 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
-import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
@@ -52,7 +47,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebind
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
 /**
  * Fragment responsável por exibir a lista de aplicativos controlados.
@@ -63,12 +57,6 @@ class HomeFragment : MyFragment() {
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
-
-    @Inject
-    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
-
-    @Inject
-    lateinit var getUserUseCase: GetUserUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,12 +97,6 @@ class HomeFragment : MyFragment() {
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
-        }
-
-        Log.d("USUK", "HomeFragment.onViewCreated: ------------------------")
-        NotificationListener.instance()?.getSnoozedNots()?.forEach { not ->
-            Log.d("USUK", "HomeFragment.Snoozed: ${AppNotificationFactory.create(not)}")
-            NotificationListener.instance()?.snoozeNot(not, 100L)
         }
     }
 
@@ -177,7 +159,7 @@ class HomeFragment : MyFragment() {
 
     private fun setupActionBar() = binding.apply {
 
-        val user = getUserUseCase() ?: error("É necessário estar logado para chegar nesse ponto.")
+        val user = viewModel.getUser()
 
         binding.tvUserName.text = user.name
 
@@ -254,7 +236,7 @@ class HomeFragment : MyFragment() {
             getDrawable(R.drawable.vec_rule_permissive_small),
             getDrawable(R.drawable.vec_rule_restrictive_small),
             getDrawable(R.drawable.vec_dot_notification_indicator),
-            getInstalledAppIconUseCase,
+            viewModel.getInstalledAppIcon(),
             ::navigateToViewManagedAppFragment
         )
     }

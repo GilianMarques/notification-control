@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
+import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.Echo
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import javax.inject.Inject
@@ -31,9 +32,7 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
     override fun repostNotification(activeNotification: ActiveStatusBarNotification) {
 
         if (!isEchoEnabled()) return
-        /*Ja nao faz mas a validação pois o notificationlistener ja verifica a validade das notficaçoes antes de processar
-        * caso isso deixe de funcionar no futuro, use SystemNotiificationValidator pra validar a notificação antes de ecoar.*/
-        //   if (!isNotificationValid(activeNotification)) return
+        if (!SystemNotificationValidator.isValidToEcho(activeNotification)) return
 
         val original = activeNotification.notification
         val notificationId = activeNotification.id + 10000
