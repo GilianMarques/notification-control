@@ -31,6 +31,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeR
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.PostRuleSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.NameErrorMessage
@@ -51,6 +52,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private val addRuleUseCase: AddRuleUseCase,
     private val updateRuleUseCase: UpdateRuleUseCase,
     private val rescheduleAlarmsOnRuleEditUseCase: RescheduleAlarmsOnRuleEditUseCase,
+    private val postRuleSnoozedNotificationsUseCase: PostRuleSnoozedNotificationsUseCase,
 ) : ViewModel() {
 
     private var editingRule: Rule? = null
@@ -328,6 +330,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val rule = validatedRule.copy(id = editingRule!!.id)
         updateRuleUseCase(rule)
         rescheduleAlarmsOnRuleEditUseCase(rule)
+        postRuleSnoozedNotificationsUseCase(rule)
         _eventsChannel.trySend(Event.SetResultAndClose(rule))
     }
 

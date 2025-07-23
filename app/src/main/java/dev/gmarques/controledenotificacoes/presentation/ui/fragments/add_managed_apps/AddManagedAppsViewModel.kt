@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.PostAppSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
@@ -37,6 +38,7 @@ class AddManagedAppsViewModel @Inject constructor(
     private val getAllRulesUseCase: GetAllRulesUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
+    private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
 ) : ViewModel() {
 
 
@@ -155,7 +157,7 @@ class AddManagedAppsViewModel @Inject constructor(
      * Se a instância do [NotificationListener] não estiver disponível, a função não faz nada.
      */
     private fun requestActiveNotificationsEvaluation() {
-        NotificationListener.processActiveNotifications()
+        NotificationListener.instance().processActiveNotifications()
     }
 
     /**
@@ -167,6 +169,9 @@ class AddManagedAppsViewModel @Inject constructor(
      */
     private suspend fun addManagedApp(app: ManagedApp) {
         addManagedAppUseCase(app)
+        /*Como da pra atualizar um app que ja esta sendo gerenciado por aqui é necessário
+        * repostar as notificaçoes adiadas caso haja alguma*/
+        postAppSnoozedNotificationsUseCase(app)
     }
 
     fun addSelectedAppByPkgId(packageName: String) = viewModelScope.launch {

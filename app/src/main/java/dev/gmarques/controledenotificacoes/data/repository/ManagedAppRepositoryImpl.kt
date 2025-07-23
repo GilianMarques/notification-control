@@ -43,8 +43,8 @@ class ManagedAppRepositoryImpl @Inject constructor(private val managedAppDao: Ma
     }
 
     override suspend fun getManagedAppsByRuleId(ruleId: String): List<ManagedApp?> {
-        return managedAppDao.getManagedAppsByRuleId(ruleId).let {
-            it.map { it?.let { ManagedAppMapper.mapToModel(it) } }
+        return managedAppDao.getManagedAppsByRuleId(ruleId).let { managedAppEntity ->
+            managedAppEntity.map { it?.let { ManagedAppMapper.mapToModel(it) } }
         }
     }
 

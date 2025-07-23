@@ -31,7 +31,9 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
     override fun repostNotification(activeNotification: ActiveStatusBarNotification) {
 
         if (!isEchoEnabled()) return
-        if (!isNotificationValid(activeNotification)) return
+        /*Ja nao faz mas a validação pois o notificationlistener ja verifica a validade das notficaçoes antes de processar
+        * caso isso deixe de funcionar no futuro, use SystemNotiificationValidator pra validar a notificação antes de ecoar.*/
+        //   if (!isNotificationValid(activeNotification)) return
 
         val original = activeNotification.notification
         val notificationId = activeNotification.id + 10000
@@ -66,17 +68,5 @@ class EchoImpl @Inject constructor(@ApplicationContext private val baseContext: 
     /** Retorna true se o eco estiver habilitado, false caso contrario */
     private fun isEchoEnabled(): Boolean {
         return !PreferencesImpl.echoEnabled.isDefault()
-    }
-
-    /**Retorna true se a notificação for valida, false caso contrario */
-    private fun isNotificationValid(sbn: ActiveStatusBarNotification): Boolean {
-        return !isMediaPlaybackNotification(sbn)
-    }
-
-    /**Não reposta notificações de apps de musica ou video
-     * Retorna true se a notificação for de um app de midia, false caso contrario */
-    private fun isMediaPlaybackNotification(sbn: ActiveStatusBarNotification): Boolean {
-        // Verifica se há estilo de media (MediaStyle)
-        return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }
 }

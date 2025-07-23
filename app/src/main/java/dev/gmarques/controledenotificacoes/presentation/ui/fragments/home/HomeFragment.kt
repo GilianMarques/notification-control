@@ -4,6 +4,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,8 +36,10 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
@@ -107,6 +110,12 @@ class HomeFragment : MyFragment() {
             setupFabAddManagedApp()
             setupSearch()
         }
+
+        Log.d("USUK", "HomeFragment.onViewCreated: ------------------------")
+        NotificationListener.instance().getSnoozedNots().forEach { not ->
+            Log.d("USUK", "HomeFragment.Snoozed: ${AppNotificationFactory.create(not)}")
+            NotificationListener.instance().snoozeNot(not, 100L)
+        }
     }
 
     private fun setupPopUpMenu() {
@@ -158,8 +167,6 @@ class HomeFragment : MyFragment() {
         if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
         else navigate()
     }
-
-
 
     private fun navigateToSettingsFragment() {
 

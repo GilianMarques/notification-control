@@ -6,9 +6,10 @@ import android.os.Build
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
+import androidx.annotation.RequiresApi
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
+import dev.gmarques.controledenotificacoes.domain.data.repository.SystemNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification
@@ -16,7 +17,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncom
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener.Companion.processActiveNotifications
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -25,6 +26,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.joda.time.LocalDateTime
 
 /**
  * Criado por Gilian Marques
@@ -33,7 +35,11 @@ import kotlinx.coroutines.launch
  * Usa-se o [NotificationServiceManager] em primeiro plano pra ver se este listener está concetado e iniciar caso não esteja.
  *
  */
-class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
+class NotificationListener : NotificationListenerService(), SystemNotificationRepository, CoroutineScope by MainScope() {
+
+    init {
+        instance = this@NotificationListener
+    }
 
     private val echoImpl = HiltEntryPoints.echo()
 
@@ -42,32 +48,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private var debugTests: DebugTests? = null
 
     companion object {
-        /**
-         * Ao NÃO expor a instancia publicamente eu consigo garantir que as notificações extraidas daqui seguem as regras de negócio.
-         */
-        private var instance: NotificationListener? = null
 
-        fun getActiveNotifications(): List<StatusBarNotification> {
-            val notifications = mutableListOf<StatusBarNotification>()
-            if (instance?.isListenerConnected() == false) return notifications
-            instance?.activeNotifications?.let {
-                notifications.addAll(it)
-            }
+        private lateinit var instance: NotificationListener
 
-            return notifications.filter {
-                SystemNotificationValidator.isValidToProcess(it)
-            }
-        }
-
-        /**
-         * Usa [processNotification]. para processar todas as notificações ativas validas
-         */
-        fun processActiveNotifications() {
-            if (instance?.isListenerConnected() == false) return
-            val active = instance?.activeNotifications ?: return
-            active.forEach { sbn ->
-                instance?.processNotification(sbn)
-            }
+        fun instance(): SystemNotificationRepository {
+            return instance as SystemNotificationRepository
         }
     }
 
@@ -78,7 +63,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onListenerConnected() {
         super.onListenerConnected()
         if (BuildConfig.DEBUG) debugTests = DebugTests()
-        instance = this@NotificationListener
         observeRulesChanges()
     }
 
@@ -114,29 +98,29 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         when (result) {
             is AllowNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
+                //   Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
+                //   Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
+                //   Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 cancelNotification(result.targetNotification.key)
             }
 
             is SnoozeNotification -> {
-                Log.d(
-                    "USUK",
-                    "NotificationListener.processNotification: SnoozeNotification: snoozeFor: ${result.snoozeFor} not: ${result.targetNotification} "
-                )
+                /*  Log.d(
+                      "USUK",
+                      "NotificationListener.processNotification: SnoozeNotification: snoozeFor: ${result.snoozeFor} not: ${result.targetNotification} "
+                  )*/
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
@@ -156,7 +140,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onListenerDisconnected() {
-        instance = null
         cancel()
         super.onListenerDisconnected()
     }
@@ -164,10 +147,54 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     fun isListenerConnected(): Boolean {
         val cn = ComponentName(baseContext, NotificationListener::class.java)
         val enabledListeners = Settings.Secure.getString(
-            baseContext.contentResolver,
-            "enabled_notification_listeners"
+            baseContext.contentResolver, "enabled_notification_listeners"
         )
         return (enabledListeners?.contains(cn.flattenToString()) == true)
+    }
+
+    override fun getActiveNots(): List<ActiveStatusBarNotification> {
+
+        if (!isListenerConnected()) return emptyList()
+
+        return activeNotifications?.filter {
+            SystemNotificationValidator.isValidToProcess(it)
+        }?.map {
+            ActiveStatusBarNotificationFactory.create(it)
+        } ?: emptyList()
+    }
+
+    override fun getSnoozedNots(): List<ActiveStatusBarNotification> {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !isListenerConnected()) return emptyList()
+
+        return snoozedNotifications?.filter {
+            SystemNotificationValidator.isValidToProcess(it)
+        }?.map {
+            ActiveStatusBarNotificationFactory.create(it)
+        } ?: emptyList()
+    }
+
+    /**
+     * Usa [processNotification] para processar todas as notificações ativas validas
+     */
+    override fun processActiveNotifications() {
+        if (!isListenerConnected()) return
+
+        val active = activeNotifications ?: return
+        active.forEach { sbn ->
+            processNotification(sbn)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun snoozeNot(notification: ActiveStatusBarNotification, until: Long) {
+        val awaitTimeUntilPost = LocalDateTime(until).toDate().time - LocalDateTime.now().toDate().time
+        snoozeNotification(notification.key, awaitTimeUntilPost)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun postSnoozedNotification(notification: ActiveStatusBarNotification) {
+        snoozeNotification(notification.key, 500L)
     }
 }
 
@@ -180,6 +207,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
  */
 class DebugTests {
 
+
     init {
         if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de begug")
     }
@@ -191,7 +219,7 @@ class DebugTests {
     /**
      *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
      * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
-     * @see processNotification
+     * @see NotificationListener.processNotification
      */
     fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
         validationCallbackErrorJob = CoroutineScope(Main).launch {
