@@ -12,8 +12,6 @@ import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorPr
 import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
-import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcer
-import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcerImpl
 
 /**
  * Criado por Gilian Marques
@@ -30,9 +28,6 @@ abstract class FrameworkModule {
 
     @Binds
     abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider
-
-    @Binds
-    abstract fun bindRuleEnforcer(impl: RuleEnforcerImpl): RuleEnforcer
 
     @Binds
     abstract fun bindScheduleManager(impl: AlarmSchedulerImpl): AlarmScheduler

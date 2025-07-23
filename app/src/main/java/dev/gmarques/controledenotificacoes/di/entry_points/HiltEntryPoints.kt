@@ -17,7 +17,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
-import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcer
 
 /**
  * Criado por Gilian Marques
@@ -46,10 +45,6 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun reportNotificationManager(): ReportNotificationManager {
         return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
-    }
-
-    override fun ruleEnforcer(): RuleEnforcer {
-        return entryPoint<FrameworkEntryPoint>().ruleEnforcer()
     }
 
     override fun scheduleManager(): AlarmSchedulerImpl {

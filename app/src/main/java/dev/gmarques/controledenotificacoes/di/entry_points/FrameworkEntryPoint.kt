@@ -8,7 +8,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePrefer
 import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
-import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcer
 
 /**
  * Criado por Gilian Marques
@@ -18,7 +17,6 @@ import dev.gmarques.controledenotificacoes.z_exclude.RuleEnforcer
 @EntryPoint
 interface FrameworkEntryPoint {
     fun reportNotificationManager(): ReportNotificationManager
-    fun ruleEnforcer(): RuleEnforcer
     fun scheduleManager(): AlarmSchedulerImpl
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase
