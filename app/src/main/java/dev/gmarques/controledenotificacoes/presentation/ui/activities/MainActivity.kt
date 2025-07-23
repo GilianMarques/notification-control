@@ -121,10 +121,10 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
      * de aplicativo gerenciado, a função remove o fragmento do painel master.
      * Isso garante que, em telas maiores, a navegação principal ocorra no painel de detalhes, evitando duplicidade de telas.
      */
-    private fun removeDuplicatedFragmentOnExpandedScreen() = with(binding.navHostDetail) {
-
-        this?.post {
-            val navControllerDetail = this.findNavController()
+    private fun removeDuplicatedFragmentOnExpandedScreen() {
+        val navHostDetail = binding.navHostDetail ?: return
+        navHostDetail.post {
+            val navControllerDetail = navHostDetail.findNavController()
             val navControllerMaster = binding.navHostMaster.findNavController()
 
             if (navControllerDetail.currentDestination?.id == R.id.viewManagedAppFragment &&
