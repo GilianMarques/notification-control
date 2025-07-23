@@ -66,7 +66,8 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectNotificationsButton()
         setupAddRuleButton()
         setupConcludeFab()
-        observeViewModel()
+        observeStates()
+        observeEvents()
         showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
         loadLastUsedOrAddedRule()
     }
@@ -83,7 +84,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
         removeSelectedRuleIfItWasDeletedByUser()
 
-        if (viewModel.selectedRule.value != null) return@launch
+        if (viewModel.getSelectedRule() != null) return@launch
 
         val pref = PreferencesImpl.lastSelectedRule
         if (!pref.isDefault()) {
@@ -103,7 +104,7 @@ class AddManagedAppsFragment() : MyFragment() {
      * feita para impedir que o app salve uma regra que ja nao existe em um app, causando um problema gigantesco.
      */
     private suspend fun removeSelectedRuleIfItWasDeletedByUser() {
-        viewModel.selectedRule.value?.id?.let {
+        viewModel.getSelectedRule()?.id?.let {
             if (viewModel.getRuleById(it) == null) viewModel.setRule(null)
         }
     }
@@ -172,7 +173,7 @@ class AddManagedAppsFragment() : MyFragment() {
             ) as ArrayList<InstalledApp>
             lifecycleScope.launch {
 
-                val preSelectedApps = viewModel.selectedApps.value?.size ?: 0
+                val preSelectedApps = viewModel.getSelectedApps().size
                 val awaitUntilAppsAreLoadedOnUi = preSelectedApps > 0
 
                 if (awaitUntilAppsAreLoadedOnUi) do {
@@ -243,28 +244,39 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.selectedApps.observe(viewLifecycleOwner) { apps ->
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeStates() {
+        collectFlow(viewModel.selectedApps) { apps ->
             manageAppsViews(apps)
         }
 
-        viewModel.selectedRule.observe(viewLifecycleOwner) { rule ->
+        collectFlow(viewModel.selectedRule) { rule ->
             rule?.let { manageRuleView(rule) }
         }
+    }
 
-        viewModel.showError.observe(viewLifecycleOwner) {
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeEvents() {
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
+                is Event.Error -> {
 
-            it.consume()?.let {
-                showErrorSnackBar(it, binding.fabConclude)
+                    showErrorSnackBar(event.msg, binding.fabConclude)
+                    binding.fabConclude.isEnabled = true
+                }
+
+                Event.SuccessCloseFrag -> {
+                    goBack()
+                    vibrator.success()
+                }
             }
-            binding.fabConclude.isEnabled = true
         }
-
-        viewModel.successCloseFragment.observe(viewLifecycleOwner) {
-            goBack()
-            vibrator.success()
-        }
-
     }
 
     /**

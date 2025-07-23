@@ -40,6 +40,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault
         )
 
@@ -65,6 +66,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
             Rule(
@@ -81,6 +83,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
             Rule(
@@ -97,6 +100,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
         )
@@ -129,6 +133,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
             Rule(
@@ -145,6 +150,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
             Rule(
@@ -161,6 +167,7 @@ class RuleRepositoryImplTest {
                 ),
                 null,
                 type = Rule.typeDefault,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault
             ),
         )
@@ -192,6 +199,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault
         )
 
@@ -216,6 +224,7 @@ class RuleRepositoryImplTest {
             ),
             null,
             type = Rule.typeDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault
         )
 
@@ -243,6 +252,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    keepFullHistory = Rule.keepFullHistoryDefault,
                     action = Rule.actionDefault
                 )
             )
@@ -272,6 +282,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    keepFullHistory = Rule.keepFullHistoryDefault,
                     action = Rule.actionDefault
                 )
             ),
@@ -290,6 +301,7 @@ class RuleRepositoryImplTest {
                     ),
                     null,
                     type = Rule.typeDefault,
+                    keepFullHistory = Rule.keepFullHistoryDefault,
                     action = Rule.actionDefault
                 )
             )

@@ -30,6 +30,7 @@ class RuleMapperTest {
             type = Type.PERMISSIVE,
             days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
@@ -54,6 +55,7 @@ class RuleMapperTest {
             ruleType = Type.RESTRICTIVE,
             days = weekDayAdapter.toJson(listOf(Rule.WeekDay.TUESDAY, Rule.WeekDay.THURSDAY)),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             timeRanges = timeRangeAdapter.toJson(listOf(range))
         )

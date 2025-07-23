@@ -117,6 +117,7 @@ class RuleValidatorTest {
             days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(8, 0, 12, 0)),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
             action = Rule.actionDefault
         )
@@ -129,6 +130,7 @@ class RuleValidatorTest {
             name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
@@ -142,6 +144,7 @@ class RuleValidatorTest {
             name = "Regra",
             days = emptyList(),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
@@ -155,6 +158,7 @@ class RuleValidatorTest {
             name = "Regra",
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(
@@ -171,6 +175,7 @@ class RuleValidatorTest {
             name = "Regra",
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(

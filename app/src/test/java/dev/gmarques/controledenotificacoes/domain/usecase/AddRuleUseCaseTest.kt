@@ -30,7 +30,8 @@ class AddRuleUseCaseTest {
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
             condition = null,
             type = Rule.typeDefault,
-            action = Rule.actionDefault
+            action = Rule.actionDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
         )
 
         useCase(rule)
