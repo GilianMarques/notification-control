@@ -122,5 +122,15 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
             preferenceSaver = saver::invoke
         )
     }
+    override val showHomeFragmentUiHints: PreferenceProperty<Boolean> by lazy {
+
+        PreferenceProperty(
+            key = "show_home_fragment_ui_hints",
+            defaultValue = true,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
+
 
 }

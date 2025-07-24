@@ -164,7 +164,7 @@
 
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="356dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
@@ -230,6 +230,9 @@
                     style="@style/Widget.Material3.CompoundButton.Switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/vec_history"
+                    android:drawablePadding="16dp"
+                    android:drawableTint="?colorPrimary"
                     android:padding="8dp"
                     android:text="@string/Manter_historico_completo" />
 

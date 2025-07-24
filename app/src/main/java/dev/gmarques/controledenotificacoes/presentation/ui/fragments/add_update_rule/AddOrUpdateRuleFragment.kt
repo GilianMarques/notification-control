@@ -81,6 +81,8 @@ class AddOrUpdateRuleFragment : MyFragment() {
             setupSwFullHistory()
             setupFabAddRule()
             setupEditingModeIfNeeded()
+            setupPopUpMenu()
+            toggleHintsVisibility()
             observeRuleType()
             observeRuleAction()
             observeTimeRanges()
@@ -116,6 +118,52 @@ class AddOrUpdateRuleFragment : MyFragment() {
             )
 
         }
+    }
+
+    private fun setupPopUpMenu() = with(binding.actionbar) {
+
+/*        val popupMenu = popupMenu {
+            section {
+                item {
+                    label = getString(
+                        if (PreferencesImpl.showHomeFragmentUiHints.value) R.string.Ocultar_dicas
+                        else R.string.Exibir_dicas
+                    )
+                    icon = R.drawable.vec_hint
+                    callback = {
+                        with(PreferencesImpl.showHomeFragmentUiHints) {
+                            this.set(this.value.not())
+                        }
+                        toggleHintsVisibility()
+                    }
+                }
+            }
+        }
+*/
+        val toggleIcon =
+            {
+                ivMenu.setImageResource(
+                    if (PreferencesImpl.showHomeFragmentUiHints.value) R.drawable.vec_hint_lamp_on
+                    else R.drawable.vec_hint
+                )
+            }
+        ivMenu.setOnClickListener(AnimatedClickListener {
+            //      popupMenu.show(this@AddOrUpdateRuleFragment.requireContext(), ivMenu)
+            with(PreferencesImpl.showHomeFragmentUiHints) {
+                this.set(this.value.not())
+                toggleIcon()
+                toggleHintsVisibility()
+            }
+        })
+
+        toggleIcon()
+
+    }
+
+    private fun toggleHintsVisibility() = with(binding) {
+        tvRuleTypeInfo.isVisible = PreferencesImpl.showHomeFragmentUiHints.value
+        tvRuleActionInfo.isVisible = PreferencesImpl.showHomeFragmentUiHints.value
+        tvFullHistoryInfo.isVisible = PreferencesImpl.showHomeFragmentUiHints.value
     }
 
     private fun setupFabAddRule() = with(binding) {

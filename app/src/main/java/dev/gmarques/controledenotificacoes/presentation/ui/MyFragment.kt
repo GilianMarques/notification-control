@@ -151,7 +151,7 @@ open class MyFragment() : Fragment() {
             is AddOrUpdateRuleFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Adicionar_regra)
-                binding.ivMenu.isGone = true
+                binding.ivMenu.isGone = false
             }
 
             is SelectAppsFragment -> {

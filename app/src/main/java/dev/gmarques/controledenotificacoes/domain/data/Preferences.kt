@@ -22,6 +22,8 @@ interface Preferences {
 
     val detailsPaneScreenPercent: PreferenceProperty<Float>
 
+    val showHomeFragmentUiHints: PreferenceProperty<Boolean>
+
     @Keep
     /**Todas as preferencias dentro dessa interface podem ser resetadas pelo usuario*/
     interface ResettableDialogHints {

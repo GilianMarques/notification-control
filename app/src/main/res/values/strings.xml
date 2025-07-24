@@ -309,6 +309,8 @@
     <string name="Manter_historico_completo">Manter histórico completo</string>
     <string name="Todas_as_notifica_es_dos_apps_gerenciados_por_essa_regra_ser_o_mantidas_em_hist_rico">Todas as notificações dos apps gerenciados por essa regra serão mantidas em histórico.</string>
     <string name="Apenas_as_notifica_es_bloqueadas_dos_apps_gerenciados_por_essa_regra_ser_o_mantidas_em_hist_rico">Apenas as notificações bloqueadas dos apps gerenciados por essa regra serão mantidas em histórico.</string>
+    <string name="Exibir_dicas">Exibir dicas</string>
+    <string name="Ocultar_dicas">Ocultar dicas</string>
 
 
 </resources>
