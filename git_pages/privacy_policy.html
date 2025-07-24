@@ -1,25 +1,323 @@
-<div><img style="display: block; margin-left: auto; margin-right: auto;" src="https://gilianmarques.github.io/notification-control/app/src/main/ic_launcher-playstore.png" alt="&Iacute;cone do app" width="141" height="141" />
-<h1>Pol&iacute;tica de Privacidade</h1>
-</div>
-<p>Esta Pol&iacute;tica de Privacidade descreve como as informa&ccedil;&otilde;es dos usu&aacute;rios s&atilde;o tratadas no aplicativo Android <strong>Controle de Notifica&ccedil;&otilde;es</strong>.</p>
-<h2>Coleta de Dados</h2>
-<p>Este aplicativo <strong>n&atilde;o coleta, armazena ou compartilha dados pessoais</strong> dos usu&aacute;rios.</p>
-<p>O uso de login &eacute; <strong>opcional</strong> e tem como &uacute;nico objetivo a personaliza&ccedil;&atilde;o da interface.</p>
-<h2>Servi&ccedil;os de Terceiros</h2>
-<p>O aplicativo utiliza os seguintes servi&ccedil;os de terceiros fornecidos pela plataforma <strong>Firebase</strong>, mantida pela <strong>Google</strong>:</p>
-<ul>
-<li><strong>Firebase Authentication</strong>: usado para autentica&ccedil;&atilde;o. O app n&atilde;o acessa dados al&eacute;m do necess&aacute;rio para identificar o usu&aacute;rio.</li>
-<li><strong>Firebase Crashlytics</strong>: coleta informa&ccedil;&otilde;es t&eacute;cnicas sobre falhas no aplicativo (como tipo de erro, vers&atilde;o do Android, etc.). Nenhum dado pessoal &eacute; coletado.</li>
-<li><strong>Firebase Remote Config</strong>: usado para ativar ou desativar funcionalidades remotamente. Nenhuma informa&ccedil;&atilde;o pessoal &eacute; coletada.</li>
-</ul>
-<p>Esses servi&ccedil;os podem coletar <strong>dados t&eacute;cnicos de forma anonimizada</strong>, conforme a <a href="https://policies.google.com/privacy" target="_blank">Pol&iacute;tica de Privacidade da Google</a>.</p>
-<h2>Compartilhamento de Dados</h2>
-<p>Este aplicativo <strong>n&atilde;o compartilha dados com terceiros</strong>.</p>
-<h2>Seguran&ccedil;a</h2>
-<p>O aplicativo adota boas pr&aacute;ticas de desenvolvimento para proteger os dados e a integridade do sistema, mesmo que <strong>nenhum dado pessoal seja coletado ou armazenado</strong>.</p>
-<h2>Altera&ccedil;&otilde;es nesta Pol&iacute;tica</h2>
-<p>Esta pol&iacute;tica pode ser <strong>atualizada periodicamente</strong>. Recomendamos que os usu&aacute;rios revisem esta p&aacute;gina ocasionalmente para se manterem informados.</p>
-<h2>Contato</h2>
-<p>Se voc&ecirc; tiver d&uacute;vidas sobre esta Pol&iacute;tica de Privacidade, entre em contato pelo e-mail:<br />📧 <strong>dev.gmarques@gmail.com</strong></p>
-<hr />
-<p><strong>&Uacute;ltima atualiza&ccedil;&atilde;o:</strong> 24 de julho de 2025</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade - Controle de Notificações</title>
+    <style>
+        :root {
+            --primary-purple: #502AE5;
+            --secondary-purple: #C745FF;
+            --light-purple: #502AE5;
+            --dark-purple: #502AE5;
+            --background-purple: #f8f6fb;
+            --text-dark: #2d1b3d;
+            --text-light: #5a4c6b;
+            --border-color: #d4c5e8;
+            --shadow-color: rgba(102, 51, 153, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--background-purple) 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background: white;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            border-radius: 12px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--primary-purple);
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-purple);
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            border: 4px solid var(--light-purple);
+            transition: transform 0.3s ease;
+        }
+
+        .app-icon:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--dark-purple);
+            margin: 2.5rem 0 1rem;
+            padding-left: 1rem;
+            border-left: 4px solid var(--secondary-purple);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-dark);
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        ul {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        li::marker {
+            color: var(--secondary-purple);
+        }
+
+        strong {
+            color: var(--dark-purple);
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.3s ease;
+        }
+
+        a:hover {
+            border-bottom: 1px solid var(--primary-purple);
+        }
+
+        .section {
+            background: var(--background-purple);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--light-purple);
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .contact-section h2 {
+            color: white;
+            border: none;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .contact-section p {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+        }
+
+        .contact-section strong {
+            color: white;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-color);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--light-purple), rgba(177, 156, 217, 0.3));
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 1.5rem 0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+                border-radius: 8px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                margin: 2rem 0 0.8rem;
+            }
+
+            .app-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            ul {
+                padding-left: 1.5rem;
+            }
+
+            .section, .highlight-box {
+                padding: 1rem;
+            }
+
+            .contact-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+                padding-left: 0.8rem;
+            }
+
+            .app-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            p, li {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Animações sutis */
+        .container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img class="app-icon" src="https://gilianmarques.github.io/notification-control/app/src/main/ic_launcher-playstore.png" alt="Ícone do app Controle de Notificações" />
+            <h1>Política de Privacidade</h1>
+            <p class="subtitle">Aplicativo Android Controle de Notificações</p>
+        </div>
+
+        <div class="highlight-box">
+            <p>Esta Política de Privacidade descreve como as informações dos usuários são tratadas no aplicativo Android <strong>Controle de Notificações</strong>.</p>
+        </div>
+
+        <h2>Coleta de Dados</h2>
+        <div class="section">
+            <p>Este aplicativo <strong>não coleta, armazena ou compartilha dados pessoais</strong> dos usuários.</p>
+            <p>O uso de login é <strong>opcional</strong> e tem como único objetivo a personalização da interface.</p>
+        </div>
+
+        <h2>Serviços de Terceiros</h2>
+        <p>O aplicativo utiliza os seguintes serviços de terceiros fornecidos pela plataforma <strong>Firebase</strong>, mantida pela <strong>Google</strong>:</p>
+        <ul>
+            <li><strong>Firebase Authentication</strong>: usado para autenticação. O app não acessa dados além do necessário para identificar o usuário.</li>
+            <li><strong>Firebase Crashlytics</strong>: coleta informações técnicas sobre falhas no aplicativo (como tipo de erro, versão do Android, etc.). Nenhum dado pessoal é coletado.</li>
+            <li><strong>Firebase Remote Config</strong>: usado para ativar ou desativar funcionalidades remotamente. Nenhuma informação pessoal é coletada.</li>
+        </ul>
+        <div class="section">
+            <p>Esses serviços podem coletar <strong>dados técnicos de forma anonimizada</strong>, conforme a <a href="https://policies.google.com/privacy" target="_blank">Política de Privacidade da Google</a>.</p>
+        </div>
+
+        <h2>Compartilhamento de Dados</h2>
+        <div class="section">
+            <p>Este aplicativo <strong>não compartilha dados com terceiros</strong>.</p>
+        </div>
+
+        <h2>Segurança</h2>
+        <p>O aplicativo adota boas práticas de desenvolvimento para proteger os dados e a integridade do sistema, mesmo que <strong>nenhum dado pessoal seja coletado ou armazenado</strong>.</p>
+
+        <h2>Alterações nesta Política</h2>
+        <p>Esta política pode ser <strong>atualizada periodicamente</strong>. Recomendamos que os usuários revisem esta página ocasionalmente para se manterem informados.</p>
+
+        <div class="contact-section">
+            <h2>Contato</h2>
+            <p>Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato pelo e-mail:</p>
+            <p>📧 <strong>dev.gmarques@gmail.com</strong></p>
+        </div>
+
+        <div class="footer">
+            <p><strong>Última atualização:</strong> 24 de julho de 2025</p>
+        </div>
+    </div>
+</body>
+</html>
