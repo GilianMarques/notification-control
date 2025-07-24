@@ -283,12 +283,13 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     }
 
     fun isListenNotificationEnabled(): Boolean {
-
         val enabledListeners = Settings.Secure.getString(
             contentResolver, "enabled_notification_listeners"
         ) ?: return false
-
-        return enabledListeners.split(":").any { it == packageName }
+        // vai dar falso positivo se tiver mais de uma variante instalada no dispositivo. Ex: release e staging
+        // troquei o contains por equals e resolveu, testei no apk staging e release mas a versao da playstore
+        // nunca reconhecia a permissao mesmo depois de concedida entao tive que voltar a usar o contains.
+        return enabledListeners.split(":").any { it.contains(packageName) }
     }
 
     fun requestNotificationAccessPermission() {
