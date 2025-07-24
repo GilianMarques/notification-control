@@ -4,7 +4,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.gms.google-services")
@@ -78,8 +78,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
 }
 
@@ -111,7 +113,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
-    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.57")
     implementation("com.google.firebase:firebase-auth:24.0.0")
     implementation("com.google.firebase:firebase-config:23.0.0")
     implementation("com.google.firebase:firebase-crashlytics:20.0.0")
@@ -122,12 +124,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
-
-    //noinspection KaptUsageInsteadOfKsp
-    kapt("androidx.room:room-compiler:2.7.2")
-    //noinspection KaptUsageInsteadOfKsp
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    ksp("androidx.room:room-compiler:2.7.2")
+    ksp("com.github.bumptech.glide:ksp:4.16.0")
+    ksp("com.google.dagger:hilt-android-compiler:2.57")
 
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:2.7.2")
@@ -150,11 +149,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-}
-
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
 }
 
 tasks.withType<Test> {

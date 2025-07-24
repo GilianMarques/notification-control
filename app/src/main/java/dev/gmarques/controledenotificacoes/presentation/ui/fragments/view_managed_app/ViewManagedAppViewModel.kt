@@ -185,7 +185,7 @@ class ViewManagedAppViewModel @Inject constructor(
     }
 
     fun loadAppIcon(pkg: String, context: Context): Drawable = runBlocking {
-        return@runBlocking getInstalledAppIconUseCase(pkg) ?: ContextCompat.getDrawable(context, R.drawable.vec_app)
+        return@runBlocking getInstalledAppIconUseCase(pkg) ?: ContextCompat.getDrawable(context, R.drawable.vec_app)!!
     }
 
     /**
