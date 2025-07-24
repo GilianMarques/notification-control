@@ -288,7 +288,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             contentResolver, "enabled_notification_listeners"
         ) ?: return false
 
-        return enabledListeners.split(":").any { it.contains(packageName) }
+        return enabledListeners.split(":").any { it == packageName }
     }
 
     fun requestNotificationAccessPermission() {
