@@ -94,12 +94,12 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.fragment:fragment-ktx:1.8.8")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1") // TODO: remover
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
-    implementation("androidx.navigation:navigation-common-ktx:2.9.1") // Permite usar NavDeepLinkBuilder para abrir fragmentos especificos via notificação com argumentos
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.1") // Feature module support for Fragments
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.1") // Views/Fragments integration
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.2") // TODO: remover
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2")
+    implementation("androidx.navigation:navigation-common-ktx:2.9.2") // Permite usar NavDeepLinkBuilder para abrir fragmentos especificos via notificação com argumentos
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.2") // Feature module support for Fragments
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.2") // Views/Fragments integration
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.2")
     implementation("androidx.room:room-ktx:2.7.2")
     implementation("androidx.room:room-runtime:2.7.2")
 
@@ -112,9 +112,9 @@ dependencies {
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
     implementation("com.google.dagger:hilt-android:2.51.1")
-    implementation("com.google.firebase:firebase-auth:23.2.1")
-    implementation("com.google.firebase:firebase-config:22.1.2")
-    implementation("com.google.firebase:firebase-crashlytics:19.4.4")
+    implementation("com.google.firebase:firebase-auth:24.0.0")
+    implementation("com.google.firebase:firebase-config:23.0.0")
+    implementation("com.google.firebase:firebase-crashlytics:20.0.0")
 
     implementation("com.squareup.moshi:moshi:1.15.2")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.2") // Para suporte a Kotlin
@@ -131,18 +131,18 @@ dependencies {
 
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:2.7.2")
-    testImplementation("io.mockk:mockk:1.14.4")
+    testImplementation("io.mockk:mockk:1.14.5")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.3") // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.3")
     testImplementation("org.mockito:mockito-core:5.18.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // imitar classes
+    testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0") // imitar classes
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.13.3") // Necessário para rodar JUnit 4 com o 5
     testImplementation(kotlin("test"))
 
     // Testing Navigation
-    androidTestImplementation("androidx.navigation:navigation-testing:2.9.1")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.9.2")
     // necessario para testes instrumentados pois ainda usam junit4 como padrao
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:core:1.6.1")
