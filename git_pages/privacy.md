@@ -1,0 +1,40 @@
+# Política de Privacidade
+
+Esta Política de Privacidade descreve como as informações dos usuários são tratadas no aplicativo Android **Controle de Notificações**.
+
+## Coleta de Dados
+
+Este aplicativo **não coleta, armazena ou compartilha dados pessoais** dos usuários.
+
+O uso de login é **opcional** e tem como único objetivo a personalização da interface.
+
+## Serviços de Terceiros
+
+O aplicativo utiliza os seguintes serviços de terceiros fornecidos pela plataforma **Firebase**, mantida pela **Google**:
+
+- **Firebase Authentication**: usado para autenticação. O app não acessa dados além do necessário para identificar o usuário.
+- **Firebase Crashlytics**: coleta informações técnicas sobre falhas no aplicativo (como tipo de erro, versão do Android, etc.). Nenhum dado pessoal é coletado.
+- **Firebase Remote Config**: usado para ativar ou desativar funcionalidades remotamente. Nenhuma informação pessoal é coletada.
+
+Esses serviços podem coletar **dados técnicos de forma anonimizada**, conforme a [Política de Privacidade da Google](https://policies.google.com/privacy).
+
+## Compartilhamento de Dados
+
+Este aplicativo **não compartilha dados com terceiros**.
+
+## Segurança
+
+O aplicativo adota boas práticas de desenvolvimento para proteger os dados e a integridade do sistema, mesmo que **nenhum dado pessoal seja coletado ou armazenado**.
+
+## Alterações nesta Política
+
+Esta política pode ser **atualizada periodicamente**. Recomendamos que os usuários revisem esta página ocasionalmente para se manterem informados.
+
+## Contato
+
+Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato pelo e-mail:  
+📧 **dev.gmarques@gmail.com**
+
+---
+
+**Última atualização:** 24 de julho de 2025
