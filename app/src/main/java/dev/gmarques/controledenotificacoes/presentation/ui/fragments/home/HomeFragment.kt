@@ -361,7 +361,7 @@ class HomeFragment : MyFragment() {
         super.onResume()
 
         if (binding.containerWarnings.isEmpty()) lifecycleScope.launch {
-            delay(500)
+            delay(1500)
 
             if (!requireMainActivity().isListenNotificationEnabled()) {
                 showListenNotificationWarning()
