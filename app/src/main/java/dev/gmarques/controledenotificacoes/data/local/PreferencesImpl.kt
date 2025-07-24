@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.data.local
 
+import androidx.annotation.Keep
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.data.Preferences
@@ -19,6 +20,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPan
  * Isso permite acessar e modificar as preferencias de maneira simples, funcional e escalavel
  *
  */
+@Keep
 object PreferencesImpl : Preferences, ResettableDialogHints {
 
     private val reader = HiltEntryPoints.readPreferenceUseCase()
