@@ -14,6 +14,8 @@ import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_1_2
 import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_2_3
+import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_3_4
+import dev.gmarques.controledenotificacoes.data.local.room.migrations.MIGRATION_4_5
 import javax.inject.Singleton
 
 /**
@@ -30,7 +32,14 @@ object RoomDatabaseModule {
     fun provideRoomDatabase(@ApplicationContext context: Context): RoomDatabase {
 
         return Room.databaseBuilder(context, RoomDatabase::class.java, "room_database")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                /**Nao esquece de aumentar a versão do DB em [RoomDatabase]*/
+            )
+
             .fallbackToDestructiveMigrationOnDowngrade(BuildConfig.DEBUG)
             .build()
     }

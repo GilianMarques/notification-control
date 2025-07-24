@@ -22,8 +22,19 @@ import java.util.TimerTask
 /**
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 09:07.
+
+ * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
 class NotificationServiceManager : Service() {
+
+    companion object {
+        private const val NOTIFICATION_ID = 220461
+        private var instance: NotificationServiceManager? = null
+        fun stopSelf() {
+            instance?.disconnectListener()
+            instance?.stopForeground(STOP_FOREGROUND_REMOVE)
+        }
+    }
 
     private val checkIntervalMs = 10_000L // intervalo entre checagens
     private var timer: Timer? = null
@@ -32,12 +43,8 @@ class NotificationServiceManager : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
+        instance = this
         return START_STICKY
-    }
-
-    override fun onDestroy() {
-        timer?.cancel()
-        super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -123,6 +130,16 @@ class NotificationServiceManager : Service() {
         )
     }
 
+    private fun disconnectListener() {
+        val pm = packageManager
+        val componentName = ComponentName(this, NotificationListener::class.java)
+        pm.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+    }
+
     /**
      * Abre as configurações de notificação para o canal específico da notificação em primeiro plano (foreground).
      * Em versões mais recentes do Android (O+), navega diretamente para as configurações do canal.
@@ -171,7 +188,8 @@ class NotificationServiceManager : Service() {
 
     }
 
-    companion object {
-        private const val NOTIFICATION_ID = 220461
+    override fun onDestroy() {
+        timer?.cancel()
+        super.onDestroy()
     }
 }

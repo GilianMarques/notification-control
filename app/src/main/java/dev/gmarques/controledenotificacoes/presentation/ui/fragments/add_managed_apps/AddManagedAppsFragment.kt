@@ -16,9 +16,6 @@ import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemRuleSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -32,22 +29,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
 class AddManagedAppsFragment() : MyFragment() {
 
     private val maxAppsViews = 5
-
-    @Inject
-    lateinit var getAllRulesUseCase: GetAllRulesUseCase
-
-    @Inject
-    lateinit var getRuleByIdUseCase: GetRuleByIdUseCase
-
-    @Inject
-    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -79,8 +66,13 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectNotificationsButton()
         setupAddRuleButton()
         setupConcludeFab()
-        observeViewModel()
-        showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
+        observeStates()
+        observeEvents()
+        showHintDialog(
+            parent = binding.llParent,
+            showHintPreference = PreferencesImpl.showHintHowRulesAndManagedAppsWork,
+            msg = getString(R.string.como_adicionar_o_primeiro_app),
+        )
         loadLastUsedOrAddedRule()
     }
 
@@ -96,18 +88,18 @@ class AddManagedAppsFragment() : MyFragment() {
 
         removeSelectedRuleIfItWasDeletedByUser()
 
-        if (viewModel.selectedRule.value != null) return@launch
+        if (viewModel.getSelectedRule() != null) return@launch
 
         val pref = PreferencesImpl.lastSelectedRule
         if (!pref.isDefault()) {
-            getRuleByIdUseCase(pref.value).let { rule ->
+            viewModel.getRuleById(pref.value).let { rule ->
                 if (rule == null) pref.reset()
                 else viewModel.setRule(rule)
                 return@launch
             }
         }
 
-        val rules = getAllRulesUseCase()
+        val rules = viewModel.getAllRules()
         if (!rules.isEmpty()) viewModel.setRule(rules.last())
     }
 
@@ -116,8 +108,8 @@ class AddManagedAppsFragment() : MyFragment() {
      * feita para impedir que o app salve uma regra que ja nao existe em um app, causando um problema gigantesco.
      */
     private suspend fun removeSelectedRuleIfItWasDeletedByUser() {
-        viewModel.selectedRule.value?.id?.let {
-            if (getRuleByIdUseCase(it) == null) viewModel.setRule(null)
+        viewModel.getSelectedRule()?.id?.let {
+            if (viewModel.getRuleById(it) == null) viewModel.setRule(null)
         }
     }
 
@@ -185,7 +177,7 @@ class AddManagedAppsFragment() : MyFragment() {
             ) as ArrayList<InstalledApp>
             lifecycleScope.launch {
 
-                val preSelectedApps = viewModel.selectedApps.value?.size ?: 0
+                val preSelectedApps = viewModel.getSelectedApps().size
                 val awaitUntilAppsAreLoadedOnUi = preSelectedApps > 0
 
                 if (awaitUntilAppsAreLoadedOnUi) do {
@@ -245,39 +237,50 @@ class AddManagedAppsFragment() : MyFragment() {
 
         setFragmentResultListener(SelectNotificationFragment.RESULT_LISTENER_KEY) { _, bundle ->
 
-            val pkgId = requireSerializableOf(
+            val packageName = requireSerializableOf(
                 bundle, SelectNotificationFragment.BUNDLED_PACKAGE_NAME_KEY, String()::class.java
             ) as String
 
             lifecycleScope.launch {
-                viewModel.addSelectedAppByPkgId(pkgId)
+                viewModel.addSelectedAppByPkgId(packageName)
             }
 
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.selectedApps.observe(viewLifecycleOwner) { apps ->
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeStates() {
+        collectFlow(viewModel.selectedApps) { apps ->
             manageAppsViews(apps)
         }
 
-        viewModel.selectedRule.observe(viewLifecycleOwner) { rule ->
+        collectFlow(viewModel.selectedRule) { rule ->
             rule?.let { manageRuleView(rule) }
         }
+    }
 
-        viewModel.showError.observe(viewLifecycleOwner) {
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeEvents() {
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
+                is Event.Error -> {
 
-            it.consume()?.let {
-                showErrorSnackBar(it, binding.fabConclude)
+                    showErrorSnackBar(event.msg, binding.fabConclude)
+                    binding.fabConclude.isEnabled = true
+                }
+
+                Event.SuccessCloseFrag -> {
+                    goBack()
+                    vibrator.success()
+                }
             }
-            binding.fabConclude.isEnabled = true
         }
-
-        viewModel.successCloseFragment.observe(viewLifecycleOwner) {
-            goBack()
-            vibrator.success()
-        }
-
     }
 
     /**
@@ -299,13 +302,13 @@ class AddManagedAppsFragment() : MyFragment() {
 
                 val itemBinding = ItemAppSmallBinding.inflate(layoutInflater).apply {
                     name.text = app.name
-                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                    ivAppIcon.setImageDrawable(viewModel.getInstalledAppIcon(app.packageName))
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.deleteApp(app)
                     })
                 }
 
-                ContainerController.Child(app.packageId, app.name, itemBinding)
+                ContainerController.Child(app.packageName, app.name, itemBinding)
             }
 
             containerController.submitList(children)

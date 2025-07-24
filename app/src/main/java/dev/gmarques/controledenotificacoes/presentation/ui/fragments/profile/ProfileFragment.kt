@@ -13,31 +13,15 @@ import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.databinding.FragmentProfileBinding
-import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : MyFragment() {
-
-    @Inject
-    lateinit var roomDatabase: RoomDatabase
-
-    @Inject
-    lateinit var logOffUserUseCase: LogOffUserUseCase
-
-    @Inject
-    lateinit var getUserUseCase: GetUserUseCase
 
     private lateinit var binding: FragmentProfileBinding
 
@@ -106,6 +90,13 @@ class ProfileFragment : MyFragment() {
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
+
+                Event.LogoffDone -> {
+                    lifecycleScope.launch(Main) {
+                        vibrator.success()
+                        requireActivity().finish()
+                    }
+                }
             }
         }
     }
@@ -117,23 +108,13 @@ class ProfileFragment : MyFragment() {
                 .setMessage(getString(R.string.Voce_sera_desconectado_a_e_todos_os_dados_locais_ser_o_removidos_deseja_mesmo_continuar))
                 .setCancelable(true)
                 .setPositiveButton(getString(R.string.Sair)) { dialog, _ ->
-                    lifecycleScope.launch {
-                        performLogOff()
-                    }
+                    viewModel.performLogOff()
                 }.show()
         }
     }
 
-    private suspend fun performLogOff() = withContext(IO) {
-
-        logOffUserUseCase()
-        if (!BuildConfig.DEBUG) roomDatabase.clearAllTables()
-        vibrator.success()
-        withContext(Main) { requireActivity().finish() }
-    }
-
     private fun loadUserData() {
-        val user = getUserUseCase() ?: error("usuario nao pode ser nulo aqui")
+        val user = viewModel.getUser()
 
         binding.tvUserName.text = user.name
 

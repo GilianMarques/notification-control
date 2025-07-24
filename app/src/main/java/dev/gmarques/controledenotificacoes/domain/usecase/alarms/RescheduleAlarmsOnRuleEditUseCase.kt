@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
@@ -41,10 +41,10 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
         app: ManagedApp,
         rule: Rule,
     ) {
-        val isThereAnyActiveAlarm = alarmScheduler.isThereAnyAlarmSetForPackage(app.packageId)
+        val isThereAnyActiveAlarm = alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)
 
         if (isThereAnyActiveAlarm) {
-            alarmScheduler.cancelAlarm(app.packageId)
+            alarmScheduler.cancelAlarm(app.packageName)
             scheduleAlarmForAppUseCase(app, rule)
         }
     }

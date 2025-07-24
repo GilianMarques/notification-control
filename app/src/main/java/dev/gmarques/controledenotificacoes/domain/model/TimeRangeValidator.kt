@@ -1,15 +1,17 @@
-import TimeRangeValidator.TimeRangeValidatorException.AllDayWithNoZeroedValuesException
-import TimeRangeValidator.TimeRangeValidatorException.DuplicateTimeRangeException
-import TimeRangeValidator.TimeRangeValidatorException.HourOutOfRangeException
-import TimeRangeValidator.TimeRangeValidatorException.IntersectedRangeException
-import TimeRangeValidator.TimeRangeValidatorException.InversedRangeException
-import TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
-import TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
+package dev.gmarques.controledenotificacoes.domain.model
+
 import dev.gmarques.controledenotificacoes.domain.OperationResult
-import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.asRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.AllDayWithNoZeroedValuesException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.DuplicateTimeRangeException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.HourOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.IntersectedRangeException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.InversedRangeException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
+
 
 /**
  *
@@ -25,10 +27,10 @@ object TimeRangeValidator {
     private val HOUR_RANGE = 0..23
     private val MINUTE_RANGE = 0..59
 
-    /** max [TimeRange]s for [dev.gmarques.controledenotificacoes.domain.model.Rule] */
+    /** max [TimeRange]s for [Rule] */
     const val MAX_RANGES = 10
 
-    /** min [TimeRange]s for [dev.gmarques.controledenotificacoes.domain.model.Rule] */
+    /** min [TimeRange]s for [Rule] */
     const val MIN_RANGES = 1
 
     /**

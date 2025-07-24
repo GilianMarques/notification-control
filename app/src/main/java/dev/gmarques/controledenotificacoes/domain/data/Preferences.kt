@@ -6,15 +6,16 @@ import androidx.annotation.Keep
 interface Preferences {
 
     /**Se deve incluir apps do sistema na lista de seleçao de apps instalados*/
-    val prefIncludeSystemApps: PreferenceProperty<Boolean>
+    val includeSystemApps: PreferenceProperty<Boolean>
 
     /**Se deve incluir apps que ja estao sendo gerenciados na lista de seleçao de apps instalados*/
-    val prefIncludeManagedApps: PreferenceProperty<Boolean>
+    val includeManagedApps: PreferenceProperty<Boolean>
 
     val scheduledAlarms: PreferenceProperty<String>
     val lastSelectedRule: PreferenceProperty<String>
 
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
+
     val showWarningCardPostNotification: PreferenceProperty<Boolean>
 
     val echoEnabled: PreferenceProperty<Boolean>

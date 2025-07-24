@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -9,9 +9,10 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import javax.inject.Inject
 
@@ -32,22 +33,22 @@ class AlarmSchedulerImpl @Inject constructor(
      * Se um agendamento ja existir, será cancelado e um novo será criado,
      * garantindo que apenas um alarme seja agendado para cada pacote.
      *
-     * @param packageId O ID do pacote para o qual o alarme será agendado.
+     * @param packageName O ID do pacote para o qual o alarme será agendado.
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
-    override fun scheduleAlarm(packageId: String, millis: Long) {
+    override fun scheduleAlarm(packageName: String, millis: Long) {
 
-        cancelAlarm(packageId) // avoid multiple schedules for the same package
+        cancelAlarm(packageName) // avoid multiple schedules for the same package
 
-        if (millis == NextAppUnlockTimeUseCase.INFINITE) return
+        if (millis == NextRuleUnlockTimeUseCase.INFINITE) return
 
-        //    Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
+        //  Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
 
-        val pIntent = createPendingIntent(packageId)
+        val pIntent = createPendingIntent(packageName)
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
 
-        saveScheduleData(packageId)
+        saveScheduleData(packageName)
     }
 
     /**
@@ -60,28 +61,28 @@ class AlarmSchedulerImpl @Inject constructor(
     /**
      * Cancela um alarme agendado para um pacote específico.
      *
-     * @param packageId O ID do pacote para o qual o alarme será cancelado.
+     * @param packageName O ID do pacote para o qual o alarme será cancelado.
      */
-    override fun cancelAlarm(packageId: String) {
+    override fun cancelAlarm(packageName: String) {
 
-        val pIntent = createPendingIntent(packageId)
+        val pIntent = createPendingIntent(packageName)
 
         alarmManager.cancel(pIntent)
 
-        deleteScheduleData(packageId)
+        deleteScheduleData(packageName)
     }
 
     /**
      * Verifica se existe algum alarme agendado para um pacote específico.
-     * Lê a preferência que armazena a lista de pacotes com alarmes agendados e verifica se o `packageId` está presente.
+     * Lê a preferência que armazena a lista de pacotes com alarmes agendados e verifica se o `packageName` está presente.
      *
-     * @param packageId O ID do pacote a ser verificado.
+     * @param packageName O ID do pacote a ser verificado.
      * @return `true` se houver um alarme agendado para o pacote, `false` caso contrário.
      */
-    override fun isThereAnyAlarmSetForPackage(packageId: String): Boolean {
+    override fun isThereAnyAlarmSetForPackage(packageName: String): Boolean {
 
         val json = PreferencesImpl.scheduledAlarms.value
-        return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageId)
+        return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageName)
     }
 
     /**
@@ -98,14 +99,14 @@ class AlarmSchedulerImpl @Inject constructor(
 
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager].
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AlarmReceiver].
      *
-     * @param packageId O ID do pacote a ser incluído como extra no [Intent] do [PendingIntent].
+     * @param packageName O ID do pacote a ser incluído como extra no [Intent] do [PendingIntent].
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */
-    private fun createPendingIntent(packageId: String): PendingIntent {
+    private fun createPendingIntent(packageName: String): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("packageId", packageId)
+            putExtra(AlarmReceiver.PACKAGE_ID, packageName)
         }
 
         return PendingIntent.getBroadcast(
@@ -133,13 +134,13 @@ class AlarmSchedulerImpl @Inject constructor(
      * Garante que os pacotes na lista não se repitam.
      * Utiliza o [SavePreferenceUseCase] para persistir essa informação.
      *
-     * @param packageId O ID do pacote para o qual o dado de agendamento será salvo.
+     * @param packageName O ID do pacote para o qual o dado de agendamento será salvo.
      */
-    private fun saveScheduleData(packageId: String) {
+    private fun saveScheduleData(packageName: String) {
 
         val json = PreferencesImpl.scheduledAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
-            .apply { if (!this.contains(packageId)) add(packageId) }
+            .apply { if (!this.contains(packageName)) add(packageName) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
@@ -149,13 +150,13 @@ class AlarmSchedulerImpl @Inject constructor(
     /**
      * Remove o dado que indica que um alarme foi agendado para o pacote especificado.
      *
-     * @param packageId O ID do pacote para o qual o dado de agendamento será removido.
+     * @param packageName O ID do pacote para o qual o dado de agendamento será removido.
      */
-    override fun deleteScheduleData(packageId: String) {
+    override fun deleteScheduleData(packageName: String) {
 
         val json = PreferencesImpl.scheduledAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
-            .apply { remove(packageId) }
+            .apply { remove(packageName) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
@@ -190,7 +191,7 @@ class AlarmSchedulerImpl @Inject constructor(
          * @return A lista de strings desserializada, uma lista vazia se a string estivee vazia ou `null` se a conversão falhar.
          */
         fun fromJson(json: String): MutableList<String>? {
-            return if (json.isEmpty()) mutableListOf<String>() else adapter.fromJson(json)!!
+            return if (json.isEmpty()) mutableListOf() else adapter.fromJson(json)!!
         }
     }
 

@@ -28,6 +28,8 @@ class UpdateRuleUseCaseTest {
             condition = null,
             timeRanges = listOf(TimeRange(10, 30, 11, 35)),
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
         )
         useCase(rule)
 

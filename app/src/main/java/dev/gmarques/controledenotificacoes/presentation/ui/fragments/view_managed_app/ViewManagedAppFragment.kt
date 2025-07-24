@@ -26,7 +26,7 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtension
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
-import dev.gmarques.controledenotificacoes.framework.model.ShakeDetectorHelper
+import dev.gmarques.controledenotificacoes.framework.ShakeDetectorHelper
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
@@ -43,8 +43,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ViewManagedAppFragment() : MyFragment(),
-    SlidingPaneController.SlidingPaneControllerCallback {
+class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPaneControllerCallback {
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
@@ -66,12 +65,12 @@ class ViewManagedAppFragment() : MyFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pkg = if (args.packageId != null) {
-            viewModel.setup(args.packageId!!)
-            args.packageId!!
+        val pkg = if (args.packageName != null) {
+            viewModel.setup(args.packageName!!)
+            args.packageName!!
         } else if (args.app != null) {
             viewModel.setup(args.app!!)
-            args.app!!.packageId
+            args.app!!.packageName
         } else {
             goBack()
             null
@@ -145,8 +144,8 @@ class ViewManagedAppFragment() : MyFragment(),
         hideViewOnRVScroll(rvHistory, fabOpenApp)
         fabOpenApp.setOnClickListener(AnimatedClickListener {
 
-            val packageId = viewModel.managedAppFlow.value!!.packageId
-            val launched = requireMainActivity().launchApp(packageId)
+            val packageName = viewModel.managedAppFlow.value!!.packageName
+            val launched = requireMainActivity().launchApp(packageName)
             if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), fabOpenApp)
 
         })
@@ -270,7 +269,6 @@ class ViewManagedAppFragment() : MyFragment(),
         })
     }
 
-
     private fun confirmClearHistory() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Por_favor_confirme))
             .setMessage(getString(R.string.Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao))
@@ -364,9 +362,13 @@ class ViewManagedAppFragment() : MyFragment(),
         super.onPause()
     }
 
-    /**Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)*/
+    /**
+     * Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)
+     * e mais...
+     */
     override fun onResume() {
         requireMainActivity().slidingPaneController?.showMasterAndDetails()
+        viewModel.markNotificationsAsRead()
         super.onResume()
     }
 

@@ -1,9 +1,9 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -117,7 +117,9 @@ class RuleValidatorTest {
             days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(8, 0, 12, 0)),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
+            action = Rule.actionDefault
         )
         RuleValidator.validate(rule) // Se lancar excecão, o teste falha
     }
@@ -128,7 +130,9 @@ class RuleValidatorTest {
             name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -140,7 +144,9 @@ class RuleValidatorTest {
             name = "Regra",
             days = emptyList(),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -152,7 +158,9 @@ class RuleValidatorTest {
             name = "Regra",
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(8, 0, 12, 0)
@@ -167,7 +175,9 @@ class RuleValidatorTest {
             name = "Regra",
             days = listOf(Rule.WeekDay.MONDAY),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             type = Rule.typeDefault,
+            action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(11, 0, 13, 0)

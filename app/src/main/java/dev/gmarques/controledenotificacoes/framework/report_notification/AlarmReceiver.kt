@@ -1,24 +1,28 @@
 package dev.gmarques.controledenotificacoes.framework.report_notification
 
+
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 
 /**
  * É executado mediante agendamento no sistema para  emitir notificações ao usuario.
- * Usa [ReportNotificationManager] para exibir a notificação de relatório.e [dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler]
+ * Usa [ReportNotificationManager] para exibir a notificação de relatório e [AlarmScheduler]
  * para limpar os dados de agendamento após a emissao das notificações.
  */
 class AlarmReceiver : BroadcastReceiver() {
 
+    companion object {
+        const val PACKAGE_ID = "packageName"
+    }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 
-        val pkg = intent.getStringExtra("packageId") ?: return
-        Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
+        val pkg = intent.getStringExtra(PACKAGE_ID) ?: return
+        // Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
 
         getReportNotificationManager().showReportNotification(pkg)
 

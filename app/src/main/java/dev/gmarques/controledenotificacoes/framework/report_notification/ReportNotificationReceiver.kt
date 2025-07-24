@@ -8,6 +8,17 @@ import android.os.Build
 import android.util.Log
 
 /**
+ * Classe que extende `BroadcastReceiver` responsavel por exibir notificações recebidas e tratar
+ * as interações do usuário com essas notificações.
+ *
+ * Quando o ususario clica em uma notificação de relatorio, esta classe é invocada pelo sistema Android.
+ * Ela extrai os dados relevantes da notificação, como o ID da notificação, o nome do pacote de
+ * destino e a intenção original que disparou a notificação.
+ *
+ * Se a notificação tiver um ID válido e uma intenção de destino válida, esta classe cancela a
+ * notificação original e inicia a atividade de destino, garantindo que a atividade seja iniciada
+ * em uma nova tarefa e que as tarefas existentes sejam limpas.
+ *
  * Criado por Gilian Marques
  * Em sábado, 07 de junho de 2025 as 17:43.
  */

@@ -9,10 +9,14 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
+import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRuleFactory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +33,8 @@ class HomeViewModel @Inject constructor(
     observeAllRulesUseCase: ObserveAllRulesUseCase,
     observeAllManagedApps: ObserveAllManagedApps,
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
+    private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
+    private val getUserUseCase: GetUserUseCase,
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
@@ -52,7 +58,9 @@ class HomeViewModel @Inject constructor(
             days = listOf(Rule.WeekDay.SUNDAY),
             condition = null,
             timeRanges = listOf(TimeRange(1, 2, 3, 4)),
-            type = Rule.typeDefault
+            type = Rule.typeDefault,
+            action = Rule.actionDefault,
+            keepFullHistory = Rule.keepFullHistoryDefault,
         )
     }
 
@@ -92,15 +100,18 @@ class HomeViewModel @Inject constructor(
 
         val rulesMap = rules.associateBy { it.id }
 
-        return managedApps.map { managedApp ->
+        return managedApps
+            .map { managedApp ->
 
-            val installedApp = runBlocking {
-                getInstalledAppByPackageOrDefaultUseCase(managedApp.packageId)
+                val installedApp = runBlocking {
+                    getInstalledAppByPackageOrDefaultUseCase(managedApp.packageName)
+                }
+
+                ManagedAppWithRuleFactory.create(installedApp, managedApp, rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound)
+
             }
-
-            ManagedAppWithRule.from(installedApp, managedApp, rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound)
-
-        }.sortedWith(compareByDescending<ManagedAppWithRule> { it.hasPendingNotifications }.thenBy { it.name.lowercase() })
+            .sortedWith(compareByDescending<ManagedAppWithRule> { it.hasPendingNotifications }
+                .thenBy { it.name.lowercase() })
 
     }
 
@@ -121,6 +132,21 @@ class HomeViewModel @Inject constructor(
             initialValue = initialValue
         )
     }
+
+    /**
+     * Recupera o usuário logado.
+     * @return O usuário logado.
+     * @throws IllegalStateException Se não houver usuário logado.
+     */
+    fun getUser(): User {
+        return getUserUseCase() ?: error("É necessário estar logado para chegar nesse ponto.")
+    }
+
+    /**
+     * Recupera o caso de uso para obter o ícone de um aplicativo instalado.
+     * @return O caso de uso [GetInstalledAppIconUseCase].
+     */
+    fun getInstalledAppIcon(): GetInstalledAppIconUseCase = getInstalledAppIconUseCase
 
 }
 

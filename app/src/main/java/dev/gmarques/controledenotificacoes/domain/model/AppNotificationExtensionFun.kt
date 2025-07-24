@@ -1,7 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import android.app.Notification
-import android.service.notification.StatusBarNotification
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -22,20 +20,20 @@ object AppNotificationExtensionFun {
     fun AppNotification.timeFormatted(): String {
         val now = Calendar.getInstance()
         val notificationTime = Calendar.getInstance().apply {
-            timeInMillis = timestamp
+            timeInMillis = postTime
         }
 
         return if (now.get(Calendar.YEAR) == notificationTime.get(Calendar.YEAR)
             && now.get(Calendar.DAY_OF_YEAR) == notificationTime.get(Calendar.DAY_OF_YEAR)
         ) {
-            SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(timestamp))
+            SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(postTime))
         } else {
-            SimpleDateFormat("EEEE, dd/MM HH:mm", Locale.getDefault()).format(Date(timestamp))
+            SimpleDateFormat("EEEE, dd/MM HH:mm", Locale.getDefault()).format(Date(postTime))
         }
     }
 
     fun AppNotification.pendingIntentId(): String {
-        return "${this.packageId}_${this.timestamp}"
+        return "${this.packageName}_${this.postTime}"
     }
 
     /**
@@ -47,52 +45,10 @@ object AppNotificationExtensionFun {
      * é  atualizada e um novo bitmap é gerado mesmo que o bitmap seja o mesmo ja que a musica nao mudou. Entendeu?
      * */
     fun AppNotification.bitmapId(): String {
-        return "${this.packageId}_${this.title}_${this.content}"
+        return "${this.packageName}_${this.title}_${this.content}"
             .replace(Regex("[^a-zA-Z0-9]"), "") +
                 ".png"
 
     }
-
-    /**
-     * Cria uma [AppNotification] a partir de uma [StatusBarNotification].
-     *
-     * Esta função deve ser chamada em [AppNotification] passando uma [StatusBarNotification] como argumento.
-     * Ela extrai corretamente múltiplas mensagens (usando EXTRA_TEXT_LINES quando existir).
-     *
-     * @param sbn A notificação do sistema (StatusBarNotification) a ser convertida.
-     * @return Uma instância de [AppNotification] com os dados extraídos.
-     */
-    fun createFromStatusBarNotification(sbn: StatusBarNotification): AppNotification {
-        val extras = sbn.notification.extras
-
-        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()
-            ?: extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString()
-            ?: extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
-            ?: "" // Fallback final
-
-        val content: String = when {
-            // 1. Tenta obter múltiplas linhas (ex: InboxStyle)
-            extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.isNotEmpty() == true -> {
-                extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)!!
-                    .joinToString(separator = "\n") { it.toString() }
-            }
-
-            // 2. Tenta texto grande (ex: BigTextStyle)
-            extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null -> {
-                extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
-            }
-
-            // 3. Fallback padrão
-            else -> extras.getCharSequence(Notification.EXTRA_TEXT)?.toString().orEmpty()
-        }
-
-        return AppNotification(
-            packageId = sbn.packageName,
-            title = title,
-            content = content,
-            timestamp = sbn.postTime
-        )
-    }
-
 
 }

@@ -9,8 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
 import androidx.core.view.isGone
@@ -32,12 +32,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewHintBinding
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
-import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.VibratorProviderImpl
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
+import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -50,6 +50,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.Se
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -63,10 +64,10 @@ import kotlin.system.exitProcess
  */
 @AndroidEntryPoint
 open class MyFragment() : Fragment() {
-    private var dialogHint: AlertDialog? = null
 
     /**printa as alteraçoes no ciclo de vida dos fragmentos filho, se habilitado*/
     private val enableLifecycleDebugLogs = false
+
     @Inject
     lateinit var vibrator: VibratorProvider
 
@@ -200,7 +201,7 @@ open class MyFragment() : Fragment() {
             }
 
             else -> {
-                throw IllegalArgumentException("Inclua o codigo de inicializaçao da Actionbar para esse fragmento aqui")
+                error("Inclua o codigo de inicializaçao da Actionbar para esse fragmento aqui")
             }
 
         }
@@ -309,26 +310,31 @@ open class MyFragment() : Fragment() {
      *
      */
     protected fun showHintDialog(
+        parent: ViewGroup,
         showHintPreference: PreferenceProperty<Boolean>,
         msg: String,
-        delay: Long = 500L,
+        delay: Long = 100L,
     ) = lifecycleScope.launch {
 
 
         if (!showHintPreference.value) return@launch
 
-        dialogHint?.dismiss()
+        with(ViewHintBinding.inflate(layoutInflater)) {
+            tvHint.text = msg
+            chipUnderstood.setOnClickListener(AnimatedClickListener {
+                vibrator.success()
+                lifecycleScope.launch {
+                    showHintPreference.set(false)
+                    parent.removeView(this@with.root)
+                }
+            })
 
-        if (delay > 0) delay(delay)
+            if (delay > 0) delay(delay)
+            parent.addViewWithTwoStepsAnimation(this.root)
+            vibrator.interaction()
+        }
 
-        vibrator.interaction()
 
-        dialogHint = MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
-            .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                lifecycleScope.launch { showHintPreference.set(false) }
-            }.setNegativeButton(getString(R.string.Lembre_me_da_proxima_vez)) { dialog, _ ->
-            }.setCancelable(false).setIcon(R.drawable.vec_hint)
-            .show()
     }
 
     /**
@@ -399,22 +405,16 @@ open class MyFragment() : Fragment() {
             if (it == null || !it.blockApp) return@collectFlow
 
             vibrator.error()
-            MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(getString(R.string.Atencao))
-                .setMessage(
-                    getString(
-                        R.string.Esta_versao_do_app_foi_bloqueada_verifique_atualiza_es_na_play_store,
-                        getString(R.string.app_name)
-                    )
+            MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Atencao)).setMessage(
+                getString(
+                    R.string.Esta_versao_do_app_foi_bloqueada_verifique_atualiza_es_na_play_store,
+                    getString(R.string.app_name)
                 )
-                .setPositiveButton(getString(R.string.Ir_a_loja)) { dialog, _ ->
-                    openPlayStore()
-                }
-                .setNegativeButton(getString(R.string.Sair)) { dialog, _ ->
-                    exitProcess(0)
-                }
-                .setCancelable(false)
-                .show()
+            ).setPositiveButton(getString(R.string.Ir_a_loja)) { dialog, _ ->
+                openPlayStore()
+            }.setNegativeButton(getString(R.string.Sair)) { dialog, _ ->
+                exitProcess(0)
+            }.setCancelable(false).show()
         }
 
     }
@@ -479,8 +479,8 @@ open class MyFragment() : Fragment() {
 
     /**
      * Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets)
-     * Esse controlador sempre restará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
-     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme estado do [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController].
+     * Esse controlador sempre estará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
+     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme [SlidingPaneController.SlidingPaneState] do [SlidingPaneController].
      * para obter o navegador Default do sistema no momento da chamada use [findNavControllerDefault].
      */
     protected fun findNavControllerMain() =
@@ -489,7 +489,7 @@ open class MyFragment() : Fragment() {
 
 
     /**
-     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController]
+     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [SlidingPaneController]
      * Use [findNavControllerMain] para obter o navController do painel principal e [findNavControllerDetails] para obter o
      * navController do painel de detalhes (indisponivel em celulares)*/
     protected fun findNavControllerDefault() = findNavController()

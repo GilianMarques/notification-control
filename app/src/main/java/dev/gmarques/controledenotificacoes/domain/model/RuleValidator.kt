@@ -1,10 +1,12 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.blocksAllDayWholeWeek
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.ConditionValidationException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.PermaBlockWithSnoozeActionException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDays
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateId
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateName
@@ -48,8 +50,24 @@ object RuleValidator {
 
         validateId(rule.id).getOrThrow()
 
-        validateCondition(rule.condition)
+        validateCondition(rule.condition).getOrThrow()
 
+        validateRuleItSelf(rule).getOrThrow()
+
+    }
+
+    /**Valida se as configurações da regra nao se contradizem/anulam de alguma forma*/
+    fun validateRuleItSelf(rule: Rule): OperationResult<RuleValidatorException, Rule> {
+        /**
+         * Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas.
+         * Nao tem porque adiar notificações que nunca devem ser mostradas.
+         */
+        if (rule.action == Rule.Action.SNOOZE && rule.blocksAllDayWholeWeek())
+            return OperationResult.failure<RuleValidatorException>(
+                PermaBlockWithSnoozeActionException(rule)
+            )
+
+        return OperationResult.success(rule)
     }
 
 
@@ -104,7 +122,7 @@ object RuleValidator {
         val minDays = 1
         val maxDays = 7
         return if (days.size !in minDays..maxDays) {
-            OperationResult.failure(RuleValidatorException.DaysOutOfRangeException(minDays, maxDays, days.size))
+            OperationResult.failure(DaysOutOfRangeException(minDays, maxDays, days.size))
         } else OperationResult.success(days)
     }
 
@@ -123,7 +141,7 @@ object RuleValidator {
      * @param id A string de ID a ser validada.
      * @return Um objeto [Result]:
      *         - [OperationResult.success] contendo a string de ID se ela não estiver vazia.
-     *         - [OperationResult.failure] contendo uma [BlankIdException] se a string de ID estiver vazia.
+     *         - [OperationResult.failure] contendo uma [BlankPackageNameException] se a string de ID estiver vazia.
      */
     fun validateId(id: String): OperationResult<RuleValidatorException, String> {
         if (id.isEmpty()) {
@@ -145,12 +163,13 @@ object RuleValidator {
 
     }
 
+
     /**
      * Criado por Gilian Marques
      * Em 20/06/2025 as 17:18
      */
     sealed class RuleValidatorException(msg: String) : Exception(msg) {
-
+// TODO: agrupar exceptions por funçao de validação
         /**
          * Criado por Gilian Marques
          * Em domingo, 30 de março de 2025 as 14:21.
@@ -177,6 +196,9 @@ object RuleValidator {
          */
         class BlankIdException() :
             RuleValidatorException("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
+
+        class PermaBlockWithSnoozeActionException(rule: Rule) :
+            RuleValidatorException("Um app em bloqueio permanente (24/7) deve ter suas notificações canceladas. Nao tem porque adiar notificações que nunca devem ser mostradas. \nregra: $rule")
 
         /**
          * Criado por Gilian Marques

@@ -21,10 +21,10 @@ interface ManagedAppDao {
     @Update
     suspend fun updateManagedApp(managedAppEntity: ManagedAppEntity)
 
-    @Query("DELETE FROM managed_apps WHERE packageId = :id")
+    @Query("DELETE FROM managed_apps WHERE packageName = :id")
     suspend fun deleteById(id: String)
 
-    @Query("SELECT * FROM managed_apps WHERE packageId = :id")
+    @Query("SELECT * FROM managed_apps WHERE packageName = :id")
     suspend fun getManagedAppByPackageId(id: String): ManagedAppEntity?
 
     @Query("SELECT * FROM managed_apps")
@@ -37,7 +37,7 @@ interface ManagedAppDao {
     suspend fun getManagedAppsByRuleId(ruleId: String): List<ManagedAppEntity?>
 
 
-    @Query("SELECT * FROM managed_apps WHERE packageId = :pkg")
+    @Query("SELECT * FROM managed_apps WHERE packageName = :pkg")
     fun observeManagedApp(pkg: String): Flow<ManagedAppEntity?>
 
 }

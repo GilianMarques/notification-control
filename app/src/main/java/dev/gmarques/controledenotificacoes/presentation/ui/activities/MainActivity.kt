@@ -19,6 +19,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -33,7 +34,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -57,6 +58,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     private lateinit var homeLabel: String
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
     private lateinit var appUpdateManager: AppUpdateManager
+
     var slidingPaneController: SlidingPaneController? = null
         private set
 
@@ -98,7 +100,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             } ?: SlidingPaneState.ONLY_MASTER
 
 
-        lockOrientation()
         setContentView(binding.root)
 
         enableEdgeToEdge()
@@ -110,10 +111,30 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
         observeNavigationChanges()
         checkForAppUpdate()
-
         setupForTablet(lastSlidingPaneState)
-
+        removeDuplicatedFragmentOnExpandedScreen()
     }
+
+    /**
+     * Esta função verifica se a tela do dispositivo foi expandida, como no caso de um celular para um foldable/tablet.
+     * Se a tela foi expandida e ambos os painéis de navegação (master e detail) estão exibindo o mesmo fragmento de visualização
+     * de aplicativo gerenciado, a função remove o fragmento do painel master.
+     * Isso garante que, em telas maiores, a navegação principal ocorra no painel de detalhes, evitando duplicidade de telas.
+     */
+    private fun removeDuplicatedFragmentOnExpandedScreen() {
+        val navHostDetail = binding.navHostDetail ?: return
+        navHostDetail.post {
+            val navControllerDetail = navHostDetail.findNavController()
+            val navControllerMaster = binding.navHostMaster.findNavController()
+
+            if (navControllerDetail.currentDestination?.id == R.id.viewManagedAppFragment &&
+                navControllerMaster.currentDestination?.id == R.id.viewManagedAppFragment
+            ) {
+                navControllerMaster.popBackStack()
+            }
+        }
+    }
+
 
     private fun setupForTablet(lastState: SlidingPaneState?) = with(binding) {
 
@@ -147,12 +168,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             null -> slidingPaneController?.showOnlyMaster()
         }
 
-    }
-
-    private fun lockOrientation() {
-        // TODO: ver io que fazer com isso
-        //  if (App.largeScreenDevice) requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
-        //  else SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     private fun checkForAppUpdate() {
@@ -267,12 +282,13 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         }
     }
 
-    fun isNotificationListenerEnabled(): Boolean {
-
+    fun isListenNotificationEnabled(): Boolean {
         val enabledListeners = Settings.Secure.getString(
             contentResolver, "enabled_notification_listeners"
         ) ?: return false
-
+        // vai dar falso positivo se tiver mais de uma variante instalada no dispositivo. Ex: release e staging
+        // troquei o contains por equals e resolveu, testei no apk staging e release mas a versao da playstore
+        // nunca reconhecia a permissao mesmo depois de concedida entao tive que voltar a usar o contains.
         return enabledListeners.split(":").any { it.contains(packageName) }
     }
 
@@ -327,11 +343,11 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
 
     /**
      * Tenta abrir um app com base no id do pacote
-     * @param packageId id do pacote do app a ser aberto ex: com.google.android.youtube
+     * @param packageName id do pacote do app a ser aberto ex: com.google.android.youtube
      * @return true se o app foi aberto com sucesso, false caso contrario
      */
-    fun launchApp(packageId: String): Boolean {
-        val launchIntent = packageManager.getLaunchIntentForPackage(packageId)
+    fun launchApp(packageName: String): Boolean {
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
         return if (launchIntent != null) {
             startActivity(launchIntent)
@@ -360,9 +376,13 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             SlidingPaneState.ONLY_DETAILS -> detailHost
         }
 
-        if (!supportFragmentManager.isDestroyed) supportFragmentManager.beginTransaction()
-            .setPrimaryNavigationFragment(primaryHost)
-            .commit()
+        if (!supportFragmentManager.isStateSaved
+            && !supportFragmentManager.isDestroyed
+        ) {
+            supportFragmentManager.beginTransaction()
+                .setPrimaryNavigationFragment(primaryHost)
+                .commit()
+        } else Log.e("USUK", "MainActivity.onAnimationEnd: default navhost not changed")
     }
 
     /**

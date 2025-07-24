@@ -4,6 +4,8 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.data.Preferences
 import dev.gmarques.controledenotificacoes.domain.data.Preferences.ResettableDialogHints
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 
 /**
@@ -13,7 +15,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPan
  * Implementa [Preferences] e [Preferences.ResettableDialogHints] que definem quais sao as preferencias disponiveis no app e faz a implementação
  * dessas preferencias usando instancias de [PreferenceProperty] inicializadas sob demanda para  facilitar o acesso, leitura e escrita
  * das preferências através dos usecases
- * [dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase] e [dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase]
+ * [ReadPreferenceUseCase] e [SavePreferenceUseCase]
  * Isso permite acessar e modificar as preferencias de maneira simples, funcional e escalavel
  *
  */
@@ -57,7 +59,7 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val prefIncludeSystemApps: PreferenceProperty<Boolean> by lazy {
+    override val includeSystemApps: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "pref_include_system_apps",
             defaultValue = false,
@@ -66,7 +68,7 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val prefIncludeManagedApps: PreferenceProperty<Boolean> by lazy {
+    override val includeManagedApps: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "pref_include_managed_apps",
             defaultValue = false,

@@ -1,26 +1,21 @@
 package dev.gmarques.controledenotificacoes.presentation.utils
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import android.util.DisplayMetrics
-import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
-import java.util.Timer
-import java.util.TimerTask
 import kotlin.math.max
 
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 08 de julho de 2025 as 14:33.
+ *
+ * Um GridLayoutManager personalizado que ajusta automaticamente o número de colunas.
  */
 class AutoFitGridLayoutManager(
     context: Context,
     itemWidthDp: Int,
-    private val spanCountChangeListener: (spanCount: Int) -> Unit ={},
+    private val spanCountChangeListener: (spanCount: Int) -> Unit = {},
 ) : GridLayoutManager(context, 1) {
 
     private var itemWidthPx = 0
@@ -44,7 +39,7 @@ class AutoFitGridLayoutManager(
 
         newSpanCount = max(1, totalSpace / itemWidthPx)
 
-        if (newSpanCount != spanCount)  {
+        if (newSpanCount != spanCount) {
             spanCount = newSpanCount
             spanCountChangeListener.invoke(spanCount)
         }

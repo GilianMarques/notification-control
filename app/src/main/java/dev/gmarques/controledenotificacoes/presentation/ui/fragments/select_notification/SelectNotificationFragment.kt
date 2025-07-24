@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectNotificationBinding
-import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 
 /**
@@ -55,7 +55,7 @@ class SelectNotificationFragment : MyFragment() {
     }
 
     private fun onNotificationSelected(notification: ActiveStatusBarNotification) {
-        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to notification.packageId)
+        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to notification.packageName)
         setFragmentResult(RESULT_LISTENER_KEY, result)
         goBack()
     }

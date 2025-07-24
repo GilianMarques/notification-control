@@ -29,13 +29,14 @@ import kotlinx.coroutines.launch
 class TimeRangeDialogManager(
     private val context: Context,
     private val inflater: LayoutInflater,
+    defaultRange: TimeRange?,
     private val onRangeSelected: (TimeRange) -> Unit,
 ) {
 
-    private var startHour = 8
-    private var startMinute = 0
-    private var endHour = 18
-    private var endMinute = 0
+    private var startHour = defaultRange?.startHour ?: 8
+    private var startMinute = defaultRange?.startMinute ?: 0
+    private var endHour = defaultRange?.endHour ?: 18
+    private var endMinute = defaultRange?.endMinute ?: 0
 
     private lateinit var binding: DialogTimeIntervalBinding
     private lateinit var dialog: AlertDialog
@@ -68,14 +69,12 @@ class TimeRangeDialogManager(
     }
 
     /** Configura os campos de entrada de horário para responder a eventos de texto e foco. */
-    @SuppressLint("SetTextI18n")
     private fun setupEditTexts() = with(binding) {
         setupTimeEditText(edtStart) { hour, min ->
             startHour = hour
             startMinute = min
             edtEnd.requestFocus()
         }
-
         setupTimeEditText(edtEnd) { hour, min ->
             endHour = hour
             endMinute = min
@@ -93,8 +92,11 @@ class TimeRangeDialogManager(
         field: android.widget.EditText,
         onComplete: (Int, Int) -> Unit,
     ) {
-        field.doOnTextChanged { text, _, _, _ ->
-            if (ignoreTextChange) return@doOnTextChanged
+        field.doOnTextChanged { text, start, before, count ->
+
+            val erasingContent = before > count
+
+            if (ignoreTextChange || erasingContent) return@doOnTextChanged
             val str = text.toString()
             if (str.length == 2 && !str.contains(":")) {
                 field.setText("$str:")
@@ -127,7 +129,7 @@ class TimeRangeDialogManager(
     /** Solicita o foco e exibe o teclado para o campo inicial após breve atraso. */
     private fun requestKeyboardFocus() {
         CoroutineScope(Main).launch {
-            delay(200)
+            delay(120)
             binding.edtStart.showKeyboard()
         }
     }

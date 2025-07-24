@@ -10,6 +10,9 @@ import androidx.transition.Visibility
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 22 de abril de 2025 as 22:29.
+ *
+ * Uma transição personalizada pra ser usada com o framework transitions do Andorid
+ * Ela faz um slide-in de bem sutíl de baixo pra cima junto com um fade-in.
  */
 class SlideTransition : Visibility() {
     override fun onAppear(

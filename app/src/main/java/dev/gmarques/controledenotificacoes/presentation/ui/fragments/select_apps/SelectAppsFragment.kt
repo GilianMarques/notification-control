@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,8 +69,9 @@ class SelectAppsFragment : MyFragment() {
         observeEvents()
         setupFabConclude()
         showHintDialog(
-            PreferencesImpl.showHintSelectFirstApp,
-            getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
+            parent = binding.llHintParent,
+            showHintPreference = PreferencesImpl.showHintSelectFirstApp,
+            msg = getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
         )
         setupPopUpMenu()
 
@@ -151,7 +151,7 @@ class SelectAppsFragment : MyFragment() {
         collectFlow(viewModel.installedApps) {
             lifecycleScope.launch {
                 adapter.submitList(it, binding.tietSearch.text.toString().trim())
-                it.forEach { Log.d("USUK", "SelectAppsFragment.observeStates: ${it.installedApp.packageId}") }
+                //    it.forEach { Log.d("USUK", "SelectAppsFragment.observeStates: ${it.installedApp.packageName}") }
             }
         }
 
@@ -174,9 +174,10 @@ class SelectAppsFragment : MyFragment() {
 
                 Event.SelectedAlreadyManagedApp -> {
                     showHintDialog(
-                        PreferencesImpl.showHintSelectedAppsAlreadyManaged,
-                        getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
-                        100
+                        parent = binding.llHintParent,
+                        showHintPreference = PreferencesImpl.showHintSelectedAppsAlreadyManaged,
+                        msg = getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
+                        delay = 100
                     )
                 }
 
@@ -233,7 +234,7 @@ class SelectAppsFragment : MyFragment() {
             section {
 
                 item {
-                    label = if (PreferencesImpl.prefIncludeSystemApps.value) getString(R.string.Excluir_apps_do_sistema)
+                    label = if (PreferencesImpl.includeSystemApps.value) getString(R.string.Excluir_apps_do_sistema)
                     else getString(R.string.Incluir_apps_do_sistema)
                     icon = R.drawable.vec_app
                     callback = {
@@ -242,7 +243,7 @@ class SelectAppsFragment : MyFragment() {
                 }
 
                 item {
-                    label = if (PreferencesImpl.prefIncludeManagedApps.value)
+                    label = if (PreferencesImpl.includeManagedApps.value)
                         getString(R.string.Excluir_apps_gerenciados)
                     else getString(R.string.Incluir_apps_gerenciados)
                     icon = R.drawable.vec_app

@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
  * Em sábado, 13 de abril de 2025 às 16:55.
  */
 interface ManagedAppRepository {
-    suspend fun addOrUpdateManagedAppOrThrow(app: ManagedApp)
-    suspend fun updateManagedAppOrThrow(app: ManagedApp)
-    suspend fun deleteManagedAppByPackageId(packageId: String)
+    suspend fun addOrUpdateManagedAppOrThrow(managedApp: ManagedApp)
+    suspend fun updateManagedAppOrThrow(managedApp: ManagedApp)
+    suspend fun deleteManagedAppByPackageId(packageName: String)
     suspend fun deleteManagedAppsByRuleId(ruleId: String): Int
     suspend fun getManagedAppByPackageId(id: String): ManagedApp?
     suspend fun getManagedAppsByRuleId(ruleId: String): List<ManagedApp?>

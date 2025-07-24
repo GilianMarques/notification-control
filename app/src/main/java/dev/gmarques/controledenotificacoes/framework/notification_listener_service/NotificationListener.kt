@@ -1,16 +1,23 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
+import androidx.annotation.RequiresApi
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
-import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.data.repository.SystemNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AppNotManaged
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -19,43 +26,29 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import org.joda.time.LocalDateTime
 
 /**
  * Criado por Gilian Marques
  * Em sábado, 03 de maio de 2025 as 16:18.
+ * Serviço responsavel por  escutar as notificações do dispositivo, assim que o usuario da permissão de acesso às notificações.
+ * Usa-se o [NotificationServiceManager] em primeiro plano pra ver se este listener está concetado e iniciar caso não esteja.
+ *
  */
-class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
+class NotificationListener : NotificationListenerService(), SystemNotificationRepository, CoroutineScope by MainScope() {
 
-    private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
     private val echoImpl = HiltEntryPoints.echo()
-    private var cancelingNotificationKey = ""
-    private var errorJob: Job? = null
-    private var validationCallbackErrorJob: Job? = null
+
+    private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
+
+    private var debugTests: DebugTests? = null
 
     companion object {
-        var instance: NotificationListener? = null
-            private set
 
+        private var instance: NotificationListener? = null
 
-    }
-
-    fun cancelOngoingNotificationBySnooze(sbn: StatusBarNotification) {
-        Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: $sbn\n\n")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && sbn.isOngoing && sbn.id == 220461) {
-            Log.d("USUK", "NotificationListener.cancelOngoingNotificationBySnooze: trying to cancel")
-            try {
-                val maxTime = 60_000L
-                snoozeNotification(sbn.key, maxTime)
-             /*   launch {
-                    delay(5000)
-                    snoozedNotifications.forEach {
-                        snoozeNotification(sbn.key, 100L)
-                    }
-                }*/
-            } catch (e: Exception) {
-                Log.e("NotifSnooze", "Erro ao adiar notificação: ${e.message}")
-            }
+        fun instance(): SystemNotificationRepository? {
+            return if (instance != null) instance as SystemNotificationRepository else null
         }
     }
 
@@ -66,156 +59,195 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onListenerConnected() {
         super.onListenerConnected()
         instance = this@NotificationListener
+        if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
-
-      //  activeNotifications.forEach { cancelOngoingNotificationBySnooze(it) } todo    implementar
     }
 
     /**
      * Observa mudanças nas regras de notificação.
      * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
-     * o mét.odo [evaluateActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * o mét.odo [processActiveNotifications] é chamado para reavaliar todas as notificações ativas
      * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
      */
     private fun observeRulesChanges() = launch(IO) {
         HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            evaluateActiveNotifications()
+            processActiveNotifications()
         }
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        manageNotification(sbn)
+        processNotification(sbn)
     }
 
     /**
-     * Lê todas as notificações ativas no momento em que o serviço é conectado.
-     * Processa cada notificação ativa usando o mét.odo [manageNotification].
+     * Processa uma notificação recebida pra saber se ela sera cancelada, adiada, permitida, ecoada, etc...
+     * Ao fim do processamento executa a ação necessario com base na regra, caso exista uma.
+     * Usa o [ProcessIncomingNotificationUseCase]
+     * para processar os dados e salvar a notificação se necessario.
      */
+    private fun processNotification(sbn: StatusBarNotification) {
 
-    fun evaluateActiveNotifications() {
-        val active = activeNotifications ?: return
-        active.forEach { sbn ->
-            manageNotification(sbn)
-        }
-    }
+        if (!SystemNotificationValidator.isValidToProcess(sbn)) return
 
-    fun getFilteredActiveNotifications(): List<StatusBarNotification> {
+        debugTests?.crashIfCallbackNotCalled(sbn)
 
-        val notifications = mutableListOf<StatusBarNotification>()
-        activeNotifications?.let {
-            notifications.addAll(it)
-        }
+        val result = processIncomingNotificationUseCase(sbn)
 
-        return notifications.filter {
-            !it.isOngoing && it.packageName != BuildConfig.APPLICATION_ID
-        }
+        when (result) {
+            is AllowNotification -> {
+                //   Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
+                debugTests?.cancelCrashIfCallbackNotCalled()
+                echoImpl.repostNotification(result.targetNotification)
+            }
 
-    }
+            is AppNotManaged -> {
+                //   Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
+                debugTests?.cancelCrashIfCallbackNotCalled()
+                echoImpl.repostNotification(result.targetNotification)
+            }
 
-    /**
-     * Processa uma notificação recebida.
-     * Extrai informações relevantes e as encapsula em um objeto AppNotification.
-     * Em seguida, utiliza o RuleEnforcer para aplicar as regras configuradas.
-     *
-     */
-    private fun manageNotification(sbn: StatusBarNotification) {
+            is CancelNotification -> {
+                //   Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
+                debugTests?.cancelCrashIfCallbackNotCalled()
+                debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
+                cancelNotification(result.targetNotification.key)
+            }
 
-        if (sbn.isOngoing) return
-        if (sbn.packageName.contains(BuildConfig.APPLICATION_ID)) return
-
-        runBlocking {
-            crashIfCallbackNotCalled()
-            ruleEnforcer.enforceOnNotification(sbn, object : RuleEnforcer.Callback {
-
-                override fun cancelNotification(
-                    appNotification: AppNotification,
-                    rule: Rule,
-                    managedApp: ManagedApp,
-                ) {
-                    Log.d("USUK", "NotificationListener.cancelNotification: ${sbn.packageName} ")
-                    cancelValidationCallbackTimer()
-                    crashIfNotificationWasNotRemovedInDebugBuild(sbn)
-                    cancelNotification(sbn.key)
-                }
-
-                override fun appNotManaged() {
-                    Log.d("USUK", "NotificationListener.appNotManaged: ${sbn.packageName}")
-                    cancelValidationCallbackTimer()
-                    echoImpl.repostIfNotification(sbn)
-                }
-
-                override fun allowNotification() {
-                    Log.d("USUK", "NotificationListener.allowNotification: ${sbn.packageName}")
-                    cancelValidationCallbackTimer()
-                    echoImpl.repostIfNotification(sbn)
-                }
-            })
-        }
-    }
-
-    /**
-     * Cancela o temporizador que monitora se o callback de validação da notificação foi chamado.
-     * Esta função é usada em conjunto com [crashIfCallbackNotCalled] para garantir que,
-     * em builds de debug, o aplicativo falhe se o callback não for invocado dentro de um
-     * período esperado. Isso ajuda a identificar problemas onde o RuleEnforcer não está
-     * chamando o callback corretamente, o que poderia afetar a função de eco.
-     */
-    private fun cancelValidationCallbackTimer() = validationCallbackErrorJob?.cancel()
-
-    /**
-     * Inicia um temporizador que, se não for cancelado a tempo, causará uma falha no aplicativo.
-     * Esta função é destinada a evitar bugs. Ela garante que alterações no RuleEnforcer
-     * não impeçam que o callback seja chamado nos casos onde:
-     * - A notificação deve ser bloqueada.
-     * - A notificação não deve ser bloqueada.
-     * - O aplicativo não é gerenciado.
-     * Isso serve para impedir que bugs sejam introduzidos no código.
-     *
-     * @see  cancelValidationCallbackTimer
-     * @see manageNotification
-     */
-    private fun crashIfCallbackNotCalled() {
-        validationCallbackErrorJob = CoroutineScope(Main).launch {
-            delay(3000)
-            error("O callback de validação passado para o RuleEnforcer não foi chamado.")
-        }
-    }
-
-    /**
-     * Essa função serve pra testes apenas e nao sera usada em produção.
-     * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
-     * essa função vai crashar o app para que o jumento do desenvolvedor (eu :-] ) possa ajeitar a cagada que ele fez
-     */
-    private fun crashIfNotificationWasNotRemovedInDebugBuild(sbn: StatusBarNotification) {
-        if (BuildConfig.DEBUG) {
-            if (sbn.isOngoing) return // nao da pra cancelar notificaçoes ongoing
-
-            cancelingNotificationKey = sbn.key
-            errorJob?.cancel()
-            errorJob = CoroutineScope(Main).launch {
-                delay(1000)
-                error("A notificaçao nao foi cancelada: OnGoing?${sbn.isOngoing}\nMais detalhes:$sbn")
+            is SnoozeNotification -> {
+                /*  Log.d(
+                      "USUK",
+                      "NotificationListener.processNotification: SnoozeNotification: snoozeFor: ${result.snoozeFor} not: ${result.targetNotification} "
+                  )*/
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
+                debugTests?.cancelCrashIfCallbackNotCalled()
+                debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
+                snoozeNotification(result.targetNotification.key, result.snoozeFor)
             }
         }
+
+
     }
 
     /**
-     * Ajuda  a  [crashIfNotificationWasNotRemovedInDebugBuild] a determinar se a notificação foi de fato cancelada
+     * Ajuda  a  [DebugTests] a determinar se a notificação foi de fato cancelada
      */
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-
-        if (BuildConfig.DEBUG) {
-            if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
-        }
-
+        debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
         super.onNotificationRemoved(sbn, rankingMap)
     }
 
     override fun onListenerDisconnected() {
-        instance = null
         cancel()
+        instance = null
         super.onListenerDisconnected()
     }
 
+    fun isListenerConnected(): Boolean {
+        val cn = ComponentName(baseContext, NotificationListener::class.java)
+        val enabledListeners = Settings.Secure.getString(
+            baseContext.contentResolver, "enabled_notification_listeners"
+        )
+        return (enabledListeners?.contains(cn.flattenToString()) == true)
+    }
+
+    override fun getActiveNots(): List<ActiveStatusBarNotification> {
+
+        if (!isListenerConnected()) return emptyList()
+
+        return activeNotifications?.filter {
+            SystemNotificationValidator.isValidToProcess(it)
+        }?.map {
+            ActiveStatusBarNotificationFactory.create(it)
+        } ?: emptyList()
+    }
+
+    override fun getSnoozedNots(): List<ActiveStatusBarNotification> {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !isListenerConnected()) return emptyList()
+
+        return snoozedNotifications?.filter {
+            SystemNotificationValidator.isValidToProcess(it)
+        }?.map {
+            ActiveStatusBarNotificationFactory.create(it)
+        } ?: emptyList()
+    }
+
+    /**
+     * Usa [processNotification] para processar todas as notificações ativas validas
+     */
+    override fun processActiveNotifications() {
+        if (!isListenerConnected()) return
+
+        val active = activeNotifications ?: return
+        active.forEach { sbn ->
+            processNotification(sbn)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun snoozeNot(notification: ActiveStatusBarNotification, until: Long) {
+        val awaitTimeUntilPost = LocalDateTime(until).toDate().time - LocalDateTime.now().toDate().time
+        snoozeNotification(notification.key, awaitTimeUntilPost)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun postSnoozedNotification(notification: ActiveStatusBarNotification) {
+        snoozeNotification(notification.key, 500L)
+    }
 }
 
+/**
+ * Esta classe encapsula funcionalidades de teste e depuração destinadas a serem usadas
+ * exclusivamente durante o desenvolvimento (builds de debug).
+ * Ela fornece métodos para simular cenários de falha e verificar o comportamento
+ * esperado do aplicativo em relação ao gerenciamento de notificações.
+ *
+ */
+class DebugTests {
+
+
+    init {
+        if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de begug")
+    }
+
+    private var cancelingNotificationKey = ""
+    private var errorJob: Job? = null
+    private var validationCallbackErrorJob: Job? = null
+
+    /**
+     *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
+     * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
+     * @see NotificationListener.processNotification
+     */
+    fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
+        validationCallbackErrorJob = CoroutineScope(Main).launch {
+            delay(3000)
+            error("O callback de validação passado para o RuleEnforcer não foi chamado. sbn: $sbn")
+        }
+    }
+
+    fun cancelCrashIfCallbackNotCalled() {
+        validationCallbackErrorJob?.cancel()
+    }
+
+    /**
+     * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
+     * essa função vai crashar o app para que o jumento do desenvolvedor (eu ;-] ) possa ajeitar a cagada que ele fez
+     */
+    fun crashIfNotificationDoesNotRemove(activeNotification: ActiveStatusBarNotification) {
+        if (BuildConfig.DEBUG) {
+            if (activeNotification.isOngoing) return // nao se considera esse tipo de notificação
+
+            cancelingNotificationKey = activeNotification.key
+            errorJob?.cancel()
+            errorJob = CoroutineScope(Main).launch {
+                delay(1000)
+                error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
+            }
+        }
+    }
+
+    fun cancelCrashIfNotificationDoesNotRemove(sbn: StatusBarNotification?) {
+        if (BuildConfig.DEBUG) if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
+    }
+}

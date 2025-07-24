@@ -1,0 +1,17 @@
+
+
+NotificationParser é o responsável por extrair dados essenciais de uma StatusBarNotification, como título, conteúdo, ícones e
+ intents, centralizando toda a lógica de parsing para evitar duplicação e facilitar manutenção.
+
+O resultado do parsing é representado por um objeto intermediário, ParsedNotificationData, que encapsula essas informações de
+forma clara e imutável.
+
+A partir desse dado intermediário, a AppNotificationFactory cria modelos de domínio (AppNotification), desacoplando a lógica da
+API Android e mantendo o domínio limpo e testável.
+
+Paralelamente, a ActiveStatusBarNotificationFactory utiliza o mesmo parser para criar objetos  (ActiveStatusBarNotification),
+ adicionando dados específicos da notificação ativa para uso na interface.
+
+
+Ou seja as factories usam o NotificationParser que gera um  ParsedNotificationData pra ser usando na criação de AppNotifications,
+ActiveStatusBarNotification, etc... padronizando a coleta de dados da StatusBarNotification e desacoplando o codigodo projeto  do Android

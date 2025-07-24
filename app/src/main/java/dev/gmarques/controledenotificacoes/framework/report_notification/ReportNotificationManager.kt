@@ -118,7 +118,7 @@ class ReportNotificationManager @Inject constructor(
         val targetIntent = NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.viewManagedAppFragment)
-            .setArguments(bundleOf("packageId" to packageName))
+            .setArguments(bundleOf("packageName" to packageName))
             .createTaskStackBuilder()
             .intents
             .first()

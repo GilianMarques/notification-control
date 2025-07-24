@@ -15,7 +15,7 @@ object ManagedAppMapper {
      * Esta função recebe uma instância de [ManagedApp], que representa um aplicativo
      * gerenciado por um sistema, e a transforma em uma instância de [ManagedAppEntity],
      * adequada para persistência ou outras necessidades de armazenamento de dados.
-     * Ela extrai as propriedades relevantes (ruleId e packageId) do [ManagedApp] e as utiliza
+     * Ela extrai as propriedades relevantes (ruleId e packageName) do [ManagedApp] e as utiliza
      * para construir um novo [ManagedAppEntity].
      *
      * @param managedApp O objeto [ManagedApp] a ser mapeado.
@@ -25,7 +25,7 @@ object ManagedAppMapper {
 
         return ManagedAppEntity(
             ruleId = managedApp.ruleId,
-            packageId = managedApp.packageId,
+            packageName = managedApp.packageName,
             hasPendingNotifications = managedApp.hasPendingNotifications
         )
     }
@@ -35,7 +35,7 @@ object ManagedAppMapper {
      *
      * Esta função recebe uma [ManagedAppEntity] representando os dados persistentes
      * e a transforma em um objeto [ManagedApp] que é usado na lógica de domínio da aplicação.
-     * Ela extrai os campos necessários (ruleId e packageId) da entidade e cria uma
+     * Ela extrai os campos necessários (ruleId e packageName) da entidade e cria uma
      * instância [ManagedApp] correspondente.
      *
      * @param entity A [ManagedAppEntity] a ser mapeada.
@@ -45,7 +45,7 @@ object ManagedAppMapper {
 
         return ManagedApp(
             ruleId = entity.ruleId,
-            packageId = entity.packageId,
+            packageName = entity.packageName,
             hasPendingNotifications = entity.hasPendingNotifications
         )
     }

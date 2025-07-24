@@ -86,7 +86,6 @@ object ConditionValidator {
         return OperationResult.success(keywords)
     }
 
-
     /**
      * Valida uma única palavra-chave (keyword).
      *

@@ -1,8 +1,11 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
-import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -13,9 +16,9 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
     private val stringsProvider: StringsProvider,
 ) {
 
-    operator fun invoke(rule: Rule): String {
+    operator fun invoke(rule: Rule, baseDate: LocalDateTime = LocalDateTime.now()): String {
         val formattedDays = formatCondensedDays(rule.days)
-        val range = formatTimeRanges(rule)
+        val range = formatTimeRanges(rule, baseDate)
         val ruleType = formatRuleType(rule.type)
 
         return "$ruleType $formattedDays $range"
@@ -68,19 +71,51 @@ class GenerateRuleDescriptionUseCase @Inject constructor(
         }
     }
 
-    private fun formatTimeRanges(rule: Rule): String {
-        if (rule.timeRanges.isEmpty()) return ""
+    /**
+     * Formata os intervalos de tempo de uma regra em uma string descritiva.
+     *
+     * A função recebe uma `Rule` (regra) e uma `baseDate` (data base) e retorna uma
+     * representação textual dos intervalos de tempo da regra.
+     *
+     * A lógica é a seguinte:
+     * 1.  **Validação:** Se a regra não tiver intervalos, lança um erro. Se algum intervalo for "dia inteiro",
+     *     retorna a string correspondente.
+     * 2.  **Intervalo Atual:** Tenta encontrar um intervalo de tempo ativo com base na `baseDate`.
+     *     Os intervalos são ordenados pelo horário de início. O primeiro intervalo cujo horário de término
+     *     seja igual ou posterior à hora atual é selecionado.
+     * 3.  **Formatação:**
+     *     *   Se um intervalo ativo for encontrado, formata seus horários de início e término no formato "HH:MM-HH:MM".
+     *     *   Caso contrário (nenhum intervalo ativo no momento), encontra o intervalo com o início mais cedo
+     *         e o intervalo com o término mais tarde entre todos os definidos na regra. Formata esses horários
+     *         no mesmo padrão "HH:MM-HH:MM", representando o período geral coberto.
+     *
+     * Essencialmente, prioriza mostrar o intervalo ativo e, na ausência deste, mostra o intervalo mais amplo da regra.
+     */
+    private fun formatTimeRanges(rule: Rule, baseDate: LocalDateTime): String {
 
+        if (rule.timeRanges.isEmpty()) error("uma regra deve ter pelo menos um intervalo de tempo")
         if (rule.timeRanges.any { it.allDay }) return stringsProvider.wholeDay()
 
+        val dateBasedDesc = rule.timeRanges.apply {
+            sortedBy { it.startInMinutes() }
+        }.firstOrNull { it.endInMinutes() >= baseDate.hourOfDay * 60 + baseDate.minuteOfHour }
 
-        val start = rule.timeRanges.minByOrNull { it.startHour * 60 + it.startMinute }!!
-        val end = rule.timeRanges.maxByOrNull { it.endHour * 60 + it.endMinute }!!
+        fun formatTimes(startTime: String, endTime: String): String {
+            return "%s-%s".format(startTime, endTime)
+        }
 
-        val startTime = formatTime(start.startHour, start.startMinute)
-        val endTime = formatTime(end.endHour, end.endMinute)
+        if (dateBasedDesc != null) return formatTimes(
+            formatTime(dateBasedDesc.startHour, dateBasedDesc.startMinute),
+            formatTime(dateBasedDesc.endHour, dateBasedDesc.endMinute)
+        )
 
-        return "%s-%s".format(startTime, endTime)
+        val start = rule.timeRanges.minByOrNull { it.startInMinutes() }!!
+        val end = rule.timeRanges.maxByOrNull { it.endInMinutes() }!!
+
+        return formatTimes(
+            formatTime(start.startHour, start.startMinute),
+            formatTime(end.endHour, end.endMinute)
+        )
 
     }
 

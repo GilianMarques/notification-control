@@ -3,11 +3,10 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
-import dev.gmarques.controledenotificacoes.framework.EchoImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -18,7 +17,6 @@ import dev.gmarques.controledenotificacoes.framework.report_notification.ReportN
 @EntryPoint
 interface FrameworkEntryPoint {
     fun reportNotificationManager(): ReportNotificationManager
-    fun ruleEnforcer(): RuleEnforcer
     fun scheduleManager(): AlarmSchedulerImpl
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase

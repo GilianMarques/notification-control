@@ -22,7 +22,7 @@ class AddManagedAppUseCaseTest {
     @Test
     fun `deve chamar add do repositorio com o managed app correto`() = runTest {
         // Arrange
-        val managedApp = ManagedApp(packageId = "com.instagram.android", ruleId = "regra-456", hasPendingNotifications = false)
+        val managedApp = ManagedApp(packageName = "com.instagram.android", ruleId = "regra-456", hasPendingNotifications = false)
 
         // Act
         useCase(managedApp)

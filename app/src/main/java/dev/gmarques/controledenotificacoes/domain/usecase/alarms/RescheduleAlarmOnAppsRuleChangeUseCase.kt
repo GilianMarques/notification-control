@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,7 +25,7 @@ class RescheduleAlarmOnAppsRuleChangeUseCase @Inject constructor(
      */
     suspend operator fun invoke(app: ManagedApp, rule: Rule) = withContext(IO) {
 
-        if (alarmScheduler.isThereAnyAlarmSetForPackage(app.packageId)) scheduleAlarmForAppUseCase(app, rule)
+        if (alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)) scheduleAlarmForAppUseCase(app, rule)
 
     }
 

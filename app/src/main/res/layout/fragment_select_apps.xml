@@ -33,15 +33,27 @@
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|enterAlways">
 
-                <include
-                    android:id="@+id/actionbar"
-                    layout="@layout/view_activity_header"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:orientation="vertical">
 
+                    <include
+                        android:id="@+id/actionbar"
+                        layout="@layout/view_activity_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_hint_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -76,7 +88,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
                 app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
                 app:startIconDrawable="@drawable/vec_search">
 
@@ -94,11 +105,12 @@
                     tools:text="Whatsapp" />
             </com.google.android.material.textfield.TextInputLayout>
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvApps"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="8dp"
                 android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
                 android:overScrollMode="always"
                 android:paddingStart="4dp"
@@ -106,8 +118,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-
+                app:layout_constraintTop_toBottomOf="@id/til_search"
                 app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
                 tools:listitem="@layout/item_app_selectable" />
 

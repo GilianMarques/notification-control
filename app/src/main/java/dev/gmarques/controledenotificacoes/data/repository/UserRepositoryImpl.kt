@@ -1,11 +1,12 @@
 package dev.gmarques.controledenotificacoes.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
-import dev.gmarques.controledenotificacoes.domain.framework.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.User
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -45,8 +46,12 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun logOff() {
-        AuthUI.getInstance().signOut(context).await()
-        FirebaseAuth.getInstance().signOut()
+      try {
+              AuthUI.getInstance().signOut(context).await()
+              FirebaseAuth.getInstance().signOut()
+      } catch (ex: Exception) {
+          Log.e("USUK", "UserRepositoryImpl.logOff: $ex")
+      }
     }
 
     override fun deleteAccount() {

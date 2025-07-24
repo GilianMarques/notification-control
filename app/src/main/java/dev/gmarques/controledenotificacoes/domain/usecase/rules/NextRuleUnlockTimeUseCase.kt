@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
+package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.Rule.Type
@@ -7,8 +7,8 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.sortedR
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.INFINITE
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.REPEAT_COUNT
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase.Companion.INFINITE
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase.Companion.REPEAT_COUNT
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.at
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.weekDayNumber
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.withSecondsAndMillisSetToZero
@@ -22,12 +22,8 @@ import javax.inject.Inject
  *
  *  Classe responsável por calcular o próximo horário em que um aplicativo será desbloqueado
  * com base nas regras de uso configuradas pelo usuário.
- *
- * As regras podem ser do tipo [Rule.Type.RESTRICTIVE] (dias/horários de bloqueio)
- * ou [Rule.Type.PERMISSIVE] (dias/horários de liberação).
- *
  */
-class NextAppUnlockTimeUseCase @Inject constructor() {
+class NextRuleUnlockTimeUseCase @Inject constructor() {
 
     companion object {
 

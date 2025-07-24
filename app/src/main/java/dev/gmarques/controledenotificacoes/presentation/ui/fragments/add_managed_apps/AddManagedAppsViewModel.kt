@@ -1,8 +1,8 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
+
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.graphics.drawable.Drawable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,14 +12,21 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.PostAppSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,23 +37,27 @@ class AddManagedAppsViewModel @Inject constructor(
     private val addManagedAppUseCase: AddManagedAppUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
+    private val getAllRulesUseCase: GetAllRulesUseCase,
+    private val getRuleByIdUseCase: GetRuleByIdUseCase,
+    private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
+    private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
+) : ViewModel() {
 
-    ) : ViewModel() {
 
+    private val _selectedApps = MutableStateFlow<Map<String, InstalledApp>>(emptyMap())
+    val selectedApps: Flow<Map<String, InstalledApp>> = _selectedApps
 
-    private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
-    val selectedApps: LiveData<Map<String, InstalledApp>> = _selectedApps
-    private val _selectedRule = MutableLiveData<Rule?>()
-    val selectedRule: LiveData<Rule?> = _selectedRule
-    private val _showError = MutableLiveData<EventWrapper<String>>()
-    val showError: LiveData<EventWrapper<String>> = _showError
-    private val _successCloseFragment = MutableLiveData<EventWrapper<Unit>>()
-    val successCloseFragment: LiveData<EventWrapper<Unit>> = _successCloseFragment
+    private val _selectedRule = MutableStateFlow<Rule?>(null)
+    val selectedRule: Flow<Rule?> = _selectedRule
+
+    private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
+    val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
+
 
     fun addNewlySelectedApps(apps: List<InstalledApp>) {
-        _selectedApps.value = _selectedApps.value!!.values.toMutableList().apply {
+        _selectedApps.value = _selectedApps.value.values.toMutableList().apply {
             addAll(apps)
-        }.associateBy { it.packageId }
+        }.associateBy { it.packageName }
     }
 
     fun setRule(rule: Rule?) = viewModelScope.launch(Main) {
@@ -55,21 +66,21 @@ class AddManagedAppsViewModel @Inject constructor(
     }
 
     fun getSelectedPackages(): Array<String> {
-        return selectedApps.value!!.values.map { it.packageId }.toTypedArray()
+        return _selectedApps.value.values.map { it.packageName }.toTypedArray()
     }
 
     /**
      * Remove um aplicativo da lista de aplicativos atualmente selecionados.
      *
      * A função recebe um objeto [InstalledApp] representando o aplicativo a ser removido.
-     * Ela localiza o aplicativo na lista usando o packageId do aplicativo e o remove.
-     * A remoção atualiza o [LiveData] `_selectedApps`, que notifica os observadores
+     * Ela localiza o aplicativo na lista usando o packageName do aplicativo e o remove.
+     * A remoção atualiza o [Flow] `_selectedApps`, que notifica os observadores
      * sobre a mudança na lista de aplicativos selecionados.
      *
      * @param app O [InstalledApp] a ser removido da lista de aplicativos selecionados.
      */
     fun deleteApp(app: InstalledApp) {
-        _selectedApps.value = _selectedApps.value!!.toMutableMap().apply { remove(app.packageId) }
+        _selectedApps.value = _selectedApps.value.toMutableMap().apply { remove(app.packageName) }
     }
 
     /**
@@ -87,22 +98,22 @@ class AddManagedAppsViewModel @Inject constructor(
     fun validateSelection() = viewModelScope.launch(Main) {
 
         val rule = _selectedRule.value
-        val apps = _selectedApps.value!!.values.toList()
+        val apps = _selectedApps.value.values.toList()
 
         if (rule == null) {
-            _showError.postValue(EventWrapper(context.getString(R.string.Selecione_uma_regra)))
+            _eventsChannel.trySend(Event.Error(context.getString(R.string.Selecione_uma_regra)))
             return@launch
         }
 
         if (apps.isEmpty()) {
-            _showError.postValue(EventWrapper(context.getString(R.string.Selecione_pelo_menos_um_aplicativo)))
+            _eventsChannel.trySend(Event.Error(context.getString(R.string.Selecione_pelo_menos_um_aplicativo)))
             return@launch
         }
 
         apps.map {
             async {
                 val managedApp = ManagedApp(
-                    packageId = it.packageId,
+                    packageName = it.packageName,
                     ruleId = rule.id,
                     hasPendingNotifications = false
                 )
@@ -113,7 +124,7 @@ class AddManagedAppsViewModel @Inject constructor(
 
         requestActiveNotificationsEvaluation()
 
-        _successCloseFragment.postValue(EventWrapper(Unit))
+        _eventsChannel.trySend(Event.SuccessCloseFrag)
 
     }
 
@@ -149,7 +160,7 @@ class AddManagedAppsViewModel @Inject constructor(
      * Se a instância do [NotificationListener] não estiver disponível, a função não faz nada.
      */
     private fun requestActiveNotificationsEvaluation() {
-        NotificationListener.instance?.evaluateActiveNotifications()
+        NotificationListener.instance()?.processActiveNotifications()
     }
 
     /**
@@ -161,17 +172,44 @@ class AddManagedAppsViewModel @Inject constructor(
      */
     private suspend fun addManagedApp(app: ManagedApp) {
         addManagedAppUseCase(app)
+        /*Como da pra atualizar um app que ja esta sendo gerenciado por aqui é necessário
+        * repostar as notificaçoes adiadas caso haja alguma*/
+        postAppSnoozedNotificationsUseCase(app)
     }
 
-    fun addSelectedAppByPkgId(pkgId: String) = viewModelScope.launch {
-        val installedApp = getInstalledAppByPackageOrDefaultUseCase(pkgId)
+    fun addSelectedAppByPkgId(packageName: String) = viewModelScope.launch {
+        val installedApp = getInstalledAppByPackageOrDefaultUseCase(packageName)
 
         if (installedApp.uninstalled) {
-            _showError.postValue(EventWrapper(context.getString(R.string.O_aplicativo_n_o_pode_ser_selecionado)))
+            _eventsChannel.trySend(Event.Error(context.getString(R.string.O_aplicativo_n_o_pode_ser_selecionado)))
             return@launch
         }
 
         addNewlySelectedApps(listOf(installedApp))
     }
 
+    suspend fun getAllRules(): List<Rule> {
+        return getAllRulesUseCase()
+    }
+
+    suspend fun getRuleById(id: String): Rule? {
+        return getRuleByIdUseCase(id)
+    }
+
+    suspend fun getInstalledAppIcon(packageName: String): Drawable? {
+        return getInstalledAppIconUseCase(packageName)
+    }
+
+    fun getSelectedRule(): Rule? = _selectedRule.value
+    fun getSelectedApps(): Map<String, InstalledApp> = _selectedApps.value
+
+
+}
+
+/**
+ * Representa os eventos (consumo unico) que podem ser disparados para a UI
+ */
+sealed class Event {
+    data class Error(val msg: String) : Event()
+    object SuccessCloseFrag : Event()
 }

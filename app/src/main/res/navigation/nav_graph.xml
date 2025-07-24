@@ -65,7 +65,7 @@
         tools:layout="@layout/fragment_view_managed_app">
 
         <argument
-            android:name="packageId"
+            android:name="packageName"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
@@ -76,7 +76,7 @@
             app:argType="dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule"
             app:nullable="true" />
 
-        <deepLink app:uri="app://app/details/{packageId}" />
+        <deepLink app:uri="app://app/details/{packageName}" />
 
         <action
             android:id="@+id/to_addRuleFragment"
