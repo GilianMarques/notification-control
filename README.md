@@ -20,7 +20,6 @@ Essa ferramenta concede ao usuário a capacidade de eliminar distrações de man
 * Bloquear notificações específicas com base em condições
 * Bloquear todas as notificações de um aplicativo, mas mantendo um histórico para consultas eventuais
 
----
 
 ## Tecnologias e arquitetura
 
@@ -33,7 +32,6 @@ O **AlarmManager** foi utilizado para manter o serviço de controle sempre rodan
 O projeto também conta com **testes unitários** e **instrumentados**.
 Por fim, implementei **descrições de conteúdo** para tornar o aplicativo acessível a pessoas com deficiência visual.
 
----
 
 ## Capturas de Tela
 
