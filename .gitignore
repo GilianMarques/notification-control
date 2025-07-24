@@ -37,3 +37,4 @@ google-services.json
 # release keystore data
 /keystore.properties
 app/release/app-release.aab
+app/release/app-release.aab
