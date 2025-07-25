@@ -1,0 +1,27 @@
+name: Adicionar cabeçalho de licença
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  license:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v3
+
+      - name: Injetar conteúdo do LICENSE no .licenserc.yaml
+        run: |
+          LICENSE_CONTENT=$(awk '{print "      " $0}' LICENSE | sed '1s/^/    content: |\\n/')
+          awk '/content: ""/ { print LICENSE_CONTENT; next }1' LICENSE_CONTENT="$LICENSE_CONTENT" .licenserc.yaml > .licenserc.tmp.yaml
+          mv .licenserc.tmp.yaml .licenserc.yaml
+
+      - name: Rodar Skywalking Eyes para aplicar cabeçalhos
+        uses: apache/skywalking-eyes@v0.6.0
+        with:
+          command: fix
