@@ -15,30 +15,17 @@ jobs:
       - name: Baixar o código do repositório
         uses: actions/checkout@v3
 
-      - name: Instalar Go (requisito para skywalking-eyes)
+      - name: Instalar Go (requisito do Skywalking Eyes)
         uses: actions/setup-go@v4
         with:
           go-version: 1.21
 
-      - name: Instalar Skywalking Eyes
+      - name: Instalar Skywalking Eyes (license-eye)
         run: |
-          curl -sSfL https://raw.githubusercontent.com/apache/skywalking-eyes/main/scripts/install.sh | sh
+          curl -sSfL https://raw.githubusercontent.com/apache/skywalking-eyes/main/scripts/install.sh | bash
           echo "$HOME/.skywalking-eyes/bin" >> $GITHUB_PATH
+          export PATH="$HOME/.skywalking-eyes/bin:$PATH"
 
       - name: Injetar conteúdo do LICENSE no .licenserc.yaml
         run: |
-          LICENSE_CONTENT=$(awk '{print "      " $0}' LICENSE | sed '1s/^/    content: |\\n/')
-          awk '/content: ""/ { print LICENSE_CONTENT; next }1' LICENSE_CONTENT="$LICENSE_CONTENT" .licenserc.yaml > .licenserc.tmp.yaml
-          mv .licenserc.tmp.yaml .licenserc.yaml
-
-      - name: Rodar Skywalking Eyes para aplicar cabeçalhos
-        run: |
-          license-eye fix
-
-      - name: Commit e push automático das alterações
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff-index --quiet HEAD || git commit -m "🤖 Adiciona cabeçalhos de licença automaticamente"
-          git push
+          LICENSE_CONTENT=$(awk '{print_
