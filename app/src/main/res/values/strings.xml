@@ -1,3 +1,28 @@
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  ~
+  -->
+
 <resources>
     <string name="default_web_client_id" translatable="false">webClientId.apps.googleusercontent.com</string>
     <string name="app_name">Controle de notificações</string>
@@ -248,6 +273,7 @@
     <string name="Ver_politica_de_privacidade">Ver política de privacidade</string>
     <string name="Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes">Não foi possível obter url. Tente novamente em alguns instantes</string>
     <string name="O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros">O conteúdo das notificações fica salvo apenas no seu dispositivo e sob nenhuma circunstância é compartilhado com terceiros.</string>
+    <string name="Historico_de_notifica_es_do_sistema">Histórico de notificações do sistema</string>
 
 
 </resources>
