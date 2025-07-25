@@ -33,6 +33,43 @@ O projeto também conta com **testes unitários** e **instrumentados**.
 Por fim, implementei **descrições de conteúdo** para tornar o aplicativo acessível a pessoas com deficiência visual.
 
 
+
+## Como rodar o projeto
+
+1.  **Crie uma chave de assinatura (release):**  
+    No Android Studio, vá em:  
+    `Build > Generate Signed Bundle / APK`  
+    Siga o assistente para gerar uma chave `.jks`.
+    
+2.  **Crie o arquivo `keystore.properties` na raiz do projeto:**  
+    Isso é necessário para rodar as versões `staging` e `release` localmente.
+    
+    Preencha com:
+    
+    ```properties
+    storeFile=C:/Users/Usuario/Documents/GitHub/controle_de_notificacoes.jks  (caminho da sua chave)
+    storePassword=senha_keystore
+    keyAlias=release  (use o mesmo alias definido durante a criação da chave)
+    keyPassword=senha_alias
+    
+    ```
+    
+3.  **Configure o Firebase:**
+    
+    -   Crie uma conta no [Firebase](https://firebase.google.com/) (caso não tenha). 
+        
+    -   Crie um novo projeto e adicione um app Android.
+        
+    -   Inclua as digitais SHA-1 das chaves `debug` (gerada automaticamente pelo Android Studio) e `release` (a que você criou).
+        
+    -   Baixe o arquivo `google-services.json` e salve-o na pasta `app/`.
+        
+4.  **Configure o Java:**
+    
+    O projeto utiliza o `JDK 21`.  
+    Certifique-se de instalá-lo e configurar a variável de ambiente `JAVA_HOME` apontando para o diretório correto do JDK.
+    
+   
 ## Capturas de Tela
 
 <p align="center">
