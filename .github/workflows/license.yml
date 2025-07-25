@@ -15,6 +15,16 @@ jobs:
       - name: Baixar o código do repositório
         uses: actions/checkout@v3
 
+      - name: Instalar Go (requisito para skywalking-eyes)
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Instalar Skywalking Eyes
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/apache/skywalking-eyes/main/scripts/install.sh | sh
+          echo "$HOME/.skywalking-eyes/bin" >> $GITHUB_PATH
+
       - name: Injetar conteúdo do LICENSE no .licenserc.yaml
         run: |
           LICENSE_CONTENT=$(awk '{print "      " $0}' LICENSE | sed '1s/^/    content: |\\n/')
@@ -22,6 +32,13 @@ jobs:
           mv .licenserc.tmp.yaml .licenserc.yaml
 
       - name: Rodar Skywalking Eyes para aplicar cabeçalhos
-        uses: apache/skywalking-eyes@v0.6.0
-        with:
-          command: fix
+        run: |
+          license-eye fix
+
+      - name: Commit e push automático das alterações
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "🤖 Adiciona cabeçalhos de licença automaticamente"
+          git push
