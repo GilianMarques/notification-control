@@ -125,7 +125,6 @@
     <string name="Gerenciando_notificacoes">Gerenciando notificações</string>
     <string name="Permissao_necessaria">Permissão necessária</string>
     <string name="Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_">Para que seja possível gerenciar as notificações, é necessário que você forneça a permissão: \"Acesso às notificações.\"</string>
-    <string name="Sua_privacidade_esta_protegida">Este app não coleta dados e nem salva qualquer informação do usuário fora do dispositivo. Os dados das notificações são usados apenas para controle e histórico de notificações bloqueadas.</string>
     <string name="Permitir">Permitir</string>
     <string name="Permita_que_x_acesse_as_notificacoes">Permita que %1$s acesse as notificações</string>
     <string name="Monitoramento_de_notificacoes">Monitorando notificações</string>
@@ -311,6 +310,9 @@
     <string name="Apenas_as_notifica_es_bloqueadas_dos_apps_gerenciados_por_essa_regra_ser_o_mantidas_em_hist_rico">Apenas as notificações bloqueadas dos apps gerenciados por essa regra serão mantidas em histórico.</string>
     <string name="Exibir_dicas">Exibir dicas</string>
     <string name="Ocultar_dicas">Ocultar dicas</string>
+    <string name="Ver_politica_de_privacidade">Ver política de privacidade</string>
+    <string name="Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes">Não foi possível obter url. Tente novamente em alguns instantes</string>
+    <string name="O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros">O conteúdo das notificações fica salvo apenas no seu dispositivo e sob nenhuma circunstância é compartilhado com terceiros.</string>
 
 
 </resources>

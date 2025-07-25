@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.properties.Delegates
 
 /**
  * Criado por Gilian Marques
@@ -86,10 +85,12 @@ class App() : Application(), CoroutineScope by MainScope() {
                 remoteConfig.fetchAndActivate().await()
                 _remoteConfigValues.tryEmit(
                     RemoteConfigValues(
-                        remoteConfig.getLong("blockBelow").toInt() > BuildConfig.VERSION_CODE,
-                        remoteConfig.getString("contactEmail"),
-                        remoteConfig.getString("playStoreAppLink")
-                    )
+                        blockApp = remoteConfig.getLong("blockBelow").toInt() > BuildConfig.VERSION_CODE,
+                        contactEmail = remoteConfig.getString("contactEmail"),
+                        playStoreAppLink = remoteConfig.getString("playStoreAppLink"),
+                        privacyUrl = remoteConfig.getString("privacyUrl"),
+
+                        )
                 )
             } catch (e: Exception) {
                 if (BuildConfig.DEBUG) e.printStackTrace()
@@ -99,7 +100,7 @@ class App() : Application(), CoroutineScope by MainScope() {
 
         if (fetchResult == null) {
             _remoteConfigValues.tryEmit(
-                RemoteConfigValues(blockApp = false)
+                RemoteConfigValues()
             )
         }
 

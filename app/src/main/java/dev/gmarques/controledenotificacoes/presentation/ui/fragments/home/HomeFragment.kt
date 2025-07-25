@@ -389,9 +389,24 @@ class HomeFragment : MyFragment() {
 
         warningBinding.chipPrivacy.setOnClickListener(AnimatedClickListener {
             MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Sua_privacidade_importa))
-                .setMessage(getString(R.string.Sua_privacidade_esta_protegida))
+                .setMessage(getString(R.string.O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros))
                 .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                }.setIcon(R.drawable.vec_info).show()
+                }
+                .setNegativeButton(getString(R.string.Ver_politica_de_privacidade)) { dialog, _ ->
+                    val url = App.instance.remoteConfigValues.value?.privacyUrl
+
+                    if (!url.isNullOrBlank()) {
+                        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                        startActivity(intent)
+                    } else {
+                        showErrorSnackBar(
+                            getString(R.string.Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes),
+                            binding.fabAdd
+                        )
+                    }
+
+                }
+                .setIcon(R.drawable.vec_info).show()
         })
 
         warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
