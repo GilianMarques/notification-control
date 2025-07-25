@@ -274,6 +274,11 @@
     <string name="Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes">Não foi possível obter url. Tente novamente em alguns instantes</string>
     <string name="O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros">O conteúdo das notificações fica salvo apenas no seu dispositivo e sob nenhuma circunstância é compartilhado com terceiros.</string>
     <string name="Historico_de_notifica_es_do_sistema">Histórico de notificações do sistema</string>
+    <string name="Op_es">Opções</string>
+    <string name="Notifica_es_ativas">Notificações ativas</string>
+    <string name="Gerenciar_notificacoes">Gerenciar notificações</string>
+    <string name="Ocultar">Ocultar</string>
+    <string name="Gerenciar">Gerenciar</string>
 
 
 </resources>

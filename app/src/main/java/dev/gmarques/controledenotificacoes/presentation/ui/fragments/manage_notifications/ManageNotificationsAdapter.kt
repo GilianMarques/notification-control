@@ -23,27 +23,31 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationBinding
+import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Criado por Gilian Marques
  * Em segunda-feira, 30 de junho de 2025 as 15:17.
  */
-class NotificationsAdapter(
-    private val onItemClick: (ActiveStatusBarNotification) -> Unit,
-) : ListAdapter<ActiveStatusBarNotification, NotificationsAdapter.ViewHolder>(DiffCallback()) {
+class ManageNotificationsAdapter(
+) : ListAdapter<ActiveStatusBarNotification, ManageNotificationsAdapter.ViewHolder>(DiffCallback()) {
+
+    private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemAppNotificationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemAppNotificationManageableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding.root.startAnimation(anim)
         return ViewHolder(binding)
     }
 
@@ -51,26 +55,20 @@ class NotificationsAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemAppNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemAppNotificationManageableBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(notification: ActiveStatusBarNotification) = with(binding) {
 
             tvTitle.text = notification.title
 
             tvContent.text = notification.content
-            tvContent.isVisible = true
+            tvContent.isVisible = !notification.content.isEmpty()
 
             ivAppIcon.setImageIcon(notification.smallIcon)
 
             ivLargeIcon.setImageIcon(notification.largeIcon)
             ivLargeIcon.isVisible = notification.largeIcon != null
 
-            tvOpenNotification.isVisible = false
-            tvTime.isVisible = false
-
-            parent.setOnClickListener {
-                onItemClick(notification)
-            }
         }
     }
 

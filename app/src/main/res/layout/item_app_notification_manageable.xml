@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  ~
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:transitionGroup="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/back_container"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/back_circle"
+            android:backgroundTint="?colorPrimary"
+            android:padding="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_title"
+            app:srcCompat="@drawable/vec_app"
+            app:tint="?colorOnPrimary" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_large_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/tv_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:srcCompat="@drawable/vec_open_app"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:maxLines="3"
+            android:padding="4dp"
+            android:textAlignment="viewStart"
+            android:layout_marginStart="4dp"
+            android:textSize="16sp"
+            android:transitionName="not_title"
+            app:drawableTint="?colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Whatsapp" />
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:maxLines="20"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:textAlignment="gravity"
+            android:textSize="14sp"
+            android:transitionName="not_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_large_icon"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:text="Conteudo da notificação\nbla bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla..."
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottomBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierAllowsGoneWidgets="true"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="tv_content,iv_large_icon" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_snooze"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/Adiar"
+            android:textColor="?colorOnPrimary"
+            app:chipBackgroundColor="?attr/colorPrimary"
+            app:chipCornerRadius="16dp"
+            app:chipIcon="@drawable/vec_snooze"
+            app:chipIconTint="?colorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottomBarrier" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_hide"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/Ocultar"
+            android:textColor="?colorOnSecondary"
+            app:chipBackgroundColor="?attr/colorSecondary"
+            app:chipCornerRadius="16dp"
+            app:chipIcon="@drawable/vec_hide"
+            app:chipIconTint="?colorOnSecondary"
+            app:layout_constraintBottom_toBottomOf="@id/chip_snooze"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/chip_snooze"
+            app:layout_constraintTop_toTopOf="@id/chip_snooze" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_manage"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/Gerenciar"
+            android:textColor="?colorOnTertiary"
+            app:chipBackgroundColor="?attr/colorTertiary"
+            app:chipCornerRadius="16dp"
+            app:chipIcon="@drawable/vec_rule_permissive"
+            app:chipIconTint="?colorOnTertiary"
+            app:layout_constraintBottom_toBottomOf="@id/chip_snooze"
+            app:layout_constraintEnd_toStartOf="@id/chip_hide"
+            app:layout_constraintTop_toTopOf="@id/chip_snooze" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -67,6 +67,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification.SelectNotificationFragment
@@ -222,6 +223,12 @@ open class MyFragment() : Fragment() {
             is SelectNotificationFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Selecionar_notificacao)
+                binding.ivMenu.isGone = true
+            }
+
+            is ManageNotificationsFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Gerenciar_notificacoes)
                 binding.ivMenu.isGone = true
             }
 

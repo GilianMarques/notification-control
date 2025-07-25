@@ -126,8 +126,39 @@ class HomeFragment : MyFragment() {
     }
 
     private fun setupPopUpMenu() {
+
         val popupMenu = popupMenu {
 
+
+            section {
+
+                item {
+                    label = getString(R.string.Notifica_es_ativas)
+                    icon = R.drawable.vec_listen_notification
+                    callback = {
+                        navigateToManageNotificationsFragment()
+                    }
+                }
+            }
+
+            section {
+
+                item {
+                    label = getString(R.string.Op_es)
+                    icon = R.drawable.vec_settings
+                    callback = {
+                        navigateToSettingsFragment()
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Echo)
+                    icon = R.drawable.vec_echo
+                    callback = {
+                        navigateToEchoFragment()
+                    }
+                }
+            }
 
             section {
 
@@ -136,28 +167,6 @@ class HomeFragment : MyFragment() {
                     icon = R.drawable.vec_feedback
                     callback = {
                         showHowToFeedbackDialog()
-                    }
-                }
-            }
-
-            section {
-
-                item {
-                    label = getString(R.string.Configuracoes)
-                    icon = R.drawable.vec_settings
-                    callback = {
-                        navigateToSettingsFragment()
-                    }
-                }
-            }
-
-            section {
-
-                item {
-                    label = getString(R.string.Echo)
-                    icon = R.drawable.vec_echo
-                    callback = {
-                        navigateToEchoFragment()
                     }
                 }
             }
@@ -180,6 +189,10 @@ class HomeFragment : MyFragment() {
         val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toSettingsFragment()) }
         if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
         else navigate()
+    }
+
+    private fun navigateToManageNotificationsFragment() {
+        findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
     }
 
     private fun setupActionBar() = binding.apply {
