@@ -29,6 +29,7 @@ class IsAppInBlockPeriodUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
@@ -73,6 +74,7 @@ class IsAppInBlockPeriodUseCaseTest {
                 Rule.WeekDay.SATURDAY,
             ),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(true)
@@ -102,6 +104,7 @@ class IsAppInBlockPeriodUseCaseTest {
                 Rule.WeekDay.TUESDAY,
             ),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 0),
@@ -133,6 +136,7 @@ class IsAppInBlockPeriodUseCaseTest {
                 Rule.WeekDay.TUESDAY,
             ),
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             timeRanges = listOf(
                 TimeRange(8, 0, 18, 0),

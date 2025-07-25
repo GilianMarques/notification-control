@@ -3,13 +3,14 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import junit.framework.TestCase
 import org.joda.time.LocalDateTime
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class NextAppUnlockTimeUseCaseTest {
+class NextRuleUnlockTimeUseCaseTest {
 
 
     @Suppress("PrivatePropertyName")
@@ -30,6 +31,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
@@ -40,7 +42,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -67,6 +69,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
@@ -76,7 +79,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -104,6 +107,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -113,7 +117,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -137,6 +141,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -146,7 +151,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -171,6 +176,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
@@ -182,7 +188,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -207,6 +213,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
@@ -217,7 +224,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -242,6 +249,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -252,7 +260,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -277,6 +285,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -287,7 +296,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -312,6 +321,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
@@ -321,7 +331,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
@@ -345,6 +355,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
@@ -354,7 +365,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -379,6 +390,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.WEDNESDAY,
@@ -390,7 +402,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -416,6 +428,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.RESTRICTIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
@@ -432,10 +445,10 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
+        val expectPeriod = NextRuleUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n", expectPeriod, nextPeriodMillis
         )
@@ -451,6 +464,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
@@ -461,7 +475,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -488,6 +502,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.SUNDAY,
@@ -497,7 +512,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -523,6 +538,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -532,7 +548,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -557,6 +573,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -566,7 +583,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -591,6 +608,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
@@ -604,7 +622,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -628,6 +646,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -638,7 +657,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -663,6 +682,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.TUESDAY,
@@ -674,7 +694,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -699,6 +719,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
@@ -708,7 +729,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -733,6 +754,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
@@ -742,7 +764,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -767,6 +789,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.FRIDAY,
@@ -777,7 +800,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod =
@@ -803,6 +826,7 @@ class NextAppUnlockTimeUseCaseTest {
             name = "",
             type = Rule.Type.PERMISSIVE,
             condition = null,
+            keepFullHistory = Rule.keepFullHistoryDefault,
             action = Rule.actionDefault,
             days = listOf(
                 Rule.WeekDay.MONDAY,
@@ -819,10 +843,10 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase()
+        val nextPeriodMillis = NextRuleUnlockTimeUseCase()
             .invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
+        val expectPeriod = NextRuleUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n", expectPeriod, nextPeriodMillis
         )

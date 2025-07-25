@@ -27,6 +27,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.RESTRICTIVE,
                 condition = null,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
@@ -40,6 +41,7 @@ class GenerateRuleDescriptionUseCaseTest {
                 name = "",
                 type = Rule.Type.PERMISSIVE,
                 condition = null,
+                keepFullHistory = Rule.keepFullHistoryDefault,
                 action = Rule.actionDefault,
                 days = listOf(Rule.WeekDay.MONDAY, Rule.WeekDay.SUNDAY, Rule.WeekDay.FRIDAY),
                 timeRanges = listOf(
