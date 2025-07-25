@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import java.text.MessageFormat
 import javax.inject.Inject
 
 /**
@@ -103,9 +102,13 @@ class LoginViewModel @Inject constructor(
                 R.string.Erro_no_provedor_c_digo, error?.errorCode, error?.message
             )
 
-            else -> MessageFormat.format(
-                context.getString(R.string.O_login_falhou_c_digo_0_mensagem_1), error?.errorCode, error?.message
+            else -> context.getString(
+                R.string.O_login_falhou_c_digo_0_mensagem_1,
+                error?.errorCode.toString(),
+                error?.cause
             )
+
+
         }
     }
 }

@@ -72,8 +72,9 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun logOff() {
       try {
-              AuthUI.getInstance().signOut(context).await()
-              FirebaseAuth.getInstance().signOut()
+          FirebaseAuth.getInstance().signOut()
+          AuthUI.getInstance().signOut(context).await()
+
       } catch (ex: Exception) {
           Log.e("USUK", "UserRepositoryImpl.logOff: $ex")
       }
