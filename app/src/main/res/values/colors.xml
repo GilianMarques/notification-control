@@ -29,6 +29,7 @@
     <color name="app_icon_bg_color">#502AE5</color>
 
     <color name="container_background">#1A502AE5</color>
+    <color name="container_stroke_color">#40502AE5</color>
     <color name="md_theme_primary">#502AE5</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
     <color name="md_theme_primaryContainer">#694CFE</color>

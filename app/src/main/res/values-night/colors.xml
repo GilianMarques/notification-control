@@ -24,6 +24,7 @@
   -->
 
 <resources>
+    <color name="container_stroke_color">#0DC8BFFF</color>
     <color name="md_theme_primary">#C8BFFF</color>
     <color name="md_theme_onPrimary">#2C009E</color>
     <color name="md_theme_primaryContainer">#694CFE</color>

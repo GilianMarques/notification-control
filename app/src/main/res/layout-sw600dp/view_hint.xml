@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
@@ -58,25 +57,50 @@
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:layout_marginTop="8dp"
+                android:padding="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/vec_hint"
+                app:srcCompat="@drawable/vec_hint_lamp_on"
                 app:tint="?colorPrimary" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_art_small"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/vec_hint_lamp_on"
+                app:tint="?colorPrimary"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                app:barrierAllowsGoneWidgets="true"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="iv_art,iv_art_small" />
 
             <TextView
                 android:id="@+id/tv_hint"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:elevation="10dp"
                 android:maxWidth="350dp"
+                android:paddingBottom="8dp"
                 android:text="@string/Permita_o_envio_de_notifica_es_para_ser_avisado_a_sobre_as_notifica_es_recebidas_durante_o_per_odo_de_bloqueio_dos_apps"
                 android:textAlignment="textStart"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_art"
+                app:layout_constraintStart_toEndOf="@id/barrier"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.chip.Chip

@@ -93,8 +93,8 @@ class AddManagedAppsFragment() : MyFragment() {
         setupConcludeFab()
         observeStates()
         observeEvents()
-        showHintDialog(
-            parent = binding.llParent,
+        showHintView(
+            parent = binding.llHintParent,
             showHintPreference = PreferencesImpl.showHintHowRulesAndManagedAppsWork,
             msg = getString(R.string.como_adicionar_o_primeiro_app),
         )

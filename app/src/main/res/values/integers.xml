@@ -26,4 +26,5 @@
 
 <resources>
     <integer name="view_managed_app_rule_name_max_lines">3</integer>
+    <integer name="split_hint_max_chars">100</integer>
 </resources>

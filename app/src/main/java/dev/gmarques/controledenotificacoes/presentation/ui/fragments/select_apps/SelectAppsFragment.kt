@@ -93,7 +93,7 @@ class SelectAppsFragment : MyFragment() {
         observeStates()
         observeEvents()
         setupFabConclude()
-        showHintDialog(
+        showHintView(
             parent = binding.llHintParent,
             showHintPreference = PreferencesImpl.showHintSelectFirstApp,
             msg = getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
@@ -198,7 +198,7 @@ class SelectAppsFragment : MyFragment() {
                 }
 
                 Event.SelectedAlreadyManagedApp -> {
-                    showHintDialog(
+                    showHintView(
                         parent = binding.llHintParent,
                         showHintPreference = PreferencesImpl.showHintSelectedAppsAlreadyManaged,
                         msg = getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
