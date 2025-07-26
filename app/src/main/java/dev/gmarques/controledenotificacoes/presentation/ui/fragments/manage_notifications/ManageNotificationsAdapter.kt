@@ -36,6 +36,8 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
 
 /**
  * Criado por Gilian Marques
@@ -63,8 +65,11 @@ class ManageNotificationsAdapter(
 
             tvTitle.text = notification.title
 
-            tvContent.text = notification.content
             tvContent.isVisible = !notification.content.isEmpty()
+
+            if (tvContent.canUseReadMoreFeature(notification.content)) {
+                tvContent.readMoreFeature(notification.content) { fullText -> ivLargeIcon.isVisible = fullText }
+            } else tvContent.text = notification.content
 
             ivAppIcon.setImageIcon(notification.smallIcon)
 

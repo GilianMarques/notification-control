@@ -45,8 +45,23 @@ class ManageNotificationsViewModel @Inject constructor(
     val notificationsFlow: Flow<List<ActiveStatusBarNotification>> get() = _notificationsFlow
 
     fun loadNotifications() {
-        val notifications = mutableListOf<ActiveStatusBarNotification>()
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
+
+        val notificationListener = NotificationListener.instance() ?: return
+
+        val notifications =
+            (notificationListener.getActiveNots()
+                    + notificationListener.getSnoozedNots()
+                    + notificationListener.getOngoingNots())
+                .filter { it.content.isNotBlank() || it.title.isNotBlank() }
+                .distinctBy { it.title to it.content }
+                .distinctBy { it.postTime }
+
+        _notificationsFlow.tryEmit(notifications)
+
+
+    }
+
+    fun snoozeNotification(notification: ActiveStatusBarNotification) {
+        NotificationListener.instance()?.snoozeNot(notification, System.currentTimeMillis() + 10000)
     }
 }

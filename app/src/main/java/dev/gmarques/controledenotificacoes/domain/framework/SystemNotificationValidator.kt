@@ -36,10 +36,12 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
  */
 object SystemNotificationValidator {
 
-    fun isValidToProcess(notification: StatusBarNotification): Boolean {
-        return !notification.isOngoing
-                && notification.packageName != BuildConfig.APPLICATION_ID
+    fun isValidToProcess(notification: StatusBarNotification, acceptOnGoing: Boolean = false): Boolean {
+
+        return notification.packageName != BuildConfig.APPLICATION_ID
+                && if (!acceptOnGoing) !notification.isOngoing else true
     }
+
 
     fun isValidToEcho(notification: ActiveStatusBarNotification): Boolean {
         return !notification.isOngoing

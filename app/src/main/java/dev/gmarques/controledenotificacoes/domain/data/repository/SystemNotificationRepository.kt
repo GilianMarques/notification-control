@@ -38,6 +38,7 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
  */
 interface SystemNotificationRepository {
     fun getActiveNots(): List<ActiveStatusBarNotification>
+    fun getOngoingNots(): List<ActiveStatusBarNotification>
     fun getSnoozedNots(): List<ActiveStatusBarNotification>
     fun processActiveNotifications()
 

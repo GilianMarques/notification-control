@@ -64,6 +64,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
         observeViewModel()
+        viewModel.loadNotifications()
     }
 
     private fun setupRecyclerView() {
@@ -110,6 +111,6 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
     /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
     override fun onSnoozeClicked(notification: ActiveStatusBarNotification) {
-        TODO("Not yet implemented")
+       viewModel.snoozeNotification(notification)
     }
 }

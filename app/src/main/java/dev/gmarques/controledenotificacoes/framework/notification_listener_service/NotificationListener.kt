@@ -186,6 +186,17 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
         } ?: emptyList()
     }
 
+    override fun getOngoingNots(): List<ActiveStatusBarNotification> {
+
+        if (!isListenerConnected()) return emptyList()
+
+        return activeNotifications?.filter {
+            it.isOngoing && SystemNotificationValidator.isValidToProcess(it, true)
+        }?.map {
+            ActiveStatusBarNotificationFactory.create(it)
+        } ?: emptyList()
+    }
+
     override fun getSnoozedNots(): List<ActiveStatusBarNotification> {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !isListenerConnected()) return emptyList()

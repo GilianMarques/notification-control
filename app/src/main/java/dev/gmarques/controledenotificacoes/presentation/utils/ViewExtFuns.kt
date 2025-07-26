@@ -27,11 +27,18 @@ package dev.gmarques.controledenotificacoes.presentation.utils
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
 
 
 /**
@@ -144,5 +151,78 @@ object ViewExtFuns {
         this.adapter = null
         this.adapter = adapter
     }
-}
 
+    /**
+     * Implementa a funcionalidade "Leia mais" para um TextView.
+     *
+     * Esta função de extensão encurta um texto longo exibido em um TextView,
+     * adicionando um link "Leia mais" no final. Ao clicar no link, o texto completo
+     * é exibido. Clicar novamente retorna ao texto encurtado.
+     *
+     * A quebra do texto é determinada pelo valor `split_hint_max_chars` definido nos recursos.
+     * O texto do link "Leia mais" é obtido do recurso de string `R.string.Leia_mais`.
+     * O link "Leia mais" é estilizado com sublinhado e a cor padrão de link do tema.
+     *
+     * @param msg O texto completo a ser exibido. use [canUseReadMoreFeature] para determinar se deve chamar essa função.
+     * @param callback Uma função de callback opcional que é invocada sempre que o estado
+     *                 de visibilidade do texto (completo ou encurtado) é alterado.
+     *                 O parâmetro `fullText` do callback será `true` se o texto completo
+     *                 estiver sendo exibido, e `false` caso contrário.
+     *
+     * @throws IllegalArgumentException Se o texto for muito curto para aplicar a funcionalidade.
+     */
+    fun TextView.readMoreFeature(msg: String, callback: (fullText: Boolean) -> Unit = {}) {
+
+        val splitHintAt = resources.getInteger(R.integer.split_hint_max_chars)
+        if (splitHintAt >= msg.length) error("Nao passe mensagens curtas para essa função")
+        val readMore = context.getString(R.string.Leia_mais)
+
+        val shortenedHint = SpannableString(
+            msg.substring(0, splitHintAt)
+                .plus("… ")
+                .plus(readMore)
+        )
+
+        shortenedHint.apply {
+            setSpan(
+                UnderlineSpan(),
+                shortenedHint.length - readMore.length,
+                shortenedHint.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            setSpan(
+                ForegroundColorSpan(linkTextColors.defaultColor),
+                shortenedHint.length - readMore.length,
+                shortenedHint.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        val toggleVisibility = {
+            text = if (text == shortenedHint) msg else shortenedHint
+            callback.invoke(text == msg)
+        }.apply { invoke() }
+
+        setOnClickListener {
+            toggleVisibility.invoke()
+        }
+    }
+
+    /**
+     * Verifica se a funcionalidade "Leia mais" pode ser aplicada a um determinado texto
+     * em um TextView.
+     *
+     * A funcionalidade "Leia mais" só é aplicável se o comprimento do texto (`msg`)
+     * for maior do que o limite de caracteres definido em `R.integer.split_hint_max_chars`.
+     *
+     * @param msg O texto a ser verificado.
+     * @return `true` se a funcionalidade "Leia mais" puder ser usada (ou seja, se o texto
+     *         for mais longo que o limite), `false` caso contrário.
+     * @see readMoreFeature
+     */
+    fun TextView.canUseReadMoreFeature(msg: String): Boolean {
+        val splitHintAt = resources.getInteger(R.integer.split_hint_max_chars)
+        return splitHintAt < msg.length
+    }
+}

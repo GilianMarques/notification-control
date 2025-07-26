@@ -30,13 +30,8 @@ import android.animation.AnimatorListenerAdapter
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -82,6 +77,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.Se
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -376,36 +372,14 @@ open class MyFragment() : Fragment() {
                 return@launch
             }
 
-            val readMore = getString(R.string.Leia_mais)
-            val shortenedHint = SpannableString(
-                msg.substring(0, splitHintAt)
-                    .plus("… ")
-                    .plus(readMore)
-            )
+            val toggleVisibility = { fullText: Boolean ->
+                chipUnderstood.isGone = !fullText
+                ivArt.isGone = !fullText
+                ivArtSmall.isVisible = !fullText
+            }.apply { invoke(false) }
 
-            shortenedHint.apply {
-                setSpan(
-                    UnderlineSpan(),
-                    shortenedHint.length - readMore.length,
-                    shortenedHint.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                setSpan(
-                    StyleSpan(Typeface.ITALIC),
-                    shortenedHint.length - readMore.length,
-                    shortenedHint.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-            val toggleVisibility = {
-                chipUnderstood.isGone = chipUnderstood.isGone.not()
-                ivArt.isGone = ivArt.isGone.not()
-                ivArtSmall.isVisible = ivArt.isGone
-                tvHint.text = if (tvHint.text == shortenedHint) msg else shortenedHint
-            }.apply { invoke() }
-
-            tvHint.setOnClickListener {
-                toggleVisibility.invoke()
+            tvHint.readMoreFeature(msg) { fullText ->
+                toggleVisibility(fullText)
             }
         }
 
