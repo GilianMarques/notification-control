@@ -30,9 +30,11 @@ import androidx.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.data.local.room.dao.AppNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
+import dev.gmarques.controledenotificacoes.data.local.room.dao.SnoozedNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.entities.AppNotificationEntity
 import dev.gmarques.controledenotificacoes.data.local.room.entities.ManagedAppEntity
 import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
+import dev.gmarques.controledenotificacoes.data.local.room.entities.SnoozedNotificationEntity
 
 
 /**
@@ -45,15 +47,18 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
     entities = [
         RuleEntity::class,
         ManagedAppEntity::class,
-        AppNotificationEntity::class
+        AppNotificationEntity::class,
+        SnoozedNotificationEntity::class,
     ],
-    version = 1
+    version = 2
 )
 abstract class RoomDatabase : RoomDatabase() {
 
     abstract fun ruleDao(): RuleDao
     abstract fun managedAppDao(): ManagedAppDao
     abstract fun appNotificationDao(): AppNotificationDao
+
+    abstract fun snoozedNotificationDao(): SnoozedNotificationDao
 
 }
 

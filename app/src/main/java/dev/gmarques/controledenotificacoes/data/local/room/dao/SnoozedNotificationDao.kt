@@ -23,30 +23,30 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications
+package dev.gmarques.controledenotificacoes.data.local.room.dao
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import dev.gmarques.controledenotificacoes.data.local.room.entities.SnoozedNotificationEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import javax.inject.Inject
 
-/**
- * Criado por Gilian Marques
- * Em 25/07/2025 as 16:54
- */
-@HiltViewModel
-class ManageNotificationsViewModel @Inject constructor(
-) : ViewModel() {
+@Dao
+interface SnoozedNotificationDao {
 
-    private val _notificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
-    val notificationsFlow: Flow<List<ActiveStatusBarNotification>> get() = _notificationsFlow
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(notification: SnoozedNotificationEntity)
 
-    fun loadNotifications() {
-        val notifications = mutableListOf<ActiveStatusBarNotification>()
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-    }
+    @Query("DELETE FROM snoozed_notifications WHERE packageName = :packageName")
+    suspend fun deleteAll(packageName: String)
+
+    @Query("SELECT * FROM snoozed_notifications WHERE packageName = :pkg")
+    suspend fun getByPkg(pkg: String): SnoozedNotificationEntity?
+
+    @Query("SELECT * FROM snoozed_notifications")
+    suspend fun getAll(): List<SnoozedNotificationEntity>
+
+    @Query("SELECT * FROM snoozed_notifications WHERE packageName = :pkg")
+    fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotificationEntity>>
 }

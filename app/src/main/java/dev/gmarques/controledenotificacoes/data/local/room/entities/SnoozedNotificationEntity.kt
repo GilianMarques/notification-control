@@ -23,30 +23,18 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications
+package dev.gmarques.controledenotificacoes.data.local.room.entities
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import javax.inject.Inject
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-/**
- * Criado por Gilian Marques
- * Em 25/07/2025 as 16:54
- */
-@HiltViewModel
-class ManageNotificationsViewModel @Inject constructor(
-) : ViewModel() {
-
-    private val _notificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
-    val notificationsFlow: Flow<List<ActiveStatusBarNotification>> get() = _notificationsFlow
-
-    fun loadNotifications() {
-        val notifications = mutableListOf<ActiveStatusBarNotification>()
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-    }
-}
+@Entity(tableName = "snoozed_notifications")
+data class SnoozedNotificationEntity(
+    val packageName: String,
+    val key: String,
+    val title: String,
+    val content: String,
+    @PrimaryKey
+    val postTime: Long,
+    val hidden: Boolean,
+)

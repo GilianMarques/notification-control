@@ -33,6 +33,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentManageNotificationsBinding
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
@@ -44,7 +45,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebind
  * Em 25/07/2025 as 16:54
  */
 @AndroidEntryPoint
-class ManageNotificationsFragment : MyFragment() {
+class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Callback {
 
 
     private lateinit var binding: FragmentManageNotificationsBinding
@@ -66,7 +67,7 @@ class ManageNotificationsFragment : MyFragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = ManageNotificationsAdapter()
+        adapter = ManageNotificationsAdapter(this)
 
         requireMainActivity().slidingPaneController
             ?.addStateListener(this@ManageNotificationsFragment, object : SlidingPaneControllerCallback {
@@ -95,5 +96,20 @@ class ManageNotificationsFragment : MyFragment() {
             adapter.submitList(list)
             binding.emptyView.isVisible = list.isEmpty()
         }
+    }
+
+    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
+    override fun onManageClicked(notification: ActiveStatusBarNotification) {
+        TODO("Not yet implemented")
+    }
+
+    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
+    override fun onHideClicked(notification: ActiveStatusBarNotification) {
+        TODO("Not yet implemented")
+    }
+
+    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
+    override fun onSnoozeClicked(notification: ActiveStatusBarNotification) {
+        TODO("Not yet implemented")
     }
 }

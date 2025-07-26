@@ -35,12 +35,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
 /**
  * Criado por Gilian Marques
  * Em segunda-feira, 30 de junho de 2025 as 15:17.
  */
 class ManageNotificationsAdapter(
+    private val callback: Callback
 ) : ListAdapter<ActiveStatusBarNotification, ManageNotificationsAdapter.ViewHolder>(DiffCallback()) {
 
     private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
@@ -69,6 +71,18 @@ class ManageNotificationsAdapter(
             ivLargeIcon.setImageIcon(notification.largeIcon)
             ivLargeIcon.isVisible = notification.largeIcon != null
 
+            chipManage.setOnClickListener(AnimatedClickListener {
+                callback.onManageClicked(notification)
+            })
+
+            chipHide.setOnClickListener(AnimatedClickListener {
+                callback.onHideClicked(notification)
+            })
+
+            chipSnooze.setOnClickListener(AnimatedClickListener {
+                callback.onSnoozeClicked(notification)
+            })
+
         }
     }
 
@@ -78,10 +92,15 @@ class ManageNotificationsAdapter(
         }
 
         override fun areContentsTheSame(oldItem: ActiveStatusBarNotification, newItem: ActiveStatusBarNotification): Boolean {
-            return oldItem.title == newItem.title &&
-                    oldItem.content == newItem.content &&
-                    oldItem.packageName == newItem.packageName &&
-                    oldItem.postTime == newItem.postTime
+            return oldItem.title == newItem.title && oldItem.content == newItem.content && oldItem.packageName == newItem.packageName && oldItem.postTime == newItem.postTime
         }
     }
+
+
+    interface Callback {
+        fun onManageClicked(notification: ActiveStatusBarNotification)
+        fun onHideClicked(notification: ActiveStatusBarNotification)
+        fun onSnoozeClicked(notification: ActiveStatusBarNotification)
+    }
+
 }

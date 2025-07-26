@@ -23,30 +23,19 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications
+package dev.gmarques.controledenotificacoes.domain.data.repository
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em 25/07/2025 as 16:54
+ * Em 26/07/2025 as 18:01
  */
-@HiltViewModel
-class ManageNotificationsViewModel @Inject constructor(
-) : ViewModel() {
-
-    private val _notificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
-    val notificationsFlow: Flow<List<ActiveStatusBarNotification>> get() = _notificationsFlow
-
-    fun loadNotifications() {
-        val notifications = mutableListOf<ActiveStatusBarNotification>()
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-        notifications.addAll(NotificationListener.instance()?.getActiveNots() ?: emptyList())
-    }
+interface SnoozedNotificationRepository {
+    suspend fun insert(notification: SnoozedNotification)
+    suspend fun deleteAll(packageName: String)
+    suspend fun getByPkg(pkg: String): SnoozedNotification?
+    suspend fun getAll(): List<SnoozedNotification>
+    fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>>
 }

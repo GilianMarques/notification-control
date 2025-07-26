@@ -1,0 +1,66 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package dev.gmarques.controledenotificacoes.domain.model
+
+import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.KeyValidation
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.PackageNameValidation
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.PackageNameValidation.BlankPackageNameException
+
+
+object SnoozedNotificationValidator {
+    fun validate(notification: SnoozedNotification) {
+        validatePackageName(notification.packageName).getOrThrow()
+        validateKey(notification.key).getOrThrow()
+    }
+
+    fun validatePackageName(packageName: String): OperationResult<PackageNameValidation, String> {
+        return if (packageName.isEmpty()) OperationResult.failure(BlankPackageNameException())
+        else OperationResult.success(packageName)
+    }
+
+    fun validateKey(key: String): OperationResult<KeyValidation, String> {
+        return if (key.isEmpty()) OperationResult.failure(KeyValidation.BlankKeyException())
+        else OperationResult.success(key)
+    }
+
+    /**
+     * Criado por Gilian Marques
+     * Em 26/07/2025 as 17:58
+     */
+    sealed class SnoozedNotificationValidatorException(msg: String) : Exception(msg) {
+
+        sealed class PackageNameValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
+            class BlankPackageNameException() :
+                PackageNameValidation("Em hipótese alguma o packageName de um objeto pode ficar vazio.")
+        }
+
+        sealed class KeyValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
+            class BlankKeyException() :
+                KeyValidation("O Key da notificação não pode ficar vazio.")
+        }
+    }
+}

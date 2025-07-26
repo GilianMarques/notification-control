@@ -23,21 +23,13 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.data.local.room.migrations
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
+import javax.inject.Inject
 
-/**
-Criado por Gilian Marques
- * Em 29/06/2025 as 10:54
- *
- * Essa migração adiciona uma coluna 'condition' à tabela 'rules'. Esta coluna armazenará a condição para a regra de notificação.
- */
-@Suppress("ClassName")
-object MIGRATION_2_3 : Migration(2, 3) {
-
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE rules ADD COLUMN condition TEXT NULL")
-    }
+class InsertSnoozedNotificationUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
+    suspend operator fun invoke(notification: SnoozedNotification) = repository.insert(notification)
 }
+

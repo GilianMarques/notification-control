@@ -87,7 +87,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val _managedAppFlow = MutableStateFlow<ManagedAppWithRule?>(null)
     val managedAppFlow: StateFlow<ManagedAppWithRule?> get() = _managedAppFlow
 
-    private val _appNotificationHistoryFlow = MutableStateFlow<List<AppNotification>>(emptyList<AppNotification>())
+    private val _appNotificationHistoryFlow = MutableStateFlow(emptyList<AppNotification>())
     val appNotificationHistoryFlow: StateFlow<List<AppNotification>> get() = _appNotificationHistoryFlow
 
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)

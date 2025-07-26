@@ -23,19 +23,37 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.data.local.room.migrations
+package dev.gmarques.controledenotificacoes.data.local.room.mapper
 
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import dev.gmarques.controledenotificacoes.data.local.room.entities.SnoozedNotificationEntity
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator
 
-/**
- * Criado por Gilian Marques
- * Em quinta-feira, 17 de julho de 2025 as 16:40.
- * Renomeia a coluna `behaviour` para `action` na tabela `rules`.
- */
-@Suppress("ClassName")
-object MIGRATION_4_5 : Migration(4, 5) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE rules RENAME COLUMN behaviour TO action")
+
+object SnoozedNotificationMapper {
+
+    fun toEntity(model: SnoozedNotification): SnoozedNotificationEntity {
+
+        SnoozedNotificationValidator.validate(model)
+
+        return SnoozedNotificationEntity(
+            packageName = model.packageName,
+            title = model.title,
+            content = model.content,
+            postTime = model.postTime,
+            key = model.key,
+            hidden = model.hidden
+        )
+    }
+
+    fun toModel(entity: SnoozedNotificationEntity): SnoozedNotification {
+        return SnoozedNotification(
+            packageName = entity.packageName,
+            title = entity.title,
+            content = entity.content,
+            postTime = entity.postTime,
+            key = entity.key,
+            hidden = entity.hidden
+        )
     }
 }
