@@ -31,7 +31,9 @@ import java.io.Serializable
  * Criado por Gilian Marques
  * Em domingo, 26 de julho de 2025 as 17:45.
  *
- * Representa uma notificação do sistema que foi oculta temporaria ou indefinidamente pelo usuario
+ * Representa uma notificação do sistema que foi oculta temporaria ou indefinidamente de maneira manual pelo usuario, ou seja,
+ * sempre que o ususario selecinar uma notificação e a adiar por um tempo definido ou ilimitado um objeto desses sera criado para
+ * permitir o acompanhamento e reemissao da notificação caso o sistema a perca.
  * Use a Factory [SnoozedNotificationFactory] para instanciar o objeto com segurança.
  */
 data class SnoozedNotification(
@@ -40,5 +42,10 @@ data class SnoozedNotification(
     val title: String,
     val content: String,
     val postTime: Long,
-    val hidden: Boolean,
-) : Serializable
+    val permaHidden: Boolean,
+) : Serializable {
+
+    companion object {
+        const val defaultSnoozePeriod = 24 * 60 * 60 * 1000L
+    }
+}

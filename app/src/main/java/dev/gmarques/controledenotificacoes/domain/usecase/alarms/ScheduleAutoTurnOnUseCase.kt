@@ -37,7 +37,7 @@ import javax.inject.Inject
  * Em sábado, 05 de julho de 2025 as 19:26.
  *
  * Agenda alarmes que abrirao o [AutoTurnOnReceiver] que é responsavel por iniciar o serviço que mantem o listener de
- * notificações ativo. Isso garante que se o app fechar por algum motivo, será reaberto e o serviç seguirá rodando.
+ * notificações ativo. Isso garante que se o app fechar por algum motivo, será reaberto e o serviço seguirá rodando.
  */
 class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: AlarmScheduler) {
 

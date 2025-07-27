@@ -28,14 +28,12 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_not
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.domain.data.repository.SystemNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.framework.ShowHideOngoingNotificationUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,6 +43,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ManageNotificationsViewModel @Inject constructor(
+    private val showHideOngoingNotificationUseCase: ShowHideOngoingNotificationUseCase,
 ) : ViewModel() {
 
     private val _notificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
@@ -52,41 +51,25 @@ class ManageNotificationsViewModel @Inject constructor(
 
     private var observerJob: Job = Job()
 
-    fun loadActiveNotifications() {
-
-        getServiceWhenReady() { notificationService ->
+    fun loadActiveNotifications() = viewModelScope.launch {
+        NotificationListener.getWhenReady { notificationService ->
             observeNotifications(notificationService.getActiveNotsFlow())
         }
     }
 
 
-    fun loadSnoozedNotifications() {
-        getServiceWhenReady() { notificationService ->
+    fun loadSnoozedNotifications() = viewModelScope.launch {
+        NotificationListener.getWhenReady { notificationService ->
             observeNotifications(notificationService.getSnoozedNotsFlow())
         }
     }
 
-    fun loadOngoingNotifications() {
-        getServiceWhenReady() { notificationService ->
+    fun loadOngoingNotifications() = viewModelScope.launch {
+        NotificationListener.getWhenReady { notificationService ->
             observeNotifications(notificationService.getOngoingNotsFlow())
         }
     }
 
-    /**
-     * Aguarda o servico de notificacoes estar pronto e entao executa [callback]
-     * passando o servico como parametro
-     * @param callback Funcao a ser executada com o servico como parametro
-     */
-    private fun getServiceWhenReady(callback: (notificationService: SystemNotificationRepository) -> Unit) {
-        viewModelScope.launch {
-            NotificationListener.getWhenReady()
-                .filterNotNull()
-                .first()
-                .let { notificationService ->
-                    callback(notificationService)
-                }
-        }
-    }
 
     /**
      * Observa o fluxo de notificacoes [flow] e atualiza o estado interno [_notificationsFlow]
@@ -109,5 +92,9 @@ class ManageNotificationsViewModel @Inject constructor(
 
     fun snoozeNotification(notification: ActiveStatusBarNotification) {
         NotificationListener.get()?.snoozeNot(notification, System.currentTimeMillis() + 10000)
+    }
+
+    fun hideNotification(notification: ActiveStatusBarNotification) = viewModelScope.launch {
+        showHideOngoingNotificationUseCase(notification, false)
     }
 }

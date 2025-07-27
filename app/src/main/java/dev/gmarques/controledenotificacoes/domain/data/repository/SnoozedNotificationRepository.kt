@@ -35,6 +35,8 @@ import kotlinx.coroutines.flow.Flow
 interface SnoozedNotificationRepository {
     suspend fun insert(notification: SnoozedNotification)
     suspend fun deleteAll(packageName: String)
+
+    suspend fun delete(key: String)
     suspend fun getByPkg(pkg: String): SnoozedNotification?
     suspend fun getAll(): List<SnoozedNotification>
     fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>>

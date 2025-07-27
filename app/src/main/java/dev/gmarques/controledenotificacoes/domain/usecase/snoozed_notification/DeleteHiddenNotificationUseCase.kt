@@ -23,43 +23,28 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.data.repository
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import dev.gmarques.controledenotificacoes.data.local.room.dao.SnoozedNotificationDao
-import dev.gmarques.controledenotificacoes.data.local.room.mapper.SnoozedNotificationMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class SnoozedNotificationRepositoryImpl @Inject constructor(
-    private val dao: SnoozedNotificationDao,
-) : SnoozedNotificationRepository {
 
-    override suspend fun insert(notification: SnoozedNotification) {
-        SnoozedNotificationMapper.toEntity(notification).let { dao.insert(it) }
+/**
+ * Criado por Gilian Marques
+ * Em 27/07/2025 as 14:55
+ *
+ *UseCase reponsavel por remover o registro de uma notificação que foi ocultada pelo usuario (adiada indeterminadamente)
+ *
+ * Remove uma [SnoozedNotification] de acordo com sua [SnoozedNotification.key]
+ * Esse Usecase NAO lida com bitmaps/pendingIntents em cache
+ */
+class DeleteHiddenNotificationUseCase @Inject constructor(
+    private val repository: SnoozedNotificationRepository,
+) {
+
+    suspend operator fun invoke(notification: SnoozedNotification) {
+        repository.delete(notification.key)
     }
 
-    override suspend fun deleteAll(packageName: String) {
-        dao.deleteAll(packageName)
-    }
-
-    override suspend fun delete(key: String) {
-        dao.delete(key)
-    }
-
-    override suspend fun getByPkg(pkg: String): SnoozedNotification? {
-        return dao.getByPkg(pkg)?.let { SnoozedNotificationMapper.toModel(it) }
-    }
-
-    override suspend fun getAll(): List<SnoozedNotification> {
-        return dao.getAll().map { SnoozedNotificationMapper.toModel(it) }
-    }
-
-    override fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>> {
-        return dao.observeNotificationsByPkgId(pkg).map { list ->
-            list.map { SnoozedNotificationMapper.toModel(it) }
-        }
-    }
 }

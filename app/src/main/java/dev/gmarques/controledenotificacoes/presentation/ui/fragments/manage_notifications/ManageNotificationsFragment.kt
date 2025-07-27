@@ -32,6 +32,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentManageNotificationsBinding
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -62,9 +63,21 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupToggleButtons()
         setupRecyclerView()
         observeViewModel()
         viewModel.loadActiveNotifications()
+    }
+
+    private fun setupToggleButtons() = with(binding) {
+        buttonGroup.addOnButtonCheckedListener { mbt, id, checked ->
+
+            when (mbt.checkedButtonId) {
+                R.id.button_snoozed -> viewModel.loadSnoozedNotifications()
+                R.id.button_active -> viewModel.loadActiveNotifications()
+                R.id.button_ongoning -> viewModel.loadOngoingNotifications()
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -106,11 +119,11 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
     /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
     override fun onHideClicked(notification: ActiveStatusBarNotification) {
-        TODO("Not yet implemented")
+        viewModel.hideNotification(notification)
     }
 
     /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
     override fun onSnoozeClicked(notification: ActiveStatusBarNotification) {
-       viewModel.snoozeNotification(notification)
+        viewModel.snoozeNotification(notification)
     }
 }

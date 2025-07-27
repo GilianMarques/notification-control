@@ -58,7 +58,7 @@ object SnoozedNotificationFactory {
             content = parsed.content,
             postTime = parsed.timestamp,
             key = sbn.key,
-            hidden = false
+            permaHidden = false
         )
     }
 
@@ -71,7 +71,7 @@ object SnoozedNotificationFactory {
             content = act.content,
             postTime = act.postTime,
             key = act.key,
-            hidden = false
+            permaHidden = false
         )
     }
 }

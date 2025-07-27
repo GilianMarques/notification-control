@@ -30,11 +30,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "snoozed_notifications")
 data class SnoozedNotificationEntity(
-    val packageName: String,
+    @PrimaryKey
     val key: String,
+    val packageName: String,
     val title: String,
     val content: String,
-    @PrimaryKey
     val postTime: Long,
-    val hidden: Boolean,
+    val permaHidden: Boolean,
 )

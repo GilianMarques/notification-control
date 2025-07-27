@@ -18,8 +18,8 @@ object MIGRATION_1_2 : Migration(1, 2) {
                 `title` TEXT NOT NULL,
                 `content` TEXT NOT NULL,
                 `postTime` INTEGER NOT NULL,
-                `hidden` INTEGER NOT NULL,
-                PRIMARY KEY(`postTime`)
+                `permaHidden` INTEGER NOT NULL,
+                PRIMARY KEY(`key`)
             )
             """.trimIndent()
         )

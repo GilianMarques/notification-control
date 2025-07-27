@@ -40,16 +40,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/button_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="5dp"
+        android:gravity="center"
+        app:checkedButton="@id/button_active"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/nav_bar_max_width"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_snoozed"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Adiadas"
+            app:icon="@drawable/vec_snooze"
+            app:iconGravity="top" />
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/button_active"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ativas"
+            app:icon="@drawable/vec_dot_notification_indicator"
+            app:iconGravity="top" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_ongoning"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Persistentes"
+            app:icon="@drawable/vec_drag_handle"
+            app:iconGravity="top" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_notifications"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/actionbar"
+        app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
         tools:listitem="@layout/item_app_notification" />
 
     <ProgressBar
@@ -95,9 +147,9 @@
             android:elevation="10dp"
             android:fontFamily="@font/urbanist_extrabold"
             android:maxWidth="250dp"
-            android:textColor="?colorSecondary"
             android:text="@string/Nenhuma_notifica_o_v_lida_ativa_no_momento"
             android:textAlignment="center"
+            android:textColor="?colorSecondary"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

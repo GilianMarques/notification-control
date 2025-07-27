@@ -31,6 +31,7 @@ import android.os.Build
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import androidx.annotation.RequiresApi
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
@@ -43,6 +44,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncom
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener.Companion.serviceInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -52,6 +54,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 
@@ -93,13 +97,26 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
         }
 
         /**
-         * Obtém um Flow que emite a instância do serviço NotificationListener quando estiver pronta.
-         * Isso permite que os componentes observem e reajam quando o serviço estiver conectado e disponível.
+         * Retorna uma instancia de [SystemNotificationRepository] quando o listener estiver conectado.
          *
-         * @return Um Flow que emite a instância do SystemNotificationRepository ou null.
+         * Esta função observa o [serviceInstance], que é um `MutableStateFlow` representando
+         * a instância do serviço de notificação. Ela espera até que o `serviceInstance`
+         * emita um valor não nulo (ou seja, o serviço esteja pronto). Assim que o serviço
+         * estiver disponível, a função [callback] é invocada, passando a instância do
+         * serviço como parâmetro.
+         * @param callback Função a ser executada quando o serviço estiver pronto.
          */
-        fun getWhenReady(): Flow<SystemNotificationRepository?> = serviceInstance
+        suspend fun getWhenReady(callback: (notificationService: SystemNotificationRepository) -> Unit) {
+            if (serviceInstance.value != null) callback.invoke(serviceInstance.value!!)
+            else serviceInstance.filterNotNull()
+                .first()
+                .let { notificationService ->
+                    callback(notificationService)
+                }
+        }
+
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
@@ -127,6 +144,7 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         processNotification(sbn)
         emitNotifications()
+        Log.d("USUK", "NotificationListener.onNotificationPosted:  ${sbn.key}")
     }
 
     private fun emitNotifications() {
