@@ -31,10 +31,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
-import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.AutoTurnOnAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 
@@ -55,7 +57,10 @@ abstract class FrameworkModule {
     abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider
 
     @Binds
-    abstract fun bindScheduleManager(impl: AlarmSchedulerImpl): AlarmScheduler
+    abstract fun bindScheduleManager(impl: ReportNotificationAlarmSchedulerImpl): ReportNotificationAlarmScheduler
+
+    @Binds
+    abstract fun bindAutoTurnOnAlarmScheduler(impl: AutoTurnOnAlarmSchedulerImpl): AutoTurnOnAlarmScheduler
 
 
 }

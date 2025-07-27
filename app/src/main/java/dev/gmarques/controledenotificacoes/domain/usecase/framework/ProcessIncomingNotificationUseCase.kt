@@ -31,7 +31,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Allow
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Cancel
@@ -72,7 +72,7 @@ import javax.inject.Inject
 class ProcessIncomingNotificationUseCase @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val updateManagedAppUseCase: UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     private val incomingNotificationProcessor: IncomingNotificationProcessor,
@@ -202,7 +202,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
      */
     private fun scheduleReportNotification(rule: Rule, targetNotification: ActiveStatusBarNotification) {
         val nextUnlockTime = rule.nextAppUnlockPeriodFromNow()
-        alarmScheduler.scheduleAlarm(targetNotification.packageName, nextUnlockTime)
+        reportNotificationAlarmScheduler.scheduleAlarm(targetNotification.packageName, nextUnlockTime)
     }
 
     sealed class ProcessingResult {

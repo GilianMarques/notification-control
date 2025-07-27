@@ -30,7 +30,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
@@ -42,7 +42,7 @@ import dev.gmarques.controledenotificacoes.framework.report_notification.ReportN
 @EntryPoint
 interface FrameworkEntryPoint {
     fun reportNotificationManager(): ReportNotificationManager
-    fun scheduleManager(): AlarmSchedulerImpl
+    fun scheduleManager(): ReportNotificationAlarmSchedulerImpl
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase
     fun echo(): EchoImpl

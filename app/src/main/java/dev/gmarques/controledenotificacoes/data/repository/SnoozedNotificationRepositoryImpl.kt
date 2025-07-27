@@ -49,8 +49,8 @@ class SnoozedNotificationRepositoryImpl @Inject constructor(
         dao.delete(key)
     }
 
-    override suspend fun getByPkg(pkg: String): SnoozedNotification? {
-        return dao.getByPkg(pkg)?.let { SnoozedNotificationMapper.toModel(it) }
+    override suspend fun getByKey(key: String): SnoozedNotification? {
+        return dao.getByKey(key)?.let { SnoozedNotificationMapper.toModel(it) }
     }
 
     override suspend fun getAll(): List<SnoozedNotification> {

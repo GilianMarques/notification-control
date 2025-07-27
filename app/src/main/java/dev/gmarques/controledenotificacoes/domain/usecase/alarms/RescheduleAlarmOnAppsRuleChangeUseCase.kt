@@ -25,7 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import kotlinx.coroutines.Dispatchers.IO
@@ -37,7 +37,7 @@ import javax.inject.Inject
  * Em segunda-feira, 19 de maio de 2025 as 15:13.
  */
 class RescheduleAlarmOnAppsRuleChangeUseCase @Inject constructor(
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val scheduleAlarmForAppUseCase: ScheduleAlarmForAppUseCase,
 ) {
 
@@ -50,7 +50,7 @@ class RescheduleAlarmOnAppsRuleChangeUseCase @Inject constructor(
      */
     suspend operator fun invoke(app: ManagedApp, rule: Rule) = withContext(IO) {
 
-        if (alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)) scheduleAlarmForAppUseCase(app, rule)
+        if (reportNotificationAlarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)) scheduleAlarmForAppUseCase(app, rule)
 
     }
 

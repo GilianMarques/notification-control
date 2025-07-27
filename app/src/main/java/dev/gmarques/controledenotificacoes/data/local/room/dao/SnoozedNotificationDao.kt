@@ -44,8 +44,8 @@ interface SnoozedNotificationDao {
     @Query("DELETE FROM snoozed_notifications WHERE `key` = :key")
     suspend fun delete(key: String)
 
-    @Query("SELECT * FROM snoozed_notifications WHERE packageName = :pkg")
-    suspend fun getByPkg(pkg: String): SnoozedNotificationEntity?
+    @Query("SELECT * FROM snoozed_notifications WHERE `key` = :key")
+    suspend fun getByKey(key: String): SnoozedNotificationEntity?
 
     @Query("SELECT * FROM snoozed_notifications")
     suspend fun getAll(): List<SnoozedNotificationEntity>

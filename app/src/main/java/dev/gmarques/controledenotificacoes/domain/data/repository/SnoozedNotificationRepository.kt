@@ -37,7 +37,7 @@ interface SnoozedNotificationRepository {
     suspend fun deleteAll(packageName: String)
 
     suspend fun delete(key: String)
-    suspend fun getByPkg(pkg: String): SnoozedNotification?
+    suspend fun getByKey(key: String): SnoozedNotification?
     suspend fun getAll(): List<SnoozedNotification>
     fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>>
 }

@@ -38,8 +38,9 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDesc
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.framework.implementations.AlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
@@ -72,7 +73,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
     }
 
-    override fun scheduleManager(): AlarmSchedulerImpl {
+    override fun scheduleManager(): ReportNotificationAlarmSchedulerImpl {
         return entryPoint<FrameworkEntryPoint>().scheduleManager()
     }
 
@@ -126,6 +127,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun processIncomingNotificationUseCase(): ProcessIncomingNotificationUseCase {
         return entryPoint<UseCasesEntryPoint>().processIncomingNotificationUseCase()
+    }
+
+    override fun getGetSnoozedNotificationByKeyUseCase(): GetSnoozedNotificationByKeyUseCase {
+        return entryPoint<UseCasesEntryPoint>().getGetSnoozedNotificationByKeyUseCase()
     }
 
 }

@@ -25,7 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -38,7 +38,7 @@ import javax.inject.Inject
  *
  */
 class CancelAlarmForAppUseCase @Inject constructor(
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
 ) {
     /**
      * Cancela o alarme associado ao ID do pacote fornecido.
@@ -46,7 +46,7 @@ class CancelAlarmForAppUseCase @Inject constructor(
      * @param packageName O ID do pacote do aplicativo para o qual o alarme deve ser cancelado.
      */
     suspend operator fun invoke(packageName: String) = withContext(IO) {
-        alarmScheduler.cancelAlarm(packageName)
+        reportNotificationAlarmScheduler.cancelAlarm(packageName)
     }
 
 }

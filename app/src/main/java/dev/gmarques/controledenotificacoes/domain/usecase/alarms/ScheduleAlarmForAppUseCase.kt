@@ -26,7 +26,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import android.util.Log
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
@@ -40,7 +40,7 @@ import javax.inject.Inject
  * Criada pra fazer valer o DRY na hora de reagendar os alarmes
  */
 class ScheduleAlarmForAppUseCase @Inject constructor(
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
 ) {
 
     /**
@@ -59,7 +59,7 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
 
         if (scheduleTimeMillis == NextRuleUnlockTimeUseCase.INFINITE) return
 
-        alarmScheduler.scheduleAlarm(app.packageName, scheduleTimeMillis)
+        reportNotificationAlarmScheduler.scheduleAlarm(app.packageName, scheduleTimeMillis)
 
 
     }

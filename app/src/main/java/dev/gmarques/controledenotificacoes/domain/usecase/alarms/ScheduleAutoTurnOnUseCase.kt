@@ -25,7 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
 import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.at
 import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.withSecondsAndMillisSetToZero
@@ -39,7 +39,7 @@ import javax.inject.Inject
  * Agenda alarmes que abrirao o [AutoTurnOnReceiver] que é responsavel por iniciar o serviço que mantem o listener de
  * notificações ativo. Isso garante que se o app fechar por algum motivo, será reaberto e o serviço seguirá rodando.
  */
-class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: AlarmScheduler) {
+class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: AutoTurnOnAlarmScheduler) {
 
     operator fun invoke() {
 

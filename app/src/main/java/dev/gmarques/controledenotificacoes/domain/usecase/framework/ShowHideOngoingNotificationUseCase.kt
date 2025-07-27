@@ -30,7 +30,7 @@ class ShowHideOngoingNotificationUseCase @Inject constructor(
 
         NotificationListener.getWhenReady {
             if (show) it.postSnoozedNotification(notification)
-            else it.snoozeNot(notification, System.currentTimeMillis() + SnoozedNotification.defaultSnoozePeriod)
+            else it.snoozeNotification(notification, System.currentTimeMillis() + SnoozedNotification.defaultSnoozePeriod)
         }
 
     }

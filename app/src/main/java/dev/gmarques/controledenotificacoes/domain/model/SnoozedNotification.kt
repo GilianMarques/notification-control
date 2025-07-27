@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.model
 
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Companion.defaultSnoozePeriod
 import java.io.Serializable
 
 /**
@@ -46,6 +47,9 @@ data class SnoozedNotification(
 ) : Serializable {
 
     companion object {
+        /**Intervalo padrao ao qual uma notificação oculta pelo usuario deve ficar adiada no sistema.
+         * Use [System.currentTimeMillis] + [defaultSnoozePeriod]
+         */
         const val defaultSnoozePeriod = 24 * 60 * 60 * 1000L
     }
 }

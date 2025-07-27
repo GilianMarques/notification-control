@@ -53,20 +53,20 @@ class ManageNotificationsViewModel @Inject constructor(
 
     fun loadActiveNotifications() = viewModelScope.launch {
         NotificationListener.getWhenReady { notificationService ->
-            observeNotifications(notificationService.getActiveNotsFlow())
+            observeNotifications(notificationService.getActiveNotificationsFlow())
         }
     }
 
 
     fun loadSnoozedNotifications() = viewModelScope.launch {
         NotificationListener.getWhenReady { notificationService ->
-            observeNotifications(notificationService.getSnoozedNotsFlow())
+            observeNotifications(notificationService.getSnoozedNotificationsFlow())
         }
     }
 
     fun loadOngoingNotifications() = viewModelScope.launch {
         NotificationListener.getWhenReady { notificationService ->
-            observeNotifications(notificationService.getOngoingNotsFlow())
+            observeNotifications(notificationService.getOngoingNotificationsFlow())
         }
     }
 
@@ -91,7 +91,8 @@ class ManageNotificationsViewModel @Inject constructor(
     }
 
     fun snoozeNotification(notification: ActiveStatusBarNotification) {
-        NotificationListener.get()?.snoozeNot(notification, System.currentTimeMillis() + 10000)
+        NotificationListener.get()?.snoozeNotification(notification, System.currentTimeMillis() + 10000)
+        // TODO: usar SnoozeNotificationUseCase
     }
 
     fun hideNotification(notification: ActiveStatusBarNotification) = viewModelScope.launch {

@@ -30,11 +30,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 
 /**
  * É executado mediante agendamento no sistema para  emitir notificações ao usuario.
- * Usa [ReportNotificationManager] para exibir a notificação de relatório e [AlarmScheduler]
+ * Usa [ReportNotificationManager] para exibir a notificação de relatório e [ReportNotificationAlarmScheduler]
  * para limpar os dados de agendamento após a emissao das notificações.
  */
 class AlarmReceiver : BroadcastReceiver() {

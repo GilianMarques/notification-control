@@ -1,28 +1,3 @@
-/*
- * MIT License
- *
- * Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.app.AlarmManager
@@ -34,10 +9,9 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
-import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import javax.inject.Inject
 
@@ -47,9 +21,9 @@ import javax.inject.Inject
  *
  * Gerencia o agendamento e cancelamento de alarmes no sistema usados para emitir notificações
  */
-class AlarmSchedulerImpl @Inject constructor(
+class ReportNotificationAlarmSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : AlarmScheduler {
+) : ReportNotificationAlarmScheduler {
 
     private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
@@ -67,20 +41,13 @@ class AlarmSchedulerImpl @Inject constructor(
 
         if (millis == NextRuleUnlockTimeUseCase.INFINITE) return
 
-        //  Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
+        //  Log.d("USUK", "ReportNotificationAlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
 
         val pIntent = createPendingIntent(packageName)
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
 
         saveScheduleData(packageName)
-    }
-
-    /**
-     * Agenda o alarme responsavel por ligar o serviço de escuta de notificações de tempos em tempos
-     */
-    override fun scheduleAutoTurnOnAlarm(millis: Long) {
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, createAutoTurnOnPendingIntent())
     }
 
     /**
@@ -133,21 +100,6 @@ class AlarmSchedulerImpl @Inject constructor(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(AlarmReceiver.PACKAGE_ID, packageName)
         }
-
-        return PendingIntent.getBroadcast(
-            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
-
-    /**
-     * Cria um [PendingIntent] para ser usado com o [AlarmManager] para ligar o serviço de escuta
-     * de notificações.
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AutoTurnOnReceiver].
-     *
-     * @return Um [PendingIntent] configurado para enviar um broadcast.
-     */
-    private fun createAutoTurnOnPendingIntent(): PendingIntent {
-        val intent = Intent(context, AutoTurnOnReceiver::class.java)
 
         return PendingIntent.getBroadcast(
             context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -219,5 +171,4 @@ class AlarmSchedulerImpl @Inject constructor(
             return if (json.isEmpty()) mutableListOf() else adapter.fromJson(json)!!
         }
     }
-
 }

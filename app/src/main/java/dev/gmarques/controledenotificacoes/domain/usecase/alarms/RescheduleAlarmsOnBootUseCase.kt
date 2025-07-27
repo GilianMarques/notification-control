@@ -26,7 +26,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import android.util.Log
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
@@ -43,7 +43,7 @@ import javax.inject.Inject
  */
 
 class RescheduleAlarmsOnBootUseCase @Inject constructor(
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val scheduleAlarmForAppUseCase: ScheduleAlarmForAppUseCase,
@@ -57,7 +57,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
      */
     suspend operator fun invoke() = withContext(IO) {
 
-        val activeSchedules = alarmScheduler.getAllSchedules()
+        val activeSchedules = reportNotificationAlarmScheduler.getAllSchedules()
 
         activeSchedules.map { pkg ->
             Log.d("USUK", "RescheduleAlarmsOnBootUseCase.invoke: rescheduling $pkg")

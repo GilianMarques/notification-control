@@ -28,6 +28,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
 import javax.inject.Inject
 
-class GetSnoozedNotificationByPkgUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
-    suspend operator fun invoke(pkg: String) = repository.getByPkg(pkg)
+class GetSnoozedNotificationByKeyUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
+    suspend operator fun invoke(key: String) = repository.getByKey(key)
 }

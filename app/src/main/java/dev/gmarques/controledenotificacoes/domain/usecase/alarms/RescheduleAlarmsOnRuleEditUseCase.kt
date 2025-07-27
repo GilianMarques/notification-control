@@ -25,7 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.AlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
@@ -40,7 +40,7 @@ import javax.inject.Inject
  * Em segunda-feira, 19 de maio de 2025 as 13:14.
  */
 class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
-    private val alarmScheduler: AlarmScheduler,
+    private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val getManagedAppsByRuleIdUseCase: GetManagedAppsByRuleIdUseCase,
     private val scheduleAlarmForAppUseCase: ScheduleAlarmForAppUseCase,
 ) {
@@ -66,10 +66,10 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
         app: ManagedApp,
         rule: Rule,
     ) {
-        val isThereAnyActiveAlarm = alarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)
+        val isThereAnyActiveAlarm = reportNotificationAlarmScheduler.isThereAnyAlarmSetForPackage(app.packageName)
 
         if (isThereAnyActiveAlarm) {
-            alarmScheduler.cancelAlarm(app.packageName)
+            reportNotificationAlarmScheduler.cancelAlarm(app.packageName)
             scheduleAlarmForAppUseCase(app, rule)
         }
     }

@@ -36,12 +36,14 @@ import dev.gmarques.controledenotificacoes.data.repository.InstalledInstalledApp
 import dev.gmarques.controledenotificacoes.data.repository.ManagedAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.PreferencesRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
+import dev.gmarques.controledenotificacoes.data.repository.SnoozedNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.UserRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.PreferencesRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
 import javax.inject.Singleton
 
@@ -77,4 +79,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAppNotificationRepository(impl: AppNotificationRepositoryImpl): AppNotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSnoozedNotificationRepository(impl: SnoozedNotificationRepositoryImpl): SnoozedNotificationRepository
 }
