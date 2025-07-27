@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.domain.data.repository
 
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Criado por Gilian Marques
@@ -37,8 +38,11 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
  * Deve ser implementada e exposta via função estatica  pelo listener de notificações [NotificationListener]
  */
 interface SystemNotificationRepository {
+    fun getActiveNotsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getActiveNots(): List<ActiveStatusBarNotification>
+    fun getOngoingNotsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getOngoingNots(): List<ActiveStatusBarNotification>
+    fun getSnoozedNotsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getSnoozedNots(): List<ActiveStatusBarNotification>
     fun processActiveNotifications()
 

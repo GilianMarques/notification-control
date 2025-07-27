@@ -64,7 +64,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
         observeViewModel()
-        viewModel.loadNotifications()
+        viewModel.loadActiveNotifications()
     }
 
     private fun setupRecyclerView() {

@@ -50,6 +50,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 
@@ -68,24 +70,46 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
 
     private var debugTests: DebugTests? = null
 
+    private val activeNotificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
+    private val snoozedNotificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
+    private val ongoingNotificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
+
+
     companion object {
+        /**
+         * Instância do serviço NotificationListener.
+         * É um MutableStateFlow para que os observadores possam ser notificados quando a instância do serviço estiver pronta.
+         */
+        private val serviceInstance: MutableStateFlow<SystemNotificationRepository?> = MutableStateFlow(null)
 
-        private var instance: NotificationListener? = null
-
-        fun instance(): SystemNotificationRepository? {
-            return if (instance != null) instance as SystemNotificationRepository else null
+        /**
+         * Obtém a instância do serviço NotificationListener.
+         * Retorna a instância atual do serviço se estiver disponível, caso contrário, retorna null.
+         *
+         * @return A instância do SystemNotificationRepository ou null se não estiver disponível.
+         */
+        fun get(): SystemNotificationRepository? {
+            return if (serviceInstance.value != null) serviceInstance.value else null
         }
-    }
 
+        /**
+         * Obtém um Flow que emite a instância do serviço NotificationListener quando estiver pronta.
+         * Isso permite que os componentes observem e reajam quando o serviço estiver conectado e disponível.
+         *
+         * @return Um Flow que emite a instância do SystemNotificationRepository ou null.
+         */
+        fun getWhenReady(): Flow<SystemNotificationRepository?> = serviceInstance
+    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        instance = this@NotificationListener
+        serviceInstance.tryEmit(this@NotificationListener)
         if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
+        emitNotifications()
     }
 
     /**
@@ -102,6 +126,13 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         processNotification(sbn)
+        emitNotifications()
+    }
+
+    private fun emitNotifications() {
+        activeNotificationsFlow.value = getActiveNots()
+        snoozedNotificationsFlow.value = getSnoozedNots()
+        ongoingNotificationsFlow.value = getOngoingNots()
     }
 
     /**
@@ -158,12 +189,13 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
      */
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
         debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
+        emitNotifications()
         super.onNotificationRemoved(sbn, rankingMap)
     }
 
     override fun onListenerDisconnected() {
         cancel()
-        instance = null
+        serviceInstance.tryEmit(null)
         super.onListenerDisconnected()
     }
 
@@ -173,6 +205,10 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
             baseContext.contentResolver, "enabled_notification_listeners"
         )
         return (enabledListeners?.contains(cn.flattenToString()) == true)
+    }
+
+    override fun getActiveNotsFlow(): Flow<List<ActiveStatusBarNotification>> {
+        return activeNotificationsFlow as Flow<List<ActiveStatusBarNotification>>
     }
 
     override fun getActiveNots(): List<ActiveStatusBarNotification> {
@@ -186,6 +222,10 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
         } ?: emptyList()
     }
 
+    override fun getOngoingNotsFlow(): Flow<List<ActiveStatusBarNotification>> {
+        return ongoingNotificationsFlow as Flow<List<ActiveStatusBarNotification>>
+    }
+
     override fun getOngoingNots(): List<ActiveStatusBarNotification> {
 
         if (!isListenerConnected()) return emptyList()
@@ -195,6 +235,10 @@ class NotificationListener : NotificationListenerService(), SystemNotificationRe
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
         } ?: emptyList()
+    }
+
+    override fun getSnoozedNotsFlow(): Flow<List<ActiveStatusBarNotification>> {
+        return snoozedNotificationsFlow as Flow<List<ActiveStatusBarNotification>>
     }
 
     override fun getSnoozedNots(): List<ActiveStatusBarNotification> {

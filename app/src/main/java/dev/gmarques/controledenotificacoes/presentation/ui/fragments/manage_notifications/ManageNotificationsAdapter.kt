@@ -28,6 +28,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_not
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -65,16 +66,23 @@ class ManageNotificationsAdapter(
 
             tvTitle.text = notification.title
 
-            tvContent.isVisible = !notification.content.isEmpty()
-
-            if (tvContent.canUseReadMoreFeature(notification.content)) {
-                tvContent.readMoreFeature(notification.content) { fullText -> ivLargeIcon.isVisible = fullText }
-            } else tvContent.text = notification.content
 
             ivAppIcon.setImageIcon(notification.smallIcon)
 
             ivLargeIcon.setImageIcon(notification.largeIcon)
             ivLargeIcon.isVisible = notification.largeIcon != null
+
+
+            tvContent.isVisible = !notification.content.isEmpty()
+
+            if (tvContent.canUseReadMoreFeature(notification.content)) {
+                ivLargeIcon.isGone = true
+
+                tvContent.readMoreFeature(notification.content) { fullText ->
+                    ivLargeIcon.isVisible = fullText && notification.largeIcon != null
+                }
+            } else tvContent.text = notification.content
+
 
             chipManage.setOnClickListener(AnimatedClickListener {
                 callback.onManageClicked(notification)

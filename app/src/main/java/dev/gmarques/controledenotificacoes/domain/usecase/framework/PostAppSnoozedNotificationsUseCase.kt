@@ -42,7 +42,7 @@ import javax.inject.Inject
 class PostAppSnoozedNotificationsUseCase @Inject constructor() {
 
     operator fun invoke(app: ManagedApp) {
-        val notificationListener = NotificationListener.instance()
+        val notificationListener = NotificationListener.get()
 
         notificationListener?.getSnoozedNots()
             ?.filter { it.packageName == app.packageName }
