@@ -1,6 +1,6 @@
 ## Controle de notificações
 
-Esse app permite que você controle quando outros aplicativos podem emitir notificações com base em regras que consideram dias e horários, além de condições como se a notificação contém ou não determinada palavra-chave.
+Esse app permite que você controle quando outros aplicativos podem emitir notificações com base em regras que consideram dias e horários e condições, além de permitir adiar para uma data específica ou ocultar notificações, mesmo as persistentes.
 
 ## Problema:
 
