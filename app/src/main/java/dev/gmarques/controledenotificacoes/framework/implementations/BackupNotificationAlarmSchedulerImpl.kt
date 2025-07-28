@@ -34,72 +34,78 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
-import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationAlarmReceiver
+import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationAlarmReceiver
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em sexta-feira, 16 de maio de 2025 as 11:07.
+ * Em 28/07/2025 as 12:19
  *
- * Veja [ReportNotificationAlarmScheduler] para mais detalhes.
+ * Veja [BackupNotificationAlarmScheduler] para mais detalhes.
  */
-class ReportNotificationAlarmSchedulerImpl @Inject constructor(
+class BackupNotificationAlarmSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ReportNotificationAlarmScheduler {
+) : BackupNotificationAlarmScheduler {
 
     private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
     /**
-     * Agenda um alarme para um pacote específico em um determinado horário.
-     * Se um agendamento ja existir, será cancelado e um novo será criado,
-     * garantindo que apenas um alarme seja agendado para cada pacote.
-     *
-     * @param packageName O ID do pacote para o qual o alarme será agendado.
-     * @param millis O horário em milissegundos em que o alarme deve disparar.
+     * A notificação de backup será exibida nesse no horário marcado para a notificação adiada ser exibida pelo sistema + o
+     * valor definido nessa variável. Isso serve pra dar tempo do sistema emitir a notificação e o app detectar e cancelar o agendamento
+     * da notificação de backup.
      */
-    override fun scheduleAlarm(packageName: String, millis: Long) {
+    private val defaultBackupNotificationDelay = 60_000L
 
-        cancelAlarm(packageName) // avoid multiple schedules for the same package
+    /**
+     * Agenda um alarme para uma notificação específica em um determinado horário.
+     * Se um agendamento ja existir, será cancelado e um novo será criado,
+     * garantindo que apenas um alarme seja agendado para cada notificação.
+     *
+     * @param key A chave unica da notificação  para o qual o alarme será agendado.
+     * @param snoozedUntil O horário em milissegundos em que a notificação foi adiada, esta função adicionará um delay a esse horario.
+     *
+     */
+    override fun scheduleAlarm(key: String, snoozedUntil: Long) {
 
-        if (millis == NextRuleUnlockTimeUseCase.INFINITE) return
+        if (LocalDateTime.now().isBefore(LocalDateTime(snoozedUntil))) error("Alarm cannot be scheduled in the past")
 
-        //  Log.d("USUK", "ReportNotificationAlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
+        cancelAlarm(key) // avoid multiple schedules for the same notification
 
-        val pIntent = createPendingIntent(packageName)
+        val pIntent = createPendingIntent(key)
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, snoozedUntil + defaultBackupNotificationDelay, pIntent)
 
-        saveScheduleData(packageName)
+        saveScheduleData(key)
     }
 
     /**
      * Cancela um alarme agendado para um pacote específico.
      *
-     * @param packageName O ID do pacote para o qual o alarme será cancelado.
+     * @param key A ID da notificação para o qual o alarme será cancelado.
      */
-    override fun cancelAlarm(packageName: String) {
+    override fun cancelAlarm(key: String) {
 
-        val pIntent = createPendingIntent(packageName)
+        val pIntent = createPendingIntent(key)
 
         alarmManager.cancel(pIntent)
 
-        deleteScheduleData(packageName)
+        deleteScheduleData(key)
     }
 
     /**
      * Verifica se existe algum alarme agendado para um pacote específico.
      * Lê a preferência que armazena a lista de pacotes com alarmes agendados e verifica se o `packageName` está presente.
      *
-     * @param packageName O ID do pacote a ser verificado.
+     * @param key A ID da notificação a ser verificado.
      * @return `true` se houver um alarme agendado para o pacote, `false` caso contrário.
      */
-    override fun isThereAnyAlarmSetForPackage(packageName: String): Boolean {
+    override fun isThereAnyAlarmSetForKey(key: String): Boolean {
 
-        val json = PreferencesImpl.scheduledReportNotificationAlarms.value
-        return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageName)
+        val json = PreferencesImpl.scheduledSnoozedNotificationAlarms.value
+        return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(key)
     }
 
     /**
@@ -110,20 +116,20 @@ class ReportNotificationAlarmSchedulerImpl @Inject constructor(
      * estiver agendado ou se a preferência não existir.
      */
     override fun getAllSchedules(): List<String> {
-        val json = PreferencesImpl.scheduledReportNotificationAlarms.value
+        val json = PreferencesImpl.scheduledSnoozedNotificationAlarms.value
         return MoshiListConverter.fromJson(json) ?: mutableListOf()
     }
 
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager].
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [ReportNotificationAlarmReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [BackupNotificationAlarmReceiver].
      *
-     * @param packageName O ID do pacote a ser incluído como extra no [Intent] do [PendingIntent].
+     * @param key A ID da notificação a ser incluído como extra no [Intent] do [PendingIntent].
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */
-    private fun createPendingIntent(packageName: String): PendingIntent {
-        val intent = Intent(context, ReportNotificationAlarmReceiver::class.java).apply {
-            putExtra(ReportNotificationAlarmReceiver.PACKAGE_NAME, packageName)
+    private fun createPendingIntent(key: String): PendingIntent {
+        val intent = Intent(context, BackupNotificationAlarmReceiver::class.java).apply {
+            putExtra(BackupNotificationAlarmReceiver.NOTIFICATION_KEY, key)
         }
 
         return PendingIntent.getBroadcast(
@@ -132,37 +138,37 @@ class ReportNotificationAlarmSchedulerImpl @Inject constructor(
     }
 
     /**
-     * Salva o pacote  indicando que um alarme foi agendado para o aplicativo especificado.
-     * Garante que os pacotes na lista não se repitam.
+     * Salva a chave  indicando que um alarme foi agendado para a notificação especificada.
+     * Garante que as chaves na lista não se repitam.
      * Utiliza o [SavePreferenceUseCase] para persistir essa informação.
      *
-     * @param packageName O ID do pacote para o qual o dado de agendamento será salvo.
+     * @param key A ID da notificação para o qual o dado de agendamento será salvo.
      */
-    private fun saveScheduleData(packageName: String) {
+    private fun saveScheduleData(key: String) {
 
-        val json = PreferencesImpl.scheduledReportNotificationAlarms.value
+        val json = PreferencesImpl.scheduledSnoozedNotificationAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
-            .apply { if (!this.contains(packageName)) add(packageName) }
+            .apply { if (!this.contains(key)) add(key) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        PreferencesImpl.scheduledReportNotificationAlarms.set(updateJson)
+        PreferencesImpl.scheduledSnoozedNotificationAlarms.set(updateJson)
     }
 
     /**
      * Remove o dado que indica que um alarme foi agendado para o pacote especificado.
      *
-     * @param packageName O ID do pacote para o qual o dado de agendamento será removido.
+     * @param key A ID da notificação para o qual o dado de agendamento será removido.
      */
-    override fun deleteScheduleData(packageName: String) {
+    override fun deleteScheduleData(key: String) {
 
-        val json = PreferencesImpl.scheduledReportNotificationAlarms.value
+        val json = PreferencesImpl.scheduledSnoozedNotificationAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
-            .apply { remove(packageName) }
+            .apply { remove(key) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        PreferencesImpl.scheduledReportNotificationAlarms.set(updateJson)
+        PreferencesImpl.scheduledSnoozedNotificationAlarms.set(updateJson)
 
     }
 

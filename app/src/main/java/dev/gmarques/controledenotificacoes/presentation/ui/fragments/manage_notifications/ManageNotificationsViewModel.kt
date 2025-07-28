@@ -28,7 +28,8 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_not
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.ShowHideOngoingNotificationUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByUserUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import kotlinx.coroutines.Job
@@ -43,7 +44,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ManageNotificationsViewModel @Inject constructor(
-    private val showHideOngoingNotificationUseCase: ShowHideOngoingNotificationUseCase,
+    private val postSnoozedNotificationUseCase: PostSnoozedNotificationUseCase,
+    private val snoozeNotificationByUserUseCase: SnoozeNotificationByUserUseCase,
 ) : ViewModel() {
 
     private val _notificationsFlow: MutableStateFlow<List<ActiveStatusBarNotification>> = MutableStateFlow(emptyList())
@@ -81,21 +83,18 @@ class ManageNotificationsViewModel @Inject constructor(
 
         observerJob = viewModelScope.launch {
             flow.collect { nots ->
-                _notificationsFlow.tryEmit(
-                    nots
-                        .filter { it.content.isNotBlank() || it.title.isNotBlank() }
-                        .distinctBy { it.title to it.content })
+                _notificationsFlow.tryEmit(nots.filter { it.content.isNotBlank() || it.title.isNotBlank() }
+                    .distinctBy { it.title to it.content })
             }
         }
 
     }
 
-    fun snoozeNotification(notification: ActiveStatusBarNotification) {
-        NotificationListener.get()?.snoozeNotification(notification, System.currentTimeMillis() + 10000)
-        // TODO: usar SnoozeNotificationUseCase
+    fun snoozeNotification(notification: ActiveStatusBarNotification) = viewModelScope.launch {
+        snoozeNotificationByUserUseCase(notification, System.currentTimeMillis() + 10000, false)
     }
 
     fun hideNotification(notification: ActiveStatusBarNotification) = viewModelScope.launch {
-        showHideOngoingNotificationUseCase(notification, false)
+        snoozeNotificationByUserUseCase(notification, 0, true)
     }
 }

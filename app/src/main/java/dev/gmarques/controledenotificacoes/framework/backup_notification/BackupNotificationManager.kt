@@ -23,7 +23,7 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.framework.report_notification
+package dev.gmarques.controledenotificacoes.framework.backup_notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -37,30 +37,29 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
-import androidx.core.os.bundleOf
-import androidx.navigation.NavDeepLinkBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.framework.NotificationReceiver
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em sábado, 24 de maio de 2025 as 15:52.
+ * Em 28/07/2025 as 13:30
  *
- * Constrói e exibe notificações de relatório de notificações recebidas durante o bloqueio.
+ *  Constrói e exibe notificações de backup de notificações adiadas que nao foram emitidas pelo sistema.
  */
-class ReportNotificationManager @Inject constructor(
+class BackupNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+    // TODO: terminar de editar
+    private val channelId = "backup_snoozed_notification"
 
-    private val channelId = "notification_report"
-
-    fun showReportNotification(packageName: String) {
+    fun showBackupNotification(notification: SnoozedNotification) {
         createNotificationChannelIfNeeded()
 
-        val id = packageName.hashCode()
-        val notification = buildNotification(packageName, id)
+        val id = notification.packageName.hashCode()
+        val notification = buildNotification(notification, id)
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
         notificationManager.notify(id, notification)
@@ -68,21 +67,24 @@ class ReportNotificationManager @Inject constructor(
 
     private fun createNotificationChannelIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.Relatorio_de_notificacoes)
+            val name = context.getString(R.string.Notifica_es_adiadas_perdidas)
             val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH)
             context.getSystemService(NotificationManager::class.java)
                 .createNotificationChannel(channel)
         }
     }
 
-    private fun buildNotification(packageName: String, notificationId: Int): Notification {
+    private fun buildNotification(notification: SnoozedNotification, id: Int): Notification {
 
-        val appName = getAppNameFromPackage(packageName)
-        val appIcon = getAppIconFromPackage(packageName)
+        val appName = getAppNameFromPackage(notification.packageName)
+        val appIcon = getAppIconFromPackage(notification.packageName)
 
         return NotificationCompat.Builder(context, channelId)
-            .setContentTitle(appName)
-            .setContentText(context.getString(R.string.X_recebeu_notifica_es_durante_o_bloqueio, appName))
+            .setContentTitle(context.getString(R.string.Adiada_).plus(notification.title))
+            .setContentText(
+                notification.content.plus("\n\n")
+                    .plus(context.getString(R.string.Clique_aqui_para_abrir_x, appName))
+            )
             .setLargeIcon(appIcon)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(false)
@@ -90,8 +92,7 @@ class ReportNotificationManager @Inject constructor(
             .setGroup("${System.currentTimeMillis()}")
             .setGroupSummary(false)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .addAction(createOpenTargetAppAction(packageName, notificationId))
-            .setContentIntent(createOpenNotificationHistoryPendingIntent(packageName, notificationId))
+            .setContentIntent(createOpenTargetPendingIntent(notification.packageName, id))
             .build()
     }
 
@@ -119,48 +120,18 @@ class ReportNotificationManager @Inject constructor(
         packageName
     }
 
-    private fun createOpenTargetAppAction(packageName: String, notificationId: Int): NotificationCompat.Action {
+    private fun createOpenTargetPendingIntent(packageName: String, notificationId: Int): PendingIntent? {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-            putExtra(NotificationReceiver.EXTRA_TARGET_PACKAGE, packageName)
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            notificationId,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        return NotificationCompat.Action.Builder(
-            R.drawable.ic_launcher_foreground,
-            context.getString(R.string.Abrir_app),
-            pendingIntent
-        ).build()
-    }
-
-    private fun createOpenNotificationHistoryPendingIntent(packageName: String, notificationId: Int): PendingIntent? {
-
-        val targetIntent = NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.viewManagedAppFragment)
-            .setArguments(bundleOf("packageName" to packageName))
-            .createTaskStackBuilder()
-            .intents
-            .first()
-
-        val broadcastIntent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra(NotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-            putExtra(NotificationReceiver.EXTRA_ORIGINAL_INTENT, targetIntent)
+            putExtra(NotificationReceiver.Companion.EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(NotificationReceiver.Companion.EXTRA_TARGET_PACKAGE, packageName)
         }
 
         return PendingIntent.getBroadcast(
             context,
             notificationId,
-            broadcastIntent,
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
     }
 
 

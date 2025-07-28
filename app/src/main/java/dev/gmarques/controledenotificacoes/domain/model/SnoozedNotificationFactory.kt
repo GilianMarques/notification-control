@@ -26,6 +26,7 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
 import dev.gmarques.controledenotificacoes.framework.NotificationParser
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ParsedNotificationData
@@ -58,7 +59,9 @@ object SnoozedNotificationFactory {
             content = parsed.content,
             postTime = parsed.timestamp,
             key = sbn.key,
-            permaHidden = false
+            permaHidden = false,
+            origin = Origin.NOT_SET,
+            snoozeUntil = -1,
         )
     }
 
@@ -71,7 +74,9 @@ object SnoozedNotificationFactory {
             content = act.content,
             postTime = act.postTime,
             key = act.key,
-            permaHidden = false
+            permaHidden = false,
+            origin = Origin.NOT_SET,
+            snoozeUntil = -1,
         )
     }
 }

@@ -36,7 +36,9 @@ interface Preferences {
     /**Se deve incluir apps que ja estao sendo gerenciados na lista de seleçao de apps instalados*/
     val includeManagedApps: PreferenceProperty<Boolean>
 
-    val scheduledAlarms: PreferenceProperty<String>
+    val scheduledReportNotificationAlarms: PreferenceProperty<String>
+
+    val scheduledSnoozedNotificationAlarms: PreferenceProperty<String>
     val lastSelectedRule: PreferenceProperty<String>
 
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>

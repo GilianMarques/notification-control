@@ -26,15 +26,22 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.KeyValidation
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.OriginValidation
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.OriginValidation.NotSetOriginException
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.PackageNameValidation
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.PackageNameValidation.BlankPackageNameException
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.SnoozeUntilValidation
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationValidator.SnoozedNotificationValidatorException.SnoozeUntilValidation.InvalidStampException
 
 
 object SnoozedNotificationValidator {
     fun validate(notification: SnoozedNotification) {
         validatePackageName(notification.packageName).getOrThrow()
         validateKey(notification.key).getOrThrow()
+        validateSnoozeUntil(notification.snoozeUntil, notification.permaHidden).getOrThrow()
+        validateOrigin(notification.origin).getOrThrow()
     }
 
     fun validatePackageName(packageName: String): OperationResult<PackageNameValidation, String> {
@@ -45,6 +52,19 @@ object SnoozedNotificationValidator {
     fun validateKey(key: String): OperationResult<KeyValidation, String> {
         return if (key.isEmpty()) OperationResult.failure(KeyValidation.BlankKeyException())
         else OperationResult.success(key)
+    }
+
+    fun validateOrigin(origin: Origin): OperationResult<OriginValidation, Origin> {
+        return when (origin) {
+            Origin.NOT_SET -> OperationResult.failure(NotSetOriginException(origin))
+            else -> OperationResult.success(origin)
+        }
+    }
+
+    fun validateSnoozeUntil(snoozeUntil: Long, permaHidden: Boolean): OperationResult<SnoozeUntilValidation, Long> {
+        return if (permaHidden || snoozeUntil > System.currentTimeMillis()) {
+            OperationResult.failure(InvalidStampException())
+        } else OperationResult.success(snoozeUntil)
     }
 
     /**
@@ -59,8 +79,17 @@ object SnoozedNotificationValidator {
         }
 
         sealed class KeyValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
-            class BlankKeyException() :
-                KeyValidation("O Key da notificação não pode ficar vazio.")
+            class BlankKeyException() : KeyValidation("O Key da notificação não pode ficar vazio.")
+        }
+
+        sealed class SnoozeUntilValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
+            class InvalidStampException() :
+                SnoozeUntilValidation("A notificação adiada deve ter um valor definido no futuro para para reemissão a menos que seja permaHidden.")
+        }
+
+        sealed class OriginValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
+            class NotSetOriginException(origin: Origin) :
+                OriginValidation("A origem do adiamento nao pode ser $origin. Esse valor serve apenas para evitar passar valores desncessarios durante as inicializaçoes de objeto pelo codigo e nao deve ser salvo no banco de dados.")
         }
     }
 }

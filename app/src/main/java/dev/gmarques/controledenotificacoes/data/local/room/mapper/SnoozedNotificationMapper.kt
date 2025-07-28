@@ -42,7 +42,9 @@ object SnoozedNotificationMapper {
             content = model.content,
             postTime = model.postTime,
             key = model.key,
-            permaHidden = model.permaHidden
+            permaHidden = model.permaHidden,
+            origin = model.origin,
+            snoozeUntil = model.snoozeUntil
         )
     }
 
@@ -53,7 +55,9 @@ object SnoozedNotificationMapper {
             content = entity.content,
             postTime = entity.postTime,
             key = entity.key,
-            permaHidden = entity.permaHidden
+            permaHidden = entity.permaHidden,
+            origin = entity.origin,
+            snoozeUntil = entity.snoozeUntil
         )
     }
 }

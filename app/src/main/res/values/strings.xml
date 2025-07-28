@@ -280,6 +280,9 @@
     <string name="Ocultar">Ocultar</string>
     <string name="Gerenciar">Gerenciar</string>
     <string name="Leia_mais">"Leia mais"</string>
+    <string name="Notifica_es_adiadas_perdidas">Notificações adiadas perdidas</string>
+    <string name="Adiada_">"Adiada: "</string>
+    <string name="Clique_aqui_para_abrir_x">Clique aqui para abrir %1$s</string>
 
 
 </resources>

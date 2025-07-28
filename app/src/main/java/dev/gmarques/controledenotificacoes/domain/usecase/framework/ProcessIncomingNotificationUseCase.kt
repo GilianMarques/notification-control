@@ -31,11 +31,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Allow
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Cancel
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Snooze
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImpl
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
@@ -65,9 +65,6 @@ import javax.inject.Inject
  * ao processo como manter historico, fazer cache de bitmap, agendar alarme, etc...
  *
  * usa [IncomingNotificationProcessorImpl] para o processamento da notificação
- *
- * todo A natureza desse usecase de rodar com  RunBlocking Pode impedir que as notificações sejam bloqueadas a tempo
- * Se esse problema começar a aparecer execute as ações de salvar os dados em uma thread separada ou  depois de retornar
  */
 class ProcessIncomingNotificationUseCase @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,

@@ -37,17 +37,17 @@ import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.Rep
  * Usa [ReportNotificationManager] para exibir a notificação de relatório e [ReportNotificationAlarmScheduler]
  * para limpar os dados de agendamento após a emissao das notificações.
  */
-class AlarmReceiver : BroadcastReceiver() {
+class ReportNotificationAlarmReceiver : BroadcastReceiver() {
 
     companion object {
-        const val PACKAGE_ID = "packageName"
+        const val PACKAGE_NAME = "packageName"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 
-        val pkg = intent.getStringExtra(PACKAGE_ID) ?: return
-        // Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
+        val pkg = intent.getStringExtra(PACKAGE_NAME) ?: return
+        // Log.d("USUK", "ReportNotificationAlarmReceiver.onReceive: alarm received for $pkg")
 
         getReportNotificationManager().showReportNotification(pkg)
 
@@ -67,7 +67,7 @@ class AlarmReceiver : BroadcastReceiver() {
      */
     private fun clearPreferenceForPackage(pkg: String) {
 
-        val scheduleManager = HiltEntryPoints.scheduleManager()
+        val scheduleManager = HiltEntryPoints.reportNotificationScheduleManager()
 
         scheduleManager.deleteScheduleData(pkg)
     }

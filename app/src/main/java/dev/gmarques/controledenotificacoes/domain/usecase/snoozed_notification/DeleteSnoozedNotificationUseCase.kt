@@ -23,30 +23,30 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.domain.usecase.framework
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
+import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import javax.inject.Inject
+
 
 /**
  * Criado por Gilian Marques
- * Em quarta-feira, 23 de julho de 2025 às 13:14.
+ * Em 28/07/2025 as 15:11
  *
- * Responsável por cancelar o adiamento e emitir imediatamente todas as notificações adiadas
- * de aplicativos regidos por uma regra específica.
+ * Caso de uso para excluir o registro uma notificação adiada do banco de dados.
+ * Remove o registro do banco de dados e cancela possiveis agendamentos que possam existir para emissao de notificação backup.
  *
- * Criado originalmente para ser utilizado após a edição de uma regra, uma vez que a reemissão
- * das notificações faz com que elas sejam reprocessadas de acordo com a nova regra.
  */
-
-class PostRuleSnoozedNotificationsUseCase @Inject constructor(
-    private val getManagedAppsByRuleIdUseCase: GetManagedAppsByRuleIdUseCase,
-    private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
+class DeleteSnoozedNotificationUseCase @Inject constructor(
+    private val repository: SnoozedNotificationRepository,
+    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
 ) {
-    suspend operator fun invoke(rule: Rule) {
-        getManagedAppsByRuleIdUseCase(rule.id).onEach { app ->
-            app?.let { postAppSnoozedNotificationsUseCase(app) }
-        }
+
+    suspend operator fun invoke(notification: SnoozedNotification) {
+        repository.delete(notification.key)
+        backupNotificationAlarmScheduler.cancelAlarm(notification.key)
     }
+
 }

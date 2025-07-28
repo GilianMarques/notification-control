@@ -38,15 +38,18 @@ object MIGRATION_1_2 : Migration(1, 2) {
         db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS `snoozed_notifications` (
-                `packageName` TEXT NOT NULL,
                 `key` TEXT NOT NULL,
+                `packageName` TEXT NOT NULL,
                 `title` TEXT NOT NULL,
                 `content` TEXT NOT NULL,
                 `postTime` INTEGER NOT NULL,
                 `permaHidden` INTEGER NOT NULL,
+                `origin` TEXT NOT NULL,
+                `snoozeUntil` INTEGER NOT NULL,
                 PRIMARY KEY(`key`)
             )
             """.trimIndent()
         )
     }
 }
+

@@ -104,9 +104,21 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val scheduledAlarms: PreferenceProperty<String> by lazy {
+    override val scheduledReportNotificationAlarms: PreferenceProperty<String> by lazy {
         PreferenceProperty(
-            key = "scheduled_alarms", defaultValue = "", preferenceReader = reader::invoke, preferenceSaver = saver::invoke
+            key = "scheduled_report_notification_alarms",
+            defaultValue = "",
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
+
+    override val scheduledSnoozedNotificationAlarms: PreferenceProperty<String> by lazy {
+        PreferenceProperty(
+            key = "scheduled_snoozed_notification_alarms",
+            defaultValue = "",
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
         )
     }
 

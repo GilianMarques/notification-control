@@ -26,25 +26,8 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import javax.inject.Inject
 
-
-/**
- * Criado por Gilian Marques
- * Em 27/07/2025 as 14:55
- *
- *UseCase reponsavel por remover o registro de uma notificação que foi ocultada pelo usuario (adiada indeterminadamente)
- *
- * Remove uma [SnoozedNotification] de acordo com sua [SnoozedNotification.key]
- * Esse Usecase NAO lida com bitmaps/pendingIntents em cache
- */
-class DeleteHiddenNotificationUseCase @Inject constructor(
-    private val repository: SnoozedNotificationRepository,
-) {
-
-    suspend operator fun invoke(notification: SnoozedNotification) {
-        repository.delete(notification.key)
-    }
-
+class GetSnoozedNotificationsByPackageNameUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
+    suspend operator fun invoke(packageName: String) = repository.getByPackageName(packageName)
 }

@@ -31,11 +31,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.framework.implementations.AutoTurnOnAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
@@ -51,13 +53,16 @@ import dev.gmarques.controledenotificacoes.framework.implementations.VibratorPro
 abstract class FrameworkModule {
 
     @Binds
-    abstract fun bindVibrator(impl: VibratorProviderImpl): VibratorProvider
+    abstract fun bindVibratorProvider(impl: VibratorProviderImpl): VibratorProvider
 
     @Binds
-    abstract fun bindRuleStringsProvider(impl: StringsProviderImpl): StringsProvider
+    abstract fun bindStringsProvider(impl: StringsProviderImpl): StringsProvider
 
     @Binds
-    abstract fun bindScheduleManager(impl: ReportNotificationAlarmSchedulerImpl): ReportNotificationAlarmScheduler
+    abstract fun bindReportNotificationAlarmScheduler(impl: ReportNotificationAlarmSchedulerImpl): ReportNotificationAlarmScheduler
+
+    @Binds
+    abstract fun bindBackupNotificationAlarmScheduler(impl: BackupNotificationAlarmSchedulerImpl): BackupNotificationAlarmScheduler
 
     @Binds
     abstract fun bindAutoTurnOnAlarmScheduler(impl: AutoTurnOnAlarmSchedulerImpl): AutoTurnOnAlarmScheduler

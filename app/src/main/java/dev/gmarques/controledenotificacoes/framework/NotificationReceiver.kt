@@ -23,7 +23,7 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.framework.report_notification
+package dev.gmarques.controledenotificacoes.framework
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -36,7 +36,7 @@ import android.util.Log
  * Classe que extende `BroadcastReceiver` responsavel por exibir notificações recebidas e tratar
  * as interações do usuário com essas notificações.
  *
- * Quando o ususario clica em uma notificação de relatorio, esta classe é invocada pelo sistema Android.
+ * Quando o usuario clica em uma notificação de relatorio ou de backup, esta classe é invocada pelo sistema Android.
  * Ela extrai os dados relevantes da notificação, como o ID da notificação, o nome do pacote de
  * destino e a intenção original que disparou a notificação.
  *
@@ -47,7 +47,7 @@ import android.util.Log
  * Criado por Gilian Marques
  * Em sábado, 07 de junho de 2025 as 17:43.
  */
-class ReportNotificationReceiver : BroadcastReceiver() {
+class NotificationReceiver : BroadcastReceiver() {
 
     companion object {
         const val EXTRA_NOTIFICATION_ID = "notification_id"

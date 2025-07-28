@@ -23,10 +23,10 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.domain.usecase.framework
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
 import javax.inject.Inject
 
 /**
@@ -34,18 +34,19 @@ import javax.inject.Inject
  * Em quarta-feira, 23 de julho de 2025 às 13:14.
  *
  * Responsável por cancelar o adiamento e emitir imediatamente todas as notificações adiadas
- * de um aplicativo específico.
+ * de aplicativos regidos por uma regra específica.
  *
  * Criado originalmente para ser utilizado após a edição de uma regra, uma vez que a reemissão
  * das notificações faz com que elas sejam reprocessadas de acordo com a nova regra.
  */
-class PostAppSnoozedNotificationsUseCase @Inject constructor() {
 
-    operator fun invoke(app: ManagedApp) {
-        val notificationListener = NotificationListener.get()
-
-        notificationListener?.getSnoozedNotifications()
-            ?.filter { it.packageName == app.packageName }
-            ?.onEach { notificationListener.postSnoozedNotification(it) }
+class PostRuleSnoozedNotificationsUseCase @Inject constructor(
+    private val getManagedAppsByRuleIdUseCase: GetManagedAppsByRuleIdUseCase,
+    private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
+) {
+    suspend operator fun invoke(rule: Rule) {
+        getManagedAppsByRuleIdUseCase(rule.id).onEach { app ->
+            app?.let { postAppSnoozedNotificationsUseCase(app) }
+        }
     }
 }

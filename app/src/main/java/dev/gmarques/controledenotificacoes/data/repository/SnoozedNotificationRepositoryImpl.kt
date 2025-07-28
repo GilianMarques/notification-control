@@ -53,6 +53,10 @@ class SnoozedNotificationRepositoryImpl @Inject constructor(
         return dao.getByKey(key)?.let { SnoozedNotificationMapper.toModel(it) }
     }
 
+    override suspend fun getByPackageName(packageName: String): List<SnoozedNotification> {
+        return dao.getByPackageName(packageName).map { SnoozedNotificationMapper.toModel(it) }
+    }
+
     override suspend fun getAll(): List<SnoozedNotification> {
         return dao.getAll().map { SnoozedNotificationMapper.toModel(it) }
     }

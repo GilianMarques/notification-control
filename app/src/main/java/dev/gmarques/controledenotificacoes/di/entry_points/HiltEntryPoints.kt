@@ -38,10 +38,13 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDesc
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationManager
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -73,8 +76,16 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
     }
 
-    override fun scheduleManager(): ReportNotificationAlarmSchedulerImpl {
-        return entryPoint<FrameworkEntryPoint>().scheduleManager()
+    override fun backupNotificationManager(): BackupNotificationManager {
+        return entryPoint<FrameworkEntryPoint>().backupNotificationManager()
+    }
+
+    override fun reportNotificationScheduleManager(): ReportNotificationAlarmSchedulerImpl {
+        return entryPoint<FrameworkEntryPoint>().reportNotificationScheduleManager()
+    }
+
+    override fun snoozedNotificationScheduleManager(): BackupNotificationAlarmSchedulerImpl {
+        return entryPoint<FrameworkEntryPoint>().snoozedNotificationScheduleManager()
     }
 
     override fun readPreferenceUseCase(): ReadPreferenceUseCase {
@@ -131,6 +142,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun getGetSnoozedNotificationByKeyUseCase(): GetSnoozedNotificationByKeyUseCase {
         return entryPoint<UseCasesEntryPoint>().getGetSnoozedNotificationByKeyUseCase()
+    }
+
+    override fun getDeleteSnoozedNotificationUseCase(): DeleteSnoozedNotificationUseCase {
+        return entryPoint<UseCasesEntryPoint>().getDeleteSnoozedNotificationUseCase()
     }
 
 }

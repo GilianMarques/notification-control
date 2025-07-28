@@ -59,6 +59,9 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     private val echoImpl = HiltEntryPoints.echo()
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
     private val getSnoozedNotificationByKeyUseCase = HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase()
+    private val deleteSnoozedNotificationUseCase = HiltEntryPoints.getDeleteSnoozedNotificationUseCase()
+
+    private val snoozedNotificationScheduleManager = HiltEntryPoints.snoozedNotificationScheduleManager()
 
     private val activeFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
     private val snoozedFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
@@ -133,20 +136,45 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     }
 
-
+    // TODO: transformar em usecase?
     private fun processSnoozedNotification(snoozedNotification: SnoozedNotification, sbn: StatusBarNotification) = runBlocking {
 
-        // TODO: ver se é permahidden, ver sem tem alarme agendado pra ela, remover do db
-// TODO: continuar aqui
         if (snoozedNotification.permaHidden) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) snoozeNotification(
-                ActiveStatusBarNotificationFactory.create(sbn),
-                System.currentTimeMillis() + SnoozedNotification.defaultSnoozePeriod
-            )
+            snoozeNotificationIfSdkCompatible(sbn, System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD)
             return@runBlocking
         }
 
+        if (snoozedNotificationPostedTooEarly(snoozedNotification)) {
+            snoozeNotificationIfSdkCompatible(sbn, snoozedNotification.snoozeUntil)
+            return@runBlocking
+        }
 
+        if (snoozedNotificationScheduleManager.isThereAnyAlarmSetForKey(snoozedNotification.key)) {
+            snoozedNotificationScheduleManager.cancelAlarm(snoozedNotification.key)
+            deleteSnoozedNotificationUseCase(snoozedNotification)
+        }
+
+    }
+
+    /**
+     * Chama a função adiar do sistema se o sdk for compativel.
+     * Criada pra evitar boilerplate.
+     */
+    private fun snoozeNotificationIfSdkCompatible(sbn: StatusBarNotification, until: Long) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) snoozeNotification(
+            ActiveStatusBarNotificationFactory.create(sbn), until
+        )
+    }
+
+    /**
+     * Ajuda a determinar se a notificação adiada foi postada pelo sistema mais cedo do que deveria. Isso garante que a
+     * notificação fique adiada até o horario definido pelo usuário, mesmo que seja repostada pelo app emissor.
+     *
+     * @return true se a notificação foi postada mais cedo do que deveria, senão, false.
+     */
+    private fun snoozedNotificationPostedTooEarly(snoozedNotification: SnoozedNotification): Boolean {
+        val nowWithOffset = LocalDateTime.now().minusMillis(SnoozedNotification.SNOOZE_TIME_OFFSET)
+        return LocalDateTime(snoozedNotification.snoozeUntil).isBefore(nowWithOffset)
     }
 
     /**

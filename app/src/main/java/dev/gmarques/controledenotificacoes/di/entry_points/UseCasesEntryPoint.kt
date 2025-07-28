@@ -37,6 +37,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDesc
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 
@@ -54,4 +55,5 @@ interface UseCasesEntryPoint {
     fun scheduleAutoTurnOnUseCase(): ScheduleAutoTurnOnUseCase
     fun processIncomingNotificationUseCase(): ProcessIncomingNotificationUseCase
     fun getGetSnoozedNotificationByKeyUseCase(): GetSnoozedNotificationByKeyUseCase
+    fun getDeleteSnoozedNotificationUseCase(): DeleteSnoozedNotificationUseCase
 }

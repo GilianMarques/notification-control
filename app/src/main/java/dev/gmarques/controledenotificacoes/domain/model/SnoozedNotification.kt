@@ -25,7 +25,8 @@
 
 package dev.gmarques.controledenotificacoes.domain.model
 
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Companion.defaultSnoozePeriod
+import androidx.annotation.Keep
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Companion.DEFAULT_SNOOZED_PERIOD
 import java.io.Serializable
 
 /**
@@ -44,12 +45,36 @@ data class SnoozedNotification(
     val content: String,
     val postTime: Long,
     val permaHidden: Boolean,
+    val origin: Origin, // TODO: ao validar, se for NOT_SET lançar exceção!
+    val snoozeUntil: Long, // TODO: validar e se valor for negativo ou ants de agora... ja sabe... kkk
 ) : Serializable {
 
     companion object {
         /**Intervalo padrao ao qual uma notificação oculta pelo usuario deve ficar adiada no sistema.
-         * Use [System.currentTimeMillis] + [defaultSnoozePeriod]
+         * Use [System.currentTimeMillis] + [DEFAULT_SNOOZED_PERIOD]
          */
-        const val defaultSnoozePeriod = 24 * 60 * 60 * 1000L
+        const val DEFAULT_SNOOZED_PERIOD = 24 * 60 * 60 * 1_000L
+
+        /**Tolerancia usada pra verificar se uma notificação adiada emitida pelo sistema foi emitida cedo demais.
+         *
+         * Quando uma notificação adiada é emitida pelo sistema, verifica-se o horario em que ela deveria ser emitida e se constatado
+         * que ela foi emitida mais cedo (EX.: o app emissor repetir a notificação) ela é oculta novamente.
+         *
+         *  Nessa verificaçao é considerada essa diferença de tempo pra mais ou menos.
+         */
+        const val SNOOZE_TIME_OFFSET = 60 * 1_000
+    }
+
+
+    /**
+     * Serve pra indicar se a notificação foi adiada por uma ação automatica, derivada da execução de uma regra ou manualmente,
+     * a partir de uma ação do direta do usuário.
+     */
+    @Keep
+    enum class Origin(val value: Int) {
+        /**App lança exceção se tentar salvar isso no DB, serve apenas para evitar passar um valor na inicialização do [SnoozedNotification]*/
+        NOT_SET(-1),
+        USER(0),
+        RULE(1)
     }
 }

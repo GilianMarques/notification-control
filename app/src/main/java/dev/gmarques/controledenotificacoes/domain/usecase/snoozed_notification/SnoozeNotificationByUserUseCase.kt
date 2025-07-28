@@ -23,12 +23,11 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.domain.usecase.framework
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
-import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteHiddenNotificationUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.InsertSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import kotlinx.coroutines.runBlocking
@@ -36,27 +35,43 @@ import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em 27/07/2025 as 14:35
- * Executa todas as etapas necessárias para ocultar ou reexibir uma notificação persistente no sistema
+ * Em 27/07/2025 as 19:59
+ *
+ * Classe responsável por Executar todas as etapas necessárias para adiar ou ocultar uma notificação
+ *
+ * ATENÇÃO: Use apenas para adiamentos gerados diretamente pelo usuario.
+ *
  */
-class ShowHideOngoingNotificationUseCase @Inject constructor(
-    private val deleteHiddenNotificationUseCase: DeleteHiddenNotificationUseCase,
+class SnoozeNotificationByUserUseCase @Inject constructor(
     private val insertSnoozedNotificationUseCase: InsertSnoozedNotificationUseCase,
+    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
 ) {
 
-    suspend operator fun invoke(notification: ActiveStatusBarNotification, show: Boolean) {
+    suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long, permanently: Boolean) =
+        NotificationListener.getWhenReady { notificationManager ->
+            {
 
-        val snoozed = SnoozedNotificationFactory.create(notification).copy(permaHidden = true)
+                val snoozedNotification = SnoozedNotificationFactory.create(notification)
+                    .copy(
+                        permaHidden = permanently,
+                        origin = SnoozedNotification.Origin.USER,
+                        snoozeUntil = until
+                    )
 
-        runBlocking {
-            if (show) deleteHiddenNotificationUseCase(snoozed)
-            else insertSnoozedNotificationUseCase(snoozed)
+                runBlocking {
+                    insertSnoozedNotificationUseCase(snoozedNotification)
+                }
+
+                if (permanently) notificationManager.snoozeNotification(
+                    notification,
+                    System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD
+                )
+                else {
+                    backupNotificationAlarmScheduler.scheduleAlarm(snoozedNotification.key, until)
+                    notificationManager.snoozeNotification(notification, until)
+                }
+
+
+            }
         }
-
-        NotificationListener.getWhenReady {
-            if (show) it.postSnoozedNotification(notification)
-            else it.snoozeNotification(notification, System.currentTimeMillis() + SnoozedNotification.defaultSnoozePeriod)
-        }
-
-    }
 }

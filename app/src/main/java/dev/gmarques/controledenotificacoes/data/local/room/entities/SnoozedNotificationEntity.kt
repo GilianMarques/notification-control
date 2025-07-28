@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.data.local.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
 
 @Entity(tableName = "snoozed_notifications")
 data class SnoozedNotificationEntity(
@@ -37,4 +38,6 @@ data class SnoozedNotificationEntity(
     val content: String,
     val postTime: Long,
     val permaHidden: Boolean,
-)
+    val origin: Origin,
+    val snoozeUntil: Long,
+    )

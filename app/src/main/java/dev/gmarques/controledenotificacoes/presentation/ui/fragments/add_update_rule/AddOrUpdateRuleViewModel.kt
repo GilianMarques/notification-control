@@ -56,7 +56,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeR
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.PostRuleSnoozedNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostRuleSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.NameErrorMessage
