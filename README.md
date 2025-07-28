@@ -56,7 +56,7 @@ Por fim, implementei **descrições de conteúdo** para tornar o aplicativo aces
     
 3.  **Configure o Firebase:**
     
-    -   Crie uma conta no [Firebase](https://firebase.google.com/) (caso não tenha). 
+    -   Crie uma conta no [Firebase](https://firebase.google.com/). 
         
     -   Crie um novo projeto e adicione um app Android.
         
@@ -67,9 +67,8 @@ Por fim, implementei **descrições de conteúdo** para tornar o aplicativo aces
 4.  **Configure o Java:**
     
     O projeto utiliza o `JDK 21`.  
-    Certifique-se de instalá-lo e configurar a variável de ambiente `JAVA_HOME` apontando para o diretório correto do JDK.
-    
-   
+Vá em `Settings > Build, Execution, Deployment > Build Tools > Gradle` e defina `Gradle JDK` para umas das versões  `21.x.x` embarcadas ou instalada na sua máquina. Caso opte por instalar um jdk manualmente, certifique-se de e configurar a variável de ambiente `JAVA_HOME` apontando para o diretório raiz da instalação.
+
 ## Capturas de Tela
 
 <p align="center">
