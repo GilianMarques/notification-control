@@ -52,7 +52,6 @@ import javax.inject.Inject
 class BackupNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    // TODO: terminar de editar
     private val channelId = "backup_snoozed_notification"
 
     fun showBackupNotification(notification: SnoozedNotification) {

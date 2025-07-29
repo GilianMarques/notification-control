@@ -40,11 +40,12 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTi
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationManager
+import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
-import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -146,6 +147,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun getDeleteSnoozedNotificationUseCase(): DeleteSnoozedNotificationUseCase {
         return entryPoint<UseCasesEntryPoint>().getDeleteSnoozedNotificationUseCase()
+    }
+
+    override fun getSnoozeNotificationByRuleUseCase(): SnoozeNotificationByRuleUseCase {
+        return entryPoint<UseCasesEntryPoint>().getSnoozeNotificationByRuleUseCase()
     }
 
 }

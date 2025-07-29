@@ -28,6 +28,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_not
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -35,7 +36,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
@@ -46,7 +47,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMo
  */
 class ManageNotificationsAdapter(
     private val callback: Callback
-) : ListAdapter<ActiveStatusBarNotification, ManageNotificationsAdapter.ViewHolder>(DiffCallback()) {
+) : ListAdapter<ManageableNotification, ManageNotificationsAdapter.ViewHolder>(DiffCallback()) {
 
     private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
 
@@ -62,7 +63,7 @@ class ManageNotificationsAdapter(
 
     inner class ViewHolder(private val binding: ItemAppNotificationManageableBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(notification: ActiveStatusBarNotification) = with(binding) {
+        fun bind(notification: ManageableNotification) = with(binding) {
 
             tvTitle.text = notification.title
 
@@ -83,37 +84,25 @@ class ManageNotificationsAdapter(
                 }
             } else tvContent.text = notification.content
 
-
-            chipManage.setOnClickListener(AnimatedClickListener {
-                callback.onManageClicked(notification)
+            ivMenu.setOnClickListener(AnimatedClickListener {
+                callback.onMenuClicked(notification, ivMenu)
             })
-
-            chipHide.setOnClickListener(AnimatedClickListener {
-                callback.onHideClicked(notification)
-            })
-
-            chipSnooze.setOnClickListener(AnimatedClickListener {
-                callback.onSnoozeClicked(notification)
-            })
-
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<ActiveStatusBarNotification>() {
-        override fun areItemsTheSame(oldItem: ActiveStatusBarNotification, newItem: ActiveStatusBarNotification): Boolean {
+    class DiffCallback : DiffUtil.ItemCallback<ManageableNotification>() {
+        override fun areItemsTheSame(oldItem: ManageableNotification, newItem: ManageableNotification): Boolean {
             return oldItem.postTime == newItem.postTime && oldItem.packageName == newItem.packageName
         }
 
-        override fun areContentsTheSame(oldItem: ActiveStatusBarNotification, newItem: ActiveStatusBarNotification): Boolean {
+        override fun areContentsTheSame(oldItem: ManageableNotification, newItem: ManageableNotification): Boolean {
             return oldItem.title == newItem.title && oldItem.content == newItem.content && oldItem.packageName == newItem.packageName && oldItem.postTime == newItem.postTime
         }
     }
 
 
     interface Callback {
-        fun onManageClicked(notification: ActiveStatusBarNotification)
-        fun onHideClicked(notification: ActiveStatusBarNotification)
-        fun onSnoozeClicked(notification: ActiveStatusBarNotification)
+        fun onMenuClicked(notification: ManageableNotification, ivMenu: AppCompatImageView)
     }
 
 }

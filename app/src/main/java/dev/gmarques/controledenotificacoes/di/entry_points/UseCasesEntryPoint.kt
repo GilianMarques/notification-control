@@ -39,6 +39,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.NextRuleUnlockTi
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 
 @EntryPoint
@@ -56,4 +57,5 @@ interface UseCasesEntryPoint {
     fun processIncomingNotificationUseCase(): ProcessIncomingNotificationUseCase
     fun getGetSnoozedNotificationByKeyUseCase(): GetSnoozedNotificationByKeyUseCase
     fun getDeleteSnoozedNotificationUseCase(): DeleteSnoozedNotificationUseCase
+    fun getSnoozeNotificationByRuleUseCase(): SnoozeNotificationByRuleUseCase
 }

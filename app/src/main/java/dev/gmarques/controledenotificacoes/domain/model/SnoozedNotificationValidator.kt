@@ -63,8 +63,9 @@ object SnoozedNotificationValidator {
 
     fun validateSnoozeUntil(snoozeUntil: Long, permaHidden: Boolean): OperationResult<SnoozeUntilValidation, Long> {
         return if (permaHidden || snoozeUntil > System.currentTimeMillis()) {
-            OperationResult.failure(InvalidStampException())
-        } else OperationResult.success(snoozeUntil)
+            OperationResult.success(snoozeUntil)
+        } else OperationResult.failure(InvalidStampException(snoozeUntil, permaHidden))
+
     }
 
     /**
@@ -83,8 +84,8 @@ object SnoozedNotificationValidator {
         }
 
         sealed class SnoozeUntilValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
-            class InvalidStampException() :
-                SnoozeUntilValidation("A notificação adiada deve ter um valor definido no futuro para para reemissão a menos que seja permaHidden.")
+            class InvalidStampException(snoozeUntil: Long, permaHidden: Boolean) :
+                SnoozeUntilValidation("A notificação adiada deve ter um valor definido no futuro para para reemissão a menos que seja permaHidden. snoozeUntil: $snoozeUntil permaHidden: $permaHidden")
         }
 
         sealed class OriginValidation(msg: String) : SnoozedNotificationValidatorException(msg) {

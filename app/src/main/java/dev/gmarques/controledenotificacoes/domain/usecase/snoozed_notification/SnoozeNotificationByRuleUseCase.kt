@@ -26,26 +26,39 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em 27/07/2025 as 14:35
+ * Em 29/07/2025 as 11:17
  *
- * Executa todas as etapas necessárias para reexibir uma notificação adiada no sistema
+ * Adia uma notificação ativa com base em uma regra.
+ * Isso envolve criar um registro de notificação adiada, agendar um alarme de backup e, em seguida, adiar a notificação no sistema.
  *
- * Criada originalmente  para reexibir (desocultar) uma notificação persistente ocultada pelo usuario. Tambem funciona com
- * notificações normais.
+ * ATENÇÃO: Use apenas para adiamentos gerados pela execução de regras.
+ *
  */
-class PostSnoozedNotificationUseCase @Inject constructor(
-    private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
-    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler
+class SnoozeNotificationByRuleUseCase @Inject constructor(
+    private val insertSnoozedNotificationUseCase: InsertSnoozedNotificationUseCase,
+    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
 ) {
 
-    suspend operator fun invoke(key: String) {
-        deleteSnoozedNotificationUseCase(key)
-        backupNotificationAlarmScheduler.cancelAlarm(key)
-        NotificationListener.getWhenReady().postSnoozedNotification(key)
+    suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long) {
+
+        val notificationManager = NotificationListener.getWhenReady()
+        val snoozedNotification = SnoozedNotificationFactory.create(notification)
+            .copy(
+                permaHidden = false,
+                origin = SnoozedNotification.Origin.RULE,
+                snoozeUntil = until
+            )
+
+        insertSnoozedNotificationUseCase(snoozedNotification)
+        backupNotificationAlarmScheduler.scheduleAlarm(snoozedNotification.key, until)
+        notificationManager.snoozeNotification(notification, until)
     }
 }

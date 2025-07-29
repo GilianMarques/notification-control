@@ -26,8 +26,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import javax.inject.Inject
 
 
@@ -36,17 +34,14 @@ import javax.inject.Inject
  * Em 28/07/2025 as 15:11
  *
  * Caso de uso para excluir o registro uma notificação adiada do banco de dados.
- * Remove o registro do banco de dados e cancela possiveis agendamentos que possam existir para emissao de notificação backup.
  *
  */
 class DeleteSnoozedNotificationUseCase @Inject constructor(
     private val repository: SnoozedNotificationRepository,
-    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
 ) {
 
-    suspend operator fun invoke(notification: SnoozedNotification) {
-        repository.delete(notification.key)
-        backupNotificationAlarmScheduler.cancelAlarm(notification.key)
+    suspend operator fun invoke(key: String) {
+        repository.delete(key)
     }
 
 }

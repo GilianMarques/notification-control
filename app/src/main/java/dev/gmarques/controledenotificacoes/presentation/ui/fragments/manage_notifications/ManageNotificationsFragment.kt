@@ -29,12 +29,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentManageNotificationsBinding
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
@@ -113,17 +115,82 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
     }
 
     /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
-    override fun onManageClicked(notification: ActiveStatusBarNotification) {
-        TODO("Not yet implemented")
+    override fun onMenuClicked(notification: ManageableNotification, ivMenu: AppCompatImageView) {
+        vibrator.interaction()
+        showContextPopUpMenu(notification, ivMenu)
     }
 
-    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
-    override fun onHideClicked(notification: ActiveStatusBarNotification) {
-        viewModel.hideNotification(notification)
+    private fun showContextPopUpMenu(not: ManageableNotification, ivMenu: AppCompatImageView) {
+
+        val popupMenu = popupMenu {
+
+            if (!not.isSnoozed) section {
+                if (not.permaHidden) {
+                    item {
+                        label = getString(R.string.Exibir)
+                        icon = R.drawable.vec_show
+                        callback = {
+                            viewModel.postSnoozedOrHiddenNotification(not)
+                        }
+                    }
+                } else {
+                    item {
+                        label = getString(R.string.Ocultar)
+                        icon = R.drawable.vec_hide
+                        callback = {
+                            viewModel.hideNotification(not)
+                        }
+                    }
+                }
+            }
+
+            if (!not.permaHidden) section {
+                if (not.isSnoozed) {
+                    item {
+                        label = getString(R.string.Postar_agora)
+                        icon = R.drawable.vec_post_now
+                        callback = {
+                            viewModel.postSnoozedOrHiddenNotification(not)
+                        }
+                    }
+                } else {
+                    item {
+                        label = getString(R.string.Adiar)
+                        icon = R.drawable.vec_snooze
+                        callback = {
+                            viewModel.snoozeNotification(not, System.currentTimeMillis() + 10000L) // TODO: coletar data
+                        }
+                    }
+                }
+            }
+
+            section {
+
+                item {
+                    label = getString(R.string.Gerenciar)
+                    icon = R.drawable.vec_rule_restrictive
+                    callback = {
+                        viewModel.manageTargetApp(not)
+                    }
+                }
+            }
+
+            if (not.deadRecord) section {
+
+                item {
+                    label = getString(R.string.Remover_registro)
+                    icon = R.drawable.vec_remove
+                    callback = {
+                        viewModel.removeNotificationFromDB(not)
+                    }
+                }
+            }
+
+
+        }
+
+        popupMenu.show(this@ManageNotificationsFragment.requireContext(), ivMenu)
+
     }
 
-    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
-    override fun onSnoozeClicked(notification: ActiveStatusBarNotification) {
-        viewModel.snoozeNotification(notification)
-    }
 }

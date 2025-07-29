@@ -25,9 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.framework.implementations
 
-import android.os.Build
 import android.service.notification.StatusBarNotification
-import androidx.annotation.RequiresApi
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
@@ -51,7 +49,7 @@ import org.joda.time.LocalDateTime
  * Em domingo, 27 de julho de 2025 as 15:15.
  * Permite obter e gerenciar as notificações disponiveis no sistema
  *
- *  Obtenha uma instancia dessa classe atraves de [NotificationListener.get] ou [NotificationListener.getWhenReady]
+ *  Obtenha uma instancia dessa classe atraves de [NotificationListener.getOrNull] ou [NotificationListener.getWhenReady]
  */
 class SystemNotificationManagerImpl(private var listener: NotificationListener, private val debugTests: DebugTests?) :
     SystemNotificationManager {
@@ -60,6 +58,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
     private val getSnoozedNotificationByKeyUseCase = HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase()
     private val deleteSnoozedNotificationUseCase = HiltEntryPoints.getDeleteSnoozedNotificationUseCase()
+    private val snoozeNotificationByRuleUseCase = HiltEntryPoints.getSnoozeNotificationByRuleUseCase()
 
     private val snoozedNotificationScheduleManager = HiltEntryPoints.snoozedNotificationScheduleManager()
 
@@ -92,7 +91,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     override fun getSnoozedNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = snoozedFlow
 
     override fun getSnoozedNotifications(): List<ActiveStatusBarNotification> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !listener.isListenerConnected()) return emptyList()
+        if (!listener.isListenerConnected()) return emptyList()
         return listener.snoozedNotifications?.filter {
             SystemNotificationValidator.isValidToProcess(it)
         }?.map {
@@ -105,15 +104,13 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
         listener.activeNotifications?.forEach { processNotification(it) }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long) {
         val time = LocalDateTime(until).toDate().time - LocalDateTime.now().toDate().time
         listener.snoozeNotification(notification.key, time)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun postSnoozedNotification(notification: ActiveStatusBarNotification) {
-        listener.snoozeNotification(notification.key, 500L)
+    override fun postSnoozedNotification(key: String) {
+        listener.snoozeNotification(key, 500L)
     }
 
     /**
@@ -151,7 +148,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
         if (snoozedNotificationScheduleManager.isThereAnyAlarmSetForKey(snoozedNotification.key)) {
             snoozedNotificationScheduleManager.cancelAlarm(snoozedNotification.key)
-            deleteSnoozedNotificationUseCase(snoozedNotification)
+            deleteSnoozedNotificationUseCase(snoozedNotification.key)
         }
 
     }
@@ -159,9 +156,10 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     /**
      * Chama a função adiar do sistema se o sdk for compativel.
      * Criada pra evitar boilerplate.
+     * todo remover essa funçao
      */
     private fun snoozeNotificationIfSdkCompatible(sbn: StatusBarNotification, until: Long) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) snoozeNotification(
+        snoozeNotification(
             ActiveStatusBarNotificationFactory.create(sbn), until
         )
     }
@@ -212,10 +210,9 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             }
 
             is SnoozeNotification -> {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) error("Essa função nao deve ser chamada em versões anteriores ao Oreo")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
-                listener.snoozeNotification(result.targetNotification.key, result.snoozeFor)
+                runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.snoozeFor) }
             }
         }
 

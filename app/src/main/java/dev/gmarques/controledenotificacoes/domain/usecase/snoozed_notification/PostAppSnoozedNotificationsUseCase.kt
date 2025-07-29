@@ -27,10 +27,9 @@ package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -52,24 +51,24 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor(
     private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
 ) {
 
-    suspend operator fun invoke(app: ManagedApp) = NotificationListener.getWhenReady { notificationListener ->
+    suspend operator fun invoke(app: ManagedApp) {
 
+        val notificationManager = NotificationListener.getWhenReady()
         val snoozedNotificationsOnDB = getSnoozedNotificationsForAppOnDB(app)
 
-        notificationListener.getSnoozedNotifications()
+        notificationManager.getSnoozedNotifications()
             .filter { activeNot ->
                 activeNot.packageName == app.packageName
                         && snoozedNotificationsOnDB.any { snoozedNot -> activeNot.key == snoozedNot.key }
             }.onEach {
 
-                val snoozedNotification = SnoozedNotificationFactory.create(it)
-                runBlocking { deleteSnoozedNotificationUseCase(snoozedNotification) }
-                backupNotificationAlarmScheduler.cancelAlarm(snoozedNotification.key)
-                notificationListener.postSnoozedNotification(it)
+                deleteSnoozedNotificationUseCase(it.key)
+                backupNotificationAlarmScheduler.cancelAlarm(it.key)
+                notificationManager.postSnoozedNotification(it.key)
             }
     }
 
-    private fun getSnoozedNotificationsForAppOnDB(app: ManagedApp) = runBlocking {
-        getSnoozedNotificationsByPackageNameUseCase(app.packageName).filter { it.origin == Origin.RULE }
+    private suspend fun getSnoozedNotificationsForAppOnDB(app: ManagedApp): List<SnoozedNotification> {
+        return getSnoozedNotificationsByPackageNameUseCase(app.packageName).filter { it.origin == Origin.RULE }
     }
 }

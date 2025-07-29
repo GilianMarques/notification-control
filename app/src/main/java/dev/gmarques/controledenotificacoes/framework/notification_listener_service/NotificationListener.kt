@@ -75,19 +75,17 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
          *
          * @return A instância do [SystemNotificationManager]  ou null se não estiver disponível.
          */
-        fun get(): SystemNotificationManager? {
+        fun getOrNull(): SystemNotificationManager? {
             return if (serviceInstance.value != null) serviceInstance.value else null
         }
 
         /**
-         * Retorna uma instancia de [SystemNotificationManager] quando o listener estiver conectado.
-         * @param callback Função a ser executada quando o serviço estiver pronto.
+         * Obtém a instância do serviço [SystemNotificationManager] de forma síncrona,
+         * bloqueando a thread atual até que o serviço esteja pronto.
+         * @return A instância do [SystemNotificationManager].
          */
-        suspend fun getWhenReady(callback: (notificationService: SystemNotificationManager) -> Unit) {
-            if (serviceInstance.value != null) callback.invoke(serviceInstance.value!!)
-            else serviceInstance.filterNotNull().first().let { notificationService ->
-                callback(notificationService)
-            }
+        suspend fun getWhenReady(): SystemNotificationManager {
+            return serviceInstance.filterNotNull().first()
         }
 
     }
@@ -135,7 +133,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Observa mudanças nas regras de notificação.
      * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
-     * o mét.odo [processActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * o mét.odo [SystemNotificationManagerImpl.processActiveNotifications] é chamado para reavaliar todas as notificações ativas
      * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
      */
     private fun observeRulesChanges() = launch(IO) {
@@ -167,7 +165,7 @@ class DebugTests {
     /**
      *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
      * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
-     * @see NotificationListener.processNotification
+     * @see NotificationListener.processNotificationRule
      */
     fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
         validationCallbackErrorJob = CoroutineScope(Main).launch {

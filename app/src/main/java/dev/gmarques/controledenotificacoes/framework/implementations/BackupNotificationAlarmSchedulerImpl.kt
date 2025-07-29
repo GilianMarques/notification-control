@@ -70,7 +70,7 @@ class BackupNotificationAlarmSchedulerImpl @Inject constructor(
      */
     override fun scheduleAlarm(key: String, snoozedUntil: Long) {
 
-        if (LocalDateTime.now().isBefore(LocalDateTime(snoozedUntil))) error("Alarm cannot be scheduled in the past")
+        if (LocalDateTime(snoozedUntil).isBefore(LocalDateTime.now())) error("Alarm cannot be scheduled in the past")
 
         cancelAlarm(key) // avoid multiple schedules for the same notification
 

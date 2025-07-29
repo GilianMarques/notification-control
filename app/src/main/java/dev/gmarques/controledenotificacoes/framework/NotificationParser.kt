@@ -80,8 +80,8 @@ object NotificationParser {
         }
 
         return ParsedNotificationData(
-            title = title,
-            content = content,
+            title = title.trim(),
+            content = content.trim(),
             packageName = sbn.packageName,
             timestamp = sbn.postTime,
             smallIcon = notification.smallIcon,

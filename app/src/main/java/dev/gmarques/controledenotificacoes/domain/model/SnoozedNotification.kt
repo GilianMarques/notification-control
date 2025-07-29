@@ -45,8 +45,8 @@ data class SnoozedNotification(
     val content: String,
     val postTime: Long,
     val permaHidden: Boolean,
-    val origin: Origin, // TODO: ao validar, se for NOT_SET lançar exceção!
-    val snoozeUntil: Long, // TODO: validar e se valor for negativo ou ants de agora... ja sabe... kkk
+    val origin: Origin,
+    val snoozeUntil: Long,
 ) : Serializable {
 
     companion object {
@@ -69,6 +69,10 @@ data class SnoozedNotification(
     /**
      * Serve pra indicar se a notificação foi adiada por uma ação automatica, derivada da execução de uma regra ou manualmente,
      * a partir de uma ação do direta do usuário.
+     *
+     * Isso permite processar as notificações adiadas em situações onde como quando uma [Rule] é editada e as notificações
+     * adiadas via regra devem ser reemitidas para serem reprocessadas. Não conseguir identificar  a origem do adiamento de uma
+     * notificação pode levar a notificações adiadas pelo usuario sendo emitidas fora do horario, matando a funcionalidade.
      */
     @Keep
     enum class Origin(val value: Int) {

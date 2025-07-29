@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.framework.model
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.NotificationParser
+import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 
 
 /**
@@ -61,6 +62,27 @@ object ActiveStatusBarNotificationFactory {
             isOngoing = sbn.isOngoing,
             notification = parsed.notification,
             tag = parsed.tag,
+        )
+    }
+
+    /**
+     *  Use apenas se a [ManageableNotification] foi criada a partir de um [ActiveStatusBarNotification].
+     */
+    fun create(sbn: ManageableNotification): ActiveStatusBarNotification {
+        val defErrorMsgForNullField =
+            "esse campo nao pode ser nulo, a [ManageableNotification] noi deve ter sido criada a partir de uma [ActiveStatusBarNotification] logo nao deveria estar sendo convertida em uma."
+        return ActiveStatusBarNotification(
+            title = sbn.title,
+            content = sbn.content,
+            packageName = sbn.packageName,
+            postTime = sbn.postTime,
+            smallIcon = sbn.smallIcon,
+            largeIcon = sbn.largeIcon,
+            id = sbn.id ?: error(defErrorMsgForNullField),
+            key = sbn.key,
+            isOngoing = sbn.isOngoing,
+            notification = sbn.notification ?: error(defErrorMsgForNullField),
+            tag = sbn.tag
         )
     }
 }

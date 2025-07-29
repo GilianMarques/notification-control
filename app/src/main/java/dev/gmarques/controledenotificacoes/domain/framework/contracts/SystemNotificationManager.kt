@@ -52,5 +52,5 @@ interface SystemNotificationManager {
     fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long)
 
     /**Deve emitir imediatamente uma notificação adiada*/
-    fun postSnoozedNotification(notification: ActiveStatusBarNotification)
+    fun postSnoozedNotification(key: String)
 }

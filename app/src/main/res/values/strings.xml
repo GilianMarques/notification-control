@@ -283,6 +283,9 @@
     <string name="Notifica_es_adiadas_perdidas">Notificações adiadas perdidas</string>
     <string name="Adiada_">"Adiada: "</string>
     <string name="Clique_aqui_para_abrir_x">Clique aqui para abrir %1$s</string>
+    <string name="Exibir">Exibir</string>
+    <string name="Postar_agora">Postar agora</string>
+    <string name="Remover_registro">Remover registro</string>
 
 
 </resources>
