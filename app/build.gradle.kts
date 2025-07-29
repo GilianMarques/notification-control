@@ -42,7 +42,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.gmarques.controledenotificacoes"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 31
         versionName = "0.0.${versionCode}-beta"
