@@ -186,6 +186,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                     && !not.isSnoozed
                     && !not.permaHidden
                     && !not.deadRecord
+                    && not.isFromSystem
                 ) item {
                     label = getString(R.string.Dispensar)
                     icon = R.drawable.vec_dismiss
