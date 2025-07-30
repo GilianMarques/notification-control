@@ -25,9 +25,13 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetAllSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
@@ -52,13 +56,13 @@ class ManageNotificationsViewModel @Inject constructor(
     private val snoozeNotificationByUserUseCase: SnoozeNotificationByUserUseCase,
     private val postSnoozedNotificationUseCase: PostSnoozedNotificationUseCase,
     private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
+    @ApplicationContext private val applicationContext: Context,
 ) : ViewModel() {
 
     private val _notificationsFlow: MutableStateFlow<List<ManageableNotification>> = MutableStateFlow(emptyList())
     val notificationsFlow: Flow<List<ManageableNotification>> get() = _notificationsFlow
 
     private var observerJob: Job = Job()
-
 
     fun loadSnoozedNotifications() {
 
@@ -90,30 +94,12 @@ class ManageNotificationsViewModel @Inject constructor(
         }
     }
 
-
     fun loadActiveNotifications() {
 
         observerJob.cancel()
         observerJob = viewModelScope.launch {
             NotificationListener.getWhenReady()
-                .getActiveNotificationsFlow()
-                .collect { systemList ->
-                    val filteredSystemList = applyDefaultFilters(systemList)
-                    val combined = filteredSystemList.map {
-                        ManageableNotification.from(system = it)
-                    }
-                    _notificationsFlow.tryEmit(combined)
-
-                }
-        }
-    }
-
-    fun loadOngoingNotifications() {
-
-        observerJob.cancel()
-        observerJob = viewModelScope.launch {
-            NotificationListener.getWhenReady()
-                .getOngoingNotificationsFlow()
+                .getActiveWithOngoingNotificationsFlow()
                 .collect { systemList ->
                     val filteredSystemList = applyDefaultFilters(systemList)
                     val combined = filteredSystemList.map {
@@ -127,10 +113,10 @@ class ManageNotificationsViewModel @Inject constructor(
 
     private fun applyDefaultFilters(snoozedNotifications: List<ActiveStatusBarNotification>): List<ActiveStatusBarNotification> {
         return snoozedNotifications
-            .filter { it.content.isNotBlank() || it.title.isNotBlank() }
+            .filterNot { it.content.isEmpty() && it.title.isEmpty() }
             .distinctBy { it.title to it.content }
+            .distinctBy { it.key }
     }
-
 
     fun hideNotification(notification: ManageableNotification) = viewModelScope.launch {
         snoozeNotificationByUserUseCase(ActiveStatusBarNotificationFactory.create(notification), 0, true)
@@ -152,8 +138,17 @@ class ManageNotificationsViewModel @Inject constructor(
         deleteSnoozedNotificationUseCase(not.key)
     }
 
-    fun cancelNotification(not: ManageableNotification) {
-        // TODO: implementar cancelamento de notificação
+    fun cancelNotification(not: ManageableNotification) = viewModelScope.launch {
+        NotificationListener.getWhenReady().cancelNotification(not.key)
     }
 
+    fun copyTitleAndContent(not: ManageableNotification) {
+
+        val clipBoardData = not.title.plus("\n\n").plus(not.content)
+
+        val clipboardManager = applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(not.title, clipBoardData)
+        clipboardManager.setPrimaryClip(clip)
+
+    }
 }

@@ -37,11 +37,12 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
+import dev.gmarques.controledenotificacoes.framework.FormatDateAndTimeString
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
-import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
 
 /**
  * Criado por Gilian Marques
@@ -68,35 +69,42 @@ class ManageNotificationsAdapter(
         fun bind(notification: ManageableNotification) = with(binding) {
 
             tvTitle.text = notification.title
-
-
             ivAppIcon.setImageIcon(notification.smallIcon)
-
-            ivLargeIcon.setImageIcon(notification.largeIcon)
-            ivLargeIcon.isVisible = notification.largeIcon != null
-
-
-            tvStatus.text = if (notification.permaHidden) App.instance.getString(R.string.Oculta_por_tempo_indeterminado)
-            else if (notification.snoozeUntil > System.currentTimeMillis()) {
-                LocalDate(notification.snoozeUntil).toString()
-            } else ""
-
-            tvStatus.isVisible = tvStatus.text.toString().isNotEmpty()
-
-
-            tvContent.isVisible = !notification.content.isEmpty()
-
-            if (tvContent.canUseReadMoreFeature(notification.content)) {
-                ivLargeIcon.isGone = true
-
-                tvContent.readMoreFeature(notification.content) { fullText ->
-                    ivLargeIcon.isVisible = fullText && notification.largeIcon != null
-                }
-            } else tvContent.text = notification.content
-
             ivMenu.setOnClickListener(AnimatedClickListener {
                 callback.onMenuClicked(notification, ivMenu)
             })
+
+            ivOngoing.isVisible = notification.isOngoing
+            ivDismissible.isVisible = ivOngoing.isVisible.not()
+
+            with(ivLargeIcon) {
+                this.setImageIcon(notification.largeIcon)
+                this.isVisible = notification.largeIcon != null
+            }
+
+            with(tvStatus) {
+                this.text = if (notification.permaHidden) App.instance.getString(R.string.Oculta_por_tempo_indeterminado)
+                else if (notification.snoozeUntil > System.currentTimeMillis()) {
+                    val date = FormatDateAndTimeString.format(LocalDateTime(notification.snoozeUntil))
+                    App.instance.getString(R.string.Adiada_ate_x, date.lowercase())
+                } else ""
+
+                this.isVisible = tvStatus.text.toString().isNotEmpty()
+            }
+
+            with(tvContent) {
+
+                this.isVisible = !notification.content.isEmpty()
+
+                if (this.canUseReadMoreFeature(notification.content)) {
+                    ivLargeIcon.isGone = true
+
+                    this.readMoreFeature(notification.content) { fullText ->
+                        ivLargeIcon.isVisible = fullText && notification.largeIcon != null
+                    }
+                } else this.text = notification.content
+            }
+
         }
     }
 
@@ -109,7 +117,6 @@ class ManageNotificationsAdapter(
             return oldItem.title == newItem.title && oldItem.content == newItem.content && oldItem.packageName == newItem.packageName && oldItem.postTime == newItem.postTime
         }
     }
-
 
     interface Callback {
         fun onMenuClicked(notification: ManageableNotification, ivMenu: AppCompatImageView)

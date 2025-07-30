@@ -11,11 +11,10 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentDatetimeLayoutBinding
+import dev.gmarques.controledenotificacoes.framework.FormatDateAndTimeString
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import org.joda.time.DateTime
-import org.joda.time.LocalDateTime
 
 /**
  * Criado por Gilian Marques
@@ -90,7 +89,7 @@ class DateTimePickerFragment : MyFragment() {
 
     private fun observeViewModel() {
         collectFlow(viewModel.selectedDateTimeFlow) { dateTime ->
-            updateSelectedDateTimeDisplay(dateTime)
+            binding.tvSelectedDateTime.text = if (dateTime != null) FormatDateAndTimeString.format(dateTime) else ""
         }
 
         collectFlow(viewModel.isValidSelectionFlow) { isValid ->
@@ -99,99 +98,7 @@ class DateTimePickerFragment : MyFragment() {
         }
     }
 
-    private fun updateSelectedDateTimeDisplay(dateTime: LocalDateTime?) {
-        if (dateTime == null) return
 
-        val now = LocalDateTime.now()
-        val tomorrow = now.plusDays(1)
-        val nextWeekStart = now.plusDays(6)
-        val nextWeekEnd = now.plusDays(12)
-
-        val timeFormat = DateFormat.getTimeFormat(requireContext())
-        val formattedTime = timeFormat.format(dateTime.toDate())
-
-        val displayText = when {
-            // Hoje
-            isSameDay(dateTime, now) -> getString(R.string.Hoje_as_x, formattedTime)
-
-            // Amanhã
-            isSameDay(dateTime, tomorrow) -> getString(R.string.Amanha_as_x, formattedTime)
-
-            // Esta semana
-            dateTime.isBefore(nextWeekStart) && sundaysBetweenNowAndDate(dateTime) == 0 -> {
-                val dayOfWeek = getDayOfWeekName(dateTime.dayOfWeek)
-                getString(R.string.x_as_x, dayOfWeek, formattedTime)
-            }
-
-            // Próxima semana
-            sundaysBetweenNowAndDate(dateTime) == 1 -> {
-                val dayOfWeek = getDayOfWeekName(dateTime.dayOfWeek).lowercase()
-                val article = getDayOfWeekArticle(dateTime.dayOfWeek)
-                getString(R.string.Proximo_a_x_as_x, article, dayOfWeek, formattedTime)
-            }
-
-            // Semanas futuras
-            else -> {
-                val dayOfWeek = getDayOfWeekName(dateTime.dayOfWeek)
-                val dateFormatter = DateFormat.getDateFormat(requireContext())
-                val formattedDate = dateFormatter.format(dateTime.toDate())
-                getString(R.string.x_dia_x_as_x, dayOfWeek, formattedDate, formattedTime)
-            }
-        }
-
-        binding.tvSelectedDateTime.text = displayText
-    }
-
-    private fun sundaysBetweenNowAndDate(dataAlvo: LocalDateTime): Int {
-        val hoje = LocalDateTime.now().withTime(0, 0, 0, 0)
-        val fim = dataAlvo.withTime(0, 0, 0, 0)
-
-        if (fim.isBefore(hoje)) return 0
-
-        var contador = 0
-        var cursor = hoje
-
-        while (cursor.isBefore(fim)) {
-            if (cursor.dayOfWeek == 7) contador++
-            cursor = cursor.plusDays(1)
-        }
-
-        return contador
-    }
-
-    /**
-     * Verifica se duas datas são do mesmo dia
-     */
-    private fun isSameDay(dt1: LocalDateTime, dt2: LocalDateTime): Boolean {
-        return dt1.toLocalDate() == dt2.toLocalDate()
-    }
-
-    /**
-     * Converte o dia da semana numérico para string localizada
-     */
-    private fun getDayOfWeekName(dayOfWeek: Int): String {
-        return when (dayOfWeek) {
-            1 -> getString(R.string.Segunda)
-            2 -> getString(R.string.Terca)
-            3 -> getString(R.string.Quarta)
-            4 -> getString(R.string.Quinta)
-            5 -> getString(R.string.Sexta)
-            6 -> getString(R.string.Sabado)
-            7 -> getString(R.string.Domingo)
-            else -> ""
-        }
-    }
-
-    /**
-     * Retorna o artigo correto (próximo/próxima) para cada dia da semana
-     */
-    private fun getDayOfWeekArticle(dayOfWeek: Int): String {
-        return when (dayOfWeek) {
-            1, 2, 3, 4, 5 -> getString(R.string.Proxima) // segunda a sexta
-            6, 7 -> getString(R.string.Proximo) // sábado e domingo
-            else -> ""
-        }
-    }
 
     companion object {
         const val RESULT_KEY = "datetime_picker_result"

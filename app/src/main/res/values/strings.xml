@@ -306,6 +306,11 @@
     <string name="Proxima">Próxima</string>
     <string name="Adiar_notifica_o">Adiar notificação</string>
     <string name="Oculta_por_tempo_indeterminado">Oculta por tempo indeterminado</string>
+    <string name="Dispensar">Dispensar</string>
+    <string name="Copiar">Copiar</string>
+    <string name="Adiada_ate_x">Adiada até %1$s</string>
+    <string name="Notifica_o_persistente">Notificação persistente</string>
+    <string name="Notifica_o_dispens_vel">Notificação dispensável</string>
 
 
 </resources>

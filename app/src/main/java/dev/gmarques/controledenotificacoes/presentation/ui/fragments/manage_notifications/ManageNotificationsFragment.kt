@@ -79,7 +79,6 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
             when (mbt.checkedButtonId) {
                 R.id.button_snoozed -> viewModel.loadSnoozedNotifications()
                 R.id.button_active -> viewModel.loadActiveNotifications()
-                R.id.button_ongoning -> viewModel.loadOngoingNotifications()
             }
         }
     }
@@ -123,38 +122,33 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
     private fun showContextPopUpMenu(not: ManageableNotification, ivMenu: AppCompatImageView) {
 
-        val popupMenu = popupMenu {
+        popupMenu {
 
-            if (!not.isSnoozed) section {
-                if (not.permaHidden) {
-                    item {
+            section {
+
+                if (!not.isSnoozed)
+                    if (not.permaHidden) item {
                         label = getString(R.string.Exibir)
                         icon = R.drawable.vec_show
                         callback = {
                             viewModel.postSnoozedOrHiddenNotification(not)
                         }
                     }
-                } else {
-                    item {
+                    else item {
                         label = getString(R.string.Ocultar)
                         icon = R.drawable.vec_hide
                         callback = {
                             viewModel.hideNotification(not)
                         }
                     }
-                }
-            }
 
-            if (!not.permaHidden) section {
-                if (not.isSnoozed) {
-                    item {
-                        label = getString(R.string.Postar_agora)
-                        icon = R.drawable.vec_post_now
-                        callback = {
-                            viewModel.postSnoozedOrHiddenNotification(not)
-                        }
+                if (!not.permaHidden) if (not.isSnoozed) item {
+                    label = getString(R.string.Postar_agora)
+                    icon = R.drawable.vec_post_now
+                    callback = {
+                        viewModel.postSnoozedOrHiddenNotification(not)
                     }
-                } else {
+                } else
                     item {
                         label = getString(R.string.Adiar)
                         icon = R.drawable.vec_snooze
@@ -162,14 +156,13 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                             navigateToPickDateAndTime(not)
                         }
                     }
-                }
             }
 
             section {
 
                 item {
                     label = getString(R.string.Gerenciar)
-                    icon = R.drawable.vec_rule_restrictive
+                    icon = R.drawable.vec_manage_notification
                     callback = {
                         viewModel.manageTargetApp(not)
                     }
@@ -187,21 +180,28 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                 }
             }
 
-            if (!not.isOngoing) section {
+            section {
 
-                item {
-                    label = getString(R.string.Cancelar)
-                    icon = R.drawable.vec_rule_restrictive
+                if (!not.isOngoing && !not.isSnoozed && !not.permaHidden && !not.deadRecord) item {
+                    label = getString(R.string.Dispensar)
+                    icon = R.drawable.vec_dismiss
                     callback = {
                         viewModel.cancelNotification(not)
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Copiar)
+                    icon = R.drawable.vec_copy
+                    callback = {
+                        viewModel.copyTitleAndContent(not)
+                        vibrator.success()
                     }
                 }
             }
 
 
-        }
-
-        popupMenu.show(this@ManageNotificationsFragment.requireContext(), ivMenu)
+        }.show(this@ManageNotificationsFragment.requireContext(), ivMenu)
 
     }
 

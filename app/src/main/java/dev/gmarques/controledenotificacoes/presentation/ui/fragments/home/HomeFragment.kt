@@ -133,8 +133,8 @@ class HomeFragment : MyFragment() {
             section {
 
                 item {
-                    label = getString(R.string.Notifica_es_ativas)
-                    icon = R.drawable.vec_listen_notification
+                    label = getString(R.string.Gerenciar_notificacoes)
+                    icon = R.drawable.vec_manage_notification
                     callback = {
                         navigateToManageNotificationsFragment()
                     }

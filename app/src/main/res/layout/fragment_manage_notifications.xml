@@ -64,7 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Adiadas"
+            android:text="Adiadas/ocultas"
             app:icon="@drawable/vec_snooze"
             app:iconGravity="top" />
 
@@ -76,18 +76,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Ativas"
-            app:icon="@drawable/vec_dot_notification_indicator"
+            app:icon="@drawable/vec_notification_active"
             app:iconGravity="top" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_ongoning"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Persistentes"
-            app:icon="@drawable/vec_drag_handle"
-            app:iconGravity="top" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 

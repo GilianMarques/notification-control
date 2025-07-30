@@ -72,7 +72,7 @@
                 android:id="@+id/tv_give_read_notification_permission"
                 style="@style/SettingsMenuItem"
                 android:text="@string/Dar_permiss_o_para_ler_as_notifica_es"
-                app:drawableStartCompat="@drawable/vec_listen_notification"
+                app:drawableStartCompat="@drawable/vec_manage_notification"
                 app:drawableTint="?attr/colorPrimaryVariant"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

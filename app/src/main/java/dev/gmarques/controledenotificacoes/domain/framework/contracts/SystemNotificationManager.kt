@@ -37,12 +37,19 @@ import kotlinx.coroutines.flow.Flow
  * Deve ser implementada e exposta via função estatica  pelo listener de notificações [dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener]
  */
 interface SystemNotificationManager {
+
     fun getActiveNotificationsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getActiveNotifications(): List<ActiveStatusBarNotification>
+
     fun getOngoingNotificationsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getOngoingNotifications(): List<ActiveStatusBarNotification>
+
+    fun getActiveWithOngoingNotificationsFlow(): Flow<List<ActiveStatusBarNotification>>
+    fun getActiveWithOngoingNotifications(): List<ActiveStatusBarNotification>
+
     fun getSnoozedNotificationsFlow(): Flow<List<ActiveStatusBarNotification>>
     fun getSnoozedNotifications(): List<ActiveStatusBarNotification>
+
     fun processActiveNotifications()
 
     /**
@@ -50,6 +57,8 @@ interface SystemNotificationManager {
      * @param until uma data no futuro, até quando a notificação deve ser adiada
      */
     fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long)
+
+    fun cancelNotification(key: String)
 
     /**Deve emitir imediatamente uma notificação adiada*/
     fun postSnoozedNotification(key: String)

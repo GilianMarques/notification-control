@@ -60,7 +60,7 @@
                 android:padding="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/vec_listen_notification"
+                app:srcCompat="@drawable/vec_manage_notification"
                 app:tint="?colorPrimary" />
 
             <TextView

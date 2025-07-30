@@ -39,8 +39,15 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.DebugTests
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.joda.time.LocalDateTime
 
@@ -62,9 +69,18 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     private val snoozedNotificationScheduleManager = HiltEntryPoints.snoozedNotificationScheduleManager()
 
-    private val activeFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
     private val snoozedFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
+    private val activeFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
     private val ongoingFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
+    val activeWithOngoingFlow: StateFlow<List<ActiveStatusBarNotification>> =
+        combine(activeFlow, ongoingFlow) { active, ongoing ->
+            active + ongoing
+        }.stateIn(
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = emptyList()
+        )
+
 
     override fun getActiveNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = activeFlow
 
@@ -88,6 +104,12 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
         } ?: emptyList()
     }
 
+    override fun getActiveWithOngoingNotificationsFlow() = activeWithOngoingFlow
+
+    override fun getActiveWithOngoingNotifications(): List<ActiveStatusBarNotification> {
+        return getOngoingNotifications() + getActiveNotifications()
+    }
+
     override fun getSnoozedNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = snoozedFlow
 
     override fun getSnoozedNotifications(): List<ActiveStatusBarNotification> {
@@ -107,6 +129,10 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     override fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long) {
         val time = LocalDateTime(until).toDate().time - LocalDateTime.now().toDate().time
         listener.snoozeNotification(notification.key, time)
+    }
+
+    override fun cancelNotification(key: String) {
+        listener.cancelNotification(key)
     }
 
     override fun postSnoozedNotification(key: String) {
@@ -137,12 +163,15 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     private fun processSnoozedNotification(snoozedNotification: SnoozedNotification, sbn: StatusBarNotification) = runBlocking {
 
         if (snoozedNotification.permaHidden) {
-            snoozeNotificationIfSdkCompatible(sbn, System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD)
+            snoozeNotification(
+                ActiveStatusBarNotificationFactory.create(sbn),
+                System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD
+            )
             return@runBlocking
         }
 
         if (snoozedNotificationPostedTooEarly(snoozedNotification)) {
-            snoozeNotificationIfSdkCompatible(sbn, snoozedNotification.snoozeUntil)
+            snoozeNotification(ActiveStatusBarNotificationFactory.create(sbn), snoozedNotification.snoozeUntil)
             return@runBlocking
         }
 
@@ -151,17 +180,6 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             deleteSnoozedNotificationUseCase(snoozedNotification.key)
         }
 
-    }
-
-    /**
-     * Chama a função adiar do sistema se o sdk for compativel.
-     * Criada pra evitar boilerplate.
-     * todo remover essa funçao
-     */
-    private fun snoozeNotificationIfSdkCompatible(sbn: StatusBarNotification, until: Long) {
-        snoozeNotification(
-            ActiveStatusBarNotificationFactory.create(sbn), until
-        )
     }
 
     /**
