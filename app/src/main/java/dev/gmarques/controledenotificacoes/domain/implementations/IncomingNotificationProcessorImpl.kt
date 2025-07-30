@@ -25,19 +25,16 @@
 
 package dev.gmarques.controledenotificacoes.domain.implementations
 
-import android.os.Build
 import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import javax.inject.Inject
 
 
@@ -57,7 +54,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
 ) : IncomingNotificationProcessor {
 
     override fun processNotification(
-        activeNotification: ActiveStatusBarNotification,
+        appNotification: AppNotification,
         rule: Rule,
         managedApp: ManagedApp,
     ): PerformAction {
@@ -68,7 +65,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         return if (condition != null) processRuleWithCondition(
             isAppInBlockPeriod,
             rule,
-            AppNotificationFactory.create(activeNotification),
+            appNotification,
         ) else processRuleWithoutCondition(isAppInBlockPeriod, rule)
 
     }
@@ -122,7 +119,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
             }
 
         return if (blockNotification) decideHowToBlockNotification(rule)
-        else PerformAction.Cancel
+        else PerformAction.Allow
     }
 
 
@@ -143,17 +140,13 @@ class IncomingNotificationProcessorImpl @Inject constructor(
     }
 
     /**
-     * Decide como bloquear uma notificação com base na ação da regra e na versão do SDK do Android.
-     * Se a ação da regra for [Rule.Action.SNOOZE] e a versão do SDK for inferior a [android.os.Build.VERSION_CODES.O],
-     * a notificação é cancelada, pois o adiamento não é suportado. Caso contrário, a ação especificada
-     * na regra ([Rule.Action.SNOOZE] ou [Rule.Action.CANCEL]) é executada.
-     *
+     * Decide como bloquear uma notificação com base na ação da regra
+     * Esta função simplesmente mapeia a ação definida na regra ([Rule.Action.SNOOZE] ou
+     * [Rule.Action.CANCEL]) para a ação correspondente a ser executada na notificação.
      * @param rule A regra que define a ação de bloqueio.
      */
     private fun decideHowToBlockNotification(rule: Rule): PerformAction {
-        return if (rule.action == Rule.Action.SNOOZE && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            PerformAction.Cancel // snooze isn't supported
-        } else when (rule.action) {
+        return when (rule.action) {
             Rule.Action.SNOOZE -> PerformAction.Snooze
             Rule.Action.CANCEL -> PerformAction.Cancel
         }

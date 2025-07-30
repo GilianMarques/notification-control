@@ -25,9 +25,9 @@
 
 package dev.gmarques.controledenotificacoes.domain.framework.contracts
 
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
 /**
  * Criado por Gilian Marques
@@ -39,7 +39,7 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
 interface IncomingNotificationProcessor {
 
     fun processNotification(
-        activeNotification: ActiveStatusBarNotification,
+        appNotification: AppNotification,
         rule: Rule,
         managedApp: ManagedApp,
     ): PerformAction

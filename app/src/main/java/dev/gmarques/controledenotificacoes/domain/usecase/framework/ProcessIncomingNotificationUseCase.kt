@@ -88,7 +88,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
 
 
         val actionToPerform = incomingNotificationProcessor.processNotification(
-            targetNotification,
+            AppNotificationFactory.create(targetNotification),
             rule,
             managedApp,
         )
