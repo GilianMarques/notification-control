@@ -26,6 +26,7 @@
 package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
@@ -90,7 +91,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             SystemNotificationValidator.isValidToProcess(it)
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
-        } ?: emptyList()
+        }.applyDefaultFilter()
     }
 
     override fun getOngoingNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = ongoingFlow
@@ -101,7 +102,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             it.isOngoing && SystemNotificationValidator.isValidToProcess(it, true)
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
-        } ?: emptyList()
+        }.applyDefaultFilter()
     }
 
     override fun getActiveWithOngoingNotificationsFlow() = activeWithOngoingFlow
@@ -118,7 +119,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             SystemNotificationValidator.isValidToProcess(it)
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
-        } ?: emptyList()
+        }.applyDefaultFilter()
     }
 
     override fun processActiveNotifications() {
@@ -159,8 +160,8 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     }
 
-    // TODO: transformar em usecase?
     private fun processSnoozedNotification(snoozedNotification: SnoozedNotification, sbn: StatusBarNotification) = runBlocking {
+        // TODO: transformar em usecase?
 
         if (snoozedNotification.permaHidden) {
             snoozeNotification(
@@ -201,33 +202,32 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
      */
     fun processNotificationRule(sbn: StatusBarNotification) {
 
-        if (!SystemNotificationValidator.isValidToProcess(sbn)) return
-
         debugTests?.crashIfCallbackNotCalled(sbn)
 
         val result = processIncomingNotificationUseCase(sbn)
 
         when (result) {
             is AllowNotification -> {
-                //   Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
+                Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                //   Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
+                Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                //   Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
+                Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 listener.cancelNotification(result.targetNotification.key)
             }
 
             is SnoozeNotification -> {
+                Log.d("USUK", "NotificationListener.processNotification: SnoozeNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.snoozeFor) }
@@ -236,4 +236,14 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
 
     }
+
+    private fun List<ActiveStatusBarNotification>?.applyDefaultFilter(): List<ActiveStatusBarNotification> {
+        return this?.filterNot { it.content.isEmpty() && it.title.isEmpty() }
+            ?.distinctBy { it.title to it.content }
+            ?.distinctBy { it.key }
+            ?: emptyList()
+    }
+
+
 }
+

@@ -126,6 +126,14 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
             section {
 
+                if (!not.permaHidden && not.isFromSystem) item {
+                    label = getString(R.string.Tentar_postar_agora)
+                    icon = R.drawable.vec_post_now
+                    callback = {
+                        viewModel.postSnoozedOrHiddenNotification(not)
+                    }
+                }
+
                 if (!not.isSnoozed)
                     if (not.permaHidden) item {
                         label = getString(R.string.Exibir)

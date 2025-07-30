@@ -36,7 +36,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.D
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetAllSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByUserUseCase
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
@@ -73,10 +72,9 @@ class ManageNotificationsViewModel @Inject constructor(
                 .getSnoozedNotificationsFlow()
                 .collect { systemList ->
                     val dbList = getAllSnoozedNotificationsUseCase()
-                    val filteredSystemList = applyDefaultFilters(systemList)
 
                     val dbMap = dbList.associateBy { it.key }
-                    val systemMap = filteredSystemList.associateBy { it.key }
+                    val systemMap = systemList.associateBy { it.key }
 
                     val allKeys = dbMap.keys union systemMap.keys
 
@@ -101,8 +99,7 @@ class ManageNotificationsViewModel @Inject constructor(
             NotificationListener.getWhenReady()
                 .getActiveWithOngoingNotificationsFlow()
                 .collect { systemList ->
-                    val filteredSystemList = applyDefaultFilters(systemList)
-                    val combined = filteredSystemList.map {
+                    val combined = systemList.map {
                         ManageableNotification.from(system = it)
                     }
                     _notificationsFlow.tryEmit(combined)
@@ -111,12 +108,6 @@ class ManageNotificationsViewModel @Inject constructor(
         }
     }
 
-    private fun applyDefaultFilters(snoozedNotifications: List<ActiveStatusBarNotification>): List<ActiveStatusBarNotification> {
-        return snoozedNotifications
-            .filterNot { it.content.isEmpty() && it.title.isEmpty() }
-            .distinctBy { it.title to it.content }
-            .distinctBy { it.key }
-    }
 
     fun hideNotification(notification: ManageableNotification) = viewModelScope.launch {
         snoozeNotificationByUserUseCase(ActiveStatusBarNotificationFactory.create(notification), 0, true)
