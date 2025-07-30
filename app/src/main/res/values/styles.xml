@@ -67,7 +67,7 @@
         <item name="android:drawablePadding">16dp</item>
     </style>
 
-    <!-- stilo do textviews do frag de configurações -->
+    <!-- estilo dos textviews do frag de configurações -->
     <style name="SettingsMenuItem" parent="Margins_edittext">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -81,5 +81,21 @@
         <item name="android:textColor">?attr/colorPrimaryVariant</item>
     </style>
 
+    <!-- estilo do picker de data no fragmento de coleta de data-->
+    <style name="CalendarViewTheme" parent="android:Widget.CalendarView">
+        <item name="android:dateTextAppearance">@style/CalendarDateTextAppearance</item>
+        <item name="android:weekDayTextAppearance">@style/CalendarWeekDayTextAppearance</item>
+    </style>
+
+    <style name="CalendarDateTextAppearance" parent="android:TextAppearance.Small">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CalendarWeekDayTextAppearance" parent="android:TextAppearance.Small">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 </resources>

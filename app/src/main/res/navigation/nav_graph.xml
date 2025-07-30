@@ -56,6 +56,19 @@
     </fragment>
 
     <fragment
+        android:id="@+id/dateTimePickerFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment"
+        android:label="@string/Selecionar_Data"
+        tools:layout="@layout/fragment_datetime_layout">
+
+        <argument
+            android:name="initialTimestamp"
+            app:argType="long"
+            app:nullable="false" />
+
+    </fragment>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment"
         android:label="@string/Fragment_home"
@@ -229,6 +242,7 @@
             app:nullable="false" />
 
     </fragment>
+
     <fragment
         android:id="@+id/selectNotificationFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification.SelectNotificationFragment"
@@ -239,6 +253,12 @@
         android:id="@+id/manageNotificationsFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsFragment"
         android:label="ManageNotificationsFragment"
-        tools:layout="@layout/fragment_manage_notifications" />
+        tools:layout="@layout/fragment_manage_notifications">
+
+        <action
+            android:id="@+id/to_dateTimePickerFragment"
+            app:destination="@id/dateTimePickerFragment" />
+
+    </fragment>
 
 </navigation>

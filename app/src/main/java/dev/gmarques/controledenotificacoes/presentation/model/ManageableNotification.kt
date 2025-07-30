@@ -52,7 +52,7 @@ data class ManageableNotification(
     val permaHidden: Boolean,
     val deadRecord: Boolean,
     val origin: SnoozedNotification.Origin?,
-    val snoozeUntil: Long?,
+    val snoozeUntil: Long,
     val isFromDatabase: Boolean,
     val isFromSystem: Boolean,
 ) {
@@ -73,11 +73,11 @@ data class ManageableNotification(
                 isOngoing = system?.isOngoing ?: false,
                 notification = system?.notification,
                 tag = system?.tag,
-                permaHidden = database?.permaHidden ?: false,
                 origin = database?.origin,
-                snoozeUntil = database?.snoozeUntil,
                 isFromDatabase = database != null,
                 isFromSystem = system != null,
+                snoozeUntil = database?.snoozeUntil?:0,
+                permaHidden = database?.permaHidden ?: false,
                 isSnoozed = false,
                 deadRecord = false,
             )

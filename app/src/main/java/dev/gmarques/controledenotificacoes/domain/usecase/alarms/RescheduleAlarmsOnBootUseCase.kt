@@ -41,7 +41,7 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em segunda-feira, 19 de maio de 2025 as 12:13.
  */
-
+// TODO: reagendar notificaçoes adiadas
 class RescheduleAlarmsOnBootUseCase @Inject constructor(
     private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
@@ -60,7 +60,6 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
         val activeSchedules = reportNotificationAlarmScheduler.getAllSchedules()
 
         activeSchedules.map { pkg ->
-            Log.d("USUK", "RescheduleAlarmsOnBootUseCase.invoke: rescheduling $pkg")
             async {
 
                 val app = getApp(pkg)

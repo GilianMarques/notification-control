@@ -287,5 +287,25 @@
     <string name="Postar_agora">Postar agora</string>
     <string name="Remover_registro">Remover registro</string>
 
+    <string name="Selecionar_Data">Selecione a data</string>
+    <string name="Selecionar_Hora">Selecione a hora</string>
+    <string name="Data_e_Hora_Selecionadas">Data e Hora Selecionadas</string>
+    <string name="selected_datetime_format">%1$s - %2$s</string>
+    <string name="Selecione_uma_data_e_hora_validas">Selecione uma data e hora válidas</string>
+    <string name="Confirmar">Confirmar</string>
+    <string name="Selecionar_Data_e_Hora">Selecionar Data e Hora</string>
+    <string name="Selecao_atual">Seleção atual</string>
+
+    <string name="Hoje_as_x">Hoje às %1$s</string>
+    <string name="Amanha_as_x">Amanhã às %1$s</string>
+    <string name="x_as_x">%1$s às %2$s</string>
+    <string name="Proximo_a_x_as_x">%1$s %2$s às %3$s</string>
+    <string name="x_dia_x_as_x">%1$s, dia %2$s às %3$s</string>
+
+    <string name="Proximo">Próximo</string>
+    <string name="Proxima">Próxima</string>
+    <string name="Adiar_notifica_o">Adiar notificação</string>
+    <string name="Oculta_por_tempo_indeterminado">Oculta por tempo indeterminado</string>
+
 
 </resources>

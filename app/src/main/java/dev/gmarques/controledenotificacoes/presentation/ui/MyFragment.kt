@@ -67,6 +67,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPan
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
@@ -230,6 +231,12 @@ open class MyFragment() : Fragment() {
             is ManageNotificationsFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Gerenciar_notificacoes)
+                binding.ivMenu.isGone = true
+            }
+
+            is DateTimePickerFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Adiar_notifica_o)
                 binding.ivMenu.isGone = true
             }
 

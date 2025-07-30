@@ -130,6 +130,28 @@
             tools:text="Conteudo da notificação\nbla bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla...bla bla bla..."
             tools:visibility="visible" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottomBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierAllowsGoneWidgets="true"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="tv_content,iv_large_icon" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            tools:text="Adiada para ..."
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/vec_info_small"
+            app:drawableTint="?attr/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
+            tools:visibility="visible"
+
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

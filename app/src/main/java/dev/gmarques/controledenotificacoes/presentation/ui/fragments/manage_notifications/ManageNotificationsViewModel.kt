@@ -152,4 +152,8 @@ class ManageNotificationsViewModel @Inject constructor(
         deleteSnoozedNotificationUseCase(not.key)
     }
 
+    fun cancelNotification(not: ManageableNotification) {
+        // TODO: implementar cancelamento de notificação
+    }
+
 }

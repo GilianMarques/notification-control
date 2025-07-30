@@ -35,11 +35,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationManageableBinding
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
+import org.joda.time.LocalDate
 
 /**
  * Criado por Gilian Marques
@@ -72,6 +74,14 @@ class ManageNotificationsAdapter(
 
             ivLargeIcon.setImageIcon(notification.largeIcon)
             ivLargeIcon.isVisible = notification.largeIcon != null
+
+
+            tvStatus.text = if (notification.permaHidden) App.instance.getString(R.string.Oculta_por_tempo_indeterminado)
+            else if (notification.snoozeUntil > System.currentTimeMillis()) {
+                LocalDate(notification.snoozeUntil).toString()
+            } else ""
+
+            tvStatus.isVisible = tvStatus.text.toString().isNotEmpty()
 
 
             tvContent.isVisible = !notification.content.isEmpty()

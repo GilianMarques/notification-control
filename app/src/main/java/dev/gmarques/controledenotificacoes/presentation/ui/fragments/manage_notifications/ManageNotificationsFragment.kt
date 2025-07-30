@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +41,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotifica
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebindAdapter
 
@@ -105,7 +107,6 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
     }
 
-
     private fun observeViewModel() {
         collectFlow(viewModel.notificationsFlow) { list ->
             binding.progressBar.isVisible = false
@@ -158,7 +159,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                         label = getString(R.string.Adiar)
                         icon = R.drawable.vec_snooze
                         callback = {
-                            viewModel.snoozeNotification(not, System.currentTimeMillis() + 10000L) // TODO: coletar data
+                            navigateToPickDateAndTime(not)
                         }
                     }
                 }
@@ -186,11 +187,31 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                 }
             }
 
+            if (!not.isOngoing) section {
+
+                item {
+                    label = getString(R.string.Cancelar)
+                    icon = R.drawable.vec_rule_restrictive
+                    callback = {
+                        viewModel.cancelNotification(not)
+                    }
+                }
+            }
+
 
         }
 
         popupMenu.show(this@ManageNotificationsFragment.requireContext(), ivMenu)
 
+    }
+
+    private fun navigateToPickDateAndTime(not: ManageableNotification) {
+
+        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
+            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
+            viewModel.snoozeNotification(not, selectedTimestamp)
+        }
+        findNavControllerMain().navigate(ManageNotificationsFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
     }
 
 }
