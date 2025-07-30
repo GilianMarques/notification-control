@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.Calendar
+import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -14,60 +15,57 @@ import javax.inject.Inject
 @HiltViewModel
 class DateTimePickerViewModel @Inject constructor() : ViewModel() {
 
-    private val _selectedDateTimeFlow = MutableStateFlow<Calendar?>(null)
-    val selectedDateTimeFlow: Flow<Calendar?> get() = _selectedDateTimeFlow
+    private val _selectedDateTimeFlow = MutableStateFlow<LocalDateTime?>(null)
+    val selectedDateTimeFlow: Flow<LocalDateTime?> get() = _selectedDateTimeFlow
 
     private val _isValidSelectionFlow = MutableStateFlow(false)
     val isValidSelectionFlow: Flow<Boolean> get() = _isValidSelectionFlow
 
-    private var selectedCalendar: Calendar = Calendar.getInstance()
+    private var selectedDateTime: LocalDateTime = LocalDateTime.now()
 
     fun initializeDateTime(initialTimestamp: Long) {
-        val timestamp = initialTimestamp
-        selectedCalendar.timeInMillis = timestamp
+        val initial = DateTime(initialTimestamp).toLocalDateTime()
+        val now = LocalDateTime.now()
 
-        // Garantir que não seja no passado
-        val now = Calendar.getInstance()
-        if (selectedCalendar.before(now)) {
-            selectedCalendar = now
-        }
+        selectedDateTime = if (initial.isBefore(now)) {
+            now.plusMinutes(2)
+        } else initial
 
         updateFlows()
     }
 
     fun updateDate(year: Int, month: Int, dayOfMonth: Int) {
-        selectedCalendar.set(Calendar.YEAR, year)
-        selectedCalendar.set(Calendar.MONTH, month)
-        selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        selectedDateTime = selectedDateTime
+            .withYear(year)
+            .withMonthOfYear(month + 1) // Calendar é 0-based, Joda é 1-based
+            .withDayOfMonth(dayOfMonth)
         updateFlows()
     }
 
     fun updateTime(hourOfDay: Int, minute: Int) {
-        selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
-        selectedCalendar.set(Calendar.MINUTE, minute)
-        selectedCalendar.set(Calendar.SECOND, 0)
-        selectedCalendar.set(Calendar.MILLISECOND, 0)
+        selectedDateTime = selectedDateTime
+            .withHourOfDay(hourOfDay)
+            .withMinuteOfHour(minute)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
         updateFlows()
     }
 
     private fun updateFlows() {
         val isValid = validateSelection()
-        _selectedDateTimeFlow.tryEmit(selectedCalendar.clone() as Calendar)
+        _selectedDateTimeFlow.tryEmit(selectedDateTime)
         _isValidSelectionFlow.tryEmit(isValid)
     }
 
     private fun validateSelection(): Boolean {
-        val now = Calendar.getInstance()
-        val oneMonthFromNow = Calendar.getInstance().apply {
-            add(Calendar.MONTH, 1)
-        }
-
-        return selectedCalendar.after(now) && selectedCalendar.before(oneMonthFromNow)
+        val now = LocalDateTime.now()
+        val oneMonthFromNow = now.plusDays(31)
+        return selectedDateTime.isAfter(now) && selectedDateTime.isBefore(oneMonthFromNow)
     }
 
     fun getSelectedTimestamp(): Long? {
         return if (_isValidSelectionFlow.value) {
-            selectedCalendar.timeInMillis
+            selectedDateTime.toDateTime().millis
         } else {
             null
         }

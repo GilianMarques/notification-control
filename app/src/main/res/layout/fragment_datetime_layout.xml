@@ -22,6 +22,7 @@
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:scrollbarSize="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/actionbar"
         app:layout_constraintWidth_max="@dimen/tablet_layout_max_width">
