@@ -152,8 +152,9 @@ class HomeFragment : MyFragment() {
                 }
 
                 item {
-                    label = getString(R.string.Echo)
-                    icon = R.drawable.vec_echo
+                    val echoEnabled = PreferencesImpl.echoEnabled.value
+                    label = if (echoEnabled) getString(R.string.Desligar_echo) else getString(R.string.Ligar_echo)
+                    icon = if (echoEnabled) R.drawable.vec_echo_off else R.drawable.vec_echo
                     callback = {
                         navigateToEchoFragment()
                     }
@@ -393,7 +394,6 @@ class HomeFragment : MyFragment() {
             }
         }
     }
-
 
     override fun onResume() {
         super.onResume()

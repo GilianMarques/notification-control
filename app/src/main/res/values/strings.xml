@@ -311,6 +311,7 @@
     <string name="Adiada_ate_x">Adiada até %1$s</string>
     <string name="Notifica_o_persistente">Notificação persistente</string>
     <string name="Notifica_o_dispens_vel">Notificação dispensável</string>
+    <string name="Ligar_echo">Ligar Echo</string>
 
 
 </resources>
