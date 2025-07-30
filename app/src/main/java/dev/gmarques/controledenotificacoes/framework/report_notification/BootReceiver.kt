@@ -55,8 +55,8 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
 
     private fun rescheduleAlarmsIfAny() = launch(IO) {
         with(HiltEntryPoints) {
-            rescheduleReportNotificationsOnBootUseCase()
-            scheduleBackupNotificationsOnBootUseCase()
+            rescheduleReportNotificationsOnBootUseCase().invoke()
+            scheduleBackupNotificationsOnBootUseCase().invoke()
         }
     }
 

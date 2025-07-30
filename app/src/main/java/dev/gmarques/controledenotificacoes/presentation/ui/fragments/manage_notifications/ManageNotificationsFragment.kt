@@ -164,7 +164,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                     label = getString(R.string.Gerenciar)
                     icon = R.drawable.vec_manage_notification
                     callback = {
-                        viewModel.manageTargetApp(not)
+                        navigateToAddManagedApp(not)
                     }
                 }
             }
@@ -182,7 +182,11 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
             section {
 
-                if (!not.isOngoing && !not.isSnoozed && !not.permaHidden && !not.deadRecord) item {
+                if (!not.isOngoing
+                    && !not.isSnoozed
+                    && !not.permaHidden
+                    && !not.deadRecord
+                ) item {
                     label = getString(R.string.Dispensar)
                     icon = R.drawable.vec_dismiss
                     callback = {
@@ -212,6 +216,11 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
             viewModel.snoozeNotification(not, selectedTimestamp)
         }
         findNavControllerMain().navigate(ManageNotificationsFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+    }
+
+    private fun navigateToAddManagedApp(not: ManageableNotification) {
+        findNavControllerMain()
+            .navigate(ManageNotificationsFragmentDirections.toAddManagedAppsFragment(not.packageName))
     }
 
 }

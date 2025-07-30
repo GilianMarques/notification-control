@@ -130,12 +130,9 @@ class ManageNotificationsViewModel @Inject constructor(
         postSnoozedNotificationUseCase(not.key)
     }
 
-    fun manageTargetApp(not: ManageableNotification) {
-// TODO: implementar
-    }
-
     fun removeNotificationFromDB(not: ManageableNotification) = viewModelScope.launch {
         deleteSnoozedNotificationUseCase(not.key)
+        loadSnoozedNotifications()
     }
 
     fun cancelNotification(not: ManageableNotification) = viewModelScope.launch {

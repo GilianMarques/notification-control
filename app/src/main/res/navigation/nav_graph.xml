@@ -149,6 +149,12 @@
             android:id="@+id/to_selectNotificationFragment"
             app:destination="@id/selectNotificationFragment" />
 
+        <argument
+            android:name="packageName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
     </fragment>
 
     <fragment
@@ -258,6 +264,10 @@
         <action
             android:id="@+id/to_dateTimePickerFragment"
             app:destination="@id/dateTimePickerFragment" />
+
+        <action
+            android:id="@+id/to_addManagedAppsFragment"
+            app:destination="@id/addManagedAppsFragment" />
 
     </fragment>
 

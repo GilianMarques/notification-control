@@ -80,7 +80,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
 
         /**
-         * Obtém a instância do serviço [SystemNotificationManager] de forma síncrona,
+         * Obtém a instância do [SystemNotificationManager] de forma síncrona,
          * bloqueando a thread atual até que o serviço esteja pronto.
          * @return A instância do [SystemNotificationManager].
          */

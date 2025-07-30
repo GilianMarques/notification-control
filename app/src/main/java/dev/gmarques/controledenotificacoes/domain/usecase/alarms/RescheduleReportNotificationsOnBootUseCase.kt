@@ -55,7 +55,7 @@ class RescheduleReportNotificationsOnBootUseCase @Inject constructor(
      * É executado em uma corrotina no dispatcher IO.
      */
     suspend operator fun invoke() = withContext(IO) {
-
+        Log.d("USUK", "RescheduleReportNotificationsOnBootUseCase.invoke: ")
         val activeSchedules = reportNotificationAlarmScheduler.getAllSchedules()
 
         activeSchedules.map { pkg ->

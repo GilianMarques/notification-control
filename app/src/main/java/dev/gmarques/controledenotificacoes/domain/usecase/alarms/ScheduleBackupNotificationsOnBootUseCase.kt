@@ -26,6 +26,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
 import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationManager
 import kotlinx.coroutines.Dispatchers.IO
@@ -43,17 +44,29 @@ class ScheduleBackupNotificationsOnBootUseCase @Inject constructor(
     private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
     private val getSnoozedNotificationByKeyUseCase: GetSnoozedNotificationByKeyUseCase,
     private val backupNotificationManager: BackupNotificationManager,
-) {
+    private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
+
+    ) {
 
 
     suspend operator fun invoke() = withContext(IO) {
         backupNotificationAlarmScheduler.getAllSchedules()
             .onEach { key ->
-                getSnoozedNotificationByKeyUseCase(key)?.let { snoozedNotification ->
-                    if (System.currentTimeMillis() >= snoozedNotification.snoozeUntil) backupNotificationManager.showBackupNotification(
-                        snoozedNotification
-                    ) else backupNotificationAlarmScheduler.scheduleAlarm(key, snoozedNotification.snoozeUntil)
+                val snoozedNotification = getSnoozedNotificationByKeyUseCase(key)
+
+                if (snoozedNotification == null) {
+                    backupNotificationAlarmScheduler.cancelAlarm(key)
+                    return@onEach
                 }
+
+                if (System.currentTimeMillis() >= snoozedNotification.snoozeUntil) {
+                    backupNotificationManager.showBackupNotification(snoozedNotification)
+                    deleteSnoozedNotificationUseCase(snoozedNotification.key)
+                    backupNotificationAlarmScheduler.cancelAlarm(snoozedNotification.key)
+                    return@onEach
+                }
+
+                backupNotificationAlarmScheduler.scheduleAlarm(key, snoozedNotification.snoozeUntil)
             }
     }
 }

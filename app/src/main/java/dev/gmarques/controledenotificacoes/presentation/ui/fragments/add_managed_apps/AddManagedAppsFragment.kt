@@ -33,6 +33,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
@@ -61,6 +62,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private val maxAppsViews = 5
 
+    private val args: AddManagedAppsFragmentArgs by navArgs()
     private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
 
@@ -83,7 +85,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
         setupActionBar(binding.actionbar)
         containerController = ContainerController(viewLifecycleOwner, binding.llContainerApps, maxAppsViews)
-
+        loadDefaultPackageIfAny()
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectActiveNotificationListener()
@@ -93,12 +95,20 @@ class AddManagedAppsFragment() : MyFragment() {
         setupConcludeFab()
         observeStates()
         observeEvents()
+        showHint()
+        loadLastUsedOrAddedRule()
+    }
+
+    private fun loadDefaultPackageIfAny() {
+        args.packageName?.let { viewModel.addSelectedAppByPkgId(packageName = it) }
+    }
+
+    private fun showHint() {
         showHintView(
             parent = binding.llHintParent,
             showHintPreference = PreferencesImpl.showHintHowRulesAndManagedAppsWork,
             msg = getString(R.string.como_adicionar_o_primeiro_app),
         )
-        loadLastUsedOrAddedRule()
     }
 
     /**

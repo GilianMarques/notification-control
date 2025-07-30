@@ -30,7 +30,9 @@ import android.content.Context
 import android.content.Intent
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 /**
  * É executado mediante agendamento no sistema para  emitir notificações 'backup'
@@ -44,17 +46,22 @@ class BackupNotificationAlarmReceiver : BroadcastReceiver() {
         const val NOTIFICATION_KEY = "notificationKey"
     }
 
+    private val getSnoozedNotificationByKeyUseCase = HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase()
+    private val backupNotificationManager = HiltEntryPoints.backupNotificationManager()
+    private val deleteSnoozedNotificationUseCase = HiltEntryPoints.getDeleteSnoozedNotificationUseCase()
+
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 
-        val key = intent.getStringExtra(NOTIFICATION_KEY) ?: return
+        CoroutineScope(IO).launch {
+            val key = intent.getStringExtra(NOTIFICATION_KEY) ?: return@launch
 
-        val snoozedNotification = runBlocking { HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase().invoke(key) }
-        if (snoozedNotification != null) {
-            HiltEntryPoints.backupNotificationManager().showBackupNotification(snoozedNotification)
+            getSnoozedNotificationByKeyUseCase(key)?.let {
+                backupNotificationManager.showBackupNotification(it)
+                deleteSnoozedNotificationUseCase(it.key)
+            }
+            removeScheduleData(key)
         }
-
-        removeScheduleData(key)
     }
 
 
