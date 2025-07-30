@@ -57,7 +57,7 @@ class ReportNotificationManager @Inject constructor(
     private val channelId = "notification_report"
 
     fun showReportNotification(packageName: String) {
-        createNotificationChannelIfNeeded()
+        createNotificationChannel()
 
         val id = packageName.hashCode()
         val notification = buildNotification(packageName, id)
@@ -66,7 +66,7 @@ class ReportNotificationManager @Inject constructor(
         notificationManager.notify(id, notification)
     }
 
-    private fun createNotificationChannelIfNeeded() {
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.Relatorio_de_notificacoes)
             val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH)

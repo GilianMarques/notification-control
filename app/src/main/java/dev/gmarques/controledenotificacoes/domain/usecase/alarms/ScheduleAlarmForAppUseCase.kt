@@ -61,6 +61,5 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
 
         reportNotificationAlarmScheduler.scheduleAlarm(app.packageName, scheduleTimeMillis)
 
-
     }
 }

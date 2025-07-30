@@ -41,8 +41,7 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em segunda-feira, 19 de maio de 2025 as 12:13.
  */
-// TODO: reagendar notificaçoes adiadas
-class RescheduleAlarmsOnBootUseCase @Inject constructor(
+class RescheduleReportNotificationsOnBootUseCase @Inject constructor(
     private val reportNotificationAlarmScheduler: ReportNotificationAlarmScheduler,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
@@ -62,8 +61,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
         activeSchedules.map { pkg ->
             async {
 
-                val app = getApp(pkg)
-                if (app == null) return@async
+                val app = getApp(pkg) ?: return@async
 
                 val rule = getRule(app.ruleId)
                 scheduleAlarmForAppUseCase(app, rule)
@@ -79,7 +77,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
      */
     private suspend fun getRule(ruleId: String): Rule {
         return ruleCache.getOrPut(ruleId) {
-            getRuleByIdUseCase(ruleId) ?: error("A regra ${ruleId} não foi encontrada. Isso é um Bug.")
+            getRuleByIdUseCase(ruleId) ?: error("A regra $ruleId não foi encontrada. Isso é um Bug.")
         }
     }
 
@@ -93,7 +91,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
             .also {
                 if (it == null) Log.d(
                     "USUK",
-                    "RescheduleAlarmsOnBootUseCase.getApp: $pkg not found."
+                    "RescheduleReportNotificationsOnBootUseCase.getApp: $pkg not found."
                 )
             }
     }

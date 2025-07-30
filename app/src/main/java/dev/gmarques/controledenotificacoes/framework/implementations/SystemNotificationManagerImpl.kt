@@ -67,7 +67,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     private val deleteSnoozedNotificationUseCase = HiltEntryPoints.getDeleteSnoozedNotificationUseCase()
     private val snoozeNotificationByRuleUseCase = HiltEntryPoints.getSnoozeNotificationByRuleUseCase()
 
-    private val snoozedNotificationScheduleManager = HiltEntryPoints.snoozedNotificationScheduleManager()
+    private val backupNotificationAlarmSchedulerImpl = HiltEntryPoints.backupNotificationAlarmSchedulerImpl()
 
     private val snoozedFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
     private val activeFlow = MutableStateFlow<List<ActiveStatusBarNotification>>(emptyList())
@@ -175,8 +175,8 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
             return@runBlocking
         }
 
-        if (snoozedNotificationScheduleManager.isThereAnyAlarmSetForKey(snoozedNotification.key)) {
-            snoozedNotificationScheduleManager.cancelAlarm(snoozedNotification.key)
+        if (backupNotificationAlarmSchedulerImpl.isThereAnyAlarmSetForKey(snoozedNotification.key)) {
+            backupNotificationAlarmSchedulerImpl.cancelAlarm(snoozedNotification.key)
             deleteSnoozedNotificationUseCase(snoozedNotification.key)
         }
 

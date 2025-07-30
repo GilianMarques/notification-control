@@ -29,14 +29,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import kotlinx.coroutines.runBlocking
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
+import kotlinx.coroutines.runBlocking
 
 /**
- * É executado mediante agendamento no sistema para  emitir notificações 'backup' de notificações adiadas que foram perdidas pelo sistema.
+ * É executado mediante agendamento no sistema para  emitir notificações 'backup'
+ * de notificações adiadas que foram perdidas pelo sistema.
  *
  * @see BackupNotificationAlarmSchedulerImpl
- *
  */
 class BackupNotificationAlarmReceiver : BroadcastReceiver() {
 
@@ -44,7 +44,6 @@ class BackupNotificationAlarmReceiver : BroadcastReceiver() {
         const val NOTIFICATION_KEY = "notificationKey"
     }
 
-    // TODO: terminar de editar
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 
@@ -55,17 +54,17 @@ class BackupNotificationAlarmReceiver : BroadcastReceiver() {
             HiltEntryPoints.backupNotificationManager().showBackupNotification(snoozedNotification)
         }
 
-        clearPreferenceForKey(key)
+        removeScheduleData(key)
     }
 
 
     /**
-     * Cancela o agendamento da notificação de backup da notificação adiada que acabou de ser emitida pelo sistema
+     * Remove os dados do agendamento da notificação de backup (referente a notificação adiada) que acabou de ser emitida pelo sistema
      * @param key O nome do pacote do aplicativo cujos dados de agendamento devem ser limpos.
      */
-    private fun clearPreferenceForKey(key: String) {
+    private fun removeScheduleData(key: String) {
 
-        val scheduleManager = HiltEntryPoints.snoozedNotificationScheduleManager()
+        val scheduleManager = HiltEntryPoints.backupNotificationAlarmSchedulerImpl()
 
         scheduleManager.deleteScheduleData(key)
     }

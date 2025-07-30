@@ -47,11 +47,10 @@ class ReportNotificationAlarmReceiver : BroadcastReceiver() {
         if (context == null || intent == null) return
 
         val pkg = intent.getStringExtra(PACKAGE_NAME) ?: return
-        // Log.d("USUK", "ReportNotificationAlarmReceiver.onReceive: alarm received for $pkg")
 
         getReportNotificationManager().showReportNotification(pkg)
 
-        clearPreferenceForPackage(pkg)
+        removeScheduleData(pkg)
     }
 
     private fun getReportNotificationManager(): ReportNotificationManager {
@@ -65,7 +64,7 @@ class ReportNotificationAlarmReceiver : BroadcastReceiver() {
      *
      * @param pkg O nome do pacote do aplicativo cujos dados de agendamento devem ser limpos.
      */
-    private fun clearPreferenceForPackage(pkg: String) {
+    private fun removeScheduleData(pkg: String) {
 
         val scheduleManager = HiltEntryPoints.reportNotificationScheduleManager()
 

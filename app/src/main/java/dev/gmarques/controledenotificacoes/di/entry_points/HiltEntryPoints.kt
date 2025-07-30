@@ -27,8 +27,9 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleReportNotificationsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleBackupNotificationsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
@@ -85,8 +86,8 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().reportNotificationScheduleManager()
     }
 
-    override fun snoozedNotificationScheduleManager(): BackupNotificationAlarmSchedulerImpl {
-        return entryPoint<FrameworkEntryPoint>().snoozedNotificationScheduleManager()
+    override fun backupNotificationAlarmSchedulerImpl(): BackupNotificationAlarmSchedulerImpl {
+        return entryPoint<FrameworkEntryPoint>().backupNotificationAlarmSchedulerImpl()
     }
 
     override fun readPreferenceUseCase(): ReadPreferenceUseCase {
@@ -105,8 +106,13 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<UseCasesEntryPoint>().getAppUserUseCase()
     }
 
-    override fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase {
-        return entryPoint<UseCasesEntryPoint>().rescheduleAlarmsOnBootUseCase()
+    override fun rescheduleReportNotificationsOnBootUseCase(): RescheduleReportNotificationsOnBootUseCase {
+        return entryPoint<UseCasesEntryPoint>().rescheduleReportNotificationsOnBootUseCase()
+    }
+
+    override fun scheduleBackupNotificationsOnBootUseCase(): ScheduleBackupNotificationsOnBootUseCase {
+        return entryPoint<UseCasesEntryPoint>().scheduleBackupNotificationsOnBootUseCase()
+
     }
 
     override fun nextAppUnlockUseCase(): NextRuleUnlockTimeUseCase {

@@ -1,0 +1,8 @@
+São notificações emitidas para o usuário caso as notificações adiadas sejam perdidas por algum motivo
+(aplicativo cancelou, processo morreu, dispositivo reiniciado, etc...).
+
+O propósito dessas notificações é garantir que o usuário não seja prejudicado caso a notificação
+original não seja reemitida no momento correto.
+
+Não existe uma classe de dados (dataclass) ou outra representação para este objeto; uma notificação
+de backup é construída a partir de uma [SnoozedNotification].

@@ -34,7 +34,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -55,7 +54,7 @@ class BackupNotificationManager @Inject constructor(
     private val channelId = "backup_snoozed_notification"
 
     fun showBackupNotification(notification: SnoozedNotification) {
-        createNotificationChannelIfNeeded()
+        createNotificationChannel()
 
         val id = notification.packageName.hashCode()
         val notification = buildNotification(notification, id)
@@ -64,13 +63,11 @@ class BackupNotificationManager @Inject constructor(
         notificationManager.notify(id, notification)
     }
 
-    private fun createNotificationChannelIfNeeded() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.Notifica_es_adiadas_perdidas)
-            val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH)
-            context.getSystemService(NotificationManager::class.java)
-                .createNotificationChannel(channel)
-        }
+    private fun createNotificationChannel() {
+        val name = context.getString(R.string.Notifica_es_adiadas_perdidas)
+        val channel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH)
+        context.getSystemService(NotificationManager::class.java)
+            .createNotificationChannel(channel)
     }
 
     private fun buildNotification(notification: SnoozedNotification, id: Int): Notification {

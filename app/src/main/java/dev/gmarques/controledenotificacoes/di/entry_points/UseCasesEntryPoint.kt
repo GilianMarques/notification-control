@@ -28,8 +28,9 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleReportNotificationsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleBackupNotificationsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
@@ -46,7 +47,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 @InstallIn(SingletonComponent::class)
 interface UseCasesEntryPoint {
     fun getAppUserUseCase(): GetUserUseCase
-    fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase
+    fun rescheduleReportNotificationsOnBootUseCase(): RescheduleReportNotificationsOnBootUseCase
+    fun scheduleBackupNotificationsOnBootUseCase(): ScheduleBackupNotificationsOnBootUseCase
     fun nextAppUnlockUseCase(): NextRuleUnlockTimeUseCase
     fun isAppInBlockPeriodUseCase(): IsRuleInBlockPeriodUseCase
     fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase
