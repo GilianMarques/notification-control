@@ -54,7 +54,6 @@ data class Rule(
     companion object {
         val typeDefault = Type.RESTRICTIVE
         val actionDefault = Action.SNOOZE
-
         val keepFullHistoryDefault = false
     }
 

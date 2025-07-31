@@ -35,6 +35,7 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.IsRuleInBlockPeriodUseCase
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -46,21 +47,27 @@ import javax.inject.Inject
  * Ela considera o tipo de regra (restritiva ou permissiva), a presença de condições
  * e se o aplicativo associado à notificação está em um período de bloqueio.
  *
- * Usada em comjunto com [ProcessIncomingNotificationUseCase]
+ * Usada em conjunto com [ProcessIncomingNotificationUseCase]
+ *
+
  *
  */
 class IncomingNotificationProcessorImpl @Inject constructor(
     private val isRuleInBlockPeriodUseCase: IsRuleInBlockPeriodUseCase,
 ) : IncomingNotificationProcessor {
 
+    /**
+     * @param baseDate serve para testes. Em execução real apenas ignore.
+     */
     override fun processNotification(
         appNotification: AppNotification,
         rule: Rule,
         managedApp: ManagedApp,
+        baseDate: LocalDateTime,
     ): PerformAction {
 
         val condition = rule.condition
-        val isAppInBlockPeriod = isRuleInBlockPeriodUseCase(rule)
+        val isAppInBlockPeriod = isRuleInBlockPeriodUseCase(rule, baseDate)
 
         return if (condition != null) processRuleWithCondition(
             isAppInBlockPeriod,

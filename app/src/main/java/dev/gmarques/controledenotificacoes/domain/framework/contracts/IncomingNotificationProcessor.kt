@@ -28,6 +28,7 @@ package dev.gmarques.controledenotificacoes.domain.framework.contracts
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import org.joda.time.LocalDateTime
 
 /**
  * Criado por Gilian Marques
@@ -42,6 +43,7 @@ interface IncomingNotificationProcessor {
         appNotification: AppNotification,
         rule: Rule,
         managedApp: ManagedApp,
+        baseDate: LocalDateTime = LocalDateTime(),
     ): PerformAction
 
     sealed class PerformAction {
