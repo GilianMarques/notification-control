@@ -85,7 +85,13 @@ object SnoozedNotificationValidator {
 
         sealed class SnoozeUntilValidation(msg: String) : SnoozedNotificationValidatorException(msg) {
             class InvalidStampException(snoozeUntil: Long, permaHidden: Boolean) :
-                SnoozeUntilValidation("A notificação adiada deve ter um valor definido no futuro para para reemissão a menos que seja permaHidden. snoozeUntil: $snoozeUntil permaHidden: $permaHidden")
+                SnoozeUntilValidation(
+                    "A notificação adiada deve ter um valor definido no futuro para para reemissão a menos que seja permaHidden. snoozeUntil: $snoozeUntil (${
+                        org.joda.time.LocalDateTime(
+                            snoozeUntil
+                        )
+                    }) permaHidden: $permaHidden"
+                )
         }
 
         sealed class OriginValidation(msg: String) : SnoozedNotificationValidatorException(msg) {

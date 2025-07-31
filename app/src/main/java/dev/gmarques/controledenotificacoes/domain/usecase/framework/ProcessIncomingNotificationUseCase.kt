@@ -109,9 +109,9 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
             Snooze -> {
                 saveNotification(targetNotification)
                 setHasPendingNotificationsForManagedApp(managedApp)
-                val snoozeFor = rule.nextAppUnlockPeriodFromNow() - System.currentTimeMillis()
-                if (snoozeFor < 0) error("O periodo de adiamento deve ser positivo. verifique se a regra é permablock e o proximo periodo. rule: $rule ")
-                ProcessingResult.SnoozeNotification(targetNotification, snoozeFor)
+                val until = rule.nextAppUnlockPeriodFromNow()
+                if (until < 0) error("O periodo de adiamento deve ser positivo. verifique se a regra é permablock e o proximo periodo. rule: $rule ")
+                ProcessingResult.SnoozeNotification(targetNotification, until)
             }
         }
 
@@ -205,7 +205,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
     sealed class ProcessingResult {
         data class AllowNotification(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()
         data class CancelNotification(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()
-        data class SnoozeNotification(val targetNotification: ActiveStatusBarNotification, val snoozeFor: Long) :
+        data class SnoozeNotification(val targetNotification: ActiveStatusBarNotification, val until: Long) :
             ProcessingResult()
 
         data class AppNotManaged(val targetNotification: ActiveStatusBarNotification) : ProcessingResult()

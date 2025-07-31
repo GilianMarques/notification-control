@@ -26,7 +26,6 @@
 package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
@@ -208,29 +207,29 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
         when (result) {
             is AllowNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
+                //Log.d("USUK", "NotificationListener.processNotification: AllowNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
+                //Log.d("USUK", "NotificationListener.processNotification: AppNotManaged: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
+                //Log.d("USUK", "NotificationListener.processNotification: CancelNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 listener.cancelNotification(result.targetNotification.key)
             }
 
             is SnoozeNotification -> {
-                Log.d("USUK", "NotificationListener.processNotification: SnoozeNotification: ${result.targetNotification} ")
+                //Log.d("USUK", "NotificationListener.processNotification: SnoozeNotification: ${result.targetNotification} ")
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
-                runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.snoozeFor) }
+                runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.until) }
             }
         }
 
