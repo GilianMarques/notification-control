@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.navArgs
@@ -148,12 +149,18 @@ class SplashFragment : MyFragment() {
                 binding.tvUserName to binding.tvUserName.transitionName,
                 binding.ivProfilePicture to binding.ivProfilePicture.transitionName,
             )
-            findNavControllerMain().navigate(
-                SplashFragmentDirections.toHomeFragment(),
-                extras
-            )
 
+            // previne erro de navegação quando o app é minimizado na hora de navegar
+            collectFlow(lifecycle.currentStateFlow) {
+                if (lifecycle.currentState == Lifecycle.State.RESUMED &&
+                    findNavControllerMain().currentDestination?.id == R.id.splashFragment
+                ) findNavControllerMain().navigate(
+                    SplashFragmentDirections.toHomeFragment(),
+                    extras
+                )
+            }
         }
+
     }
 
     private fun navigateToFragmentLogin() {
