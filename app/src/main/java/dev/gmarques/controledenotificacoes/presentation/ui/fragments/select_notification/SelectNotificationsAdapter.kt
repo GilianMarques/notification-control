@@ -27,12 +27,17 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_not
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationBinding
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.canUseReadMoreFeature
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.readMoreFeature
 
 /**
  * Criado por Gilian Marques
@@ -42,8 +47,11 @@ class SelectNotificationsAdapter(
     private val onItemClick: (ActiveStatusBarNotification) -> Unit,
 ) : ListAdapter<ActiveStatusBarNotification, SelectNotificationsAdapter.ViewHolder>(DiffCallback()) {
 
+    private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAppNotificationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding.root.startAnimation(anim)
         return ViewHolder(binding)
     }
 
@@ -57,8 +65,19 @@ class SelectNotificationsAdapter(
 
             tvTitle.text = notification.title
 
-            tvContent.text = notification.content
-            tvContent.isVisible = true
+            with(tvContent) {
+
+                this.isVisible = !notification.content.isEmpty()
+
+                if (this.canUseReadMoreFeature(notification.content)) {
+                    ivLargeIcon.isGone = true
+
+                    this.readMoreFeature(notification.content) { fullText ->
+                        ivLargeIcon.isVisible = fullText && notification.largeIcon != null
+                    }
+                } else this.text = notification.content
+            }
+
 
             ivAppIcon.setImageIcon(notification.smallIcon)
 
