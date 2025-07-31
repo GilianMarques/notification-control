@@ -84,7 +84,6 @@ class ManageNotificationsViewModel @Inject constructor(
                         ManageableNotification.from(db, system).copy(
                             permaHidden = db?.permaHidden == true,
                             isSnoozed = db?.permaHidden == false,
-                            deadRecord = db != null && system == null,
                         )
                     }
                     _notificationsFlow.tryEmit(allSnoozed)

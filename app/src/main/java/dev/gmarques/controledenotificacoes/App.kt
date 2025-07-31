@@ -27,7 +27,6 @@ package dev.gmarques.controledenotificacoes
 
 import android.app.Application
 import android.content.Intent
-import android.os.Build
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
@@ -76,11 +75,22 @@ class App() : Application(), CoroutineScope by MainScope() {
         setupRemoteConfig()
         setupCrashLytics()
         startNotificationService()
+        scheduleAlarms()
+        super.onCreate()
+    }
 
+    /**
+     * Reagenda os alarmes necessários pro funcionamento correto da aplicação no sistma.
+     * Sempre que o aplicativo é morto (forçar parada, algum crash mais sério, reboot do dispositivo, etc...)
+     * os alarmes se perdem, sendo necessário o reagendamento.
+     *
+     * A execução dessa classe não indica que o app foi morto.
+     */
+    private fun scheduleAlarms() = CoroutineScope(IO).launch {
         /** Vai agendar em loop um broadcast que liga o serviço de notificações */
         HiltEntryPoints.scheduleAutoTurnOnUseCase().invoke()
-
-        super.onCreate()
+        HiltEntryPoints.scheduleBackupNotificationsOnBootUseCase().invoke()
+        HiltEntryPoints.rescheduleReportNotificationsOnBootUseCase().invoke()
     }
 
     private fun setupCrashLytics() {
@@ -134,12 +144,7 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     fun startNotificationService() {
         val serviceIntent = Intent(this, NotificationServiceManager::class.java)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+        startForegroundService(serviceIntent)
     }
 
     fun restartNotificationService() {

@@ -50,11 +50,11 @@ data class ManageableNotification(
     val tag: String?,
     val isSnoozed: Boolean,
     val permaHidden: Boolean,
-    val deadRecord: Boolean,
     val origin: SnoozedNotification.Origin?,
     val snoozeUntil: Long,
-    val isFromDatabase: Boolean,
-    val isFromSystem: Boolean,
+    val isOnlyInDatabase: Boolean,
+    val isOnlyInSystem: Boolean,
+    val isInDBAndSystem: Boolean,
 ) {
     companion object {
         fun from(
@@ -74,12 +74,12 @@ data class ManageableNotification(
                 notification = system?.notification,
                 tag = system?.tag,
                 origin = database?.origin,
-                isFromDatabase = database != null,
-                isFromSystem = system != null,
-                snoozeUntil = database?.snoozeUntil?:0,
+                isOnlyInDatabase = database != null && system == null,
+                isOnlyInSystem = database == null && system != null,
+                isInDBAndSystem = database != null && system != null,
+                snoozeUntil = database?.snoozeUntil ?: 0,
                 permaHidden = database?.permaHidden ?: false,
                 isSnoozed = false,
-                deadRecord = false,
             )
         }
     }

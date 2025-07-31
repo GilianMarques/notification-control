@@ -28,37 +28,28 @@ package dev.gmarques.controledenotificacoes.framework.report_notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleReportNotificationsOnBootUseCase
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.App
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
 /**
  * Criado por Gilian Marques
  * Em quarta-feira, 14 de maio de 2025 as 12:34.
  *
- *  Liga o [NotificationServiceManager] para que o [NotificationListener]
- *  seja monitorado em caso de desconexão, Também é responsável por, através do [RescheduleReportNotificationsOnBootUseCase] reagendar os
- *  alarmes que estavam ativos antes do dispositivo reiniciar
+ * Garante a execução da [App] que executa as tarefas necessárias
+ *
  */
 class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
-
+    /**
+     * Não é necessário fazer nada aqui.
+     * Quando esse receive é executado a classe [App] já está inicializada e por padrão ela inicializa
+     * o serviço de notificações, e reagenda os alarmes.
+     */
     override fun onReceive(context: Context, intent: Intent) {
+        @Suppress("ControlFlowWithEmptyBody")
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            rescheduleAlarmsIfAny()
+            // leia Kdoc
         }
     }
-
-    private fun rescheduleAlarmsIfAny() = launch(IO) {
-        with(HiltEntryPoints) {
-            rescheduleReportNotificationsOnBootUseCase().invoke()
-            scheduleBackupNotificationsOnBootUseCase().invoke()
-        }
-    }
-
 
 }

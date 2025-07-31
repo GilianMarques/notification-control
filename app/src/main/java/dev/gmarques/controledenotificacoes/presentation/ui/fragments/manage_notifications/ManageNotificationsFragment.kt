@@ -126,15 +126,23 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
             section {
 
-                if (!not.permaHidden && not.isFromSystem) item {
-                    label = getString(R.string.Tentar_postar_agora)
-                    icon = R.drawable.vec_post_now
-                    callback = {
-                        viewModel.postSnoozedOrHiddenNotification(not)
+                if (!not.permaHidden) {
+                    if (not.isSnoozed) item {
+                        label = getString(R.string.Tentar_postar_agora)
+                        icon = R.drawable.vec_post_now
+                        callback = {
+                            viewModel.postSnoozedOrHiddenNotification(not)
+                        }
+                    } else item {
+                        label = getString(R.string.Adiar)
+                        icon = R.drawable.vec_snooze
+                        callback = {
+                            navigateToPickDateAndTime(not)
+                        }
                     }
                 }
 
-                if (!not.isSnoozed)
+                if (!not.isSnoozed) {
                     if (not.permaHidden) item {
                         label = getString(R.string.Exibir)
                         icon = R.drawable.vec_show
@@ -149,21 +157,8 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                             viewModel.hideNotification(not)
                         }
                     }
+                }
 
-                if (!not.permaHidden) if (not.isSnoozed) item {
-                    label = getString(R.string.Postar_agora)
-                    icon = R.drawable.vec_post_now
-                    callback = {
-                        viewModel.postSnoozedOrHiddenNotification(not)
-                    }
-                } else
-                    item {
-                        label = getString(R.string.Adiar)
-                        icon = R.drawable.vec_snooze
-                        callback = {
-                            navigateToPickDateAndTime(not)
-                        }
-                    }
             }
 
             section {
@@ -177,13 +172,15 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                 }
             }
 
-            if (not.deadRecord) section {
+            if (not.isOnlyInDatabase) {
+                section {
 
-                item {
-                    label = getString(R.string.Remover_registro)
-                    icon = R.drawable.vec_remove
-                    callback = {
-                        viewModel.removeNotificationFromDB(not)
+                    item {
+                        label = getString(R.string.Remover_registro)
+                        icon = R.drawable.vec_remove
+                        callback = {
+                            viewModel.removeNotificationFromDB(not)
+                        }
                     }
                 }
             }
@@ -193,8 +190,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                 if (!not.isOngoing
                     && !not.isSnoozed
                     && !not.permaHidden
-                    && !not.deadRecord
-                    && not.isFromSystem
+                    && (not.isOnlyInSystem || not.isInDBAndSystem)
                 ) item {
                     label = getString(R.string.Dispensar)
                     icon = R.drawable.vec_dismiss
