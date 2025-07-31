@@ -53,6 +53,9 @@ interface SnoozedNotificationDao {
     @Query("SELECT * FROM snoozed_notifications")
     suspend fun getAll(): List<SnoozedNotificationEntity>
 
+    @Query("SELECT * FROM snoozed_notifications")
+    fun observeAll(): Flow<List<SnoozedNotificationEntity>>
+
     @Query("SELECT * FROM snoozed_notifications WHERE packageName = :pkg")
     fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotificationEntity>>
 }

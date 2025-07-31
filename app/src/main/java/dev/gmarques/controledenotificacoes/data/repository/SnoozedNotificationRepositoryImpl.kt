@@ -61,6 +61,12 @@ class SnoozedNotificationRepositoryImpl @Inject constructor(
         return dao.getAll().map { SnoozedNotificationMapper.toModel(it) }
     }
 
+    override suspend fun observeAll(): Flow<List<SnoozedNotification>> {
+        return dao.observeAll().map { list ->
+            list.map { SnoozedNotificationMapper.toModel(it) }
+        }
+    }
+
     override fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>> {
         return dao.observeNotificationsByPkgId(pkg).map { list ->
             list.map { SnoozedNotificationMapper.toModel(it) }

@@ -23,23 +23,15 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.domain.data.repository
+package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
-import kotlinx.coroutines.flow.Flow
+import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
+import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em 26/07/2025 as 18:01
+ * Em 31/07/2025 as 12:58
  */
-interface SnoozedNotificationRepository {
-    suspend fun insert(notification: SnoozedNotification)
-    suspend fun deleteAll(packageName: String)
-
-    suspend fun delete(key: String)
-    suspend fun getByKey(key: String): SnoozedNotification?
-    suspend fun getByPackageName(packageName: String): List<SnoozedNotification>
-    suspend fun getAll(): List<SnoozedNotification>
-    suspend fun observeAll(): Flow<List<SnoozedNotification>>
-    fun observeNotificationsByPkgId(pkg: String): Flow<List<SnoozedNotification>>
+class ObserveAllSnoozedNotificationsUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
+    suspend operator fun invoke() = repository.observeAll()
 }

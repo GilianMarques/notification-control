@@ -33,7 +33,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetAllSnoozedNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.ObserveAllSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByUserUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
@@ -42,6 +42,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotifica
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ManageNotificationsViewModel @Inject constructor(
-    private val getAllSnoozedNotificationsUseCase: GetAllSnoozedNotificationsUseCase,
+    private val observeAllSnoozedNotificationsUseCase: ObserveAllSnoozedNotificationsUseCase,
     private val snoozeNotificationByUserUseCase: SnoozeNotificationByUserUseCase,
     private val postSnoozedNotificationUseCase: PostSnoozedNotificationUseCase,
     private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
@@ -68,26 +69,28 @@ class ManageNotificationsViewModel @Inject constructor(
         observerJob.cancel()
         observerJob = viewModelScope.launch {
 
-            NotificationListener.getWhenReady()
-                .getSnoozedNotificationsFlow()
-                .collect { systemList ->
-                    val dbList = getAllSnoozedNotificationsUseCase()
+            val snoozedNotificationsOnStatusBar = NotificationListener.getWhenReady().getSnoozedNotificationsFlow()
+            val snoozedNotificationsOnDatabase = observeAllSnoozedNotificationsUseCase()
 
-                    val dbMap = dbList.associateBy { it.key }
-                    val systemMap = systemList.associateBy { it.key }
+            combine(snoozedNotificationsOnDatabase, snoozedNotificationsOnStatusBar) { dbList, systemList ->
 
-                    val allKeys = dbMap.keys union systemMap.keys
+                val dbMap = dbList.associateBy { it.key }
+                val systemMap = systemList.associateBy { it.key }
 
-                    val allSnoozed = allKeys.map { key ->
-                        val db = dbMap[key]
-                        val system = systemMap[key]
-                        ManageableNotification.from(db, system).copy(
-                            permaHidden = db?.permaHidden == true,
-                            isSnoozed = db?.permaHidden == false,
-                        )
-                    }
-                    _notificationsFlow.tryEmit(allSnoozed)
+                val allKeys = dbMap.keys union systemMap.keys
+
+                allKeys.map { key ->
+                    val db = dbMap[key]
+                    val system = systemMap[key]
+                    ManageableNotification.from(db, system).copy(
+                        permaHidden = db?.permaHidden == true,
+                        isSnoozed = db?.permaHidden == false,
+                    )
                 }
+
+            }.collect { allSnoozed ->
+                _notificationsFlow.emit(allSnoozed)
+            }
         }
     }
 
@@ -95,18 +98,16 @@ class ManageNotificationsViewModel @Inject constructor(
 
         observerJob.cancel()
         observerJob = viewModelScope.launch {
-            NotificationListener.getWhenReady()
-                .getActiveWithOngoingNotificationsFlow()
-                .collect { systemList ->
-                    val combined = systemList.map {
-                        ManageableNotification.from(system = it)
-                    }
-                    _notificationsFlow.tryEmit(combined)
+            NotificationListener.getWhenReady().getActiveWithOngoingNotificationsFlow().collect { systemList ->
 
+                val managed = systemList.map {
+                    ManageableNotification.from(system = it)
                 }
+                _notificationsFlow.tryEmit(managed)
+
+            }
         }
     }
-
 
     fun hideNotification(notification: ManageableNotification) = viewModelScope.launch {
         snoozeNotificationByUserUseCase(ActiveStatusBarNotificationFactory.create(notification), 0, true)

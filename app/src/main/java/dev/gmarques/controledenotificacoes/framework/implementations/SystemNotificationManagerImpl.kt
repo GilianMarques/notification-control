@@ -26,6 +26,7 @@
 package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
@@ -75,11 +76,12 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     val activeWithOngoingFlow: StateFlow<List<ActiveStatusBarNotification>> =
         combine(activeFlow, ongoingFlow) { active, ongoing ->
             active + ongoing
-        }.stateIn(
-            scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-            initialValue = emptyList()
-        )
+        }
+            .stateIn(
+                scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = emptyList()
+            )
 
 
     override fun getActiveNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = activeFlow
@@ -237,7 +239,9 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     }
 
     private fun List<ActiveStatusBarNotification>?.applyDefaultFilter(): List<ActiveStatusBarNotification> {
-        return this?.filterNot { it.content.isEmpty() && it.title.isEmpty() }
+        return this
+            ?.filterNot { BuildConfig.APPLICATION_ID.contains(it.packageName) }
+            ?.filterNot { it.content.isEmpty() && it.title.isEmpty() }
             ?.distinctBy { it.title to it.content }
             ?.distinctBy { it.key }
             ?: emptyList()
