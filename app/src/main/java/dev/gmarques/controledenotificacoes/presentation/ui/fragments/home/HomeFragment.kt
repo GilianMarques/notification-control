@@ -34,6 +34,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -122,6 +123,68 @@ class HomeFragment : MyFragment() {
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
+            animateRecyclerView()
+        }
+    }
+
+    private fun animateRecyclerView() = with(binding) {
+        if (llRvBackground == null) return@with
+
+        llRvBackground.doOnPreDraw {
+            val parent = llRvBackground.parent as? ConstraintLayout ?: return@doOnPreDraw
+
+            // Margens e altura originais do background
+            val bgLayoutParams = llRvBackground.layoutParams as ViewGroup.MarginLayoutParams
+            val originalBgTop = bgLayoutParams.topMargin
+            val originalBgBottom = bgLayoutParams.bottomMargin
+            val originalBgLeft = bgLayoutParams.leftMargin
+            val originalBgRight = bgLayoutParams.rightMargin
+            val originalHeight = llRvBackground.height
+            val parentHeight = parent.height
+
+            // Margens originais do RecyclerView
+            val rvLayoutParams = rvApps.layoutParams as ViewGroup.MarginLayoutParams
+            val originalRvTop = rvLayoutParams.topMargin
+            val originalRvBottom = rvLayoutParams.bottomMargin
+            val originalRvLeft = rvLayoutParams.leftMargin
+            val originalRvRight = rvLayoutParams.rightMargin
+
+            appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
+
+                val totalScrollRange = appBar.totalScrollRange
+                val progress = (-verticalOffset / totalScrollRange.toFloat()).coerceIn(0f, 1f)
+                val interpolatedProgress = AccelerateDecelerateInterpolator().getInterpolation(progress)
+
+                // ------- llRvBackground --------
+                val bgTop = (originalBgTop * (1 - interpolatedProgress)).toInt()
+                val bgBottom = (originalBgBottom * (1 - interpolatedProgress)).toInt()
+                val bgLeft = (originalBgLeft * (1 - interpolatedProgress)).toInt()
+                val bgRight = (originalBgRight * (1 - interpolatedProgress)).toInt()
+                val targetHeight =
+                    ((originalHeight * (1f - interpolatedProgress)) + (parentHeight * interpolatedProgress)).toInt()
+
+                bgLayoutParams.topMargin = bgTop
+                bgLayoutParams.bottomMargin = bgBottom
+                bgLayoutParams.leftMargin = bgLeft
+                bgLayoutParams.rightMargin = bgRight
+                bgLayoutParams.height = targetHeight
+                llRvBackground.layoutParams = bgLayoutParams
+                llRvBackground.requestLayout()
+                llRvBackground.alpha = 1f - interpolatedProgress
+
+                // ------- rvApps (RecyclerView) --------
+                val rvTop = (originalRvTop * (1 - interpolatedProgress)).toInt()
+                val rvBottom = (originalRvBottom * (1 - interpolatedProgress)).toInt()
+                val rvLeft = (originalRvLeft * (1 - interpolatedProgress)).toInt()
+                val rvRight = (originalRvRight * (1 - interpolatedProgress)).toInt()
+
+                rvLayoutParams.topMargin = rvTop
+                rvLayoutParams.bottomMargin = rvBottom
+                rvLayoutParams.leftMargin = rvLeft
+                rvLayoutParams.rightMargin = rvRight
+                rvApps.layoutParams = rvLayoutParams
+                rvApps.requestLayout()
+            }
         }
     }
 
@@ -522,7 +585,6 @@ class HomeFragment : MyFragment() {
             Toast.makeText(App.instance, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
         }
     }
-
 }
 
 

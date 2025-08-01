@@ -66,7 +66,7 @@ class ManagedAppsAdapter(
 ) : ListAdapter<ManagedAppWithRule, ManagedAppsAdapter.ViewHolder>(DiffCallback()) {
     var useGridView = false
         private set
-
+    private val largeScreen = App.largeScreenDevice
     private val anim = AnimationUtils.loadAnimation(App.instance, android.R.anim.fade_in)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -75,7 +75,7 @@ class ManagedAppsAdapter(
         val binding = if (useGridView) ItemManagedAppGridBinding.inflate(inflater, parent, false)
         else ItemManagedAppListBinding.inflate(inflater, parent, false)
 
-        binding.root.startAnimation(anim)
+        if (largeScreen) binding.root.startAnimation(anim) // buga em celulares por conta da animação do appbar
 
         return ViewHolder(binding)
     }

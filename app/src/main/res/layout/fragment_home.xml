@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
@@ -131,31 +130,101 @@
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edt_search"
-                    style="@style/Margins_edittext"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="6dp"
-                    android:autofillHints="name"
-                    android:background="@drawable/back_edittext_search"
-                    android:drawableStart="@drawable/vec_search"
-                    android:drawablePadding="16dp"
-                    android:drawableTint="?colorOnBackground"
-                    android:hint="@string/Buscar_aplicativo"
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    android:maxWidth="378dp"
-                    android:maxLines="1"
-                    android:padding="12dp"
-                    android:singleLine="true"
-                    android:visibility="invisible"
-                    tools:text="Whatsapp"
-                    tools:visibility="visible" />
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edt_search"
+                        style="@style/Margins_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="6dp"
+                        android:autofillHints="name"
+                        android:background="@drawable/back_edittext_search"
+                        android:drawableStart="@drawable/vec_search"
+                        android:drawablePadding="16dp"
+                        android:drawableTint="?colorOnBackground"
+                        android:hint="@string/Buscar_aplicativo"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:maxWidth="378dp"
+                        android:maxLines="1"
+                        android:padding="12dp"
+                        android:singleLine="true"
+                        android:visibility="invisible"
+                        tools:text="Whatsapp"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_rule_type_parent"
+                        style="@style/containers_margins"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/back_container"
+                        android:orientation="vertical"
+                        android:transitionName="apps_container">
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:fontFamily="@font/urbanist_extrabold"
+                            android:text="@string/Tipo_de_regra"
+                            android:textSize="20sp"
+                            android:transitionName="tv_target_app" />
+
+                        <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/mbt_type_rule"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <Button
+                                android:id="@+id/btn_permissive"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/Permissiva" />
+
+                            <Button
+                                android:id="@+id/btn_restritive"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/Restritiva" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+                        <TextView
+                            android:id="@+id/tv_rule_type_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:drawablePadding="8dp"
+                            android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
+                            app:drawableStartCompat="@drawable/vec_info"
+                            app:drawableTint="?attr/colorPrimary" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -202,9 +271,9 @@
                     android:elevation="10dp"
                     android:fontFamily="@font/urbanist_extrabold"
                     android:maxWidth="250dp"
-                    android:textColor="?colorSecondary"
                     android:text="@string/Clique_no_bot_o_para_configurar_o_primeiro_app"
                     android:textAlignment="center"
+                    android:textColor="?colorSecondary"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -233,20 +302,114 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <LinearLayout
+                android:id="@+id/ll_rv_background"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:minHeight="340dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_warnings">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Apps_gerenciados"
+                    android:textSize="20sp"
+                    android:transitionName="tv_target_app" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvApps"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="56dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="0dp"
                 android:contentDescription="@string/Lista_de_aplicativos_sendo_gerenciados"
                 android:paddingStart="4dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/container_warnings"
+                app:layout_constraintBottom_toBottomOf="@id/ll_rv_background"
+                app:layout_constraintEnd_toEndOf="@id/ll_rv_background"
+                app:layout_constraintStart_toStartOf="@id/ll_rv_background"
+                app:layout_constraintTop_toTopOf="@id/ll_rv_background"
                 tools:listitem="@layout/item_managed_app_list"
                 tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/ll_rules"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="apps_container"
+                app:layout_constraintTop_toBottomOf="@id/ll_rv_background">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Tipo_de_regra"
+                    android:textSize="20sp"
+                    android:transitionName="tv_target_app" />
+
+                <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/mbt_type_rules"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <Button
+                        android:id="@+id/btn_permissdive"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Permissiva" />
+
+                    <Button
+                        android:id="@+id/btn_restriftive"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Restritiva" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+                <TextView
+                    android:id="@+id/tv_rule_type_sinfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:drawablePadding="8dp"
+                    android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
+                    app:drawableStartCompat="@drawable/vec_info"
+                    app:drawableTint="?attr/colorPrimary" />
+
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
