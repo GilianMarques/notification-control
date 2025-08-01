@@ -61,7 +61,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Responsavel por expor as funçoes necessarias dessa classe + funções utilitarias para o resto do sistema
      */
-    private val systemNotificationManager: SystemNotificationManagerImpl = SystemNotificationManagerImpl(this, debugTests)
+    private val systemNotificationManager: SystemNotificationManager = SystemNotificationManagerImpl(this, debugTests)
 
     companion object {
         /**

@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.framework.contracts
 
+import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import kotlinx.coroutines.flow.Flow
 
@@ -62,4 +63,11 @@ interface SystemNotificationManager {
 
     /**Deve emitir imediatamente uma notificação adiada*/
     fun postSnoozedNotification(key: String)
+
+    fun processNotification(sbn: StatusBarNotification)
+
+    /**Atualiza os flow com as notificações atuais*/
+    fun emitNotifications()
+
+
 }

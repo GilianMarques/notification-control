@@ -26,7 +26,6 @@
 package dev.gmarques.controledenotificacoes.domain.framework
 
 import android.app.Notification
-import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 
@@ -36,16 +35,18 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
  */
 object SystemNotificationValidator {
 
-    fun isValidToProcess(notification: StatusBarNotification, acceptOnGoing: Boolean = false): Boolean {
-
-        return notification.packageName != BuildConfig.APPLICATION_ID
-                && if (!acceptOnGoing) !notification.isOngoing else true
-    }
-
-
     fun isValidToEcho(notification: ActiveStatusBarNotification): Boolean {
         return !notification.isOngoing
                 && !isMediaPlaybackNotification(notification)
+    }
+
+    fun List<ActiveStatusBarNotification>?.applyDefaultFilter(): List<ActiveStatusBarNotification> {
+        return this
+            ?.filterNot { BuildConfig.APPLICATION_ID.contains(it.packageName) }
+            ?.filterNot { it.content.isEmpty() && it.title.isEmpty() }
+            ?.distinctBy { it.title to it.content }
+            ?.distinctBy { it.key }
+            ?: emptyList()
     }
 
     private fun isMediaPlaybackNotification(notification: ActiveStatusBarNotification): Boolean {

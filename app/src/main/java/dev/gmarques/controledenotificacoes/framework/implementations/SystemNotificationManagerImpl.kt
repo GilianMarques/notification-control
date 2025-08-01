@@ -26,9 +26,8 @@
 package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
+import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator.applyDefaultFilter
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
@@ -88,8 +87,8 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     override fun getActiveNotifications(): List<ActiveStatusBarNotification> {
         if (!listener.isListenerConnected()) return emptyList()
-        return listener.activeNotifications?.filter {
-            SystemNotificationValidator.isValidToProcess(it)
+        return listener.activeNotifications?.filterNot {
+            it.isOngoing
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
         }.applyDefaultFilter()
@@ -100,7 +99,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     override fun getOngoingNotifications(): List<ActiveStatusBarNotification> {
         if (!listener.isListenerConnected()) return emptyList()
         return listener.activeNotifications?.filter {
-            it.isOngoing && SystemNotificationValidator.isValidToProcess(it, true)
+            it.isOngoing
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
         }.applyDefaultFilter()
@@ -114,11 +113,13 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     override fun getSnoozedNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = snoozedFlow
 
+    /**
+     * Retorna a lista de notificações adiadas.
+     * Inclue notificações Dispensaveis e Persistentes
+     */
     override fun getSnoozedNotifications(): List<ActiveStatusBarNotification> {
         if (!listener.isListenerConnected()) return emptyList()
-        return listener.snoozedNotifications?.filter {
-            SystemNotificationValidator.isValidToProcess(it)
-        }?.map {
+        return listener.snoozedNotifications?.map {
             ActiveStatusBarNotificationFactory.create(it)
         }.applyDefaultFilter()
     }
@@ -144,15 +145,13 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     /**
      * Atualiza os FLows de notificações ativas, adiadas e em andamento om base no conteudo do Listener de notificações.
      */
-    fun emitNotifications() {
+    override fun emitNotifications() {
         activeFlow.value = getActiveNotifications()
         snoozedFlow.value = getSnoozedNotifications()
         ongoingFlow.value = getOngoingNotifications()
     }
 
-    fun processNotification(sbn: StatusBarNotification) {
-
-        if (!SystemNotificationValidator.isValidToProcess(sbn, true)) return
+    override fun processNotification(sbn: StatusBarNotification) {
 
         val snoozedNotification = runBlocking { getSnoozedNotificationByKeyUseCase(sbn.key) }
 
@@ -161,25 +160,46 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     }
 
-    private fun processSnoozedNotification(snoozedNotification: SnoozedNotification, sbn: StatusBarNotification) = runBlocking {
+    private fun processSnoozedNotification(snoozedNot: SnoozedNotification, sbn: StatusBarNotification) = runBlocking {
         // TODO: transformar em usecase?
 
-        if (snoozedNotification.permaHidden) {
+        val activeNot = ActiveStatusBarNotificationFactory.create(sbn)
+        if (snoozedNot.permaHidden) {
             snoozeNotification(
-                ActiveStatusBarNotificationFactory.create(sbn),
+                activeNot,
                 System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD
             )
             return@runBlocking
         }
-
-        if (snoozedNotificationPostedTooEarly(snoozedNotification)) {
-            snoozeNotification(ActiveStatusBarNotificationFactory.create(sbn), snoozedNotification.snoozeUntil)
+        /** O app pode atualizar a notificação fazendo com que seja reemitida antes da hora*/
+        if (snoozedNotificationPostedTooEarly(snoozedNot)) {
+            snoozeNotification(activeNot, snoozedNot.snoozeUntil)
             return@runBlocking
         }
-
-        if (backupNotificationAlarmSchedulerImpl.isThereAnyAlarmSetForKey(snoozedNotification.key)) {
-            backupNotificationAlarmSchedulerImpl.cancelAlarm(snoozedNotification.key)
-            deleteSnoozedNotificationUseCase(snoozedNotification.key)
+        /**
+         * O propósito de adiar uma notificação é permitir que o usuário seja lembrado do seu conteúdo
+         * em um momento mais conveniente. Frequentemente, aplicativos como o WhatsApp atualizam
+         * notificações, modificando seu conteúdo. Consequentemente, quando chega o momento de
+         * reexibir a notificação adiada, seu conteúdo pode ter sido alterado.
+         *
+         * Ao verificar o conteúdo da notificação, além da sua chave (key), garantimos que o
+         * agendamento da notificação de backup seja cancelado somente se o sistema emitir
+         * a notificação com o conteúdo original novamente. Isso assegura que o usuário seja
+         * lembrado do conteúdo específico que ele desejou ver posteriormente.
+         *
+         * Caso a notificação seja atualizada – mantendo a mesma chave, mas com conteúdo
+         * modificado – o aplicativo não cancelará o agendamento. Em vez disso,
+         * emitirá uma notificação de backup contendo o conteúdo da notificação
+         * originalmente adiada.
+         *
+         * Este comportamento torna a funcionalidade de adiar notificações mais útil e confiável
+         * para o usuário.
+         */
+        if (activeNot.title == snoozedNot.title && activeNot.content == snoozedNot.content) {
+            if (backupNotificationAlarmSchedulerImpl.isThereAnyAlarmSetForKey(snoozedNot.key)) {
+                backupNotificationAlarmSchedulerImpl.cancelAlarm(snoozedNot.key)
+                deleteSnoozedNotificationUseCase(snoozedNot.key)
+            }
         }
 
     }
@@ -237,16 +257,6 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
 
     }
-
-    private fun List<ActiveStatusBarNotification>?.applyDefaultFilter(): List<ActiveStatusBarNotification> {
-        return this
-            ?.filterNot { BuildConfig.APPLICATION_ID.contains(it.packageName) }
-            ?.filterNot { it.content.isEmpty() && it.title.isEmpty() }
-            ?.distinctBy { it.title to it.content }
-            ?.distinctBy { it.key }
-            ?: emptyList()
-    }
-
 
 }
 
