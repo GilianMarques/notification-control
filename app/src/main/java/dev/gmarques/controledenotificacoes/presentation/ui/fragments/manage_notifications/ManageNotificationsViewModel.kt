@@ -83,8 +83,8 @@ class ManageNotificationsViewModel @Inject constructor(
                     val db = dbMap[key]
                     val system = systemMap[key]
                     ManageableNotification.from(db, system).copy(
-                        permaHidden = db?.permaHidden == true,
-                        isSnoozed = db?.permaHidden == false,
+                        permaHidden = db?.permaHidden ?: false,
+                        isSnoozed = db?.permaHidden?.not() ?: false,
                     )
                 }
 
