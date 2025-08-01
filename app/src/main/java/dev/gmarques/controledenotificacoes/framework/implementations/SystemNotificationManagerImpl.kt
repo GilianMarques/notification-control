@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
+import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator.applyDefaultFilter
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
@@ -152,6 +153,8 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
     }
 
     override fun processNotification(sbn: StatusBarNotification) {
+
+        if (!SystemNotificationValidator.validNotification(sbn)) return
 
         val snoozedNotification = runBlocking { getSnoozedNotificationByKeyUseCase(sbn.key) }
 
