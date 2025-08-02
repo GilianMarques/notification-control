@@ -85,6 +85,7 @@ class ManageNotificationsViewModel @Inject constructor(
                     ManageableNotification.from(db, system).copy(
                         permaHidden = db?.permaHidden ?: false,
                         isSnoozed = db?.permaHidden?.not() ?: false,
+                        isSystemSnoozed = true,
                     )
                 }
 

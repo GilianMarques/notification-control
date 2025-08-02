@@ -126,36 +126,37 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
             section {
 
-                if (!not.permaHidden) {
-                    if (not.isSnoozed) item {
-                        label = getString(R.string.Tentar_postar_agora)
-                        icon = R.drawable.vec_post_now
-                        callback = {
-                            viewModel.postSnoozedOrHiddenNotification(not)
-                        }
-                    } else item {
-                        label = getString(R.string.Adiar)
-                        icon = R.drawable.vec_snooze
-                        callback = {
-                            navigateToPickDateAndTime(not)
-                        }
+
+                if ((!not.permaHidden && not.isSnoozed) || not.isSystemSnoozed) item {
+                    label = getString(R.string.Tentar_postar_agora)
+                    icon = R.drawable.vec_post_now
+                    callback = {
+                        viewModel.postSnoozedOrHiddenNotification(not)
                     }
                 }
 
-                if (!not.isSnoozed) {
-                    if (not.permaHidden) item {
-                        label = getString(R.string.Exibir)
-                        icon = R.drawable.vec_show
-                        callback = {
-                            viewModel.postSnoozedOrHiddenNotification(not)
-                        }
+                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
+                    label = getString(R.string.Adiar)
+                    icon = R.drawable.vec_snooze
+                    callback = {
+                        navigateToPickDateAndTime(not)
                     }
-                    else item {
-                        label = getString(R.string.Ocultar)
-                        icon = R.drawable.vec_hide
-                        callback = {
-                            viewModel.hideNotification(not)
-                        }
+                }
+
+
+                if (not.permaHidden && not.isSystemSnoozed) item {
+                    label = getString(R.string.Exibir)
+                    icon = R.drawable.vec_show
+                    callback = {
+                        viewModel.postSnoozedOrHiddenNotification(not)
+                    }
+                }
+
+                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
+                    label = getString(R.string.Ocultar)
+                    icon = R.drawable.vec_hide
+                    callback = {
+                        viewModel.hideNotification(not)
                     }
                 }
 
@@ -187,11 +188,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
             section {
 
-                if (!not.isOngoing
-                    && !not.isSnoozed
-                    && !not.permaHidden
-                    && (not.isOnlyInSystem || not.isInDBAndSystem)
-                ) item {
+                if (!not.isOngoing && !not.isSnoozed && !not.permaHidden && (not.isOnlyInSystem || not.isInDBAndSystem) && !not.isSystemSnoozed) item {
                     label = getString(R.string.Dispensar)
                     icon = R.drawable.vec_dismiss
                     callback = {

@@ -127,27 +127,40 @@ class HomeFragment : MyFragment() {
         }
     }
 
+    private fun setupActiveNotificationsView() = with(binding) {
+
+        if (llActiveNotifications == null) return@with
+        if (!requireMainActivity().isListenNotificationEnabled()) return@with
+
+        llActiveNotifications.isGone = false
+
+    }
+
     private fun animateRecyclerView() = with(binding) {
-        if (llRvBackground == null) return@with
 
-        llRvBackground.doOnPreDraw {
-            val parent = llRvBackground.parent as? ConstraintLayout ?: return@doOnPreDraw
+        if (llAppsCardBottom == null ||
+            llAppsCardTop == null
+        ) return@with
 
-            // Margens e altura originais do background
-            val bgLayoutParams = llRvBackground.layoutParams as ViewGroup.MarginLayoutParams
-            val originalBgTop = bgLayoutParams.topMargin
-            val originalBgBottom = bgLayoutParams.bottomMargin
-            val originalBgLeft = bgLayoutParams.leftMargin
-            val originalBgRight = bgLayoutParams.rightMargin
-            val originalHeight = llRvBackground.height
+        llAppsCardBottom.doOnPreDraw {
+
+            val parent = llAppsCardBottom.parent as? ConstraintLayout ?: return@doOnPreDraw
+
+            /** Margens e altura originais do llAppsCardBottom*/
+            val llAppsCardBottomParams = llAppsCardBottom.layoutParams as ViewGroup.MarginLayoutParams
+            val originalBgTop = llAppsCardBottomParams.topMargin
+            val originalBgBottom = llAppsCardBottomParams.bottomMargin
+            val originalBgLeft = llAppsCardBottomParams.leftMargin
+            val originalBgRight = llAppsCardBottomParams.rightMargin
+            val originalHeight = llAppsCardBottom.height
             val parentHeight = parent.height
 
-            // Margens originais do RecyclerView
-            val rvLayoutParams = rvApps.layoutParams as ViewGroup.MarginLayoutParams
-            val originalRvTop = rvLayoutParams.topMargin
-            val originalRvBottom = rvLayoutParams.bottomMargin
-            val originalRvLeft = rvLayoutParams.leftMargin
-            val originalRvRight = rvLayoutParams.rightMargin
+            /** Margens  originais do rvApps*/
+            val rvAppsParams = rvApps.layoutParams as ViewGroup.MarginLayoutParams
+            val originalRvTop = rvAppsParams.topMargin
+            val originalRvBottom = rvAppsParams.bottomMargin
+            val originalRvLeft = rvAppsParams.leftMargin
+            val originalRvRight = rvAppsParams.rightMargin
 
             appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
 
@@ -155,35 +168,48 @@ class HomeFragment : MyFragment() {
                 val progress = (-verticalOffset / totalScrollRange.toFloat()).coerceIn(0f, 1f)
                 val interpolatedProgress = AccelerateDecelerateInterpolator().getInterpolation(progress)
 
-                // ------- llRvBackground --------
-                val bgTop = (originalBgTop * (1 - interpolatedProgress)).toInt()
-                val bgBottom = (originalBgBottom * (1 - interpolatedProgress)).toInt()
                 val bgLeft = (originalBgLeft * (1 - interpolatedProgress)).toInt()
                 val bgRight = (originalBgRight * (1 - interpolatedProgress)).toInt()
-                val targetHeight =
-                    ((originalHeight * (1f - interpolatedProgress)) + (parentHeight * interpolatedProgress)).toInt()
 
-                bgLayoutParams.topMargin = bgTop
-                bgLayoutParams.bottomMargin = bgBottom
-                bgLayoutParams.leftMargin = bgLeft
-                bgLayoutParams.rightMargin = bgRight
-                bgLayoutParams.height = targetHeight
-                llRvBackground.layoutParams = bgLayoutParams
-                llRvBackground.requestLayout()
-                llRvBackground.alpha = 1f - interpolatedProgress
 
-                // ------- rvApps (RecyclerView) --------
-                val rvTop = (originalRvTop * (1 - interpolatedProgress)).toInt()
-                val rvBottom = (originalRvBottom * (1 - interpolatedProgress)).toInt()
-                val rvLeft = (originalRvLeft * (1 - interpolatedProgress)).toInt()
-                val rvRight = (originalRvRight * (1 - interpolatedProgress)).toInt()
+                with(llAppsCardTop) {
+                    alpha = (1f - interpolatedProgress)
+                    (layoutParams as ViewGroup.MarginLayoutParams).leftMargin = bgLeft
+                    (layoutParams as ViewGroup.MarginLayoutParams).rightMargin = bgRight
+                    post { requestLayout() }
+                }
 
-                rvLayoutParams.topMargin = rvTop
-                rvLayoutParams.bottomMargin = rvBottom
-                rvLayoutParams.leftMargin = rvLeft
-                rvLayoutParams.rightMargin = rvRight
-                rvApps.layoutParams = rvLayoutParams
-                rvApps.requestLayout()
+                with(llAppsCardBottom) {
+
+                    val bgTop = (originalBgTop * (1 - interpolatedProgress)).toInt()
+                    val bgBottom = (originalBgBottom * (1 - interpolatedProgress)).toInt()
+                    val targetHeight =
+                        ((originalHeight * (1f - interpolatedProgress)) + (parentHeight * interpolatedProgress)).toInt()
+
+                    llAppsCardBottomParams.topMargin = bgTop
+                    llAppsCardBottomParams.bottomMargin = bgBottom
+                    llAppsCardBottomParams.leftMargin = bgLeft
+                    llAppsCardBottomParams.rightMargin = bgRight
+                    llAppsCardBottomParams.height = targetHeight
+
+                    background.alpha = (255 * (1f - interpolatedProgress)).toInt()
+                    post { requestLayout() }
+                }
+
+                with(rvApps) {
+
+                    val rvTop = (originalRvTop * (1 - interpolatedProgress)).toInt()
+                    val rvBottom = (originalRvBottom * (1 - interpolatedProgress)).toInt()
+                    val rvLeft = (originalRvLeft * (1 - interpolatedProgress)).toInt()
+                    val rvRight = (originalRvRight * (1 - interpolatedProgress)).toInt()
+
+                    rvAppsParams.topMargin = rvTop
+                    rvAppsParams.bottomMargin = rvBottom
+                    rvAppsParams.leftMargin = rvLeft
+                    rvAppsParams.rightMargin = rvRight
+                    post { requestLayout() }
+                }
+
             }
         }
     }
@@ -444,7 +470,9 @@ class HomeFragment : MyFragment() {
 
             lifecycleScope.launch {
                 delay(300)
-                binding.emptyView.isGone = apps?.size != 0
+                binding.emptyView.isGone = apps?.isNotEmpty() == true
+                binding.llAppsCardTop?.isGone = apps?.isEmpty() == true
+                binding.llAppsCardBottom?.isGone = apps?.isEmpty() == true
 
             }
         }
@@ -481,6 +509,7 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
+        setupActiveNotificationsView()
 
     }
 

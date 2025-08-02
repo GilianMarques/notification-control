@@ -55,6 +55,7 @@ data class ManageableNotification(
     val isOnlyInDatabase: Boolean,
     val isOnlyInSystem: Boolean,
     val isInDBAndSystem: Boolean,
+    val isSystemSnoozed: Boolean,
 ) {
     companion object {
         fun from(
@@ -80,6 +81,7 @@ data class ManageableNotification(
                 snoozeUntil = database?.snoozeUntil ?: 0,
                 permaHidden = database?.permaHidden ?: false,
                 isSnoozed = false,
+                isSystemSnoozed = false,
             )
         }
     }

@@ -1,4 +1,5 @@
 Observações do que fazer a seguir:
-ao editare regra, dar um jeito de readiar as notificaçoes assim
-ajustar os pacotes de notificationprocessor, sua impl e usecase
+ajustar aviso sobre post notification
+colocar hint na tela de not adiadas
+
 remover livedatas
