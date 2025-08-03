@@ -314,6 +314,7 @@
     <string name="Ligar_echo">Ligar Echo</string>
     <string name="Tentar_postar_agora">Tentar postar agora</string>
     <string name="Apps_gerenciados">Apps gerenciados</string>
+    <string name="Lista_de_notifica_es_ativas_e_adiadas">Lista de notificações ativas</string>
 
 
 </resources>
