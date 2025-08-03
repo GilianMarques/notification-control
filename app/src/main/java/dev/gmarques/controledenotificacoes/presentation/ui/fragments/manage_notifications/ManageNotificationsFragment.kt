@@ -127,7 +127,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
             section {
 
 
-                if ((!not.permaHidden && not.isSnoozed) || not.isSystemSnoozed) item {
+                if (!not.permaHidden && (not.isSnoozed || not.isSystemSnoozed)) item {
                     label = getString(R.string.Tentar_postar_agora)
                     icon = R.drawable.vec_post_now
                     callback = {
@@ -142,7 +142,6 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
                         navigateToPickDateAndTime(not)
                     }
                 }
-
 
                 if (not.permaHidden && not.isSystemSnoozed) item {
                     label = getString(R.string.Exibir)
