@@ -495,12 +495,11 @@ class HomeFragment : MyFragment() {
             adapter.submitList(apps)
 
             binding.progressBar.isGone = apps != null
-            //binding.edtSearch.isVisible = (apps?.size ?: 0) > 9
+            binding.edtSearch.isVisible = (apps?.size ?: 0) > 9
 
             lifecycleScope.launch {
                 delay(300)
                 binding.emptyView.isGone = apps?.isNotEmpty() == true
-                binding.edtSearch.isVisible = apps?.isNotEmpty() == true
             }
         }
     }
@@ -536,7 +535,6 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
-
     }
 
 
