@@ -131,6 +131,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.7.2")
     implementation("androidx.room:room-runtime:2.7.2")
 
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
     implementation("com.airbnb.android:lottie:6.6.7")
     implementation("com.firebaseui:firebase-ui-auth:9.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")

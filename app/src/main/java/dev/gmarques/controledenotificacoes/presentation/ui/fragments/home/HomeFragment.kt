@@ -34,6 +34,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
@@ -47,6 +48,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
@@ -61,10 +63,14 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsViewModel
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.NotificationMenuAction
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -81,6 +87,7 @@ import java.util.Calendar
 class HomeFragment : MyFragment() {
 
     private val viewModel: HomeViewModel by activityViewModels()
+    private val viewModelManageNotifications: ManageNotificationsViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
@@ -123,18 +130,56 @@ class HomeFragment : MyFragment() {
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
-            animateRecyclerView()
+            setupActiveNotificationsView()
+            setupRecyclerViewAnimation()
         }
     }
 
     private fun setupActiveNotificationsView() = with(binding) {
 
-        if (llActiveNotifications == null) return@with
-        if (!requireMainActivity().isListenNotificationEnabled()) return@with
+        if (rvNots == null) return@with
 
+        val notsAdapter = ActiveNotificationsAdapter(object : ActiveNotificationsAdapter.Callback {
+            override fun onMenuClicked(
+                notification: ManageableNotification,
+                ivMenu: AppCompatImageView
+            ) {
+                viewModelManageNotifications.createPopUpMenu(notification) { action ->
+                    when (action) {
+                        is NotificationMenuAction.PostNow -> viewModelManageNotifications.postSnoozedOrHiddenNotification(action.not)
+                        is NotificationMenuAction.Snooze -> {} // TODO:  navigateToPickDateAndTime(action.not)
+                        is NotificationMenuAction.Show -> viewModelManageNotifications.postSnoozedOrHiddenNotification(action.not)
+                        is NotificationMenuAction.Hide -> viewModelManageNotifications.hideNotification(action.not)
+                        is NotificationMenuAction.Manage -> {} // TODO:  navigateToAddManagedApp(action.not)
+                        is NotificationMenuAction.RemoveFromDB -> viewModelManageNotifications.removeNotificationFromDB(action.not)
+                        is NotificationMenuAction.Cancel -> viewModelManageNotifications.cancelNotification(action.not)
+                        is NotificationMenuAction.Copy -> {
+                            vibrator.success()
+                            viewModelManageNotifications.copyTitleAndContent(action.not)
+                        }
+                    }
+                }.show(this@HomeFragment.requireContext(), ivMenu)
+            }
+        })
+
+        binding.rvNots!!.apply {
+
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = notsAdapter
+        }
+
+        lifecycleScope.launch {
+            val service = NotificationListener.getWhenReady(1000L) ?: return@launch // TODO: exibir emptyview
+
+            collectFlow(service.getActiveWithOngoingNotificationsFlow()) {
+                notsAdapter.submitList(it.map { actNot ->
+                    ManageableNotification.from(system = actNot)
+                })
+            }
+        }
     }
 
-    private fun animateRecyclerView() = with(binding) {
+    private fun setupRecyclerViewAnimation() = with(binding) {
 
         if (rvAppsBackground == null
         ) return@with
@@ -450,11 +495,12 @@ class HomeFragment : MyFragment() {
             adapter.submitList(apps)
 
             binding.progressBar.isGone = apps != null
-            binding.edtSearch.isVisible = (apps?.size ?: 0) > 9
+            //binding.edtSearch.isVisible = (apps?.size ?: 0) > 9
 
             lifecycleScope.launch {
                 delay(300)
                 binding.emptyView.isGone = apps?.isNotEmpty() == true
+                binding.edtSearch.isVisible = apps?.isNotEmpty() == true
             }
         }
     }
@@ -490,9 +536,9 @@ class HomeFragment : MyFragment() {
                 }
             }
         }
-        setupActiveNotificationsView()
 
     }
+
 
     private fun showListenNotificationWarning() {
 

@@ -33,7 +33,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentManageNotificationsBinding
@@ -50,12 +49,12 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebind
  * Em 25/07/2025 as 16:54
  */
 @AndroidEntryPoint
-class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Callback {
+class ManageNotificationsFragment : MyFragment(), ManagedNotificationsAdapter.Callback {
 
 
     private lateinit var binding: FragmentManageNotificationsBinding
     private val viewModel: ManageNotificationsViewModel by viewModels()
-    private lateinit var adapter: ManageNotificationsAdapter
+    private lateinit var adapter: ManagedNotificationsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -84,7 +83,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
     }
 
     private fun setupRecyclerView() {
-        adapter = ManageNotificationsAdapter(this)
+        adapter = ManagedNotificationsAdapter(this)
 
         requireMainActivity().slidingPaneController
             ?.addStateListener(this@ManageNotificationsFragment, object : SlidingPaneControllerCallback {
@@ -114,7 +113,7 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
         }
     }
 
-    /**Callback do adapter do recyclerview [ManageNotificationsAdapter.Callback].*/
+    /**Callback do adapter do recyclerview [ManagedNotificationsAdapter.Callback].*/
     override fun onMenuClicked(notification: ManageableNotification, ivMenu: AppCompatImageView) {
         vibrator.interaction()
         showContextPopUpMenu(notification, ivMenu)
@@ -122,90 +121,20 @@ class ManageNotificationsFragment : MyFragment(), ManageNotificationsAdapter.Cal
 
     private fun showContextPopUpMenu(not: ManageableNotification, ivMenu: AppCompatImageView) {
 
-        popupMenu {
-
-            section {
-
-
-                if (!not.permaHidden && (not.isSnoozed || not.isSystemSnoozed)) item {
-                    label = getString(R.string.Tentar_postar_agora)
-                    icon = R.drawable.vec_post_now
-                    callback = {
-                        viewModel.postSnoozedOrHiddenNotification(not)
-                    }
-                }
-
-                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
-                    label = getString(R.string.Adiar)
-                    icon = R.drawable.vec_snooze
-                    callback = {
-                        navigateToPickDateAndTime(not)
-                    }
-                }
-
-                if (not.permaHidden && not.isSystemSnoozed) item {
-                    label = getString(R.string.Exibir)
-                    icon = R.drawable.vec_show
-                    callback = {
-                        viewModel.postSnoozedOrHiddenNotification(not)
-                    }
-                }
-
-                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
-                    label = getString(R.string.Ocultar)
-                    icon = R.drawable.vec_hide
-                    callback = {
-                        viewModel.hideNotification(not)
-                    }
-                }
-
-            }
-
-            section {
-
-                item {
-                    label = getString(R.string.Gerenciar)
-                    icon = R.drawable.vec_manage_notification
-                    callback = {
-                        navigateToAddManagedApp(not)
-                    }
+        viewModel.createPopUpMenu(not) { action ->
+            when (action) {
+                is NotificationMenuAction.PostNow -> viewModel.postSnoozedOrHiddenNotification(action.not)
+                is NotificationMenuAction.Snooze -> navigateToPickDateAndTime(action.not)
+                is NotificationMenuAction.Show -> viewModel.postSnoozedOrHiddenNotification(action.not)
+                is NotificationMenuAction.Hide -> viewModel.hideNotification(action.not)
+                is NotificationMenuAction.Manage -> navigateToAddManagedApp(action.not)
+                is NotificationMenuAction.RemoveFromDB -> viewModel.removeNotificationFromDB(action.not)
+                is NotificationMenuAction.Cancel -> viewModel.cancelNotification(action.not)
+                is NotificationMenuAction.Copy -> {
+                    vibrator.success()
+                    viewModel.copyTitleAndContent(action.not)
                 }
             }
-
-            if (not.isOnlyInDatabase) {
-                section {
-
-                    item {
-                        label = getString(R.string.Remover_registro)
-                        icon = R.drawable.vec_remove
-                        callback = {
-                            viewModel.removeNotificationFromDB(not)
-                        }
-                    }
-                }
-            }
-
-            section {
-
-                if (!not.isOngoing && !not.isSnoozed && !not.permaHidden && (not.isOnlyInSystem || not.isInDBAndSystem) && !not.isSystemSnoozed) item {
-                    label = getString(R.string.Dispensar)
-                    icon = R.drawable.vec_dismiss
-                    callback = {
-                        viewModel.cancelNotification(not)
-                    }
-                }
-
-                item {
-                    label = getString(R.string.Copiar)
-                    icon = R.drawable.vec_copy
-                    callback = {
-                        viewModel.copyTitleAndContent(not)
-                        vibrator.success()
-                    }
-                }
-            }
-
-
         }.show(this@ManageNotificationsFragment.requireContext(), ivMenu)
 
     }

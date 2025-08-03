@@ -30,8 +30,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.ObserveAllSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
@@ -140,4 +143,86 @@ class ManageNotificationsViewModel @Inject constructor(
         clipboardManager.setPrimaryClip(clip)
 
     }
+
+    fun createPopUpMenu(
+        not: ManageableNotification,
+        actionCallback: (NotificationMenuAction) -> Unit
+    ) = with(App.instance) {
+        popupMenu {
+
+            section {
+                if (!not.permaHidden && (not.isSnoozed || not.isSystemSnoozed)) item {
+                    label = getString(R.string.Tentar_postar_agora)
+                    icon = R.drawable.vec_post_now
+                    callback = { actionCallback(NotificationMenuAction.PostNow(not)) }
+                }
+
+                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
+                    label = getString(R.string.Adiar)
+                    icon = R.drawable.vec_snooze
+                    callback = { actionCallback(NotificationMenuAction.Snooze(not)) }
+                }
+
+                if (not.permaHidden && not.isSystemSnoozed) item {
+                    label = getString(R.string.Exibir)
+                    icon = R.drawable.vec_show
+                    callback = { actionCallback(NotificationMenuAction.Show(not)) }
+                }
+
+                if (!not.permaHidden && !not.isSnoozed && !not.isSystemSnoozed) item {
+                    label = getString(R.string.Ocultar)
+                    icon = R.drawable.vec_hide
+                    callback = { actionCallback(NotificationMenuAction.Hide(not)) }
+                }
+            }
+
+            section {
+                item {
+                    label = getString(R.string.Gerenciar)
+                    icon = R.drawable.vec_manage_notification
+                    callback = { actionCallback(NotificationMenuAction.Manage(not)) }
+                }
+            }
+
+            if (not.isOnlyInDatabase) {
+                section {
+                    item {
+                        label = getString(R.string.Remover_registro)
+                        icon = R.drawable.vec_remove
+                        callback = { actionCallback(NotificationMenuAction.RemoveFromDB(not)) }
+                    }
+                }
+            }
+
+            section {
+                if (!not.isOngoing && !not.isSnoozed && !not.permaHidden && (not.isOnlyInSystem || not.isInDBAndSystem) && !not.isSystemSnoozed) item {
+                    label = getString(R.string.Dispensar)
+                    icon = R.drawable.vec_dismiss
+                    callback = { actionCallback(NotificationMenuAction.Cancel(not)) }
+                }
+
+                item {
+                    label = getString(R.string.Copiar)
+                    icon = R.drawable.vec_copy
+                    callback = {
+                        actionCallback(NotificationMenuAction.Copy(not))
+                    }
+                }
+            }
+        }
+    }
+
+
 }
+
+sealed class NotificationMenuAction(val not: ManageableNotification) {
+    class PostNow(not: ManageableNotification) : NotificationMenuAction(not)
+    class Snooze(not: ManageableNotification) : NotificationMenuAction(not)
+    class Show(not: ManageableNotification) : NotificationMenuAction(not)
+    class Hide(not: ManageableNotification) : NotificationMenuAction(not)
+    class Manage(not: ManageableNotification) : NotificationMenuAction(not)
+    class RemoveFromDB(not: ManageableNotification) : NotificationMenuAction(not)
+    class Cancel(not: ManageableNotification) : NotificationMenuAction(not)
+    class Copy(not: ManageableNotification) : NotificationMenuAction(not)
+}
+
