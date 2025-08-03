@@ -72,11 +72,19 @@ Vá em `Settings > Build, Execution, Deployment > Build Tools > Gradle` e defina
 ## Capturas de Tela
 
 <p align="center">
-<img src="https://github.com/user-attachments/assets/9a76c384-d13b-4668-9f59-f15a38f879b3" width="240">
-<img src="https://github.com/user-attachments/assets/d9e11998-fd2b-42e6-867b-9c230814527a" width="240">
-<img src="https://github.com/user-attachments/assets/9d4bb920-7b69-412c-820a-5d1334ef1d64" width="240">
-<img src="https://github.com/user-attachments/assets/a154c6e8-4b37-48ff-b55e-50f27986cfb6" width="240">
-<img src="https://github.com/user-attachments/assets/78a155f7-f085-4936-8d6e-335dfff2824f" width="240">
-<img src="https://github.com/user-attachments/assets/b6a19855-ed50-4be0-87c2-8f92e01559a1" width="240">
+    <img src= "https://github.com/user-attachments/assets/f9e13802-0135-4a2a-875a-eff7a8e6f750" width="240">
+    <img src= "https://github.com/user-attachments/assets/c2f7a4da-feb7-4bdf-b7ef-71df9da7aef1" width="240">
+    <img src= "https://github.com/user-attachments/assets/e3b7cedf-b346-4e2e-8fba-bfcb7af92cbc" width="240">
+    <img src= "https://github.com/user-attachments/assets/f27392ca-a24c-4f5f-b223-7f46218662c3" width="240">
+    <img src= "https://github.com/user-attachments/assets/0d959ae4-f8aa-4615-a728-002fc64b6aba" width="240">
+    <img src= "https://github.com/user-attachments/assets/5b222cb7-2012-4b8e-95bf-5bfe75dc8033" width="240">
+    <img src= "https://github.com/user-attachments/assets/82aecc01-66d9-47ad-b8eb-82a7a8f3c5fb" height="500">
+    <img src= "https://github.com/user-attachments/assets/b31e876a-254d-4790-91b9-279495fc07b2" height="500">
+    <img src= "https://github.com/user-attachments/assets/bcbbb6ae-02e5-411c-8784-5d170aca4d5d" height="500">
 </p>
+
+
+
+
+
 
