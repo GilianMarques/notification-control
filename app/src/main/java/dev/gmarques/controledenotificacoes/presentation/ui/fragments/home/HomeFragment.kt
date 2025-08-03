@@ -132,28 +132,21 @@ class HomeFragment : MyFragment() {
         if (llActiveNotifications == null) return@with
         if (!requireMainActivity().isListenNotificationEnabled()) return@with
 
-        llActiveNotifications.isGone = false
-
     }
 
     private fun animateRecyclerView() = with(binding) {
 
-        if (llAppsCardBottom == null ||
-            llAppsCardTop == null
+        if (rvAppsBackground == null
         ) return@with
 
-        llAppsCardBottom.doOnPreDraw {
+        rvAppsBackground.doOnPreDraw {
 
-            val parent = llAppsCardBottom.parent as? ConstraintLayout ?: return@doOnPreDraw
+            val parent = rvAppsBackground.parent as? ConstraintLayout ?: return@doOnPreDraw
 
-            /** Margens e altura originais do llAppsCardBottom*/
-            val llAppsCardBottomParams = llAppsCardBottom.layoutParams as ViewGroup.MarginLayoutParams
-            val originalBgTop = llAppsCardBottomParams.topMargin
-            val originalBgBottom = llAppsCardBottomParams.bottomMargin
-            val originalBgLeft = llAppsCardBottomParams.leftMargin
-            val originalBgRight = llAppsCardBottomParams.rightMargin
-            val originalHeight = llAppsCardBottom.height
-            val parentHeight = parent.height
+            /** Margens e altura originais do rvAppsBackground*/
+            val rvAppsBackgroundParams = rvAppsBackground.layoutParams as ViewGroup.MarginLayoutParams
+            val originalBgLeft = rvAppsBackgroundParams.leftMargin
+            val originalBgRight = rvAppsBackgroundParams.rightMargin
 
             /** Margens  originais do rvApps*/
             val rvAppsParams = rvApps.layoutParams as ViewGroup.MarginLayoutParams
@@ -172,27 +165,18 @@ class HomeFragment : MyFragment() {
                 val bgRight = (originalBgRight * (1 - interpolatedProgress)).toInt()
 
 
-                with(llAppsCardTop) {
+                with(rvAppsBackground) {
+
+                    rvAppsBackgroundParams.leftMargin = bgLeft
+                    rvAppsBackgroundParams.rightMargin = bgRight
+
                     alpha = (1f - interpolatedProgress)
-                    (layoutParams as ViewGroup.MarginLayoutParams).leftMargin = bgLeft
-                    (layoutParams as ViewGroup.MarginLayoutParams).rightMargin = bgRight
                     post { requestLayout() }
                 }
 
-                with(llAppsCardBottom) {
+                with(emptyView) {
 
-                    val bgTop = (originalBgTop * (1 - interpolatedProgress)).toInt()
-                    val bgBottom = (originalBgBottom * (1 - interpolatedProgress)).toInt()
-                    val targetHeight =
-                        ((originalHeight * (1f - interpolatedProgress)) + (parentHeight * interpolatedProgress)).toInt()
-
-                    llAppsCardBottomParams.topMargin = bgTop
-                    llAppsCardBottomParams.bottomMargin = bgBottom
-                    llAppsCardBottomParams.leftMargin = bgLeft
-                    llAppsCardBottomParams.rightMargin = bgRight
-                    llAppsCardBottomParams.height = targetHeight
-
-                    background.alpha = (255 * (1f - interpolatedProgress)).toInt()
+                    alpha = (1f - interpolatedProgress)
                     post { requestLayout() }
                 }
 
@@ -471,9 +455,6 @@ class HomeFragment : MyFragment() {
             lifecycleScope.launch {
                 delay(300)
                 binding.emptyView.isGone = apps?.isNotEmpty() == true
-                binding.llAppsCardTop?.isGone = apps?.isEmpty() == true
-                binding.llAppsCardBottom?.isGone = apps?.isEmpty() == true
-
             }
         }
     }
