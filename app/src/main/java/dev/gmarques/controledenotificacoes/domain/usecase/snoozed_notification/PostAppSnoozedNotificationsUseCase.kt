@@ -30,7 +30,6 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 /**
@@ -57,7 +56,7 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor(
          * É necessário impor um limite de tempo porque esse UseCase pode ser executado antes que o usuário tenha dado permissão para o
          *  aplicativo ler as notificações fazendo com que o serviço nunca seja retornado e que o aplicativo fique travado.
          */
-        val notificationManager = withTimeoutOrNull(500L) { NotificationListener.getWhenReady() } ?: return
+        val notificationManager = NotificationListener.getWhenReady(500L) ?: return
         val snoozedNotificationsOnDB = getSnoozedNotificationsForAppOnDB(app)
 
         notificationManager.getSnoozedNotifications()
