@@ -35,6 +35,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.framework.implementations.SystemNotificationManagerImpl
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener.Companion.getWhenReady
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -46,6 +47,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Criado por Gilian Marques
@@ -81,11 +83,16 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         /**
          * Obtém a instância do [SystemNotificationManager] de forma síncrona,
-         * bloqueando a thread atual até que o serviço esteja pronto.
+         * bloqueando a thread atual até que o serviço esteja pronto (o que pode nunca acontecer).
          * @return A instância do [SystemNotificationManager].
          */
         suspend fun getWhenReady(): SystemNotificationManager {
             return serviceInstance.filterNotNull().first()
+        }
+
+        /**Mesmo que [getWhenReady] porem retorna null, caso o serviço não esteja pronto em um determinado tempo*/
+        suspend fun getWhenReady(timeOut: Long): SystemNotificationManager? {
+            return withTimeoutOrNull(timeOut) { serviceInstance.filterNotNull().first() }
         }
 
     }
