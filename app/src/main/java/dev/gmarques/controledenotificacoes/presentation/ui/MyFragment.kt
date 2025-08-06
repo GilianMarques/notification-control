@@ -356,7 +356,6 @@ open class MyFragment() : Fragment() {
         delay: Long = 100L,
     ) = lifecycleScope.launch {
 
-        parent.removeAllViews()
 
         if (!showHintPreference.value) return@launch
         val splitHintAt = resources.getInteger(R.integer.split_hint_max_chars)
@@ -372,6 +371,7 @@ open class MyFragment() : Fragment() {
             })
 
             if (delay > 0) delay(delay)
+            parent.removeAllViews()
             parent.addView(this.root)
             vibrator.interaction()
 

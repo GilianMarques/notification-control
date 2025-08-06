@@ -115,6 +115,12 @@ class DateTimePickerFragment : MyFragment() {
     private fun observeViewModel() {
         collectFlow(viewModel.selectedDateTimeFlow) { dateTime ->
             binding.tvSelectedDateTime.text = if (dateTime != null) FormatDateAndTimeString.format(dateTime) else ""
+
+            if (dateTime != null) binding.timePicker.apply {
+                hour = dateTime.hourOfDay
+                minute = dateTime.minuteOfHour
+            }
+
         }
 
         collectFlow(viewModel.isValidSelectionFlow) { isValid ->
@@ -122,7 +128,6 @@ class DateTimePickerFragment : MyFragment() {
             binding.tvValidationMessage.isVisible = !isValid
         }
     }
-
 
 
     companion object {
