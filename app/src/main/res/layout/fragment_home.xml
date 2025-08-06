@@ -240,10 +240,10 @@
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="-4dp"
                 android:background="@drawable/back_container"
                 android:orientation="vertical"
                 android:padding="4dp"
+                android:layout_marginBottom="-8dp"
                 app:layout_constraintBottom_toBottomOf="@id/barrier"
                 app:layout_constraintTop_toTopOf="@id/parent">
 
@@ -251,12 +251,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
                     android:fontFamily="@font/urbanist_extrabold"
                     android:text="@string/Apps_gerenciados"
                     android:textSize="20sp" />
-
 
 
             </LinearLayout>
@@ -326,6 +325,7 @@
                 app:layout_constraintHeight_min="80dp"
                 app:layout_constraintTop_toTopOf="@id/rv_apps_background"
                 tools:layout_height="80dp"
+                android:paddingBottom="16dp"
                 tools:listitem="@layout/item_managed_app_list"
                 tools:visibility="visible" />
 
