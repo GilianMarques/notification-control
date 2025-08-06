@@ -43,7 +43,6 @@ interface Preferences {
 
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
 
-    val showWarningCardPostNotification: PreferenceProperty<Boolean>
 
     val echoEnabled: PreferenceProperty<Boolean>
 

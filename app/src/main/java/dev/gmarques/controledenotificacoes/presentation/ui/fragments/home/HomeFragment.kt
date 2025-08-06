@@ -181,7 +181,6 @@ class HomeFragment : MyFragment() {
         }
     }
 
-
     private fun setupRecyclerViewAnimation() = with(binding) {
 
         if (rvAppsBackground == null
@@ -545,24 +544,21 @@ class HomeFragment : MyFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (binding.containerWarnings.isEmpty()) lifecycleScope.launch {
+        lifecycleScope.launch {
             delay(1500)
 
             if (!requireMainActivity().isListenNotificationEnabled()) {
-                showListenNotificationWarning()
+                if (binding.containerWarnings.isEmpty()) showListenNotificationWarning()
                 return@launch
             }
 
             if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                showBatteryRestrictionsWarning()
+                if (binding.containerWarnings.isEmpty()) showBatteryRestrictionsWarning()
                 return@launch
             }
 
             if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                if (PreferencesImpl.showWarningCardPostNotification.isDefault()) {
-                    showPostNotificationRestrictionsWarning()
-                    return@launch
-                }
+                if (binding.containerWarnings.isEmpty()) showPostNotificationRestrictionsWarning()
             }
         }
     }

@@ -137,14 +137,6 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val showWarningCardPostNotification: PreferenceProperty<Boolean> by lazy {
-        PreferenceProperty(
-            key = "show_warning_card_post_notification",
-            defaultValue = true,
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
-        )
-    }
 
     override val echoEnabled: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
