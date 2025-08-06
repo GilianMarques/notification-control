@@ -45,6 +45,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -69,6 +70,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.NotificationMenuAction
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -147,10 +149,10 @@ class HomeFragment : MyFragment() {
                 viewModelManageNotifications.createPopUpMenu(notification) { action ->
                     when (action) {
                         is NotificationMenuAction.PostNow -> viewModelManageNotifications.postSnoozedOrHiddenNotification(action.not)
-                        is NotificationMenuAction.Snooze -> {} // TODO:  navigateToPickDateAndTime(action.not)
+                        is NotificationMenuAction.Snooze -> navigateToPickDateAndTime(action.not)
                         is NotificationMenuAction.Show -> viewModelManageNotifications.postSnoozedOrHiddenNotification(action.not)
                         is NotificationMenuAction.Hide -> viewModelManageNotifications.hideNotification(action.not)
-                        is NotificationMenuAction.Manage -> {} // TODO:  navigateToAddManagedApp(action.not)
+                        is NotificationMenuAction.Manage -> navigateToAddManagedApp(action.not)
                         is NotificationMenuAction.RemoveFromDB -> viewModelManageNotifications.removeNotificationFromDB(action.not)
                         is NotificationMenuAction.Cancel -> viewModelManageNotifications.cancelNotification(action.not)
                         is NotificationMenuAction.Copy -> {
@@ -178,6 +180,7 @@ class HomeFragment : MyFragment() {
             }
         }
     }
+
 
     private fun setupRecyclerViewAnimation() = with(binding) {
 
@@ -316,6 +319,20 @@ class HomeFragment : MyFragment() {
 
     private fun navigateToManageNotificationsFragment() {
         findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
+    }
+
+    private fun navigateToPickDateAndTime(not: ManageableNotification) {
+
+        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
+            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
+            viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
+        }
+        findNavControllerMain().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+    }
+
+    private fun navigateToAddManagedApp(not: ManageableNotification) {
+        findNavControllerMain()
+            .navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
     }
 
     private fun setupActionBar() = binding.apply {
@@ -540,7 +557,6 @@ class HomeFragment : MyFragment() {
             }
         }
     }
-
 
     private fun showListenNotificationWarning() {
 

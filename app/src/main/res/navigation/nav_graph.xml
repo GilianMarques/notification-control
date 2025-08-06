@@ -96,6 +96,11 @@
         <action
             android:id="@+id/to_manageNotificationsFragment"
             app:destination="@id/manageNotificationsFragment" />
+
+        <action
+            android:id="@+id/to_dateTimePickerFragment"
+            app:destination="@id/dateTimePickerFragment" />
+
     </fragment>
 
     <fragment
