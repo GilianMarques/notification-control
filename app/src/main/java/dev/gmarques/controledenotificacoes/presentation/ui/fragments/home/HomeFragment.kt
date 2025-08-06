@@ -318,7 +318,12 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToManageNotificationsFragment() {
-        findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
+        val navigate = {
+            findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
+        }
+        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
+        else navigate()
+
     }
 
     private fun navigateToPickDateAndTime(not: ManageableNotification) {
@@ -331,8 +336,12 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToAddManagedApp(not: ManageableNotification) {
-        findNavControllerMain()
-            .navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+        val navigate = {
+            findNavControllerMain()
+                .navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+        }
+        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
+        else navigate()
     }
 
     private fun setupActionBar() = binding.apply {
