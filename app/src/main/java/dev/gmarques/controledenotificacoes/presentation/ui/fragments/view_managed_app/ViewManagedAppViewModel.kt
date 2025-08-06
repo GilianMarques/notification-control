@@ -46,6 +46,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateMan
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostAppSnoozedNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostRuleSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRuleFactory
@@ -75,6 +77,8 @@ class ViewManagedAppViewModel @Inject constructor(
     private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
     private val observeManagedApp: ObserveManagedApp,
     private val cancelAlarmForAppUseCase: CancelAlarmForAppUseCase,
+    private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
+    private val postRuleSnoozedNotificationsUseCase: PostRuleSnoozedNotificationsUseCase,
 ) : ViewModel() {
 
 
@@ -196,13 +200,19 @@ class ViewManagedAppViewModel @Inject constructor(
 
 
     fun deleteApp() = viewModelScope.launch {
-        deleteManagedAppAndItsNotificationsUseCase(_managedAppFlow.value!!.packageName)
-        _eventsFlow.tryEmit(Event.FinishWithSuccess)
+        _managedAppFlow.value?.packageName?.let {
+            deleteManagedAppAndItsNotificationsUseCase(it)
+            postAppSnoozedNotificationsUseCase(it) // TODO: usar novo usecase que vai emitir notificações de backup tbm
+            _eventsFlow.tryEmit(Event.FinishWithSuccess)
+        }
     }
 
     fun deleteRule() = viewModelScope.launch {
-        deleteRuleWithAppsUseCase(_managedAppFlow.value!!.rule)
-        _eventsFlow.tryEmit(Event.FinishWithSuccess)
+        _managedAppFlow.value?.rule?.let {
+            deleteRuleWithAppsUseCase(it)
+            postRuleSnoozedNotificationsUseCase(it) // TODO: usar novo usecase que vai emitir notificações de backup tbm
+            _eventsFlow.tryEmit(Event.FinishWithSuccess)
+        }
     }
 
     fun clearHistory() = viewModelScope.launch {

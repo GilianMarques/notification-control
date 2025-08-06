@@ -46,7 +46,7 @@ class PostRuleSnoozedNotificationsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(rule: Rule) {
         getManagedAppsByRuleIdUseCase(rule.id).onEach { app ->
-            app?.let { postAppSnoozedNotificationsUseCase(app) }
+            app?.let { postAppSnoozedNotificationsUseCase(app.packageName) }
         }
     }
 }

@@ -304,7 +304,6 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
     }
 
     private fun confirmRemoveApp() {
-        viewModel.managedAppFlow.value
         MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme)).setMessage(
             getString(R.string.Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento)
         ).setPositiveButton(
