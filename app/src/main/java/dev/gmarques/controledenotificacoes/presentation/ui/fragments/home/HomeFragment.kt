@@ -182,6 +182,8 @@ class HomeFragment : MyFragment() {
     private fun setupRecyclerViewAnimation() = with(binding) {
 
         if (rvAppsBackground == null
+            || rvNots == null
+            || llActiveNotifications == null
         ) return@with
 
         rvAppsBackground.doOnPreDraw {
@@ -220,9 +222,11 @@ class HomeFragment : MyFragment() {
                 }
 
                 with(emptyView) {
-
                     alpha = (1f - interpolatedProgress)
-                    post { requestLayout() }
+                }
+
+                with(llActiveNotifications) {
+                    alpha = (1f - interpolatedProgress)
                 }
 
                 with(rvApps) {
