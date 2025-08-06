@@ -148,7 +148,7 @@
     <string name="Permitir_acesso">Permitir acesso</string>
     <string name="Privacidade">Privacidade</string>
     <string name="Sua_privacidade_importa">Sua privacidade importa</string>
-    <string name="voce_nao_sera_avisado_sobre_notificacoes_bloqueadas_ao_fim_do_periodo_de_bloqueio_dos_apps_conceda_a_permissao_para_nao_perder_alertas_importantes">    A permissão é necessária para alertar você sobre notificações adiadas ou canceladas durante o período de bloqueio dos apps. Conceda a permissão para não perder alertas importantes.</string>
+    <string name="Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes">    A permissão é necessária para alertar você sobre notificações adiadas ou canceladas durante o período de bloqueio dos apps. Conceda a permissão para não perder alertas importantes.</string>
     <string name="Permissao_nao_concedida">Permissão não concedida</string>
     <string name="Fragment_home">Fragment_home</string>
     <string name="Remover_restricoes">Remover restrições</string>
@@ -315,6 +315,8 @@
     <string name="Tentar_postar_agora">Tentar postar agora</string>
     <string name="Apps_gerenciados">Apps gerenciados</string>
     <string name="Lista_de_notifica_es_ativas_e_adiadas">Lista de notificações ativas</string>
+    <string name="Adiadas_ocultas">Adiadas/ocultas</string>
+    <string name="Ativas">Ativas</string>
 
 
 </resources>
