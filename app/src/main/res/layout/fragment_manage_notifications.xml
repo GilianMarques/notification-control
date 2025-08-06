@@ -64,7 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Adiadas/ocultas"
+            android:text="@string/Adiadas_ocultas"
             app:icon="@drawable/vec_snooze"
             app:iconGravity="top" />
 
@@ -75,12 +75,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ativas"
+            android:text="@string/Ativas"
             app:icon="@drawable/vec_notification_active"
             app:iconGravity="top" />
 
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <LinearLayout
+        android:id="@+id/ll_hint_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/actionbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_notifications"
@@ -91,7 +101,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/actionbar"
+        app:layout_constraintTop_toBottomOf="@id/ll_hint_parent"
         app:layout_constraintWidth_max="@dimen/tablet_layout_max_width"
         tools:listitem="@layout/item_app_notification" />
 

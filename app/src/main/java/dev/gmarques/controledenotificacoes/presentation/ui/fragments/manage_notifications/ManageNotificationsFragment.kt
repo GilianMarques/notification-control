@@ -35,6 +35,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.showManageNotificationsFragmentUiHints
 import dev.gmarques.controledenotificacoes.databinding.FragmentManageNotificationsBinding
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -75,9 +76,23 @@ class ManageNotificationsFragment : MyFragment(), ManagedNotificationsAdapter.Ca
     private fun setupToggleButtons() = with(binding) {
         buttonGroup.addOnButtonCheckedListener { mbt, id, checked ->
 
-            when (mbt.checkedButtonId) {
-                R.id.button_snoozed -> viewModel.loadSnoozedNotifications()
-                R.id.button_active -> viewModel.loadActiveNotifications()
+            if (checked) when (mbt.checkedButtonId) {
+                R.id.button_snoozed -> {
+                    viewModel.loadSnoozedNotifications()
+                    showHintView(
+                        llHintParent,
+                        showManageNotificationsFragmentUiHints,
+                        getString(
+                            R.string.Notifica_es_adiadas_podem_ser_perdidas_caso_o_sistema_seja_reiniciado_o_app_emissor_seja_for_ado_a_parar_ou_cancele_a_notifica_o_enquanto_ela_estiver_adiada_n_nnesses_casos_o_X_,
+                            getString(R.string.app_name)
+                        )
+                    )
+                }
+
+                R.id.button_active -> {
+                    llHintParent.removeAllViews()
+                    viewModel.loadActiveNotifications()
+                }
             }
         }
     }

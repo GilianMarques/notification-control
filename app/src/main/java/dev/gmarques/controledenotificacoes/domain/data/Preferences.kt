@@ -50,6 +50,8 @@ interface Preferences {
 
     val showHomeFragmentUiHints: PreferenceProperty<Boolean>
 
+    val showManageNotificationsFragmentUiHints: PreferenceProperty<Boolean>
+
     @Keep
     /**Todas as preferencias dentro dessa interface podem ser resetadas pelo usuario*/
     interface ResettableDialogHints {

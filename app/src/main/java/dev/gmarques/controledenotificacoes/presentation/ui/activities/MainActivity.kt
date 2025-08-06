@@ -279,8 +279,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
                         .setPositiveButton(getString(R.string.Entendi)) { _, _ ->
                             lifecycleScope.launch { PreferencesImpl.showDialogNotPermissionDenied.set(false) }
                         }.setCancelable(false).show()
-                } else {
-                    PreferencesImpl.showWarningCardPostNotification.set(false)
                 }
             } else {
                 App.instance.restartNotificationService()

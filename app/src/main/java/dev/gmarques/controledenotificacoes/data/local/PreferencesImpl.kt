@@ -161,5 +161,15 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
+    override val showManageNotificationsFragmentUiHints: PreferenceProperty<Boolean> by lazy {
+
+        PreferenceProperty(
+            key = "show_manage_notifications_fragment_ui_hints",
+            defaultValue = true,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
+
 
 }
