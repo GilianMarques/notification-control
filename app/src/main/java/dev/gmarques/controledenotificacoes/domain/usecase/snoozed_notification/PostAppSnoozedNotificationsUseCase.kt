@@ -42,6 +42,7 @@ import javax.inject.Inject
  * das notificações faz com que elas sejam reprocessadas de acordo com a nova regra.
  *
  * Manipula apenas notificações adiadas automaticamente via regras.
+ * Processar notificações Manipuladas manualmente pelo usuário Aqui quebraria a funcionalidade de adiamento de notificações ativas do aplicativo
  *
  */
 class PostAppSnoozedNotificationsUseCase @Inject constructor(
