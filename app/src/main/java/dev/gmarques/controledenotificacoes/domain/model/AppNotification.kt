@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.model
 
+import androidx.annotation.Keep
 import java.io.Serializable
 
 /**
@@ -34,6 +35,7 @@ import java.io.Serializable
  * Representa a notificação bloqueada de um app
  * Use a Factory [AppNotificationFactory] para instanciar o objeto com segurança.
  */
+@Keep
 data class AppNotification(
     val packageName: String,
     val title: String,

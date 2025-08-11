@@ -38,6 +38,7 @@ import java.io.Serializable
  * permitir o acompanhamento e reemissao da notificação caso o sistema a perca.
  * Use a Factory [SnoozedNotificationFactory] para instanciar o objeto com segurança.
  */
+@Keep
 data class SnoozedNotification(
     val packageName: String,
     val key: String,

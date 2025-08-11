@@ -4,6 +4,7 @@ Pra cada modelo criado deve existir:
 com propriedades de tipo adequado para inserção no database. Se o objeto nao tiver uma tabela propria no db ou outra necessidade
  especifica talvez nao precise de uma entity
 
+- Add @Keep annotation se o objeto for ser persistido no room ou como json
 - Validador (camada de domino)
 vai validar todas as propriedades do modelo antes dele ser convertido em entity* pelo seu repositorio para ser salvo no db
 

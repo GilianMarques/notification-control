@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.model
 
+import androidx.annotation.Keep
 import java.io.Serializable
 import java.util.UUID
 
@@ -37,6 +38,7 @@ import java.util.UUID
  * Representa periodos de tempo em que uma regra deve atuar
  */
 
+@Keep
 data class TimeRange(
     val startHour: Int,
     val startMinute: Int,

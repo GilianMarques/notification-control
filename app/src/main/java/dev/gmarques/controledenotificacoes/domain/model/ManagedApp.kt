@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.model
 
+import androidx.annotation.Keep
 import java.io.Serializable
 
 
@@ -37,6 +38,7 @@ import java.io.Serializable
  * @param packageName O identificador do pacote do aplicativo instalado (ex: com.whatsapp).
  * @param ruleId O identificador único da regra que está sendo aplicada a esse aplicativo.
  */
+@Keep
 data class ManagedApp(
     val packageName: String,
     val ruleId: String,

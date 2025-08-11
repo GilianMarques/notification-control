@@ -199,7 +199,7 @@ class AddManagedAppsViewModel @Inject constructor(
         addManagedAppUseCase(app)
         /*Como da pra atualizar um app que ja esta sendo gerenciado por aqui é necessário
         * repostar as notificaçoes adiadas caso haja alguma*/
-        postAppSnoozedNotificationsUseCase(app)
+        postAppSnoozedNotificationsUseCase(app.packageName)
     }
 
     fun addSelectedAppByPkgId(packageName: String) = viewModelScope.launch {
