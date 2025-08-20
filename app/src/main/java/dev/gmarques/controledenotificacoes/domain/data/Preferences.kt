@@ -39,10 +39,12 @@ interface Preferences {
     val scheduledReportNotificationAlarms: PreferenceProperty<String>
 
     val scheduledSnoozedNotificationAlarms: PreferenceProperty<String>
+
     val lastSelectedRule: PreferenceProperty<String>
 
-    val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
+    val log: PreferenceProperty<String>
 
+    val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
 
     val echoEnabled: PreferenceProperty<Boolean>
 

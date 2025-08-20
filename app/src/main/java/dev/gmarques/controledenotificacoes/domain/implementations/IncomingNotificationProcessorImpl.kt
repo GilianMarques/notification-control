@@ -26,6 +26,7 @@
 package dev.gmarques.controledenotificacoes.domain.implementations
 
 import android.util.Log
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
@@ -103,7 +104,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         val condition = rule.condition ?: error("Condição não pode ser nula neste ponto")
 
         val isConditionSatisfied = condition.isSatisfiedBy(appNotification)
-
+        AppLogger.log("isConditionSatisfied: $isConditionSatisfied\ncondition: $condition\nrule: $rule\nnotification: $appNotification")
         val blockNotification =
             if (ruleType == Rule.Type.RESTRICTIVE && isAppInBlockPeriod) {
                 when (condition.type) {

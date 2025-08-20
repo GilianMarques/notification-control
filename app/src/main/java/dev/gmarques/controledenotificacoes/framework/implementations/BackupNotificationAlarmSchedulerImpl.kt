@@ -33,6 +33,7 @@ import android.content.Intent
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
@@ -69,6 +70,7 @@ class BackupNotificationAlarmSchedulerImpl @Inject constructor(
      *
      */
     override fun scheduleAlarm(key: String, snoozedUntil: Long) {
+        AppLogger.log("scheduleAlarm() key = $key, snoozedUntil = $snoozedUntil")
 
         if (LocalDateTime(snoozedUntil).isBefore(LocalDateTime.now())) error("Alarm cannot be scheduled in the past")
 
@@ -87,7 +89,7 @@ class BackupNotificationAlarmSchedulerImpl @Inject constructor(
      * @param key A ID da notificação para o qual o alarme será cancelado.
      */
     override fun cancelAlarm(key: String) {
-
+        AppLogger.log("cancelAlarm() key = $key")
         val pIntent = createPendingIntent(key)
 
         alarmManager.cancel(pIntent)

@@ -31,6 +31,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Allow
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction.Cancel
@@ -95,11 +96,13 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
 
         return@runBlocking when (actionToPerform) {
             Allow -> {
+                AppLogger.log("Allow not: $targetNotification\nregra: $rule")
                 if (rule.keepFullHistory) saveNotification(targetNotification)
                 ProcessingResult.AllowNotification(targetNotification)
             }
 
             Cancel -> {
+                AppLogger.log("Cancel not: $targetNotification\nregra: $rule")
                 saveNotification(targetNotification)
                 scheduleReportNotification(rule, targetNotification)
                 setHasPendingNotificationsForManagedApp(managedApp)
@@ -107,6 +110,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
             }
 
             Snooze -> {
+                AppLogger.log("Snooze not: $targetNotification\nregra: $rule")
                 saveNotification(targetNotification)
                 setHasPendingNotificationsForManagedApp(managedApp)
                 val until = rule.nextAppUnlockPeriodFromNow()

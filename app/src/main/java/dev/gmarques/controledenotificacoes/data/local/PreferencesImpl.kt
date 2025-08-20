@@ -128,6 +128,12 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
+    override val log: PreferenceProperty<String> by lazy {
+        PreferenceProperty(
+            key = "_log", defaultValue = "", preferenceReader = reader::invoke, preferenceSaver = saver::invoke
+        )
+    }
+
     override val showDialogNotPermissionDenied: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "show_dialog_not_permission_denied",
