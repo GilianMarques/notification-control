@@ -40,6 +40,7 @@ object AppLogger {
         val json = PreferencesImpl.log.value
         val logs: MutableList<String> = MoshiListConverter.fromJson(json) ?: mutableListOf()
         logs.add(msg)
+        PreferencesImpl.log.set(MoshiListConverter.toJson(logs))
     }
 
 
