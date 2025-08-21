@@ -63,13 +63,13 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     /**
      * Responsavel por expor as funçoes necessarias dessa classe + funções utilitarias para o resto do sistema
      */
-    private val systemNotificationManager: SystemNotificationManager = SystemNotificationManagerImpl(this, debugTests)
+    private val systemNotificationManager: SystemNotificationManager = SystemNotificationManagerImpl(debugTests)
 
     companion object {
         /**
          * É um MutableStateFlow para que os observadores possam ser notificados quando a instância do serviço estiver pronta.
          */
-        private val serviceInstance: MutableStateFlow<SystemNotificationManager?> = MutableStateFlow(null)
+        private val serviceInstanceFlow: MutableStateFlow<SystemNotificationManager?> = MutableStateFlow(null)
 
         /**
          * Obtém a instância do serviço [SystemNotificationManager].
@@ -78,7 +78,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
          * @return A instância do [SystemNotificationManager]  ou null se não estiver disponível.
          */
         fun getOrNull(): SystemNotificationManager? {
-            return if (serviceInstance.value != null) serviceInstance.value else null
+            return if (serviceInstanceFlow.value != null) serviceInstanceFlow.value else null
         }
 
         /**
@@ -87,12 +87,12 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
          * @return A instância do [SystemNotificationManager].
          */
         suspend fun getWhenReady(): SystemNotificationManager {
-            return serviceInstance.filterNotNull().first()
+            return serviceInstanceFlow.filterNotNull().first()
         }
 
-        /**Mesmo que [getWhenReady] porem retorna null, caso o serviço não esteja pronto em um determinado tempo*/
+        /**Mesmo que [getWhenReady] porem retorna null caso o serviço não esteja pronto em um determinado tempo*/
         suspend fun getWhenReady(timeOut: Long): SystemNotificationManager? {
-            return withTimeoutOrNull(timeOut) { serviceInstance.filterNotNull().first() }
+            return withTimeoutOrNull(timeOut) { serviceInstanceFlow.filterNotNull().first() }
         }
 
     }
@@ -103,7 +103,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        serviceInstance.tryEmit(systemNotificationManager)
+        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
+        serviceInstanceFlow.value = systemNotificationManager
         if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
         systemNotificationManager.emitNotifications()
@@ -125,7 +126,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerDisconnected() {
         cancel()
-        serviceInstance.tryEmit(null)
+        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
+        serviceInstanceFlow.value = null
         super.onListenerDisconnected()
     }
 

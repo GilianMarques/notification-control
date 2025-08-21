@@ -39,3 +39,5 @@ google-services.json
 app/release/app-release.aab
 app/release/app-release.aab
 app/release/app-release.aab
+/app/usage.txt
+/app/seeds.txt

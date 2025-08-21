@@ -30,6 +30,7 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl.MoshiListConverter
+import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import org.joda.time.LocalDateTime
 
 object AppLogger {
@@ -53,6 +54,11 @@ object AppLogger {
     }
 
     fun log(not: SnoozedNotification) {
+        val msg = " ${not.key}, ${not.title}, ${not.content}, ${not.postTime}"
+        log(msg)
+    }
+
+    fun log(not: ActiveStatusBarNotification) {
         val msg = " ${not.key}, ${not.title}, ${not.content}, ${not.postTime}"
         log(msg)
     }
