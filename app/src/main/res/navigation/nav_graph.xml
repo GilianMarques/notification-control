@@ -226,7 +226,11 @@
         android:id="@+id/settingsFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/to_logFragment"
+            app:destination="@id/logFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/echoFragment"
@@ -275,5 +279,10 @@
             app:destination="@id/addManagedAppsFragment" />
 
     </fragment>
+    <fragment
+        android:id="@+id/logFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.log.LogFragment"
+        android:label="LogFragment"
+        tools:layout="@layout/fragment_log" />
 
 </navigation>

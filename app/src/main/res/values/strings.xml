@@ -318,6 +318,12 @@
     <string name="Adiadas_ocultas">Adiadas/ocultas</string>
     <string name="Ativas">Ativas</string>
     <string name="Notifica_es_adiadas_podem_ser_perdidas_caso_o_sistema_seja_reiniciado_o_app_emissor_seja_for_ado_a_parar_ou_cancele_a_notifica_o_enquanto_ela_estiver_adiada_n_nnesses_casos_o_X_">Notificações adiadas podem ser perdidas caso o sistema seja reiniciado, o app emissor seja forçado a parar ou cancele a notificação enquanto ela estiver adiada.\n\nNesses casos, o %1$s emitirá uma nova notificação com o mesmo conteúdo da original no horário definido durante o adiamento.</string>
+    <string name="Atualizar">Atualizar</string>
+    <string name="nenhum_log_encontrado">Nenhum registro encontrado</string>
+    <string name="filtrar_logs">Filtrar</string>
+    <string name="Logs_de_depuracao">Logs de depuração</string>
+    <string name="Sem_registros">Sem registros</string>
+    <string name="Registros_encontrados">Registros</string>
 
 
 </resources>

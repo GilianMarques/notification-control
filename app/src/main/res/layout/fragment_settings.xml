@@ -88,6 +88,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <TextView
+                android:id="@+id/tv_debug_logs"
+                style="@style/SettingsMenuItem"
+                android:text="@string/Logs_de_depuracao"
+                app:drawableStartCompat="@drawable/vec_info"
+                app:drawableTint="?attr/colorPrimaryVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
 
         </LinearLayout>
 

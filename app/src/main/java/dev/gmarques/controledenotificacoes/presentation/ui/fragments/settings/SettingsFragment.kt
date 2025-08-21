@@ -91,6 +91,7 @@ class SettingsFragment : MyFragment() {
         setupResetHintsButton()
         setupRequestNotificationAccessPermission()
         setupOpenSystemsNotificationHistory()
+        setupDebugLogs()
         observeEvents()
         setupVersion()
     }
@@ -106,6 +107,15 @@ class SettingsFragment : MyFragment() {
             } catch (_: ActivityNotFoundException) {
                 showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_hist_rico_de_notifica_es_do_sistema))
             }
+        })
+    }
+
+
+    private fun setupDebugLogs() = with(binding) {
+        tvDebugLogs.setOnClickListener(AnimatedClickListener {
+
+            findNavControllerMain()
+                .navigate(SettingsFragmentDirections.toLogFragment())
         })
     }
 
