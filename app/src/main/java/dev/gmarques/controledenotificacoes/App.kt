@@ -57,7 +57,7 @@ class App() : Application(), CoroutineScope by MainScope() {
 
         /**
          * Necessário verificar sempre porque o ususario pode alterar as configurações de densidade da tela mudando o formato
-         * é um acso extremo mas agora esta coberto
+         * é um caso extremo mas agora esta coberto
          * */
         var largeScreenDevice = false
             private set
@@ -73,7 +73,7 @@ class App() : Application(), CoroutineScope by MainScope() {
         instance = this
 
         setupRemoteConfig()
-        setupCrashLytics()
+        if (!BuildConfig.DEBUG) setupCrashLytics()
         startNotificationService()
         scheduleAlarms()
         super.onCreate()

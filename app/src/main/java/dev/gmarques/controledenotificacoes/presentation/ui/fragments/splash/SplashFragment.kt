@@ -93,8 +93,8 @@ class SplashFragment : MyFragment() {
      */
     private fun observeRemoteConfig() {
         collectFlow(App.instance.remoteConfigValues) {
-            it?.blockApp?.let {
-                if (!it) viewModel.addNavigationRequirement(NavigationRequirements.Requirement.APP_NOT_BLOCKED)
+            it?.blockApp?.let { blockApp ->
+                if (!blockApp) viewModel.addNavigationRequirement(NavigationRequirements.Requirement.APP_NOT_BLOCKED)
             }
         }
     }

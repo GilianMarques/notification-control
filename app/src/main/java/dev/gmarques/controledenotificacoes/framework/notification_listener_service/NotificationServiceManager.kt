@@ -33,7 +33,6 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -60,7 +59,7 @@ class NotificationServiceManager : Service() {
         }
     }
 
-    private val checkIntervalMs = 10_000L // intervalo entre checagens
+    private val checkIntervalMs = 60_000L // intervalo entre checagens
     private var timer: Timer? = null
     private val channelId = "notification_watcher_channel"
 
@@ -75,7 +74,7 @@ class NotificationServiceManager : Service() {
 
     /**
      * Mantém a checagem periódica para garantir que o [NotificationListener] esteja ativo.
-     * Um [Timer] é utilizado para agendar a execução da função [forceReconnectNotificationListener]
+     * Um [Timer] é utilizado para agendar a execução da função [connectListener]
      * a cada [checkIntervalMs] milissegundos.
      */
     private fun keepCheckingNotificationListenerIsAlive() {
@@ -83,7 +82,7 @@ class NotificationServiceManager : Service() {
         timer = Timer().apply {
             schedule(object : TimerTask() {
                 override fun run() {
-                    forceReconnectNotificationListener()
+                    if (!isNotificationListenerActive()) connectListener()
                 }
             }, 0, checkIntervalMs)
         }
@@ -97,10 +96,8 @@ class NotificationServiceManager : Service() {
     private fun buildNotification(): Notification {
         val channelName = getString(R.string.Monitoramento_de_notificacoes)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
-            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
 
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.Monitoramento_de_notificacoes))
@@ -117,7 +114,6 @@ class NotificationServiceManager : Service() {
      * Essa função pode retornar true por engano em casos onde o usuário mata o aplicativo. Ao abrir ele em seguida essa função vai
      * entender que o listener está ativo mesmo que não esteja, retornando um falso positivo
      */
-    @Suppress("unused")
     fun isNotificationListenerActive(): Boolean {
         val cn = ComponentName(baseContext, NotificationListener::class.java)
         val enabledListeners = Settings.Secure.getString(
@@ -130,18 +126,6 @@ class NotificationServiceManager : Service() {
                 "NotificationServiceManager.isNotificationListenerActive: $it "
             )
         }
-    }
-
-    /**
-     * Força a reconexão do [NotificationListener].
-     * Isso é feito desabilitando e reabilitando o componente [NotificationListener]
-     * via [PackageManager]. Esta é uma abordagem conhecida para resolver problemas
-     * onde o listener de notificações para de funcionar.
-     */
-    fun forceReconnectNotificationListener() {
-        //disconnectListener()
-        connectListener()
-        // TODO: verificar se esta conectado e executar ação apenas se estiver desconectado
     }
 
     private fun disconnectListener() {
@@ -177,7 +161,7 @@ class NotificationServiceManager : Service() {
         val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
             putExtra(Settings.EXTRA_APP_PACKAGE, baseContext.packageName)
             putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
-                }
+        }
 
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 

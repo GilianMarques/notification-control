@@ -276,7 +276,7 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBack() {
         vibrator.interaction()
-        findNavControllerDefault().popBackStack()
+        findNavControllerDefault().navigateUp()
         Log.d("USUK", "MyFragment.goBack: ${this.javaClass.simpleName}")
     }
 
@@ -286,7 +286,7 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBackDetails() {
         vibrator.interaction()
-        findNavControllerDetails()?.popBackStack()
+        findNavControllerDetails()?.navigateUp()
         Log.d("USUK", "MyFragment.goBackDetails: ${this.javaClass.simpleName} ")
     }
 

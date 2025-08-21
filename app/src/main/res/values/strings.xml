@@ -324,6 +324,8 @@
     <string name="Logs_de_depuracao">Logs de depuração</string>
     <string name="Sem_registros">Sem registros</string>
     <string name="Registros_encontrados">Registros</string>
+    <string name="remover_logs">Remover logs</string>
+    <string name="tem_certeza">Tem certeza?</string>
 
 
 </resources>

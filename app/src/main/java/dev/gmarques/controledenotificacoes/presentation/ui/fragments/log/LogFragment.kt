@@ -34,6 +34,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentLogBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -70,8 +71,8 @@ class LogFragment : MyFragment() {
         }
 
         binding.fabClear.setOnClickListener {
-            Snackbar.make(binding.root, "Remover logs", Snackbar.LENGTH_LONG)
-                .setAction("TEM CERTEZA?") {
+            Snackbar.make(binding.root, getString(R.string.remover_logs), Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.tem_certeza)) {
                     PreferencesImpl.log.reset()
                     viewModel.loadLogs()
                     vibrator.success()

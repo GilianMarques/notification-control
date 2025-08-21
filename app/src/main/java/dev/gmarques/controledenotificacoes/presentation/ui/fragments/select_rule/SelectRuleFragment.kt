@@ -159,7 +159,7 @@ class SelectRuleFragment : MyFragment() {
         val destination = if (rule != null) SelectRuleFragmentDirections.toAddRuleFragment(rule)
         else SelectRuleFragmentDirections.toAddRuleFragment()
 
-        findNavControllerMain().navigate(destination, extras)
+        findNavControllerDefault().navigate(destination, extras)
     }
 
     private fun observeViewModel() {
