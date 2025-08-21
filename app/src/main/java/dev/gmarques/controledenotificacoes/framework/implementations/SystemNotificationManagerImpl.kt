@@ -116,7 +116,7 @@ class SystemNotificationManagerImpl(private var listener: NotificationListener, 
 
     /**
      * Retorna a lista de notificações adiadas.
-     * Inclue notificações Dispensaveis e Persistentes
+     * Inclui notificações Dispensaveis e Persistentes
      */
     override fun getSnoozedNotifications(): List<ActiveStatusBarNotification> {
         if (!listener.isListenerConnected()) return emptyList()

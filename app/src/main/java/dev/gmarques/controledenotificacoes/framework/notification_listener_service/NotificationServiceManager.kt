@@ -33,7 +33,6 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -140,27 +139,29 @@ class NotificationServiceManager : Service() {
      * onde o listener de notificações para de funcionar.
      */
     fun forceReconnectNotificationListener() {
-        val pm = packageManager
-        val componentName = ComponentName(this, NotificationListener::class.java)
-
-        pm.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-        pm.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
+        //disconnectListener()
+        connectListener()
+        // TODO: verificar se esta conectado e executar ação apenas se estiver desconectado
     }
 
     private fun disconnectListener() {
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)
+
         pm.setComponentEnabledSetting(
             componentName,
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+    }
+
+    private fun connectListener() {
+        val pm = packageManager
+        val componentName = ComponentName(this, NotificationListener::class.java)
+
+        pm.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
             PackageManager.DONT_KILL_APP
         )
     }
@@ -172,24 +173,11 @@ class NotificationServiceManager : Service() {
      *
      */
     fun getPendingIntentForNotificationSettings(): PendingIntent {
-        val intent = when {
 
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
-                // API 26+: vai direto pro canal
-                Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, baseContext.packageName)
-                    putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, baseContext.packageName)
+            putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
                 }
-            }
-
-            else -> {
-                // API 24 e 25: abre tela de configurações gerais do app
-                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", packageName, null)
-                }
-            }
-
-        }
 
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
@@ -206,7 +194,7 @@ class NotificationServiceManager : Service() {
 
         return PendingIntent.getActivity(
             baseContext,
-            462025, // requestCode, use diferentes se tiver múltiplas notificações com intents distintas
+            462025, // usar diferentes se tiver múltiplas notificações com intents distintas
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
