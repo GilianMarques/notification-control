@@ -216,19 +216,22 @@ class HomeFragment : MyFragment() {
 
                 with(rvAppsBackground) {
 
-                    rvAppsBackgroundParams.leftMargin = bgLeft
+
+                rvAppsBackgroundParams.leftMargin = bgLeft
                     rvAppsBackgroundParams.rightMargin = bgRight
 
                     alpha = (1f - interpolatedProgress)
                     post { requestLayout() }
                 }
 
+
                 with(emptyView) {
                     alpha = (1f - interpolatedProgress)
                 }
 
                 with(llActiveNotifications) {
-                    alpha = (1f - interpolatedProgress)
+
+                alpha = (1f - interpolatedProgress)
                 }
 
                 with(rvApps) {
