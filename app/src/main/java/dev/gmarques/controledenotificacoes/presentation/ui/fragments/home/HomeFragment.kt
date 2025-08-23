@@ -29,7 +29,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,13 +133,6 @@ class HomeFragment : MyFragment() {
             setupActiveNotificationsView()
         }
 
-
-        lifecycleScope.launch {
-            Log.d("USUK", "HomeFragment.onViewCreated: aaaa")
-            NotificationListener.getWhenReady()
-            Log.d("USUK", "HomeFragment.onViewCreated: got")
-
-        }
     }
 
     private fun setupActiveNotificationsView() = with(binding) {
