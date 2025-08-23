@@ -106,13 +106,13 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        AppLogger.d()
+        AppLogger.d("")
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        AppLogger.d()
+        AppLogger.d("")
         (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
         serviceInstanceFlow.value = systemNotificationManager
         if (BuildConfig.DEBUG) debugTests = DebugTests()

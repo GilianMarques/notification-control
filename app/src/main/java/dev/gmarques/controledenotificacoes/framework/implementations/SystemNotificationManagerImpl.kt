@@ -78,6 +78,7 @@ class SystemNotificationManagerImpl(
             AppLogger.d("retornando instancia ${if (field == null) "nula" else "nao nula"} de NotificationListener")
             return field
         }
+
     private val echoImpl = HiltEntryPoints.echo()
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
     private val getSnoozedNotificationByKeyUseCase = HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase()

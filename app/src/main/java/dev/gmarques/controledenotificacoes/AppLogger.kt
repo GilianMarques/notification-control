@@ -54,8 +54,6 @@ object AppLogger {
     }
 
 
-    fun d() = d("")
-
     fun d(msg: String, vararg relevantObjects: Any) {
 
         val stack = Thread.currentThread().stackTrace[3] // 0=Thread, 1=getStackTrace, 2=log, 3=caller
