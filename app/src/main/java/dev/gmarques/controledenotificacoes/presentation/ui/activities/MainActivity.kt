@@ -138,6 +138,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         checkForAppUpdate()
         setupForTablet(lastSlidingPaneState)
         removeDuplicatedFragmentOnExpandedScreen()
+
     }
 
     /**
@@ -253,7 +254,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
     private fun applyDefaultBackgroundColor() {
 
         if (backgroundChanged) return
-        //  Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
+        //  AppLog.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
         val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)

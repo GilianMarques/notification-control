@@ -25,11 +25,15 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import javax.inject.Inject
 
 class InsertSnoozedNotificationUseCase @Inject constructor(private val repository: SnoozedNotificationRepository) {
-    suspend operator fun invoke(notification: SnoozedNotification) = repository.insert(notification)
+    suspend operator fun invoke(notification: SnoozedNotification) {
+        AppLogger.d("", notification)
+        repository.insert(notification)
+    }
 }
 

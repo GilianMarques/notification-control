@@ -66,7 +66,7 @@ class ReportNotificationAlarmSchedulerImpl @Inject constructor(
 
         if (millis == NextRuleUnlockTimeUseCase.INFINITE) return
 
-        //  Log.d("USUK", "ReportNotificationAlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
+        //  AppLog.d("USUK", "ReportNotificationAlarmSchedulerImpl.scheduleAlarm: $packageName scheduled at ${LocalDateTime(millis)}")
 
         val pIntent = createPendingIntent(packageName)
 

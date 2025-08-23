@@ -45,10 +45,6 @@ class ActiveNotificationsAdapter(
                 callback.onMenuClicked(notification, ivMenu)
             })
 
-            //  ivOngoing.isVisible = notification.isOngoing
-            //    ivDismissible.isVisible = ivOngoing.isVisible.not()
-
-
             val lp: ViewGroup.LayoutParams? = root.layoutParams
             if (lp is FlexboxLayoutManager.LayoutParams) {
                 val flexboxLp = lp
@@ -59,7 +55,7 @@ class ActiveNotificationsAdapter(
             with(tvContent) {
 
                 this.isVisible = !notification.content.isEmpty()
-
+                isSelected = true
                 if (this.canUseReadMoreFeature(notification.content)) {
                     this.readMoreFeature(notification.content)
                 } else this.text = notification.content

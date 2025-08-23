@@ -124,7 +124,7 @@ object TimeRangeValidator {
      */
     private fun validateHour(hour: Int): OperationResult<HourOutOfRangeException, TimeRange>? {
         return if (hour !in HOUR_RANGE) {
-            //   Log.d("USUK", "TimeRangeValidator.validateHour:fail: $label")
+            //   AppLog.d("USUK", "TimeRangeValidator.validateHour:fail: $label")
             OperationResult.failure(
                 HourOutOfRangeException(HOUR_RANGE.first, HOUR_RANGE.last, hour)
             )
@@ -140,7 +140,7 @@ object TimeRangeValidator {
      */
     private fun validateMinute(minute: Int): OperationResult<MinuteOutOfRangeException, TimeRange>? {
         return if (minute !in MINUTE_RANGE) {
-            //Log.d("USUK", "TimeRangeValidator.validateMinute: fail: $label")
+            //AppLog.d("USUK", "TimeRangeValidator.validateMinute: fail: $label")
             OperationResult.failure(
                 MinuteOutOfRangeException(HOUR_RANGE.first, HOUR_RANGE.last, minute)
             )

@@ -25,7 +25,6 @@
 
 package dev.gmarques.controledenotificacoes.data.repository
 
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.data.local.room.dao.SnoozedNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.SnoozedNotificationMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.SnoozedNotificationRepository
@@ -40,8 +39,6 @@ class SnoozedNotificationRepositoryImpl @Inject constructor(
 
     override suspend fun insert(notification: SnoozedNotification) {
         SnoozedNotificationMapper.toEntity(notification).let { dao.insert(it) }
-        AppLogger.log(notification)
-
     }
 
     override suspend fun deleteAll(packageName: String) {

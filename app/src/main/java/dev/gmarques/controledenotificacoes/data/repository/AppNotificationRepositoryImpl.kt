@@ -40,7 +40,7 @@ class AppNotificationRepositoryImpl @Inject constructor(
 
     override suspend fun insert(notification: AppNotification) {
         AppNotificationMapper.toEntity(notification).let { dao.insert(it) }
-        AppLogger.log(notification)
+        AppLogger.d("", notification)
     }
 
 

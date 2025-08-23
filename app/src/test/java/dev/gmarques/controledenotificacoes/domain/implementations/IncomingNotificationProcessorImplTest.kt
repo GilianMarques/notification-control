@@ -75,7 +75,7 @@ class IncomingNotificationProcessorImplTest {
         isRuleInBlockPeriodUseCase = mockk()
         processor = IncomingNotificationProcessorImpl(isRuleInBlockPeriodUseCase)
 
-        // Mock do Log do Android
+        // Mock do AppLog do Android
         mockkStatic(Log::class)
         every { Log.w(any(), any<String>()) } returns 0
     }

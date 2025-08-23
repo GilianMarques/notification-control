@@ -104,7 +104,7 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         val condition = rule.condition ?: error("Condição não pode ser nula neste ponto")
 
         val isConditionSatisfied = condition.isSatisfiedBy(appNotification)
-        AppLogger.log("isConditionSatisfied: $isConditionSatisfied\ncondition: $condition\nrule: $rule\nnotification: $appNotification")
+        AppLogger.d(msg = "", "isConditionSatisfied: $isConditionSatisfied", condition, rule, appNotification)
         val blockNotification =
             if (ruleType == Rule.Type.RESTRICTIVE && isAppInBlockPeriod) {
                 when (condition.type) {

@@ -96,13 +96,13 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
 
         return@runBlocking when (actionToPerform) {
             Allow -> {
-                AppLogger.log("Allow not: $targetNotification\nregra: $rule")
+                AppLogger.d("Allow not: ${targetNotification.title}", rule)
                 if (rule.keepFullHistory) saveNotification(targetNotification)
                 ProcessingResult.AllowNotification(targetNotification)
             }
 
             Cancel -> {
-                AppLogger.log("Cancel not: $targetNotification\nregra: $rule")
+                AppLogger.d("Cancel not: ${targetNotification.title}", rule)
                 saveNotification(targetNotification)
                 scheduleReportNotification(rule, targetNotification)
                 setHasPendingNotificationsForManagedApp(managedApp)
@@ -110,7 +110,7 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
             }
 
             Snooze -> {
-                AppLogger.log("Snooze not: $targetNotification\nregra: $rule")
+                AppLogger.d("Snooze not: ${targetNotification.title}", rule)
                 saveNotification(targetNotification)
                 setHasPendingNotificationsForManagedApp(managedApp)
                 val until = rule.nextAppUnlockPeriodFromNow()

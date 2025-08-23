@@ -26,45 +26,53 @@
 package dev.gmarques.controledenotificacoes
 
 import android.util.Log
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl.MoshiListConverter
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import org.joda.time.LocalDateTime
 
 object AppLogger {
 
 
-    private fun writeToLog(msg: String) {
-        Log.d("USUK", msg)
+    private fun writeToLog(log: AppLog) {
+
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val adapter = moshi.adapter(AppLog::class.java)
+
+
+        Log.d(
+            "USUK",
+            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${log.relevantObjects.joinToString { "\n$it" }}"
+        )
         val json = PreferencesImpl.log.value
         val logs: MutableList<String> = MoshiListConverter.fromJson(json) ?: mutableListOf()
-        logs.add(msg)
+        logs.add(adapter.toJson(log))
         PreferencesImpl.log.set(MoshiListConverter.toJson(logs))
     }
 
 
-    fun log(msg: String) {
+    fun d() = d("")
+
+    fun d(msg: String, vararg relevantObjects: Any) {
+
         val stack = Thread.currentThread().stackTrace[3] // 0=Thread, 1=getStackTrace, 2=log, 3=caller
         val className = stack.className.substringAfterLast('.')
         val methodName = stack.methodName
-        writeToLog("${LocalDateTime.now()}: $className.$methodName: $msg")
 
+        val log = AppLog(msg = msg, relevantObjects = relevantObjects.toList(), caller = "$className.$methodName")
+
+        writeToLog(log)
     }
 
-    fun log(not: SnoozedNotification) {
-        val msg = " ${not.key}, ${not.title}, ${not.content}, ${not.postTime}"
-        log(msg)
-    }
+    data class AppLog(
+        val msg: String,
+        val relevantObjects: List<Any>,
+        var caller: String,
+        val timeStamp: Long = System.currentTimeMillis()
+    )
 
-    fun log(not: ActiveStatusBarNotification) {
-        val msg = " ${not.key}, ${not.title}, ${not.content}, ${not.postTime}"
-        log(msg)
-    }
 
-    fun log(not: AppNotification) {
-        val msg = "noKeySet, ${not.title}, ${not.content}, ${not.postTime}"
-        log(msg)
-    }
 }

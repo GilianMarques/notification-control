@@ -35,8 +35,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.provider.Settings
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import java.util.Timer
@@ -121,10 +121,7 @@ class NotificationServiceManager : Service() {
             "enabled_notification_listeners"
         )
         return (enabledListeners?.contains(cn.flattenToString()) == true).also {
-            Log.d(
-                "USUK",
-                "NotificationServiceManager.isNotificationListenerActive: $it "
-            )
+            AppLogger.d("connected? : $it ")
         }
     }
 
@@ -153,8 +150,6 @@ class NotificationServiceManager : Service() {
     /**
      * Abre as configurações de notificação para o canal específico da notificação em primeiro plano (foreground).
      * Em versões mais recentes do Android (O+), navega diretamente para as configurações do canal.
-     * Em versões anteriores (N e N-MR1), abre as configurações gerais do aplicativo.
-     *
      */
     fun getPendingIntentForNotificationSettings(): PendingIntent {
 

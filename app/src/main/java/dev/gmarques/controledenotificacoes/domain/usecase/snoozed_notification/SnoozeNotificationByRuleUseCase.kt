@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
@@ -48,7 +49,7 @@ class SnoozeNotificationByRuleUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long) {
-
+        AppLogger.d("", notification)
         val notificationManager = NotificationListener.getWhenReady()
         val snoozedNotification = SnoozedNotificationFactory.create(notification)
             .copy(

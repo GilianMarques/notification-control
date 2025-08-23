@@ -70,7 +70,7 @@ class BackupNotificationAlarmSchedulerImpl @Inject constructor(
      *
      */
     override fun scheduleAlarm(key: String, snoozedUntil: Long) {
-        AppLogger.log("scheduleAlarm() key = $key, snoozedUntil = $snoozedUntil")
+        AppLogger.d("key = $key snoozedUntil = $snoozedUntil")
 
         if (LocalDateTime(snoozedUntil).isBefore(LocalDateTime.now())) error("Alarm cannot be scheduled in the past")
 
@@ -89,7 +89,7 @@ class BackupNotificationAlarmSchedulerImpl @Inject constructor(
      * @param key A ID da notificação para o qual o alarme será cancelado.
      */
     override fun cancelAlarm(key: String) {
-        AppLogger.log("cancelAlarm() key = $key")
+        AppLogger.d("", "key = $key")
         val pIntent = createPendingIntent(key)
 
         alarmManager.cancel(pIntent)

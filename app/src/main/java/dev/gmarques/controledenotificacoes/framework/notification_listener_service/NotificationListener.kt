@@ -30,12 +30,12 @@ import android.content.Intent
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.framework.implementations.SystemNotificationManagerImpl
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener.Companion.getWhenReady
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -90,7 +90,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             return serviceInstanceFlow.filterNotNull().first()
         }
 
-        /**Mesmo que [getWhenReady] porem retorna null caso o serviço não esteja pronto em um determinado tempo*/
+        /**
+         * Obtém a instância do [SystemNotificationManager] de forma síncrona,
+         * bloqueando a thread atual até que o serviço esteja pronto (o que pode nunca acontecer).
+         * porem retorna null caso o serviço não esteja pronto em um determinado tempo
+         */
         suspend fun getWhenReady(timeOut: Long): SystemNotificationManager? {
             return withTimeoutOrNull(timeOut) { serviceInstanceFlow.filterNotNull().first() }
         }
@@ -98,6 +102,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        AppLogger.d()
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
 

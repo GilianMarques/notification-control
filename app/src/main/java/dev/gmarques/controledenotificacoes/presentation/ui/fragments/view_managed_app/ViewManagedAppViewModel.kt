@@ -134,7 +134,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     private fun observeAppChanges(pkg: String) = viewModelScope.launch(IO) {
         observeManagedApp(pkg).collect {
-            //   Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
+            //   AppLog.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
 
             if (it == null) _eventsFlow.tryEmit(Event.AppRemoved)
             else observeRuleChanges(it.ruleId)
@@ -152,7 +152,7 @@ class ViewManagedAppViewModel @Inject constructor(
         ruleObserverJob = viewModelScope.launch(IO) {
             observeRuleUseCase(ruleId).collect {
                 // a regra sera nula se o usuario a remover, nesse caso o fragmento será fechado
-                // Log.d("USUK", "ViewManagedAppViewModel.observeRuleChanges: $it")
+                // AppLog.d("USUK", "ViewManagedAppViewModel.observeRuleChanges: $it")
                 it?.let { _managedAppFlow.emit(_managedAppFlow.value?.copy(rule = it)) }
             }
         }

@@ -29,18 +29,17 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.isEmpty
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -133,7 +132,14 @@ class HomeFragment : MyFragment() {
             setupFabAddManagedApp()
             setupSearch()
             setupActiveNotificationsView()
-            setupRecyclerViewAnimation()
+        }
+
+
+        lifecycleScope.launch {
+            Log.d("USUK", "HomeFragment.onViewCreated: aaaa")
+            NotificationListener.getWhenReady()
+            Log.d("USUK", "HomeFragment.onViewCreated: got")
+
         }
     }
 
@@ -171,82 +177,19 @@ class HomeFragment : MyFragment() {
         }
 
         lifecycleScope.launch {
-            val service = NotificationListener.getWhenReady(1000L) ?: return@launch // TODO: exibir emptyview
+
+
+            val service = NotificationListener.getWhenReady(10000L) ?: run {
+                return@launch
+            }
 
             collectFlow(service.getActiveWithOngoingNotificationsFlow()) {
+
+                binding.llActiveNotifications?.isGone = it.isEmpty()
+
                 notsAdapter.submitList(it.map { actNot ->
                     ManageableNotification.from(system = actNot)
                 })
-            }
-        }
-    }
-
-    private fun setupRecyclerViewAnimation() = with(binding) {
-
-        if (rvAppsBackground == null
-            || rvNots == null
-            || llActiveNotifications == null
-        ) return@with
-
-        rvAppsBackground.doOnPreDraw {
-
-            val parent = rvAppsBackground.parent as? ConstraintLayout ?: return@doOnPreDraw
-
-            /** Margens e altura originais do rvAppsBackground*/
-            val rvAppsBackgroundParams = rvAppsBackground.layoutParams as ViewGroup.MarginLayoutParams
-            val originalBgLeft = rvAppsBackgroundParams.leftMargin
-            val originalBgRight = rvAppsBackgroundParams.rightMargin
-
-            /** Margens  originais do rvApps*/
-            val rvAppsParams = rvApps.layoutParams as ViewGroup.MarginLayoutParams
-            val originalRvTop = rvAppsParams.topMargin
-            val originalRvBottom = rvAppsParams.bottomMargin
-            val originalRvLeft = rvAppsParams.leftMargin
-            val originalRvRight = rvAppsParams.rightMargin
-
-            appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
-
-                val totalScrollRange = appBar.totalScrollRange
-                val progress = (-verticalOffset / totalScrollRange.toFloat()).coerceIn(0f, 1f)
-                val interpolatedProgress = AccelerateDecelerateInterpolator().getInterpolation(progress)
-
-                val bgLeft = (originalBgLeft * (1 - interpolatedProgress)).toInt()
-                val bgRight = (originalBgRight * (1 - interpolatedProgress)).toInt()
-
-
-                with(rvAppsBackground) {
-
-
-                rvAppsBackgroundParams.leftMargin = bgLeft
-                    rvAppsBackgroundParams.rightMargin = bgRight
-
-                    alpha = (1f - interpolatedProgress)
-                    post { requestLayout() }
-                }
-
-
-                with(emptyView) {
-                    alpha = (1f - interpolatedProgress)
-                }
-
-                with(llActiveNotifications) {
-
-                alpha = (1f - interpolatedProgress)
-                }
-
-                with(rvApps) {
-
-                    val rvTop = (originalRvTop * (1 - interpolatedProgress)).toInt()
-                    val rvBottom = (originalRvBottom * (1 - interpolatedProgress)).toInt()
-                    val rvLeft = (originalRvLeft * (1 - interpolatedProgress)).toInt()
-                    val rvRight = (originalRvRight * (1 - interpolatedProgress)).toInt()
-
-                    rvAppsParams.topMargin = rvTop
-                    rvAppsParams.bottomMargin = rvBottom
-                    rvAppsParams.leftMargin = rvLeft
-                    rvAppsParams.rightMargin = rvRight
-                    post { requestLayout() }
-                }
 
             }
         }
@@ -548,20 +491,21 @@ class HomeFragment : MyFragment() {
         super.onResume()
 
         lifecycleScope.launch {
-            delay(1500)
+
+            binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
 
             if (!requireMainActivity().isListenNotificationEnabled()) {
-                if (binding.containerWarnings.isEmpty()) showListenNotificationWarning()
+                showListenNotificationWarning()
                 return@launch
             }
 
             if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                if (binding.containerWarnings.isEmpty()) showBatteryRestrictionsWarning()
+                showBatteryRestrictionsWarning()
                 return@launch
             }
 
             if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                if (binding.containerWarnings.isEmpty()) showPostNotificationRestrictionsWarning()
+                showPostNotificationRestrictionsWarning()
             }
         }
     }
@@ -607,11 +551,6 @@ class HomeFragment : MyFragment() {
         warningBinding.chipRemoveRestriction.setOnClickListener(AnimatedClickListener {
             requireMainActivity().requestIgnoreBatteryOptimizations()
             removerWarning(warningBinding.root)
-        })
-
-        warningBinding.chipRestrictionRemoved.setOnClickListener(AnimatedClickListener {
-            removerWarning(warningBinding.root)
-            //showDialogBatteryRestrictionRemoved()
         })
 
         binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)

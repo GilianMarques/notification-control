@@ -27,14 +27,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/back_container"
+        android:background="@drawable/back_container_home_frag"
         android:foreground="?attr/selectableItemBackground"
         android:padding="8dp">
 
@@ -82,13 +82,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:maxLines="3"
+            android:ellipsize="marquee"
+            android:gravity="start"
+            android:marqueeRepeatLimit="1"
             android:textSize="12sp"
+            android:maxLines="1"
+            android:paddingHorizontal="8dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
-            tools:text="Conteudo da notificação\nbláblábláblábláblábláblábláblá."
+            tools:text="Conteudo da notificação bláblábláblábláblábláblábláblá."
             tools:visibility="visible" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

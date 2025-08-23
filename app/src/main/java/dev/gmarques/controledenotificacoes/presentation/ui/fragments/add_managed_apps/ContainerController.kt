@@ -65,7 +65,7 @@ class ContainerController(
      * @param objs A nova lista de objetos Child a serem exibidos.
      */
     fun submitList(objs: List<Child>) {
-        //   Log.d("USUK", "ContainerController.submitList: ${lastObjectsList.joinToString("\n") { it.sortableProp }}")
+        //   AppLog.d("USUK", "ContainerController.submitList: ${lastObjectsList.joinToString("\n") { it.sortableProp }}")
         val sortedObjects = objs.sortedBy { it.sortableProp }
             .subList(0, min(maxViews, objs.size))
 
@@ -96,7 +96,7 @@ class ContainerController(
      * @param obj O objeto Child cuja view correspondente deve ser removida.
      */
     private fun removeView(obj: Child) {
-        //  Log.d("USUK", "ContainerController.".plus("removeView() obj = ${obj.sortableProp}"))
+        //  AppLog.d("USUK", "ContainerController.".plus("removeView() obj = ${obj.sortableProp}"))
         container.removeView(obj.binding.root)
         children.remove(obj.id)
     }
@@ -107,7 +107,7 @@ class ContainerController(
      * @param index O índice no qual a view deve ser adicionada no container.
      */
     private fun addView(obj: Child, index: Int, delayedAnimation: Boolean = false) {
-        // Log.d(    "USUK",   "ContainerController.".plus("addView() obj = ${obj.sortableProp}, index = $index, delayedAnimation = $delayedAnimation")   )
+        // AppLog.d(    "USUK",   "ContainerController.".plus("addView() obj = ${obj.sortableProp}, index = $index, delayedAnimation = $delayedAnimation")   )
         if (delayedAnimation) {
             container.postDelayed({ container.addView(obj.binding.root, index) }, 350)
 
