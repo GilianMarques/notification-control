@@ -160,7 +160,7 @@ class ManagedAppsAdapter(
                 Glide.with(App.instance)
                     .load(getInstalledAppIconUseCase(app.packageName))
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.vec_app)
+                    .error(R.drawable.vec_alert_uninstalled_app)
                     .into(ivAppIcon)
             }
 
