@@ -56,6 +56,7 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
@@ -171,7 +172,8 @@ class HomeFragment : MyFragment() {
         lifecycleScope.launch {
 
 
-            val service = NotificationListener.getWhenReady(10000L) ?: run {
+            val service = NotificationListener.getWhenReadyOrNull() ?: run {
+                AppLogger.d("NotificationListener  == null")
                 return@launch
             }
 

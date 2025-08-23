@@ -34,6 +34,7 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.ObserveAllSnoozedNotificationsUseCase
@@ -72,7 +73,11 @@ class ManageNotificationsViewModel @Inject constructor(
         observerJob.cancel()
         observerJob = viewModelScope.launch {
 
-            val snoozedNotificationsOnStatusBar = NotificationListener.getWhenReady().getSnoozedNotificationsFlow()
+            val listener = NotificationListener.getWhenReadyOrNull() ?: run {
+                AppLogger.d("NotificationListener  == null")
+                return@launch
+            }
+            val snoozedNotificationsOnStatusBar = listener.getSnoozedNotificationsFlow()
             val snoozedNotificationsOnDatabase = observeAllSnoozedNotificationsUseCase()
 
             combine(snoozedNotificationsOnDatabase, snoozedNotificationsOnStatusBar) { dbList, systemList ->
@@ -102,7 +107,13 @@ class ManageNotificationsViewModel @Inject constructor(
 
         observerJob.cancel()
         observerJob = viewModelScope.launch {
-            NotificationListener.getWhenReady().getActiveWithOngoingNotificationsFlow().collect { systemList ->
+
+            val listener = NotificationListener.getWhenReadyOrNull() ?: run {
+                AppLogger.d("NotificationListener  == null")
+                return@launch
+            }
+
+            listener.getActiveWithOngoingNotificationsFlow().collect { systemList ->
 
                 val managed = systemList.map {
                     ManageableNotification.from(system = it)
@@ -131,7 +142,7 @@ class ManageNotificationsViewModel @Inject constructor(
     }
 
     fun cancelNotification(not: ManageableNotification) = viewModelScope.launch {
-        NotificationListener.getWhenReady().cancelNotification(not.key)
+        NotificationListener.getWhenReadyOrNull()?.cancelNotification(not.key)
     }
 
     fun copyTitleAndContent(not: ManageableNotification) {

@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
@@ -56,7 +57,11 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor(
          * É necessário impor um limite de tempo porque esse UseCase pode ser executado antes que o usuário tenha dado permissão para o
          *  aplicativo ler as notificações fazendo com que o serviço nunca seja retornado e que o aplicativo fique travado.
          */
-        val notificationManager = NotificationListener.getWhenReady(500L) ?: return
+        val notificationManager = NotificationListener.getWhenReadyOrNull() ?: run {
+            AppLogger.d("NotificationListener  == null")
+            return
+        }
+
         val snoozedNotificationsOnDB = getSnoozedNotificationsForAppOnDB(packageName)
 
         notificationManager.getSnoozedNotifications()

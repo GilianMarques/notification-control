@@ -60,24 +60,13 @@ import org.joda.time.LocalDateTime
  * Em domingo, 27 de julho de 2025 as 15:15.
  * Permite obter e gerenciar as notificações disponiveis no sistema
  *
- *  Obtenha uma instancia dessa classe atraves de [NotificationListener.getOrNull] ou [NotificationListener.getWhenReady]
+ *  Obtenha uma instancia dessa classe atraves de  [NotificationListener.getWhenReadyOrNull]
  */
 class SystemNotificationManagerImpl(
-    private val debugTests: DebugTests?
+    private val debugTests: DebugTests?,
+    private var notificationListener: NotificationListener?,
 ) :
     SystemNotificationManager, CoroutineScope by MainScope() {
-
-    var notificationListener: NotificationListener? = null
-        set(value) {
-            field = value
-            AppLogger.d(
-                "setando instancia ${if (value == null) "nula" else "nao nula"} de NotificationListener"
-            )
-        }
-        get() {
-            AppLogger.d("retornando instancia ${if (field == null) "nula" else "nao nula"} de NotificationListener")
-            return field
-        }
 
     private val echoImpl = HiltEntryPoints.echo()
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
@@ -172,6 +161,7 @@ class SystemNotificationManagerImpl(
     }
 
     override fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long) {
+        AppLogger.d(notification.title, AppNotificationFactory.create(notification), "until = $until")
 
         if (notificationListener == null) {
             AppLogger.d("notificationListener == null", notification)
@@ -288,21 +278,24 @@ class SystemNotificationManagerImpl(
 
         val result = processIncomingNotificationUseCase(sbn)
 
+        val logMsg = "notificationListener valido: ${notificationListener != null}"
+
         when (result) {
+
             is AllowNotification -> {
-                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
+                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
+                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
+                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 notificationListener?.cancelNotification(result.targetNotification.key)
@@ -311,7 +304,7 @@ class SystemNotificationManagerImpl(
             }
 
             is SnoozeNotification -> {
-                AppLogger.d("notificationListener: $notificationListener", sbn)
+                AppLogger.d(logMsg, sbn)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.until) }
@@ -319,6 +312,11 @@ class SystemNotificationManagerImpl(
         }
 
 
+    }
+
+    override fun clearNotificationListenerInstance() {
+        AppLogger.d("")
+        notificationListener = null
     }
 
 }

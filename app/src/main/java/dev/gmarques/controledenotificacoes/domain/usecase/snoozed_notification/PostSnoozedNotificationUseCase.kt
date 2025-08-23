@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
@@ -44,8 +45,9 @@ class PostSnoozedNotificationUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(key: String) {
+        AppLogger.d("")
         deleteSnoozedNotificationUseCase(key)
         backupNotificationAlarmScheduler.cancelAlarm(key)
-        NotificationListener.getWhenReady().postSnoozedNotification(key)
+        NotificationListener.getWhenReadyOrNull()?.postSnoozedNotification(key)
     }
 }

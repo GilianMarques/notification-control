@@ -45,7 +45,7 @@ class SelectNotificationViewModel @Inject constructor(
 ) : ViewModel() {
 
     val notificationsFlow: StateFlow<List<ActiveStatusBarNotification>> = flow {
-        emit(NotificationListener.getOrNull()?.getActiveNotifications() ?: emptyList())
+        emit(NotificationListener.getWhenReadyOrNull()?.getActiveNotifications() ?: emptyList())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

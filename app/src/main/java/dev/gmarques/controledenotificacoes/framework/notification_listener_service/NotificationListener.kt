@@ -60,10 +60,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     private var debugTests: DebugTests? = null
 
-    /**
-     * Responsavel por expor as funçoes necessarias dessa classe + funções utilitarias para o resto do sistema
-     */
-    private val systemNotificationManager: SystemNotificationManager = SystemNotificationManagerImpl(debugTests)
 
     companion object {
         /**
@@ -72,64 +68,50 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         private val serviceInstanceFlow: MutableStateFlow<SystemNotificationManager?> = MutableStateFlow(null)
 
         /**
-         * Obtém a instância do serviço [SystemNotificationManager].
-         * Retorna a instância atual do serviço se estiver disponível, caso contrário, retorna null.
-         *
-         * @return A instância do [SystemNotificationManager]  ou null se não estiver disponível.
+         * Obtém a instância do [SystemNotificationManager] de forma assíncrona.
+         * Aguarda até que o serviço esteja pronto, mas com um tempo limite.
+         * Retorna a instância do serviço se estiver pronta dentro do tempo limite, caso contrário, retorna null.
          */
-        fun getOrNull(): SystemNotificationManager? {
-            return if (serviceInstanceFlow.value != null) serviceInstanceFlow.value else null
-        }
+        suspend fun getWhenReadyOrNull(): SystemNotificationManager? {
 
-        /**
-         * Obtém a instância do [SystemNotificationManager] de forma síncrona,
-         * bloqueando a thread atual até que o serviço esteja pronto (o que pode nunca acontecer).
-         * @return A instância do [SystemNotificationManager].
-         */
-        suspend fun getWhenReady(): SystemNotificationManager {
-            return serviceInstanceFlow.filterNotNull().first()
-        }
+            serviceInstanceFlow.value?.let { return it }
 
-        /**
-         * Obtém a instância do [SystemNotificationManager] de forma síncrona,
-         * bloqueando a thread atual até que o serviço esteja pronto (o que pode nunca acontecer).
-         * porem retorna null caso o serviço não esteja pronto em um determinado tempo
-         */
-        suspend fun getWhenReady(timeOut: Long): SystemNotificationManager? {
-            return withTimeoutOrNull(timeOut) { serviceInstanceFlow.filterNotNull().first() }
-        }
+            NotificationServiceManager.instance?.restartListener()
+            val result = withTimeoutOrNull(2_000L) {
+                serviceInstanceFlow.filterNotNull().first()
+            }
 
-        fun setInstanceIfAlreadyConnected() {
-            //
+            AppLogger.d("reiniciar listener ${if (result == null) "nao resolveu" else "resolveu"}")
+
+            return result
         }
 
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        AppLogger.d("")
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
         AppLogger.d("")
-        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
-        serviceInstanceFlow.value = systemNotificationManager
+
+        serviceInstanceFlow.value = SystemNotificationManagerImpl(debugTests, this@NotificationListener)
         if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
-        systemNotificationManager.emitNotifications()
+        serviceInstanceFlow.value?.emitNotifications()
     }
 
     override fun onListenerDisconnected() {
         cancel()
-        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
+        serviceInstanceFlow.value?.clearNotificationListenerInstance()
         serviceInstanceFlow.value = null
         super.onListenerDisconnected()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        systemNotificationManager.emitNotifications()
-        systemNotificationManager.processNotification(sbn)
+        serviceInstanceFlow.value?.emitNotifications()
+        serviceInstanceFlow.value?.processNotification(sbn)
     }
 
     /**
@@ -137,16 +119,18 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
         debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
-        systemNotificationManager.emitNotifications()
+        serviceInstanceFlow.value?.emitNotifications()
         super.onNotificationRemoved(sbn, rankingMap)
     }
 
     fun isListenerConnected(): Boolean {
+
         val cn = ComponentName(baseContext, NotificationListener::class.java)
         val enabledListeners = Settings.Secure.getString(
             baseContext.contentResolver, "enabled_notification_listeners"
         )
-        return (enabledListeners?.contains(cn.flattenToString()) == true)
+        // evita falsos positivos em caso de variaçoes do mesmo app instaladas
+        return enabledListeners.split(":").any { it == cn.flattenToString() }
     }
 
     /**
@@ -157,7 +141,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     private fun observeRulesChanges() = launch(IO) {
         HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            systemNotificationManager.processActiveNotifications()
+            serviceInstanceFlow.value?.processActiveNotifications()
         }
     }
 

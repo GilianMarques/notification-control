@@ -50,7 +50,7 @@ class SnoozeNotificationByRuleUseCase @Inject constructor(
 
     suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long) {
         AppLogger.d("", notification)
-        val notificationManager = NotificationListener.getWhenReady()
+        val notificationManager = NotificationListener.getWhenReadyOrNull()
         val snoozedNotification = SnoozedNotificationFactory.create(notification)
             .copy(
                 permaHidden = false,
@@ -60,6 +60,6 @@ class SnoozeNotificationByRuleUseCase @Inject constructor(
 
         insertSnoozedNotificationUseCase(snoozedNotification)
         backupNotificationAlarmScheduler.scheduleAlarm(snoozedNotification.key, until)
-        notificationManager.snoozeNotification(notification, until)
+        notificationManager?.snoozeNotification(notification, until)
     }
 }

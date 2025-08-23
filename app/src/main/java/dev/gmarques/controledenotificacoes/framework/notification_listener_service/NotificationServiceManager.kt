@@ -36,8 +36,10 @@ import android.content.pm.PackageManager
 import android.os.IBinder
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import java.util.Timer
 import java.util.TimerTask
@@ -52,7 +54,7 @@ class NotificationServiceManager : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 220461
-        private var instance: NotificationServiceManager? = null
+        var instance: NotificationServiceManager? = null
         fun stopSelf() {
             instance?.disconnectListener()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
@@ -115,17 +117,17 @@ class NotificationServiceManager : Service() {
      * entender que o listener está ativo mesmo que não esteja, retornando um falso positivo
      */
     fun isNotificationListenerActive(): Boolean {
+        val baseContext = App.instance
+
         val cn = ComponentName(baseContext, NotificationListener::class.java)
         val enabledListeners = Settings.Secure.getString(
-            baseContext.contentResolver,
-            "enabled_notification_listeners"
+            baseContext.contentResolver, "enabled_notification_listeners"
         )
-        return (enabledListeners?.contains(cn.flattenToString()) == true).also {
-            AppLogger.d("connected? : $it ")
-        }
+        // evita falsos positivos em caso de variaçoes do mesmo app instaladas
+        return enabledListeners.split(":").any { it == cn.flattenToString() }
     }
 
-    private fun disconnectListener() {
+    fun disconnectListener() {
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)
 
@@ -136,7 +138,23 @@ class NotificationServiceManager : Service() {
         )
     }
 
-    private fun connectListener() {
+    /**
+     * Serve pra reanexar o listener de notificações no sistema.
+     * Isso faz com que o onListenerConnected do [NotificationListener] Seja chamado E inicialize Os objetos necessários.
+     *
+     * Por que existe?
+     * Em dispositivo Xiaomi com Android 13 (Foi onde vi o bug) as vezes onListenerConnected do [NotificationListener] nunca é
+     * chamado. Ao verificar o porque, descobri que o listener ja estava conectado e deduzi que essa era a causa.
+     * Quando esse bug ocorria fazia com que o restante do aplicativo nunca conseguisse receber uma instância valida
+     *  de [SystemNotificationManager] para uso, o inutilizando.
+     */
+    fun restartListener() {
+        AppLogger.d("")
+        disconnectListener()
+        connectListener()
+    }
+
+    fun connectListener() {
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)
 

@@ -138,7 +138,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         checkForAppUpdate()
         setupForTablet(lastSlidingPaneState)
         removeDuplicatedFragmentOnExpandedScreen()
-
     }
 
     /**
