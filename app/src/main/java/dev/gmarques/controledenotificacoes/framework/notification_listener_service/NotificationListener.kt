@@ -99,6 +99,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             return withTimeoutOrNull(timeOut) { serviceInstanceFlow.filterNotNull().first() }
         }
 
+        fun setInstanceIfAlreadyConnected() {
+            //
+        }
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -108,11 +112,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
+        AppLogger.d()
         (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
         serviceInstanceFlow.value = systemNotificationManager
         if (BuildConfig.DEBUG) debugTests = DebugTests()
         observeRulesChanges()
         systemNotificationManager.emitNotifications()
+    }
+
+    override fun onListenerDisconnected() {
+        cancel()
+        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
+        serviceInstanceFlow.value = null
+        super.onListenerDisconnected()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -127,13 +139,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
         systemNotificationManager.emitNotifications()
         super.onNotificationRemoved(sbn, rankingMap)
-    }
-
-    override fun onListenerDisconnected() {
-        cancel()
-        (systemNotificationManager as SystemNotificationManagerImpl).notificationListener = this
-        serviceInstanceFlow.value = null
-        super.onListenerDisconnected()
     }
 
     fun isListenerConnected(): Boolean {
@@ -169,7 +174,7 @@ class DebugTests {
 
 
     init {
-        if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de begug")
+        if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de Debug")
     }
 
     private var cancelingNotificationKey = ""

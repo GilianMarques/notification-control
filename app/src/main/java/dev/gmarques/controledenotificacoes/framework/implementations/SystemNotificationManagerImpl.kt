@@ -31,6 +31,7 @@ import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator.applyDefaultFilter
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification
@@ -288,19 +289,19 @@ class SystemNotificationManagerImpl(
 
         when (result) {
             is AllowNotification -> {
-                AppLogger.d("notificationListener: $notificationListener", ActiveStatusBarNotificationFactory.create(sbn))
+                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                AppLogger.d("notificationListener: $notificationListener", ActiveStatusBarNotificationFactory.create(sbn))
+                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                AppLogger.d("notificationListener: $notificationListener", ActiveStatusBarNotificationFactory.create(sbn))
+                AppLogger.d("notificationListener: $notificationListener", AppNotificationFactory.create(sbn))
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 notificationListener?.cancelNotification(result.targetNotification.key)
