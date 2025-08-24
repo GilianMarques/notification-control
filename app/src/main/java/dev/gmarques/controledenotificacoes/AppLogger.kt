@@ -27,30 +27,43 @@ package dev.gmarques.controledenotificacoes
 
 import android.util.Log
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl.MoshiListConverter
 
+/**
+ * Classe de log personalizada para o aplicativo. Permite armazenar logs de eventos com Objetos personalizados para facilitar a depuração
+ *
+ */
 object AppLogger {
 
 
     private fun writeToLog(log: AppLog) {
 
+        Log.d(
+            "USUK",
+            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${
+                log.relevantObjects.joinToString {
+                    "${
+                        it.toString().replace(",", "\n")
+                    }\n"
+                }
+            }"
+        )
+
+
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
 
-        val adapter = moshi.adapter(AppLog::class.java)
+        val typeList = Types.newParameterizedType(MutableList::class.java, AppLog::class.java)
+        val typeListAdapter = moshi.adapter<MutableList<AppLog>>(typeList)
 
+        val data = PreferencesImpl.log.value
+        val logs = if (data.isEmpty()) mutableListOf() else typeListAdapter.fromJson(data)!!
 
-        Log.d(
-            "USUK",
-            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${log.relevantObjects.joinToString { "\n$it" }}"
-        )
-        val json = PreferencesImpl.log.value
-        val logs: MutableList<String> = MoshiListConverter.fromJson(json) ?: mutableListOf()
-        logs.add(adapter.toJson(log))
-        PreferencesImpl.log.set(MoshiListConverter.toJson(logs))
+        logs.add(log)
+        PreferencesImpl.log.set(typeListAdapter.toJson(logs))
     }
 
 

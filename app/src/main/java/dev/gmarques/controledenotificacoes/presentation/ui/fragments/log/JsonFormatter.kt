@@ -23,92 +23,24 @@
  *
  */
 
-package com.example.logviewer.utils
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.log
 
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import com.squareup.moshi.Moshi
 
 object JsonFormatter {
 
-    /**
-     * Tenta formatar JSON ou "pseudo JSON" (data classes).
-     * Se não conseguir, retorna o texto original.
-     */
-    fun formatLogMessage(message: String): String {
-        val trimmed = message.trim()
-
-        // 1) Verifica se é JSON puro
-        if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-            return try {
-                val json = JSONObject(trimmed)
-                json.toString(4) // identação de 4 espaços
-            } catch (_: JSONException) {
-                formatDataClassLike(trimmed)
-            }
-        }
-
-        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
-            return try {
-                val array = JSONArray(trimmed)
-                array.toString(4)
-            } catch (_: JSONException) {
-                formatDataClassLike(trimmed)
-            }
-        }
-
-        // 2) Se parece com data class estilo Kotlin: Rule(...), ActiveStatusBarNotification(...)
-        if (trimmed.contains("(") && trimmed.contains(")")) {
-            return formatDataClassLike(trimmed)
-        }
-
-        // 3) Caso contrário, devolve cru
-        return message
-    }
 
     /**
-     * Tenta formatar uma string que parece com um objeto estilo Kotlin data class.
-     *
-     * Exemplo:
-     * Rule(id=1c1f..., name=, days=[SATURDAY, SUNDAY], ...)
+     * Formatar lista de objetos relevantes para exibição completa
      */
-    private fun formatDataClassLike(raw: String): String {
-        val builder = StringBuilder()
-        var indent = 0
-        var current = StringBuilder()
+    fun formatRelevantObjects(objects: List<Any>): String {
+        if (objects.isEmpty()) return ""
 
-        fun flushCurrent() {
-            if (current.isNotBlank()) {
-                builder.append("  ".repeat(indent))
-                builder.appendLine(current.toString().trim())
-                current = StringBuilder()
-            }
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter(Any::class.java).indent("  ")
+
+        return objects.joinToString("\n") { obj ->
+            adapter.toJson(obj)
         }
-
-        raw.forEach { c ->
-            when (c) {
-                '(', '[', '{' -> {
-                    current.append(c)
-                    flushCurrent()
-                    indent++
-                }
-
-                ')', ']', '}' -> {
-                    flushCurrent()
-                    indent--
-                    builder.append("  ".repeat(indent)).appendLine(c.toString())
-                }
-
-                ',' -> {
-                    current.append(c)
-                    flushCurrent()
-                }
-
-                else -> current.append(c)
-            }
-        }
-        flushCurrent()
-
-        return builder.toString().trimEnd()
     }
 }

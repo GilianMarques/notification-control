@@ -69,6 +69,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.log.LogFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
@@ -238,6 +239,12 @@ open class MyFragment() : Fragment() {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Adiar_notifica_o)
                 binding.ivMenu.isGone = true
+            }
+
+            is LogFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Logs_de_depuracao)
+                binding.ivMenu.isGone = false
             }
 
             else -> {

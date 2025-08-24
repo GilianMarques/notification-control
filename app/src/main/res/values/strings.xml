@@ -326,6 +326,7 @@
     <string name="Registros_encontrados">Registros</string>
     <string name="remover_logs">Remover logs</string>
     <string name="tem_certeza">Tem certeza?</string>
+    <string name="exportar_logs">Exportar logs</string>
 
 
 </resources>

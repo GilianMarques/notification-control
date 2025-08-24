@@ -71,7 +71,6 @@ class App() : Application(), CoroutineScope by MainScope() {
     override fun onCreate() {
 
         instance = this
-
         setupRemoteConfig()
         if (!BuildConfig.DEBUG) setupCrashLytics()
         startNotificationService()

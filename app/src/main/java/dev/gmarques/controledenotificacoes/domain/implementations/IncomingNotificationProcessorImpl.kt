@@ -25,7 +25,6 @@
 
 package dev.gmarques.controledenotificacoes.domain.implementations
 
-import android.util.Log
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.IncomingNotificationProcessor.PerformAction
@@ -104,7 +103,13 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         val condition = rule.condition ?: error("Condição não pode ser nula neste ponto")
 
         val isConditionSatisfied = condition.isSatisfiedBy(appNotification)
-        AppLogger.d(msg = "", "isConditionSatisfied: $isConditionSatisfied", condition, rule, appNotification)
+        AppLogger.d(
+            msg = "Processando notificação com condição ${appNotification.title}",
+            "isConditionSatisfied: $isConditionSatisfied",
+            condition,
+            rule,
+            appNotification
+        )
         val blockNotification =
             if (ruleType == Rule.Type.RESTRICTIVE && isAppInBlockPeriod) {
                 when (condition.type) {
@@ -119,21 +124,20 @@ class IncomingNotificationProcessorImpl @Inject constructor(
                 }
 
             } else {
-                Log.w(
-                    "USUK",
-                    "IncomingNotificationProcessorImpl.processCondition: notificação permitida pq nao caiu em nenhuma pré-condição"
-                )
+                AppLogger.d("notificação permitida pq nao caiu em nenhuma pré-condição ${appNotification.title}")
                 false
             }
 
-        return if (blockNotification) decideHowToBlockNotification(rule)
-        else PerformAction.Allow
+        return if (blockNotification) when (rule.action) {
+            Rule.Action.SNOOZE -> PerformAction.Snooze
+            Rule.Action.CANCEL -> PerformAction.Cancel
+        } else PerformAction.Allow
     }
 
 
     /**
      * Processa uma regra sem condição, decidindo se a notificação deve ser bloqueada ou permitida.
-     * Se o aplicativo estiver em período de bloqueio, chama [decideHowToBlockNotification] para determinar
+     * Se o aplicativo estiver em período de bloqueio,  determina
      * a ação a ser tomada com base na regra. Caso contrário, permite a notificação.
      *
      * @param isAppInBlockPeriod Indica se o aplicativo está atualmente em um período de bloqueio.
@@ -143,21 +147,13 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         isAppInBlockPeriod: Boolean,
         rule: Rule,
     ): PerformAction {
-        return if (isAppInBlockPeriod) decideHowToBlockNotification(rule)
-        else PerformAction.Allow
-    }
-
-    /**
-     * Decide como bloquear uma notificação com base na ação da regra
-     * Esta função simplesmente mapeia a ação definida na regra ([Rule.Action.SNOOZE] ou
-     * [Rule.Action.CANCEL]) para a ação correspondente a ser executada na notificação.
-     * @param rule A regra que define a ação de bloqueio.
-     */
-    private fun decideHowToBlockNotification(rule: Rule): PerformAction {
-        return when (rule.action) {
+        AppLogger.d(
+            msg = "Processando notificação sem condição ", rule, "isAppInBlockPeriod: $isAppInBlockPeriod"
+        )
+        return if (isAppInBlockPeriod) when (rule.action) {
             Rule.Action.SNOOZE -> PerformAction.Snooze
             Rule.Action.CANCEL -> PerformAction.Cancel
-        }
+        } else PerformAction.Allow
     }
 
 

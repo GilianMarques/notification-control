@@ -25,21 +25,29 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.log
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.AppLogger.AppLog
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class LogViewModel @Inject constructor() : ViewModel() {
 
-    private val allLogs = mutableListOf<String>()
-    private val _logsFlow = MutableStateFlow<List<String>>(emptyList())
-    val logsFlow: StateFlow<List<String>> get() = _logsFlow
+    private val allLogs = mutableListOf<AppLog>()
+    private val _logsFlow = MutableStateFlow<List<AppLog>>(emptyList())
+    val logsFlow: StateFlow<List<AppLog>> get() = _logsFlow
 
     fun loadLogs() {
         allLogs.clear()
@@ -51,21 +59,50 @@ class LogViewModel @Inject constructor() : ViewModel() {
         if (query.isBlank()) {
             _logsFlow.value = allLogs
         } else {
-            _logsFlow.value = allLogs.filter { it.contains(query, ignoreCase = true) }
+            _logsFlow.value = allLogs.filter {
+                it.msg.contains(query, ignoreCase = true)
+                        || it.caller.contains(query, ignoreCase = true)
+                        || it.relevantObjects.map { obj -> obj.toString() }.contains(query)
+                        || it.timeStamp.toString().contains(query, ignoreCase = true)
+            }
         }
     }
 
-    private fun getLogs(): List<String> = PreferencesImpl.log.value.let { jsonLogs ->
+    private fun getLogs(): List<AppLog> = PreferencesImpl.log.value.let { jsonLogs ->
 
-        val moshi = Moshi.Builder().build()
-        val type = Types.newParameterizedType(MutableList::class.java, String::class.java)
-        val adapter = moshi.adapter<MutableList<String>>(type)
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val type = Types.newParameterizedType(MutableList::class.java, AppLog::class.java)
+        val adapter = moshi.adapter<MutableList<AppLog>>(type)
 
         if (jsonLogs.isEmpty()) return@let emptyList()
 
-        val list: MutableList<String>? = adapter.fromJson(jsonLogs)
+        val list: MutableList<AppLog>? = adapter.fromJson(jsonLogs)
 
         return list ?: emptyList()
+
+    }
+
+    fun exportToFile() {
+        val context = App.instance
+
+        val fileName = "logs.txt"
+
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy-HH:mm:ss:SSS", Locale.getDefault())
+
+        val finalLog = getLogs().joinToString("\n\n") { appLog ->
+            dateFormat.format(Date(appLog.timeStamp)) + "  " +
+                    appLog.caller + " " +
+                    appLog.msg + "\n" +
+                    JsonFormatter.formatRelevantObjects(appLog.relevantObjects)
+        }
+
+        val file = File(context.dataDir, fileName)
+        file.writeText(finalLog)
+        Toast.makeText(context, "Obtenha através do Device Explorer no AndroidStudio", Toast.LENGTH_SHORT).show()
+
 
     }
 }

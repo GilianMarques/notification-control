@@ -26,18 +26,19 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.log
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.snackbar.Snackbar
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentLogBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
 class LogFragment : MyFragment() {
 
@@ -56,13 +57,12 @@ class LogFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setupActionBar(binding.actionbar)
         adapter = LogAdapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
         collectFlow(viewModel.logsFlow) {
-            Log.d("USUK", "LogFragment.onViewCreated: upd tv")
             adapter.submitList(it)
         }
 
@@ -70,16 +70,47 @@ class LogFragment : MyFragment() {
             viewModel.filter(text.toString())
         }
 
-        binding.fabClear.setOnClickListener {
-            Snackbar.make(binding.root, getString(R.string.remover_logs), Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.tem_certeza)) {
-                    PreferencesImpl.log.reset()
-                    viewModel.loadLogs()
-                    vibrator.success()
-                }.show()
-        }
 
         viewModel.loadLogs()
+        setupPopUpMenu()
+    }
+
+    private fun setupPopUpMenu() {
+        val popupMenu = popupMenu {
+
+            section {
+
+                item {
+                    label = getString(R.string.remover_logs)
+                    icon = R.drawable.vec_remove
+                    callback = {
+                        Snackbar.make(binding.root, getString(R.string.remover_logs), Snackbar.LENGTH_LONG)
+                            .setAction(getString(R.string.tem_certeza)) {
+                                PreferencesImpl.log.reset()
+                                viewModel.loadLogs()
+                                vibrator.success()
+                            }.show()
+                    }
+                }
+
+                item {
+                    label = getString(R.string.exportar_logs)
+                    icon = R.drawable.vec_open_notification_small
+                    callback = {
+                        viewModel.exportToFile()
+                    }
+                }
+
+            }
+
+
+        }
+
+        binding.actionbar.ivMenu.setOnClickListener(AnimatedClickListener {
+            popupMenu.show(this@LogFragment.requireContext(), binding.actionbar.ivMenu)
+        })
 
     }
+
+
 }

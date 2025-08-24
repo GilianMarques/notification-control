@@ -274,28 +274,29 @@ class SystemNotificationManagerImpl(
      */
     fun processNotificationRule(sbn: StatusBarNotification) {
 
+        val not = AppNotificationFactory.create(sbn)
+        AppLogger.d("notificationListener valido: ${notificationListener != null} not: ${not.title}", not)
+
         debugTests?.crashIfCallbackNotCalled(sbn)
 
         val result = processIncomingNotificationUseCase(sbn)
 
-        val logMsg = "notificationListener valido: ${notificationListener != null}"
-
         when (result) {
 
             is AllowNotification -> {
-                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
+                AppLogger.d("Processing result: AllowNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is AppNotManaged -> {
-                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
+                AppLogger.d("Processing result: AppNotManaged ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.repostNotification(result.targetNotification)
             }
 
             is CancelNotification -> {
-                AppLogger.d(logMsg, AppNotificationFactory.create(sbn))
+                AppLogger.d("Processing result: CancelNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 notificationListener?.cancelNotification(result.targetNotification.key)
@@ -304,7 +305,7 @@ class SystemNotificationManagerImpl(
             }
 
             is SnoozeNotification -> {
-                AppLogger.d(logMsg, sbn)
+                AppLogger.d("Processing result: SnoozeNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.until) }

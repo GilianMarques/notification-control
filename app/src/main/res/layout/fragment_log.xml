@@ -40,32 +40,15 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Title Section -->
-        <LinearLayout
+
+        <include
+            android:id="@+id/actionbar"
+            layout="@layout/view_activity_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/vec_info"
-                app:tint="?colorPrimary" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/urbanist_extrabold"
-                android:text="@string/Logs_de_depuracao"
-                android:textColor="?colorOnBackground"
-                android:textSize="24sp" />
-
-
-        </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_filter"
@@ -98,24 +81,12 @@
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:fadeScrollbars="false"
             android:scrollbars="vertical"
             tools:listitem="@layout/item_log" />
 
         <!-- Floating Action Button -->
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/Atualizar"
-            android:src="@drawable/vec_remove"
-            app:backgroundTint="?colorPrimary"
-            app:tint="?colorOnPrimary" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

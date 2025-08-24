@@ -25,39 +25,94 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.log
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.logviewer.utils.JsonFormatter
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.AppLogger.AppLog
 import dev.gmarques.controledenotificacoes.databinding.ItemLogBinding
-import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class LogAdapter :
-    ListAdapter<String, LogAdapter.LogViewHolder>(DiffCallback) {
+class LogAdapter : ListAdapter<AppLog, LogAdapter.LogViewHolder>(DiffCallback) {
 
-    object DiffCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String) = oldItem == newItem
-        override fun areContentsTheSame(oldItem: String, newItem: String) = oldItem == newItem
+    object DiffCallback : DiffUtil.ItemCallback<AppLog>() {
+        override fun areItemsTheSame(oldItem: AppLog, newItem: AppLog): Boolean {
+            return oldItem.timeStamp == newItem.timeStamp && oldItem.msg == newItem.msg
+        }
+
+        override fun areContentsTheSame(oldItem: AppLog, newItem: AppLog): Boolean {
+            return oldItem == newItem
+        }
     }
 
     inner class LogViewHolder(private val binding: ItemLogBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(log: String) {
-            with(binding.tvLogMessageExpanded) {
-                text = LogFormatter.formatLog(JsonFormatter.formatLogMessage(log))
-                setOnClickListener(AnimatedClickListener {
-                    val clipboard = App.instance.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("log", binding.tvLogMessageExpanded.text)
-                    clipboard.setPrimaryClip(clip)
-                })
+
+        @SuppressLint("SetTextI18n")
+        fun bind(appLog: AppLog) {
+            // Formatar timestamp
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy - HH:mm:ss:SSS", Locale.getDefault())
+            binding.tvTimestamp.text =
+                dateFormat.format(Date(appLog.timeStamp))
+
+            // Exibir caller
+            binding.tvCaller.text = appLog.caller
+
+            // Exibir mensagem
+            binding.tvLogMessage.text = appLog.msg + if (appLog.relevantObjects.isNotEmpty()) " (...)" else ""
+
+            // Preparar objetos relevantes usando formatação completa
+            val relevantObjectsText = JsonFormatter.formatRelevantObjects(appLog.relevantObjects)
+            binding.tvRelevantObjects.text = LogFormatter.formatLog(relevantObjectsText)
+
+            // Configurar visibilidade inicial
+            binding.tvRelevantObjects.visibility = View.GONE
+
+            // Click listener para expandir/retrair
+            binding.root.setOnClickListener {
+                binding.tvRelevantObjects.isVisible =
+                    (binding.tvRelevantObjects.text.isNotEmpty() && !binding.tvRelevantObjects.isVisible)
             }
+
+            // Long click para copiar log completo
+            binding.root.setOnLongClickListener {
+                copyLogToClipboard(appLog)
+                true
+            }
+
         }
+
+        private fun copyLogToClipboard(appLog: AppLog) {
+            val clipboard = App.instance.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy - HH:mm:ss:SSS", Locale.getDefault())
+            val formattedDate = dateFormat.format(Date(appLog.timeStamp))
+
+            val logText = buildString {
+                append("Timestamp: $formattedDate\n")
+                append("Caller: ${appLog.caller}\n")
+                append("Message: ${appLog.msg}\n\n")
+                if (appLog.relevantObjects.isNotEmpty()) {
+                    append("Relevant Objects:\n")
+                    append(JsonFormatter.formatRelevantObjects(appLog.relevantObjects))
+                }
+            }
+
+            val clip = ClipData.newPlainText("log completo", logText)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(App.instance, "Log completo copiado!", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
