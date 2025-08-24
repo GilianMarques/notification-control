@@ -38,6 +38,7 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
@@ -50,18 +51,18 @@ import java.util.TimerTask
 
  * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
-class NotificationServiceManager : Service() {
+class NotificationListenerManagerService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 220461
-        var instance: NotificationServiceManager? = null
+        var instance: NotificationListenerManagerService? = null
         fun stopSelf() {
             instance?.disconnectListener()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
         }
     }
 
-    private val checkIntervalMs = 60_000L // intervalo entre checagens
+    private val checkIntervalMs = if (BuildConfig.DEBUG) 5_000L else 60_000L // intervalo entre checagens
     private var timer: Timer? = null
     private val channelId = "notification_watcher_channel"
 
@@ -84,7 +85,7 @@ class NotificationServiceManager : Service() {
         timer = Timer().apply {
             schedule(object : TimerTask() {
                 override fun run() {
-                    if (!isNotificationListenerActive()) connectListener()
+                    if (!isNotificationListenerConnected()) connectListener()
                 }
             }, 0, checkIntervalMs)
         }
@@ -112,11 +113,44 @@ class NotificationServiceManager : Service() {
     }
 
     /**
+     * Abre as configurações de notificação para o canal específico da notificação em primeiro plano (foreground).
+     * Em versões mais recentes do Android (O+), navega diretamente para as configurações do canal.
+     */
+    private fun getPendingIntentForNotificationSettings(): PendingIntent {
+
+        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, baseContext.packageName)
+            putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+        }
+
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+        return PendingIntent.getActivity(
+            baseContext, 220462, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun getPendingIntentForOpenTheApp(): PendingIntent {
+
+        val intent = Intent(baseContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        return PendingIntent.getActivity(
+            baseContext,
+            462025, // usar diferentes se tiver múltiplas notificações com intents distintas
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+    }
+
+    /**
      * Verifica se o listener de notificações está ativo.
      * Essa função pode retornar true por engano em casos onde o usuário mata o aplicativo. Ao abrir ele em seguida essa função vai
      * entender que o listener está ativo mesmo que não esteja, retornando um falso positivo
      */
-    fun isNotificationListenerActive(): Boolean {
+    fun isNotificationListenerConnected(): Boolean {
         val baseContext = App.instance
 
         val cn = ComponentName(baseContext, NotificationListener::class.java)
@@ -125,6 +159,17 @@ class NotificationServiceManager : Service() {
         )
         // evita falsos positivos em caso de variaçoes do mesmo app instaladas
         return enabledListeners.split(":").any { it == cn.flattenToString() }
+    }
+
+    fun connectListener() {
+        val pm = packageManager
+        val componentName = ComponentName(this, NotificationListener::class.java)
+
+        pm.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
     }
 
     fun disconnectListener() {
@@ -152,50 +197,6 @@ class NotificationServiceManager : Service() {
         AppLogger.d("")
         disconnectListener()
         connectListener()
-    }
-
-    fun connectListener() {
-        val pm = packageManager
-        val componentName = ComponentName(this, NotificationListener::class.java)
-
-        pm.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-    }
-
-    /**
-     * Abre as configurações de notificação para o canal específico da notificação em primeiro plano (foreground).
-     * Em versões mais recentes do Android (O+), navega diretamente para as configurações do canal.
-     */
-    fun getPendingIntentForNotificationSettings(): PendingIntent {
-
-        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, baseContext.packageName)
-            putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
-        }
-
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-        return PendingIntent.getActivity(
-            baseContext, 220462, intent, PendingIntent.FLAG_IMMUTABLE
-        )
-    }
-
-    fun getPendingIntentForOpenTheApp(): PendingIntent {
-
-        val intent = Intent(baseContext, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        return PendingIntent.getActivity(
-            baseContext,
-            462025, // usar diferentes se tiver múltiplas notificações com intents distintas
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
     }
 
     override fun onDestroy() {

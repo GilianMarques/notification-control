@@ -84,7 +84,7 @@
         </service>
 
         <service
-            android:name=".framework.notification_listener_service.NotificationServiceManager"
+            android:name=".framework.notification_listener_service.NotificationListenerManagerService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />

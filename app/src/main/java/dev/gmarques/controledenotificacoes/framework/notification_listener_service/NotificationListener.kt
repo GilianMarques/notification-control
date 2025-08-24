@@ -25,9 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
-import android.content.ComponentName
 import android.content.Intent
-import android.provider.Settings
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.AppLogger
@@ -38,7 +36,6 @@ import dev.gmarques.controledenotificacoes.framework.implementations.SystemNotif
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -53,12 +50,12 @@ import kotlinx.coroutines.withTimeoutOrNull
  * Criado por Gilian Marques
  * Em sábado, 03 de maio de 2025 as 16:18.
  * Serviço responsavel por  escutar as notificações do dispositivo, assim que o usuario da permissão de acesso às notificações.
- * Usa-se o [NotificationServiceManager] em primeiro plano pra ver se este listener está concetado e iniciar caso não esteja.
+ * Usa-se o [NotificationListenerManagerService] em primeiro plano pra ver se este listener está concetado e iniciar caso não esteja.
  *
  */
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
-    private var debugTests: DebugTests? = null
+    private var debugTests = if (BuildConfig.DEBUG) DebugTests() else null
 
 
     companion object {
@@ -74,9 +71,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
          */
         suspend fun getWhenReadyOrNull(): SystemNotificationManager? {
 
-            serviceInstanceFlow.value?.let { return it }
+            with(serviceInstanceFlow.value) {
+                if (this != null) return this
+                else NotificationListenerManagerService.instance?.restartListener()
+            }
 
-            NotificationServiceManager.instance?.restartListener()
             val result = withTimeoutOrNull(2_000L) {
                 serviceInstanceFlow.filterNotNull().first()
             }
@@ -96,16 +95,26 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerConnected()
         AppLogger.d("")
 
-        serviceInstanceFlow.value = SystemNotificationManagerImpl(debugTests, this@NotificationListener)
-        if (BuildConfig.DEBUG) debugTests = DebugTests()
+        serviceInstanceFlow.value = SystemNotificationManagerImpl(
+            debugTests = debugTests, notificationListener = this@NotificationListener
+        )
+
         observeRulesChanges()
         serviceInstanceFlow.value?.emitNotifications()
     }
 
     override fun onListenerDisconnected() {
+        AppLogger.d("")
         cancel()
-        serviceInstanceFlow.value?.clearNotificationListenerInstance()
-        serviceInstanceFlow.value = null
+
+        with(serviceInstanceFlow) {
+            this.value?.close()
+            this.value = null
+        }
+
+        /* Isso impede crashes quando o listener é desconectado e o app fica incapaz de remover notificações
+         ou chamar o callback pra cancelar o crash agendado.*/
+        debugTests?.cancel("Listener desconectado")
         super.onListenerDisconnected()
     }
 
@@ -121,16 +130,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
         serviceInstanceFlow.value?.emitNotifications()
         super.onNotificationRemoved(sbn, rankingMap)
-    }
-
-    fun isListenerConnected(): Boolean {
-
-        val cn = ComponentName(baseContext, NotificationListener::class.java)
-        val enabledListeners = Settings.Secure.getString(
-            baseContext.contentResolver, "enabled_notification_listeners"
-        )
-        // evita falsos positivos em caso de variaçoes do mesmo app instaladas
-        return enabledListeners.split(":").any { it == cn.flattenToString() }
     }
 
     /**
@@ -154,7 +153,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
  * esperado do aplicativo em relação ao gerenciamento de notificações.
  *
  */
-class DebugTests {
+class DebugTests : CoroutineScope by MainScope() {
 
 
     init {
@@ -168,10 +167,9 @@ class DebugTests {
     /**
      *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
      * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
-     * @see NotificationListener.processNotificationRule
      */
     fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
-        validationCallbackErrorJob = CoroutineScope(Main).launch {
+        validationCallbackErrorJob = launch {
             delay(3000)
             error("O callback de validação passado para o RuleEnforcer não foi chamado. sbn: $sbn")
         }
@@ -191,7 +189,7 @@ class DebugTests {
 
             cancelingNotificationKey = activeNotification.key
             errorJob?.cancel()
-            errorJob = CoroutineScope(Main).launch {
+            errorJob = launch {
                 delay(1000)
                 error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
             }
@@ -199,6 +197,6 @@ class DebugTests {
     }
 
     fun cancelCrashIfNotificationDoesNotRemove(sbn: StatusBarNotification?) {
-        if (BuildConfig.DEBUG) if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
+        if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
     }
 }

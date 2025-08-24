@@ -34,7 +34,7 @@ import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ClearPreferencesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -68,7 +68,7 @@ class ProfileViewModel @Inject constructor(
             roomDatabase.clearAllTables()
             clearPreferencesUseCase()
         }
-        NotificationServiceManager.stopSelf()
+        NotificationListenerManagerService.stopSelf()
         _eventsChannel.trySend(Event.LogoffDone)
     }
 

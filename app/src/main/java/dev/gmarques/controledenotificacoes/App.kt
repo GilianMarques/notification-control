@@ -35,7 +35,7 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.framework.model.RemoteConfigValues
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
@@ -142,13 +142,13 @@ class App() : Application(), CoroutineScope by MainScope() {
     }
 
     fun startNotificationService() {
-        val serviceIntent = Intent(this, NotificationServiceManager::class.java)
+        val serviceIntent = Intent(this, NotificationListenerManagerService::class.java)
         startForegroundService(serviceIntent)
     }
 
     fun restartNotificationService() {
 
-        val intent = Intent(this, NotificationServiceManager::class.java)
+        val intent = Intent(this, NotificationListenerManagerService::class.java)
         stopService(intent)
         startNotificationService()
     }

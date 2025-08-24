@@ -42,10 +42,12 @@ import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotifi
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.DebugTests
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -99,7 +101,7 @@ class SystemNotificationManagerImpl(
             return emptyList()
         }
 
-        if (notificationListener?.isListenerConnected() == false) return emptyList()
+        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
         return notificationListener?.activeNotifications?.filterNot {
             it.isOngoing
         }?.map {
@@ -116,7 +118,7 @@ class SystemNotificationManagerImpl(
             return emptyList()
         }
 
-        if (notificationListener?.isListenerConnected() == false) return emptyList()
+        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
         return notificationListener?.activeNotifications?.filter {
             it.isOngoing
         }?.map {
@@ -143,7 +145,7 @@ class SystemNotificationManagerImpl(
             return emptyList()
         }
 
-        if (notificationListener?.isListenerConnected() == false) return emptyList()
+        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
         return notificationListener?.snoozedNotifications?.map {
             ActiveStatusBarNotificationFactory.create(it)
         }.applyDefaultFilter()
@@ -156,7 +158,7 @@ class SystemNotificationManagerImpl(
             return
         }
 
-        if (notificationListener?.isListenerConnected() == false) return
+        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return
         notificationListener?.activeNotifications?.forEach { processNotification(it) }
     }
 
@@ -315,9 +317,18 @@ class SystemNotificationManagerImpl(
 
     }
 
-    override fun clearNotificationListenerInstance() {
-        AppLogger.d("")
+    /**
+     * Após executar essa função, esta instancia se torna incapaz de realizar qualquer tarefa, sendo necessario obter uma nova.
+     *
+     * Cancela as corrotinas criadas nessa classe assim como o listener de notificações. Evitando Crashes por uso de listener
+     * invalido e memory leaks por parte das corrotinas.
+     *
+     * Chame close sempre que [NotificationListener.onListenerDisconnected] for executado.
+     */
+    override fun close() {
+        AppLogger.d("Fechando instancia")
         notificationListener = null
+        cancel()
     }
 
 }

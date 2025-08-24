@@ -69,7 +69,7 @@ interface SystemNotificationManager {
     /**Atualiza os flow com as notificações atuais*/
     fun emitNotifications()
 
-    fun clearNotificationListenerInstance()
-
+    /**Use para liberar recursos e encerrar corrotinas*/
+    fun close()
 
 }
