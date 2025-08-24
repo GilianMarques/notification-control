@@ -41,15 +41,14 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_app_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/back_circle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:backgroundTint="?colorPrimary"
-            android:padding="6dp"
+            android:padding="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/vec_app"
-            app:tint="?colorOnPrimary" />
+            app:tint="?colorPrimary" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -60,6 +59,7 @@
             android:padding="4dp"
             android:textAlignment="textStart"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_app_icon"
             app:layout_constraintEnd_toStartOf="@+id/iv_menu"
             app:layout_constraintStart_toEndOf="@+id/iv_app_icon"
             app:layout_constraintTop_toTopOf="@+id/iv_app_icon"
@@ -70,9 +70,9 @@
             android:id="@+id/iv_menu"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="-8dp"
             android:layout_marginEnd="-8dp"
             android:padding="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_app_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/vec_menu" />
@@ -87,7 +87,6 @@
             android:marqueeRepeatLimit="1"
             android:textSize="12sp"
             android:maxLines="1"
-            android:paddingHorizontal="8dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
