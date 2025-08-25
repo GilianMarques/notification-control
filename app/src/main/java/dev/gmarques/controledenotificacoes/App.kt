@@ -68,7 +68,6 @@ class App() : Application(), CoroutineScope by MainScope() {
     val remoteConfigValues get() = _remoteConfigValues
 
     override fun onCreate() {
-
         instance = this
         setupRemoteConfig()
         setupCrashLytics()

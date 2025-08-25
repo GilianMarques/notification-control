@@ -48,7 +48,7 @@ object AppLogger {
                         it.toString().replace(",", "\n")
                     }\n"
                 }
-            }"
+            }".replace("\n", " ") // TODO: remover quebra 
         )
 
 
@@ -75,7 +75,7 @@ object AppLogger {
 
         val log = AppLog(msg = msg, relevantObjects = relevantObjects.toList(), caller = "$className.$methodName")
 
-        writeToLog(log)
+        // TODO: liberar escrita    writeToLog(log)
     }
 
     data class AppLog(

@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.framework.implementations
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator.applyDefaultFilter
@@ -40,9 +41,9 @@ import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncom
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.DebugTests
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
+import dev.gmarques.controledenotificacoes.framework.utils.DebugTests
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -65,10 +66,10 @@ import org.joda.time.LocalDateTime
  *  Obtenha uma instancia dessa classe atraves de  [NotificationListener.getWhenReadyOrNull]
  */
 class SystemNotificationManagerImpl(
-    private val debugTests: DebugTests?,
     private var notificationListener: NotificationListener?,
 ) :
     SystemNotificationManager, CoroutineScope by MainScope() {
+
 
     private val echoImpl = HiltEntryPoints.echo()
     private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
@@ -204,6 +205,7 @@ class SystemNotificationManagerImpl(
 
     override fun processNotification(sbn: StatusBarNotification) {
 
+
         if (!SystemNotificationValidator.validNotification(sbn)) return
 
         val snoozedNotification = runBlocking { getSnoozedNotificationByKeyUseCase(sbn.key) }
@@ -276,6 +278,8 @@ class SystemNotificationManagerImpl(
      */
     fun processNotificationRule(sbn: StatusBarNotification) {
 
+        val debugTests: DebugTests? = if (BuildConfig.DEBUG) DebugTests(this) else null
+
         val not = AppNotificationFactory.create(sbn)
         AppLogger.d("notificationListener valido: ${notificationListener != null} not: ${not.title}", not)
 
@@ -300,7 +304,7 @@ class SystemNotificationManagerImpl(
             is CancelNotification -> {
                 AppLogger.d("Processing result: CancelNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
-                debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
+                if (!sbn.isOngoing) debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 notificationListener?.cancelNotification(result.targetNotification.key)
 
 

@@ -29,17 +29,16 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.AppLogger
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.framework.implementations.SystemNotificationManagerImpl
-import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
+import dev.gmarques.controledenotificacoes.framework.utils.DebugTests
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -55,9 +54,6 @@ import kotlinx.coroutines.withTimeoutOrNull
  */
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
-    private var debugTests = if (BuildConfig.DEBUG) DebugTests() else null
-
-
     companion object {
         /**
          * É um MutableStateFlow para que os observadores possam ser notificados quando a instância do serviço estiver pronta.
@@ -65,12 +61,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         private val serviceInstanceFlow: MutableStateFlow<SystemNotificationManager?> = MutableStateFlow(null)
 
         /**
+         * Expoe as notificações removidas.
+         *  Foi criado pra ajudar o [DebugTests] a identificar se uma notificação foi de fato removida da barra de status
+         */
+        private val _onNotificationRemovedFlow = MutableSharedFlow<StatusBarNotification>(replay = 0, extraBufferCapacity = 1)
+        val onNotificationRemovedFlow: Flow<StatusBarNotification> get() = _onNotificationRemovedFlow
+
+        /**
          * Obtém a instância do [SystemNotificationManager] de forma assíncrona.
          * Aguarda até que o serviço esteja pronto, mas com um tempo limite.
          * Retorna a instância do serviço se estiver pronta dentro do tempo limite, caso contrário, retorna null.
          */
         suspend fun getWhenReadyOrNull(): SystemNotificationManager? {
-
+            // TODO: mover pra outra classe
             with(serviceInstanceFlow.value) {
                 if (this != null) return this
                 else NotificationListenerManagerService.instance?.restartListener()
@@ -95,9 +98,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerConnected()
         AppLogger.d("")
 
-        serviceInstanceFlow.value = SystemNotificationManagerImpl(
-            debugTests = debugTests, notificationListener = this@NotificationListener
-        )
+        serviceInstanceFlow.value = SystemNotificationManagerImpl(this@NotificationListener)
 
         observeRulesChanges()
         serviceInstanceFlow.value?.emitNotifications()
@@ -112,23 +113,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             this.value = null
         }
 
-        /* Isso impede crashes quando o listener é desconectado e o app fica incapaz de remover notificações
-         ou chamar o callback pra cancelar o crash agendado.*/
-        debugTests?.cancel("Listener desconectado")
         super.onListenerDisconnected()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        serviceInstanceFlow.value?.emitNotifications()
-        serviceInstanceFlow.value?.processNotification(sbn)
+        launch(IO) {
+            serviceInstanceFlow.value?.emitNotifications()
+            serviceInstanceFlow.value?.processNotification(sbn)
+        }
     }
 
-    /**
-     * Ajuda  a  [DebugTests] a determinar se a notificação foi de fato cancelada
-     */
-    override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
-        debugTests?.cancelCrashIfNotificationDoesNotRemove(sbn)
+    override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap?) {
         serviceInstanceFlow.value?.emitNotifications()
+        _onNotificationRemovedFlow.tryEmit(sbn) // TODO: trocar por algo que envie o valor na hora e que nao o repita
         super.onNotificationRemoved(sbn, rankingMap)
     }
 
@@ -144,59 +141,4 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
     }
 
-}
-
-/**
- * Esta classe encapsula funcionalidades de teste e depuração destinadas a serem usadas
- * exclusivamente durante o desenvolvimento (builds de debug).
- * Ela fornece métodos para simular cenários de falha e verificar o comportamento
- * esperado do aplicativo em relação ao gerenciamento de notificações.
- *
- */
-class DebugTests : CoroutineScope by MainScope() {
-
-
-    init {
-        if (!BuildConfig.DEBUG) error("Deve ser usada apenas em buids de Debug")
-    }
-
-    private var cancelingNotificationKey = ""
-    private var errorJob: Job? = null
-    private var validationCallbackErrorJob: Job? = null
-
-    /**
-     *Esta função é usada para garantir que o aplicativo falhe se o callback não for invocado dentro de um
-     * período esperado. Isso ajuda a identificar bugs no processamento da notificação.
-     */
-    fun crashIfCallbackNotCalled(sbn: StatusBarNotification) {
-        validationCallbackErrorJob = launch {
-            delay(3000)
-            error("O callback de validação passado para o RuleEnforcer não foi chamado. sbn: $sbn")
-        }
-    }
-
-    fun cancelCrashIfCallbackNotCalled() {
-        validationCallbackErrorJob?.cancel()
-    }
-
-    /**
-     * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
-     * essa função vai crashar o app para que o jumento do desenvolvedor (eu ;-] ) possa ajeitar a cagada que ele fez
-     */
-    fun crashIfNotificationDoesNotRemove(activeNotification: ActiveStatusBarNotification) {
-        if (BuildConfig.DEBUG) {
-            if (activeNotification.isOngoing) return // nao se considera esse tipo de notificação
-
-            cancelingNotificationKey = activeNotification.key
-            errorJob?.cancel()
-            errorJob = launch {
-                delay(1000)
-                error("A notificaçao nao foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
-            }
-        }
-    }
-
-    fun cancelCrashIfNotificationDoesNotRemove(sbn: StatusBarNotification?) {
-        if (sbn?.key == cancelingNotificationKey) errorJob?.cancel()
-    }
 }
