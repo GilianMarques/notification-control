@@ -91,6 +91,7 @@ class HomeFragment : MyFragment() {
     private val viewModelManageNotifications: ManageNotificationsViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
+    private val isAppBarExpandedKey = "app_bar_expanded"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,8 +133,23 @@ class HomeFragment : MyFragment() {
             setupFabAddManagedApp()
             setupSearch()
             setupActiveNotificationsView()
+            setupAppbar()
         }
 
+    }
+
+
+    private fun setupAppbar() = with(binding) {
+
+        val expanded = findNavControllerDefault()
+            .currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Boolean>(isAppBarExpandedKey) ?: true
+
+        appbar.setExpanded(expanded, false)
+        appbar.addOnOffsetChangedListener { _, verticalOffset ->
+            findNavControllerDefault().currentBackStackEntry?.savedStateHandle?.set(isAppBarExpandedKey, verticalOffset == 0)
+        }
     }
 
     private fun setupActiveNotificationsView() = with(binding) {

@@ -156,7 +156,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:background="?colorPrimary"
-                        tools:layout_height="100dp" />
+                        tools:layout_height="10dp" />
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edt_search"
@@ -210,12 +210,13 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvNots"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="82dp"
                             android:layout_gravity="center"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="0dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="0dp"
+                            android:orientation="horizontal"
                             android:contentDescription="@string/Lista_de_notifica_es_ativas_e_adiadas"
                             tools:layout_height="80dp"
                             tools:listitem="@layout/item_app_notification_manageable_compact"
