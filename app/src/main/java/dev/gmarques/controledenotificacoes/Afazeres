@@ -1,5 +1,5 @@
 Observações do que fazer a seguir:
-dar opçao de processar ou nao notificações persistentes via regra
 postar notificações adiadas/ocultas ao remover app
-
+nao processar notificações de midia
+identificar pq o callback nao é chamado se processar multiplas notificações em simultaneo
 remover livedatas
