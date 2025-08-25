@@ -29,7 +29,6 @@ import android.app.Application
 import android.content.Intent
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.crashlytics.setCustomKeys
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
@@ -72,7 +71,7 @@ class App() : Application(), CoroutineScope by MainScope() {
 
         instance = this
         setupRemoteConfig()
-        if (!BuildConfig.DEBUG) setupCrashLytics()
+        setupCrashLytics()
         startNotificationService()
         scheduleAlarms()
         super.onCreate()
@@ -94,12 +93,14 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     private fun setupCrashLytics() {
 
+        if (BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = false
+            return
+        }
+
         val getAppUserUseCase = HiltEntryPoints.getAppUserUseCase()
 
         FirebaseCrashlytics.getInstance().apply {
-            setCustomKeys {
-                key("environment", if (BuildConfig.DEBUG) "Debug" else "Release")
-            }
             setUserId(getAppUserUseCase()?.email ?: "not_logged_in")
         }
     }
