@@ -32,9 +32,7 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Esta classe encapsula funcionalidades de teste e depuração destinadas a serem usadas
@@ -80,14 +78,14 @@ class DebugTests(private val processorCoroutineScope: CoroutineScope) {
 
         errorJob = processorCoroutineScope.launch {
 
-            val removed = withTimeoutOrNull(1000) { // TODO: isso deve ta dando erro
-                NotificationListener.onNotificationRemovedFlow
-                    .first { it.key == activeNotification.key }
+            launch {
+                delay(1000)
+                error("A notificação não foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
             }
 
-            if (removed != null) errorJob?.cancel()
-            else error("A notificação não foi cancelada: OnGoing?${activeNotification.isOngoing}\nMais detalhes:$activeNotification")
-
+            NotificationListener.onNotificationRemovedFlow.collect {
+                if (it.key == activeNotification.key) errorJob?.cancel()// cancela o erro e para de coletar o flow
+            }
         }
     }
 

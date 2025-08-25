@@ -151,8 +151,8 @@ class ProcessIncomingNotificationUseCase @Inject constructor(
             PendingIntentCache.add(appNotification.pendingIntentId(), it)
         }
 
-        try {
-            val bitmap = (targetNotification.largeIcon?.loadDrawable(context) as BitmapDrawable).bitmap
+        if (targetNotification.largeIcon != null) try {
+            val bitmap = (targetNotification.largeIcon.loadDrawable(context) as BitmapDrawable).bitmap
             val file = File(context.cacheDir, appNotification.bitmapId())
 
             FileOutputStream(file).use { out ->
