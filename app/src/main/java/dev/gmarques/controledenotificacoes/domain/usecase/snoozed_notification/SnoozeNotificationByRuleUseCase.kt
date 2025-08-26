@@ -26,11 +26,11 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
 
 /**
@@ -46,11 +46,14 @@ import javax.inject.Inject
 class SnoozeNotificationByRuleUseCase @Inject constructor(
     private val insertSnoozedNotificationUseCase: InsertSnoozedNotificationUseCase,
     private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
+    private val systemNotificationManager: SystemNotificationManager,
 ) {
 
     suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long) {
         AppLogger.d("", notification)
-        val notificationManager = NotificationListener.getWhenReadyOrNull()
+
+        if (!systemNotificationManager.canOperate()) return
+
         val snoozedNotification = SnoozedNotificationFactory.create(notification)
             .copy(
                 permaHidden = false,
@@ -60,6 +63,6 @@ class SnoozeNotificationByRuleUseCase @Inject constructor(
 
         insertSnoozedNotificationUseCase(snoozedNotification)
         backupNotificationAlarmScheduler.scheduleAlarm(snoozedNotification.key, until)
-        notificationManager?.snoozeNotification(notification, until)
+        systemNotificationManager.snoozeNotification(notification, until)
     }
 }

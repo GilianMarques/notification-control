@@ -28,10 +28,7 @@ package dev.gmarques.controledenotificacoes.framework.notification_listener_serv
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
-import dev.gmarques.controledenotificacoes.framework.implementations.SystemNotificationManagerImpl
 import dev.gmarques.controledenotificacoes.framework.utils.DebugTests
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -39,11 +36,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Criado por Gilian Marques
@@ -55,10 +48,6 @@ import kotlinx.coroutines.withTimeoutOrNull
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
     companion object {
-        /**
-         * É um MutableStateFlow para que os observadores possam ser notificados quando a instância do serviço estiver pronta.
-         */
-        private val serviceInstanceFlow: MutableStateFlow<SystemNotificationManager?> = MutableStateFlow(null)
 
         /**
          * Expoe as notificações removidas.
@@ -67,28 +56,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         private val _onNotificationRemovedFlow = MutableSharedFlow<StatusBarNotification>(replay = 0, extraBufferCapacity = 1)
         val onNotificationRemovedFlow: Flow<StatusBarNotification> get() = _onNotificationRemovedFlow
 
-        /**
-         * Obtém a instância do [SystemNotificationManager] de forma assíncrona.
-         * Aguarda até que o serviço esteja pronto, mas com um tempo limite.
-         * Retorna a instância do serviço se estiver pronta dentro do tempo limite, caso contrário, retorna null.
-         */
-        suspend fun getWhenReadyOrNull(): SystemNotificationManager? {
-            // TODO: mover pra outra classe
-            with(serviceInstanceFlow.value) {
-                if (this != null) return this
-                else NotificationListenerManagerService.instance?.restartListener()
-            }
-
-            val result = withTimeoutOrNull(2_000L) {
-                serviceInstanceFlow.filterNotNull().first()
-            }
-
-            AppLogger.d("reiniciar listener ${if (result == null) "nao resolveu" else "resolveu"}")
-
-            return result
-        }
-
     }
+
+    private val systemNotificationManager = HiltEntryPoints.systemNotificationManager()
+    private val holder: NotificationListenerHolder = HiltEntryPoints.notificationListenerHolder()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
@@ -96,36 +67,26 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        AppLogger.d("")
-
-        serviceInstanceFlow.value = SystemNotificationManagerImpl(this@NotificationListener)
-
+        holder.setListener(this@NotificationListener)
         observeRulesChanges()
-        serviceInstanceFlow.value?.emitNotifications()
     }
 
     override fun onListenerDisconnected() {
-        AppLogger.d("")
         cancel()
-
-        with(serviceInstanceFlow) {
-            this.value?.close()
-            this.value = null
-        }
-
+        holder.setListener(null)
         super.onListenerDisconnected()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         launch(IO) {
-            serviceInstanceFlow.value?.emitNotifications()
-            serviceInstanceFlow.value?.processNotification(sbn)
+            systemNotificationManager.emitNotifications()
+            systemNotificationManager.processNotification(sbn)
         }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap?) {
-        serviceInstanceFlow.value?.emitNotifications()
-        _onNotificationRemovedFlow.tryEmit(sbn) // TODO: trocar por algo que envie o valor na hora e que nao o repita
+        systemNotificationManager.emitNotifications()
+        _onNotificationRemovedFlow.tryEmit(sbn)
         super.onNotificationRemoved(sbn, rankingMap)
     }
 
@@ -137,7 +98,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     private fun observeRulesChanges() = launch(IO) {
         HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            serviceInstanceFlow.value?.processActiveNotifications()
+            systemNotificationManager.processActiveNotifications()
         }
     }
 

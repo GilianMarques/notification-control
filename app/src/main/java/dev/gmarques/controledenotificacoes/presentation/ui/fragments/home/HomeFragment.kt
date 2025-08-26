@@ -56,14 +56,13 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -80,6 +79,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebind
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
 /**
  * Fragment responsável por exibir a lista de aplicativos controlados.
@@ -87,10 +87,14 @@ import java.util.Calendar
 @AndroidEntryPoint
 class HomeFragment : MyFragment() {
 
+    @Inject
+    lateinit var systemNotificationManager: SystemNotificationManager
+
     private val viewModel: HomeViewModel by activityViewModels()
     private val viewModelManageNotifications: ManageNotificationsViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
+
     private val isAppBarExpandedKey = "app_bar_expanded"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -187,20 +191,15 @@ class HomeFragment : MyFragment() {
 
         lifecycleScope.launch {
 
+            systemNotificationManager.doWhenConnected { // TODO: nao ta funcionando
+                collectFlow(systemNotificationManager.getActiveWithOngoingNotificationsFlow()) {
 
-            val service = NotificationListener.getWhenReadyOrNull() ?: run {
-                AppLogger.d("NotificationListener  == null")
-                return@launch
-            }
+                    binding.llActiveNotifications?.isGone = it.isEmpty()
 
-            collectFlow(service.getActiveWithOngoingNotificationsFlow()) {
-
-                binding.llActiveNotifications?.isGone = it.isEmpty()
-
-                notsAdapter.submitList(it.map { actNot ->
-                    ManageableNotification.from(system = actNot)
-                })
-
+                    notsAdapter.submitList(it.map { actNot ->
+                        ManageableNotification.from(system = actNot)
+                    })
+                }
             }
         }
     }

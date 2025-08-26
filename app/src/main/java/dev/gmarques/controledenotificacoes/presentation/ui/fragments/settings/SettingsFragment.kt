@@ -32,6 +32,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.fragment.app.viewModels
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
@@ -110,8 +111,12 @@ class SettingsFragment : MyFragment() {
         })
     }
 
-
     private fun setupDebugLogs() = with(binding) {
+        if (!BuildConfig.DEBUG) {
+            tvDebugLogs.isGone = true
+            return@with
+        }
+
         tvDebugLogs.setOnClickListener(AnimatedClickListener {
 
             findNavControllerMain()

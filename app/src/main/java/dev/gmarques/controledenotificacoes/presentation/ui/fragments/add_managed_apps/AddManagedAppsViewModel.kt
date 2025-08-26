@@ -34,6 +34,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
@@ -66,7 +67,9 @@ class AddManagedAppsViewModel @Inject constructor(
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val postAppSnoozedNotificationsUseCase: PostAppSnoozedNotificationsUseCase,
-) : ViewModel() {
+    private val systemNotificationManager: SystemNotificationManager,
+
+    ) : ViewModel() {
 
 
     private val _selectedApps = MutableStateFlow<Map<String, InstalledApp>>(emptyMap())
@@ -185,7 +188,7 @@ class AddManagedAppsViewModel @Inject constructor(
      * Se a instância do [NotificationListener] não estiver disponível, a função não faz nada.
      */
     private fun requestActiveNotificationsEvaluation() {
-        viewModelScope.launch { NotificationListener.getWhenReadyOrNull()?.processActiveNotifications() }
+        viewModelScope.launch { systemNotificationManager.processActiveNotifications() }
     }
 
     /**

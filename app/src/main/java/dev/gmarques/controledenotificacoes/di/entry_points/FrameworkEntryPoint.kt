@@ -28,12 +28,14 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationManager
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerHolder
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -50,4 +52,6 @@ interface FrameworkEntryPoint {
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase
     fun echo(): EchoImpl
+    fun notificationListenerHolder(): NotificationListenerHolder
+    fun systemNotificationManager(): SystemNotificationManager
 }

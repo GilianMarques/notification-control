@@ -26,11 +26,11 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
 
 /**
@@ -47,14 +47,14 @@ import javax.inject.Inject
 class SnoozeNotificationByUserUseCase @Inject constructor(
     private val insertSnoozedNotificationUseCase: InsertSnoozedNotificationUseCase,
     private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
-) {
+    private val systemNotificationManager: SystemNotificationManager,
+
+    ) {
 
     suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long, permanently: Boolean) {
+        AppLogger.d("")
 
-        val notificationManager = NotificationListener.getWhenReadyOrNull() ?: run {
-            AppLogger.d("NotificationListener  == null")
-            return
-        }
+        if (!systemNotificationManager.canOperate()) return
 
         val snoozedNotification = SnoozedNotificationFactory.create(notification)
             .copy(
@@ -63,15 +63,15 @@ class SnoozeNotificationByUserUseCase @Inject constructor(
                 snoozeUntil = until
             )
 
-            insertSnoozedNotificationUseCase(snoozedNotification)
+        insertSnoozedNotificationUseCase(snoozedNotification)
 
-        if (permanently) notificationManager.snoozeNotification(
+        if (permanently) systemNotificationManager.snoozeNotification(
             notification,
             System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD
         )
         else {
             backupNotificationAlarmScheduler.scheduleAlarm(snoozedNotification.key, until)
-            notificationManager.snoozeNotification(notification, until)
+            systemNotificationManager.snoozeNotification(notification, until)
         }
 
     }

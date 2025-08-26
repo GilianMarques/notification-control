@@ -31,16 +31,21 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.Echo
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.StringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.framework.implementations.AutoTurnOnAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.StringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.SystemNotificationManagerImpl
+import javax.inject.Singleton
 
 /**
  * Criado por Gilian Marques
@@ -66,6 +71,13 @@ abstract class FrameworkModule {
 
     @Binds
     abstract fun bindAutoTurnOnAlarmScheduler(impl: AutoTurnOnAlarmSchedulerImpl): AutoTurnOnAlarmScheduler
+
+    @Binds
+    @Singleton
+    abstract fun bindSystemNotificationManager(impl: SystemNotificationManagerImpl): SystemNotificationManager
+
+    @Binds
+    abstract fun bindEcho(impl: EchoImpl): Echo
 
 
 }

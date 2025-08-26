@@ -23,7 +23,7 @@
  *
  */
 
-package dev.gmarques.controledenotificacoes.framework.implementations
+package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
 import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.AppLogger
@@ -31,22 +31,20 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator
 import dev.gmarques.controledenotificacoes.domain.framework.SystemNotificationValidator.applyDefaultFilter
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.Echo
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.AppNotManaged
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification
-import dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByRuleUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import dev.gmarques.controledenotificacoes.framework.utils.DebugTests
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -57,25 +55,28 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 import org.joda.time.LocalDateTime
+import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
  * Em domingo, 27 de julho de 2025 as 15:15.
  * Permite obter e gerenciar as notificações disponiveis no sistema
  *
- *  Obtenha uma instancia dessa classe atraves de  [NotificationListener.getWhenReadyOrNull]
  */
-class SystemNotificationManagerImpl(
-    private var notificationListener: NotificationListener?,
-) :
-    SystemNotificationManager, CoroutineScope by MainScope() {
+class SystemNotificationManagerImpl @Inject constructor(
+    notificationListenerConnectedInstanceHolder: NotificationListenerHolder,
+    private val processIncomingNotificationUseCase: ProcessIncomingNotificationUseCase,
+    private val getSnoozedNotificationByKeyUseCase: GetSnoozedNotificationByKeyUseCase,
+    private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
+    private val echoImpl: dagger.Lazy<Echo>,
+    private val snoozeNotificationByRuleUseCase: dagger.Lazy<SnoozeNotificationByRuleUseCase>,
+) : SystemNotificationManager {
 
+    private val scope = CoroutineScope(IO)
+    private var listener: NotificationListener? = null
 
-    private val echoImpl = HiltEntryPoints.echo()
-    private val processIncomingNotificationUseCase = HiltEntryPoints.processIncomingNotificationUseCase()
-    private val getSnoozedNotificationByKeyUseCase = HiltEntryPoints.getGetSnoozedNotificationByKeyUseCase()
-    private val deleteSnoozedNotificationUseCase = HiltEntryPoints.getDeleteSnoozedNotificationUseCase()
-    private val snoozeNotificationByRuleUseCase = HiltEntryPoints.getSnoozeNotificationByRuleUseCase()
+    /**Açoes a serem executadas quando o listener for conectado (callback)*/
+    private val onConnectedActions = mutableListOf<() -> Unit>()
 
     private val backupNotificationAlarmSchedulerImpl = HiltEntryPoints.backupNotificationAlarmSchedulerImpl()
 
@@ -85,25 +86,38 @@ class SystemNotificationManagerImpl(
     val activeWithOngoingFlow: StateFlow<List<ActiveStatusBarNotification>> =
         combine(activeFlow, ongoingFlow) { active, ongoing ->
             active + ongoing
-        }
-            .stateIn(
-                scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-                initialValue = emptyList()
-            )
+        }.stateIn(
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),// nao deve ser cancelada caso o listerner seja.
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+            initialValue = emptyList()
+        )
 
+    init {
+        val callback = object : NotificationListenerHolder.ConnectionCallback {
+            override fun onConnectionChanged(listener: NotificationListener?) {
+                AppLogger.d("listener ${if (listener == null) " desconnectado " else " connectado "}")
+
+                this@SystemNotificationManagerImpl.listener = listener
+
+                if (listener == null) {
+                    scope.cancel()
+                    return
+                }
+
+                with(onConnectedActions) {
+                    forEach { it.invoke() }
+                    clear()
+                }
+            }
+        }
+        notificationListenerConnectedInstanceHolder.registerCallback(callback)
+    }
 
     override fun getActiveNotificationsFlow(): Flow<List<ActiveStatusBarNotification>> = activeFlow
 
     override fun getActiveNotifications(): List<ActiveStatusBarNotification> {
 
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null")
-            return emptyList()
-        }
-
-        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
-        return notificationListener?.activeNotifications?.filterNot {
+        return listener?.activeNotifications?.filterNot {
             it.isOngoing
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
@@ -114,13 +128,7 @@ class SystemNotificationManagerImpl(
 
     override fun getOngoingNotifications(): List<ActiveStatusBarNotification> {
 
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null")
-            return emptyList()
-        }
-
-        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
-        return notificationListener?.activeNotifications?.filter {
+        return listener?.activeNotifications?.filter {
             it.isOngoing
         }?.map {
             ActiveStatusBarNotificationFactory.create(it)
@@ -141,57 +149,34 @@ class SystemNotificationManagerImpl(
      */
     override fun getSnoozedNotifications(): List<ActiveStatusBarNotification> {
 
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null")
-            return emptyList()
-        }
-
-        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return emptyList()
-        return notificationListener?.snoozedNotifications?.map {
+        return listener?.snoozedNotifications?.map {
             ActiveStatusBarNotificationFactory.create(it)
         }.applyDefaultFilter()
     }
 
     override fun processActiveNotifications() {
-
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null")
-            return
-        }
-
-        if (NotificationListenerManagerService.instance?.isNotificationListenerConnected() == false) return
-        notificationListener?.activeNotifications?.forEach { processNotification(it) }
+        listener
+            ?.activeNotifications
+            ?.forEach {
+                processNotification(it)
+            }
     }
 
     override fun snoozeNotification(notification: ActiveStatusBarNotification, until: Long) {
         AppLogger.d(notification.title, AppNotificationFactory.create(notification), "until = $until")
 
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null", notification)
-            return
-        }
-
         val time = LocalDateTime(until).toDate().time - LocalDateTime.now().toDate().time
-        notificationListener?.snoozeNotification(notification.key, time)
+        listener?.snoozeNotification(notification.key, time)
     }
 
     override fun cancelNotification(key: String) {
-
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null key: $key")
-            return
-        }
-
-        notificationListener?.cancelNotification(key)
+        AppLogger.d("key: $key")
+        listener?.cancelNotification(key)
     }
 
     override fun postSnoozedNotification(key: String) {
-        if (notificationListener == null) {
-            AppLogger.d("notificationListener == null key: $key")
-            return
-        }
-
-        notificationListener?.snoozeNotification(key, 500L)
+        AppLogger.d("key: $key")
+        listener?.snoozeNotification(key, 500L)
     }
 
     /**
@@ -203,8 +188,11 @@ class SystemNotificationManagerImpl(
         ongoingFlow.value = getOngoingNotifications()
     }
 
-    override fun processNotification(sbn: StatusBarNotification) {
+    override fun canOperate(): Boolean {
+        return listener != null
+    }
 
+    override fun processNotification(sbn: StatusBarNotification) {
 
         if (!SystemNotificationValidator.validNotification(sbn)) return
 
@@ -221,8 +209,7 @@ class SystemNotificationManagerImpl(
         val activeNot = ActiveStatusBarNotificationFactory.create(sbn)
         if (snoozedNot.permaHidden) {
             snoozeNotification(
-                activeNot,
-                System.currentTimeMillis() + SnoozedNotification.DEFAULT_SNOOZED_PERIOD
+                activeNot, System.currentTimeMillis() + SnoozedNotification.Companion.DEFAULT_SNOOZED_PERIOD
             )
             return@runBlocking
         }
@@ -266,22 +253,22 @@ class SystemNotificationManagerImpl(
      * @return true se a notificação foi postada mais cedo do que deveria, senão, false.
      */
     private fun snoozedNotificationPostedTooEarly(snoozedNotification: SnoozedNotification): Boolean {
-        val nowWithOffset = LocalDateTime.now().minusMillis(SnoozedNotification.SNOOZE_TIME_OFFSET)
+        val nowWithOffset = LocalDateTime.now().minusMillis(SnoozedNotification.Companion.SNOOZE_TIME_OFFSET)
         return LocalDateTime(snoozedNotification.snoozeUntil).isBefore(nowWithOffset)
     }
 
     /**
      * Processa uma notificação recebida pra saber se ela sera cancelada, adiada, permitida, ecoada, etc...
      * Ao fim do processamento executa a ação necessario com base na regra, caso exista uma.
-     * Usa o [ProcessIncomingNotificationUseCase]
+     * Usa o [dev.gmarques.controledenotificacoes.domain.usecase.framework.ProcessIncomingNotificationUseCase]
      * para processar os dados e salvar a notificação se necessario.
      */
     fun processNotificationRule(sbn: StatusBarNotification) {
 
-        val debugTests: DebugTests? = if (BuildConfig.DEBUG) DebugTests(this) else null
+        val debugTests: DebugTests? = if (BuildConfig.DEBUG) DebugTests(scope) else null
 
         val not = AppNotificationFactory.create(sbn)
-        AppLogger.d("notificationListener valido: ${notificationListener != null} not: ${not.title}", not)
+        AppLogger.d("notificationListener valido: ${listener != null} not: ${not.title}", not)
 
         debugTests?.crashIfCallbackNotCalled(sbn)
 
@@ -289,32 +276,32 @@ class SystemNotificationManagerImpl(
 
         when (result) {
 
-            is AllowNotification -> {
+            is ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification -> {
                 AppLogger.d("Processing result: AllowNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
-                echoImpl.repostNotification(result.targetNotification)
+                echoImpl.get().repostNotification(result.targetNotification)
             }
 
-            is AppNotManaged -> {
-                AppLogger.d("Processing result: AppNotManaged ${not.title}", not)
+            is ProcessIncomingNotificationUseCase.ProcessingResult.AppNotManaged -> {
+                AppLogger.d("Result: AppNotManaged ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
-                echoImpl.repostNotification(result.targetNotification)
+                echoImpl.get().repostNotification(result.targetNotification)
             }
 
-            is CancelNotification -> {
+            is ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification -> {
                 AppLogger.d("Processing result: CancelNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 if (!sbn.isOngoing) debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
-                notificationListener?.cancelNotification(result.targetNotification.key)
+                listener?.cancelNotification(result.targetNotification.key)
 
 
             }
 
-            is SnoozeNotification -> {
+            is ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification -> {
                 AppLogger.d("Processing result: SnoozeNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
-                runBlocking { snoozeNotificationByRuleUseCase(result.targetNotification, result.until) }
+                runBlocking { snoozeNotificationByRuleUseCase.get().invoke(result.targetNotification, result.until) }
             }
         }
 
@@ -322,18 +309,14 @@ class SystemNotificationManagerImpl(
     }
 
     /**
-     * Após executar essa função, esta instancia se torna incapaz de realizar qualquer tarefa, sendo necessario obter uma nova.
+     * Executa a função [func] quando o [NotificationListener] estiver conectado.
+     * Caso ja esteja conectado, a função é executada imediatamente.
+     * Caso contrario, a função é adicionada a uma lista de ações a serem executadas quando o listener for conectado.
      *
-     * Cancela as corrotinas criadas nessa classe assim como o listener de notificações. Evitando Crashes por uso de listener
-     * invalido e memory leaks por parte das corrotinas.
-     *
-     * Chame close sempre que [NotificationListener.onListenerDisconnected] for executado.
+     * Cada ação é executada uma única vez e então é removida da lista.
      */
-    override fun close() {
-        AppLogger.d("Fechando instancia")
-        notificationListener = null
-        cancel()
+    override fun doWhenConnected(func: () -> Unit) {
+        if (canOperate()) func.invoke()
+        else onConnectedActions.add(func)
     }
-
 }
-

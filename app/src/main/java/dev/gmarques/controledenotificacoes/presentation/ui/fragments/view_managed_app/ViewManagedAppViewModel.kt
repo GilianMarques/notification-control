@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.CancelAlarmForAppUseCase
@@ -48,7 +49,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCa
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostAppSnoozedAndBackupNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostRuleSnoozedNotificationsUseCase
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRuleFactory
 import kotlinx.coroutines.Dispatchers.IO
@@ -79,7 +79,9 @@ class ViewManagedAppViewModel @Inject constructor(
     private val cancelAlarmForAppUseCase: CancelAlarmForAppUseCase,
     private val postAppSnoozedAndBackupNotificationsUseCase: PostAppSnoozedAndBackupNotificationsUseCase,
     private val postRuleSnoozedNotificationsUseCase: PostRuleSnoozedNotificationsUseCase,
-) : ViewModel() {
+    private val systemNotificationManager: SystemNotificationManager,
+
+    ) : ViewModel() {
 
 
     private var initialized = false
@@ -231,7 +233,7 @@ class ViewManagedAppViewModel @Inject constructor(
         _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageName)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
-                NotificationListener.getWhenReadyOrNull()?.processActiveNotifications()
+                systemNotificationManager.processActiveNotifications()
             }
         }
     }

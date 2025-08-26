@@ -25,11 +25,10 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
-import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification.Origin
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
 
 /**
@@ -50,21 +49,17 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor(
     private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
     private val getSnoozedNotificationsByPackageNameUseCase: GetSnoozedNotificationsByPackageNameUseCase,
     private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
+    private val systemNotificationManager: SystemNotificationManager,
 ) {
 
     suspend operator fun invoke(packageName: String) {
-        /**
-         * É necessário impor um limite de tempo porque esse UseCase pode ser executado antes que o usuário tenha dado permissão para o
-         *  aplicativo ler as notificações fazendo com que o serviço nunca seja retornado e que o aplicativo fique travado.
-         */
-        val notificationManager = NotificationListener.getWhenReadyOrNull() ?: run {
-            AppLogger.d("NotificationListener  == null")
-            return
-        }
+
+        if (!systemNotificationManager.canOperate()) return
+
 
         val snoozedNotificationsOnDB = getSnoozedNotificationsForAppOnDB(packageName)
 
-        notificationManager.getSnoozedNotifications()
+        systemNotificationManager.getSnoozedNotifications()
             .filter { activeNot ->
                 activeNot.packageName == packageName
                         && snoozedNotificationsOnDB.any { snoozedNot -> activeNot.key == snoozedNot.key }
@@ -72,11 +67,8 @@ class PostAppSnoozedNotificationsUseCase @Inject constructor(
 
                 deleteSnoozedNotificationUseCase(it.key)
                 backupNotificationAlarmScheduler.cancelAlarm(it.key)
-                notificationManager.postSnoozedNotification(it.key)
+                systemNotificationManager.postSnoozedNotification(it.key)
             }
-
-        // TODO: agora preciso verificar se tem notificaçoes no db pra emitir as notificações backup
-        // TODO: criar usecase separado pois isso causa conflito com a atual funcção
     }
 
     private suspend fun getSnoozedNotificationsForAppOnDB(packageName: String): List<SnoozedNotification> {

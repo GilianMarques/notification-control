@@ -26,8 +26,8 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import javax.inject.Inject
 
 /**
@@ -37,17 +37,21 @@ import javax.inject.Inject
  * Executa todas as etapas necessárias para reexibir uma notificação adiada no sistema
  *
  * Criada originalmente  para reexibir (desocultar) uma notificação persistente ocultada pelo usuario. Tambem funciona com
- * notificações normais.
+ * notificações dispensaveis.
  */
 class PostSnoozedNotificationUseCase @Inject constructor(
     private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
-    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler
-) {
+    private val backupNotificationAlarmScheduler: BackupNotificationAlarmScheduler,
+    private val systemNotificationManager: SystemNotificationManager,
+
+    ) {
 
     suspend operator fun invoke(key: String) {
         AppLogger.d("")
+        if (!systemNotificationManager.canOperate()) return
+
         deleteSnoozedNotificationUseCase(key)
         backupNotificationAlarmScheduler.cancelAlarm(key)
-        NotificationListener.getWhenReadyOrNull()?.postSnoozedNotification(key)
+        systemNotificationManager.postSnoozedNotification(key)
     }
 }

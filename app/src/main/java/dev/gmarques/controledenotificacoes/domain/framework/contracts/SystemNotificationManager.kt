@@ -33,9 +33,8 @@ import kotlinx.coroutines.flow.Flow
  * Criado por Gilian Marques
  * Em 23/07/2025 as 11:36
  *
- * É o repositorio usado para lidar com as notificações do sistema, as que estao na barra de estatus e adiadas.
- *
- * Deve ser implementada e exposta via função estatica  pelo listener de notificações [dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener]
+ * É  usado para lidar com as notificações do sistema, as que estao na barra de estatus e adiadas.
+ * Sua implementação encapsula uma instancia de [NotificationListener] pra ler e manipular as notificações do sistema
  */
 interface SystemNotificationManager {
 
@@ -69,7 +68,8 @@ interface SystemNotificationManager {
     /**Atualiza os flow com as notificações atuais*/
     fun emitNotifications()
 
-    /**Use para liberar recursos e encerrar corrotinas*/
-    fun close()
+    fun canOperate(): Boolean
+
+    fun doWhenConnected(func: () -> Unit)
 
 }

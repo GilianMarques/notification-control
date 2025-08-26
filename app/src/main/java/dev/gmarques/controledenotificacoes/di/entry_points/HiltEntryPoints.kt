@@ -27,6 +27,7 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleReportNotificationsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleBackupNotificationsOnBootUseCase
@@ -47,6 +48,7 @@ import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupN
 import dev.gmarques.controledenotificacoes.framework.implementations.BackupNotificationAlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.implementations.ReportNotificationAlarmSchedulerImpl
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerHolder
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -100,6 +102,14 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun echo(): EchoImpl {
         return entryPoint<FrameworkEntryPoint>().echo()
+    }
+
+    override fun notificationListenerHolder(): NotificationListenerHolder {
+        return entryPoint<FrameworkEntryPoint>().notificationListenerHolder()
+    }
+
+    override fun systemNotificationManager(): SystemNotificationManager {
+        return entryPoint<FrameworkEntryPoint>().systemNotificationManager()
     }
 
     override fun getAppUserUseCase(): GetUserUseCase {

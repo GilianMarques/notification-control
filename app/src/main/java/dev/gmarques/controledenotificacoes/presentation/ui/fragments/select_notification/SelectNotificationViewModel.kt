@@ -28,8 +28,8 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_not
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
@@ -42,10 +42,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SelectNotificationViewModel @Inject constructor(
+    private val systemNotificationManager: SystemNotificationManager,
 ) : ViewModel() {
 
     val notificationsFlow: StateFlow<List<ActiveStatusBarNotification>> = flow {
-        emit(NotificationListener.getWhenReadyOrNull()?.getActiveNotifications() ?: emptyList())
+        emit(systemNotificationManager.getActiveNotifications())
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

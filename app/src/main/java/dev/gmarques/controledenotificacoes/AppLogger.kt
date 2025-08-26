@@ -40,18 +40,6 @@ object AppLogger {
 
     private fun writeToLog(log: AppLog) {
 
-        Log.d(
-            "USUK",
-            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${
-                log.relevantObjects.joinToString {
-                    "${
-                        it.toString().replace(",", "\n")
-                    }\n"
-                }
-            }".replace("\n", " ") // TODO: remover quebra 
-        )
-
-
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
@@ -74,7 +62,18 @@ object AppLogger {
 
         val log = AppLog(msg = msg, relevantObjects = relevantObjects.toList(), caller = "$className.$methodName")
 
-        // TODO: liberar escrita    writeToLog(log)
+        Log.d(
+            "USUK",
+            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${
+                log.relevantObjects.joinToString {
+                    "${
+                        it.toString().replace(",", "\n")
+                    }\n"
+                }
+            }".replace("\n", " ") // TODO: remover quebra
+        )
+
+        writeToLog(log)
     }
 
     data class AppLog(

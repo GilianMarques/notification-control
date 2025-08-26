@@ -34,14 +34,13 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.ObserveAllSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.SnoozeNotificationByUserUseCase
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotificationFactory
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -56,12 +55,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ManageNotificationsViewModel @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
     private val observeAllSnoozedNotificationsUseCase: ObserveAllSnoozedNotificationsUseCase,
     private val snoozeNotificationByUserUseCase: SnoozeNotificationByUserUseCase,
     private val postSnoozedNotificationUseCase: PostSnoozedNotificationUseCase,
     private val deleteSnoozedNotificationUseCase: DeleteSnoozedNotificationUseCase,
-    @ApplicationContext private val applicationContext: Context,
-) : ViewModel() {
+    private val systemNotificationManager: SystemNotificationManager,
+
+    ) : ViewModel() {
 
     private val _notificationsFlow: MutableStateFlow<List<ManageableNotification>> = MutableStateFlow(emptyList())
     val notificationsFlow: Flow<List<ManageableNotification>> get() = _notificationsFlow
@@ -73,11 +74,9 @@ class ManageNotificationsViewModel @Inject constructor(
         observerJob.cancel()
         observerJob = viewModelScope.launch {
 
-            val listener = NotificationListener.getWhenReadyOrNull() ?: run {
-                AppLogger.d("NotificationListener  == null")
-                return@launch
-            }
-            val snoozedNotificationsOnStatusBar = listener.getSnoozedNotificationsFlow()
+            if (!systemNotificationManager.canOperate()) return@launch
+
+            val snoozedNotificationsOnStatusBar = systemNotificationManager.getSnoozedNotificationsFlow()
             val snoozedNotificationsOnDatabase = observeAllSnoozedNotificationsUseCase()
 
             combine(snoozedNotificationsOnDatabase, snoozedNotificationsOnStatusBar) { dbList, systemList ->
@@ -108,12 +107,9 @@ class ManageNotificationsViewModel @Inject constructor(
         observerJob.cancel()
         observerJob = viewModelScope.launch {
 
-            val listener = NotificationListener.getWhenReadyOrNull() ?: run {
-                AppLogger.d("NotificationListener  == null")
-                return@launch
-            }
+            if (!systemNotificationManager.canOperate()) return@launch
 
-            listener.getActiveWithOngoingNotificationsFlow().collect { systemList ->
+            systemNotificationManager.getActiveWithOngoingNotificationsFlow().collect { systemList ->
 
                 val managed = systemList.map {
                     ManageableNotification.from(system = it)
@@ -142,7 +138,7 @@ class ManageNotificationsViewModel @Inject constructor(
     }
 
     fun cancelNotification(not: ManageableNotification) = viewModelScope.launch {
-        NotificationListener.getWhenReadyOrNull()?.cancelNotification(not.key)
+        systemNotificationManager.cancelNotification(not.key)
     }
 
     fun copyTitleAndContent(not: ManageableNotification) {

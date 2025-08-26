@@ -69,11 +69,22 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     override fun onCreate() {
         instance = this
+        setupNotificationListener()
         setupRemoteConfig()
         setupCrashLytics()
         startNotificationService()
         scheduleAlarms()
         super.onCreate()
+    }
+
+    /**
+     * Garante que o listener esteja conectado ao abrir o processo
+     */
+    private fun setupNotificationListener() {
+
+        with(NotificationListenerManagerService.instance) {
+            if (this?.isNotificationListenerConnected() == false) restartListener()
+        }
     }
 
     /**
