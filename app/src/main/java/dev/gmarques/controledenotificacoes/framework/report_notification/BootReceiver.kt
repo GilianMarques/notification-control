@@ -29,26 +29,29 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 /**
  * Criado por Gilian Marques
  * Em quarta-feira, 14 de maio de 2025 as 12:34.
- *
- * Garante a execução da [App] que executa as tarefas necessárias
- *
+ * Classe responsável por receber o evento de boot do dispositivo.
+ * Garante a execução da [App] que executa as tarefas necessárias e inicializa
+ * o [NotificationListenerManagerService] para garantir que o serviço de escuta de notificações
+ * seja iniciado após o boot.
  */
 class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
     /**
-     * Não é necessário fazer nada aqui.
-     * Quando esse receive é executado a classe [App] já está inicializada e por padrão ela inicializa
-     * o serviço de notificações, e reagenda os alarmes.
+     * Chamado quando o [BootReceiver] recebe uma intenção de broadcast.
+     * Verifica se a ação da intenção é [Intent.ACTION_BOOT_COMPLETED] e, em caso afirmativo,
+     * inicia o [NotificationListenerManagerService].
      */
     override fun onReceive(context: Context, intent: Intent) {
-        @Suppress("ControlFlowWithEmptyBody")
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            // leia Kdoc
+            AppLogger.d("")
+            NotificationListenerManagerService.start(context)
         }
     }
 

@@ -26,7 +26,6 @@
 package dev.gmarques.controledenotificacoes
 
 import android.app.Application
-import android.content.Intent
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.remoteConfig
@@ -34,7 +33,6 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.framework.model.RemoteConfigValues
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
@@ -71,7 +69,6 @@ class App() : Application(), CoroutineScope by MainScope() {
         instance = this
         setupRemoteConfig()
         setupCrashLytics()
-        startNotificationService()
         scheduleAlarms()
         super.onCreate()
     }
@@ -140,21 +137,5 @@ class App() : Application(), CoroutineScope by MainScope() {
             )
         }
 
-
     }
-
-    fun startNotificationService() {
-        // TODO: nao pode ficar aqui tem que passar pra uma activity
-        val serviceIntent = Intent(this, NotificationListenerManagerService::class.java)
-        startForegroundService(serviceIntent)
-    }
-
-    fun restartNotificationService() {
-
-        val intent = Intent(this, NotificationListenerManagerService::class.java)
-        stopService(intent)
-        startNotificationService()
-    }
-
-
 }

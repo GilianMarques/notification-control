@@ -31,11 +31,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.BuildConfig
@@ -61,6 +63,18 @@ class NotificationListenerManagerService : Service() { // TODO: usar workmanager
             instance?.disconnectListener()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
         }
+
+        fun start(context: Context) {
+            val serviceIntent = Intent(context, NotificationListenerManagerService::class.java)
+            startForegroundService(context, serviceIntent)
+        }
+
+        fun restart(context: Context) {
+            stopSelf()
+            start(context)
+        }
+
+
     }
 
     private val checkIntervalMs = if (BuildConfig.DEBUG) 5_000L else 60_000L // intervalo entre checagens

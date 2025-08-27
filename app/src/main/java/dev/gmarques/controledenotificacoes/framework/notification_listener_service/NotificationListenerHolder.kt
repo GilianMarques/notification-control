@@ -66,7 +66,7 @@ class NotificationListenerHolder @Inject constructor() {
         if (BuildConfig.DEBUG) {
             val callerClass = Class.forName(Throwable().stackTrace[1].className)
             if (callerClass != NotificationListener::class.java) {
-                throw IllegalAccessException("setListener só pode ser chamado de NotificationListener caller $callerClass")
+                throw IllegalAccessException("setListener só pode ser chamado de NotificationListener. Chamador: $callerClass")
             }
         }
 
@@ -118,9 +118,9 @@ class NotificationListenerHolder @Inject constructor() {
     private fun throwIfInvalidCallerOnDebug(callerFunction: String) {
         if (!BuildConfig.DEBUG) return
 
-        val callerClass = Class.forName(Throwable().stackTrace[1].className)
+        val callerClass = Class.forName(Throwable().stackTrace[2].className)
         if (callerClass != SystemNotificationManagerImpl::class.java) {
-            throw IllegalAccessException("$callerFunction só pode ser chamado de SystemNotificationManagerImpl")
+            throw IllegalAccessException("$callerFunction só pode ser chamado de SystemNotificationManagerImpl. Chamador: $callerClass")
         }
     }
 
