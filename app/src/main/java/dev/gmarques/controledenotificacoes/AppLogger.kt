@@ -64,13 +64,7 @@ object AppLogger {
 
         Log.d(
             "USUK",
-            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}\nobjs: ${
-                log.relevantObjects.joinToString {
-                    "${
-                        it.toString().replace(",", "\n")
-                    }\n"
-                }
-            }".replace("\n", " ") // TODO: remover quebra
+            "AppLogger:\ncaller: ${log.caller}: \nmsg: ${log.msg}".replace("\n", " ") // TODO: remover quebra
         )
 
         writeToLog(log)

@@ -69,7 +69,6 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     override fun onCreate() {
         instance = this
-        setupNotificationListener()
         setupRemoteConfig()
         setupCrashLytics()
         startNotificationService()
@@ -77,15 +76,7 @@ class App() : Application(), CoroutineScope by MainScope() {
         super.onCreate()
     }
 
-    /**
-     * Garante que o listener esteja conectado ao abrir o processo
-     */
-    private fun setupNotificationListener() {
 
-        with(NotificationListenerManagerService.instance) {
-            if (this?.isNotificationListenerConnected() == false) restartListener()
-        }
-    }
 
     /**
      * Reagenda os alarmes necessários pro funcionamento correto da aplicação no sistma.
@@ -153,6 +144,7 @@ class App() : Application(), CoroutineScope by MainScope() {
     }
 
     fun startNotificationService() {
+        // TODO: nao pode ficar aqui tem que passar pra uma activity
         val serviceIntent = Intent(this, NotificationListenerManagerService::class.java)
         startForegroundService(serviceIntent)
     }

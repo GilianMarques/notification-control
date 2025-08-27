@@ -69,6 +69,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerConnected()
         holder.setListener(this@NotificationListener)
         observeRulesChanges()
+        systemNotificationManager.emitNotifications()
     }
 
     override fun onListenerDisconnected() {
@@ -85,8 +86,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap?) {
-        systemNotificationManager.emitNotifications()
-        _onNotificationRemovedFlow.tryEmit(sbn)
+        launch(IO) {
+            systemNotificationManager.emitNotifications()
+            _onNotificationRemovedFlow.tryEmit(sbn)
+        }
         super.onNotificationRemoved(sbn, rankingMap)
     }
 

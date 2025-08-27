@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
+import dev.gmarques.controledenotificacoes.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -62,10 +63,11 @@ class NotificationListenerHolder @Inject constructor() {
      * @throws IllegalAccessException Se a chamada não for originada da classe [NotificationListener].
      */
     fun setListener(service: NotificationListener?) {
-
-        val callerClass = Class.forName(Throwable().stackTrace[1].className)
-        if (callerClass != NotificationListener::class.java) {
-            throw IllegalAccessException("setListener só pode ser chamado de NotificationListener")
+        if (BuildConfig.DEBUG) {
+            val callerClass = Class.forName(Throwable().stackTrace[1].className)
+            if (callerClass != NotificationListener::class.java) {
+                throw IllegalAccessException("setListener só pode ser chamado de NotificationListener caller $callerClass")
+            }
         }
 
         listener = service
@@ -81,8 +83,9 @@ class NotificationListenerHolder @Inject constructor() {
      * @return A instância do [NotificationListener], ou `null` se não estiver conectado.
      * @throws IllegalAccessException Se a chamada não for originada da classe [SystemNotificationManagerImpl].
      */
+    @Suppress("unused")
     fun getListener(): NotificationListener? {
-        throwIfInvalidCaller("getListener")
+        throwIfInvalidCallerOnDebug("getListener")
         return listener
     }
 
@@ -100,7 +103,7 @@ class NotificationListenerHolder @Inject constructor() {
      * @throws IllegalAccessException Se a chamada não for originada da classe [SystemNotificationManagerImpl].
      */
     fun registerCallback(callback: ConnectionCallback) {
-        throwIfInvalidCaller("registerCallback")
+        throwIfInvalidCallerOnDebug("registerCallback")
         this.callback = callback
         // Notifica imediatamente o callback com o estado atual do listener
         callback.onConnectionChanged(listener)
@@ -112,8 +115,10 @@ class NotificationListenerHolder @Inject constructor() {
      *  @param callerFunction O nome da função que está sendo chamada.
      * @throws IllegalAccessException se o chamador não for [SystemNotificationManagerImpl].
      */
-    private fun throwIfInvalidCaller(callerFunction: String) {
-        val callerClass = Class.forName(Throwable().stackTrace[2].className)
+    private fun throwIfInvalidCallerOnDebug(callerFunction: String) {
+        if (!BuildConfig.DEBUG) return
+
+        val callerClass = Class.forName(Throwable().stackTrace[1].className)
         if (callerClass != SystemNotificationManagerImpl::class.java) {
             throw IllegalAccessException("$callerFunction só pode ser chamado de SystemNotificationManagerImpl")
         }

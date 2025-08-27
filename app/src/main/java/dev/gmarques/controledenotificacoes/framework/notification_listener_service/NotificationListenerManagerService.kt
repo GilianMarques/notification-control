@@ -51,11 +51,12 @@ import java.util.TimerTask
 
  * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
-class NotificationListenerManagerService : Service() {
+class NotificationListenerManagerService : Service() { // TODO: usar workmanager?
 
     companion object {
         private const val NOTIFICATION_ID = 220461
         var instance: NotificationListenerManagerService? = null
+
         fun stopSelf() {
             instance?.disconnectListener()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
@@ -69,6 +70,7 @@ class NotificationListenerManagerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
+        setupNotificationListener()
         instance = this
         return START_STICKY
     }
@@ -162,6 +164,7 @@ class NotificationListenerManagerService : Service() {
     }
 
     fun connectListener() {
+        AppLogger.d("")
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)
 
@@ -193,11 +196,24 @@ class NotificationListenerManagerService : Service() {
      * Quando esse bug ocorria fazia com que o restante do aplicativo nunca conseguisse receber uma instância valida
      *  de [SystemNotificationManager] para uso, o inutilizando.
      */
+
+    @Suppress("unused")
     fun restartListener() {
         AppLogger.d("")
         disconnectListener()
         connectListener()
     }
+
+    /**
+     * Garante que o listener esteja conectado ao abrir o processo
+     */
+    private fun setupNotificationListener() {
+        if (!isNotificationListenerConnected()) {
+            AppLogger.d("Notification listener is not connected")
+            connectListener()
+        }
+    }
+
 
     override fun onDestroy() {
         timer?.cancel()

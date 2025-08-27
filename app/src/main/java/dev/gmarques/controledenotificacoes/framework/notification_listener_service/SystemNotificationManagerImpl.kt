@@ -76,7 +76,7 @@ class SystemNotificationManagerImpl @Inject constructor(
     private var listener: NotificationListener? = null
 
     /**Açoes a serem executadas quando o listener for conectado (callback)*/
-    private val onConnectedActions = mutableListOf<() -> Unit>()
+    private val onConnectedListeners = mutableListOf<() -> Unit>()
 
     private val backupNotificationAlarmSchedulerImpl = HiltEntryPoints.backupNotificationAlarmSchedulerImpl()
 
@@ -104,7 +104,7 @@ class SystemNotificationManagerImpl @Inject constructor(
                     return
                 }
 
-                with(onConnectedActions) {
+                with(onConnectedListeners) {
                     forEach { it.invoke() }
                     clear()
                 }
@@ -229,8 +229,8 @@ class SystemNotificationManagerImpl @Inject constructor(
          * a notificação com o conteúdo original novamente. Isso assegura que o usuário seja
          * lembrado do conteúdo específico que ele desejou ver posteriormente.
          *
-         * Caso a notificação seja atualizada – mantendo a mesma chave, mas com conteúdo
-         * modificado – o aplicativo não cancelará o agendamento. Em vez disso,
+         * Caso a notificação seja atualizada mantendo a mesma chave, mas com conteúdo
+         * modificado o aplicativo não cancelará o agendamento. Em vez disso,
          * emitirá uma notificação de backup contendo o conteúdo da notificação
          * originalmente adiada.
          *
@@ -277,7 +277,7 @@ class SystemNotificationManagerImpl @Inject constructor(
         when (result) {
 
             is ProcessIncomingNotificationUseCase.ProcessingResult.AllowNotification -> {
-                AppLogger.d("Processing result: AllowNotification ${not.title}", not)
+                AppLogger.d("Result: AllowNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 echoImpl.get().repostNotification(result.targetNotification)
             }
@@ -289,16 +289,15 @@ class SystemNotificationManagerImpl @Inject constructor(
             }
 
             is ProcessIncomingNotificationUseCase.ProcessingResult.CancelNotification -> {
-                AppLogger.d("Processing result: CancelNotification ${not.title}", not)
+                AppLogger.d("Result: CancelNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 if (!sbn.isOngoing) debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 listener?.cancelNotification(result.targetNotification.key)
 
-
             }
 
             is ProcessIncomingNotificationUseCase.ProcessingResult.SnoozeNotification -> {
-                AppLogger.d("Processing result: SnoozeNotification ${not.title}", not)
+                AppLogger.d("Result: SnoozeNotification ${not.title}", not)
                 debugTests?.cancelCrashIfCallbackNotCalled()
                 debugTests?.crashIfNotificationDoesNotRemove(result.targetNotification)
                 runBlocking { snoozeNotificationByRuleUseCase.get().invoke(result.targetNotification, result.until) }
@@ -317,6 +316,6 @@ class SystemNotificationManagerImpl @Inject constructor(
      */
     override fun doWhenConnected(func: () -> Unit) {
         if (canOperate()) func.invoke()
-        else onConnectedActions.add(func)
+        else onConnectedListeners.add(func)
     }
 }
