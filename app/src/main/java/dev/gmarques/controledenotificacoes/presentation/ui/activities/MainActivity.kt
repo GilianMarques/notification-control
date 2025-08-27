@@ -60,6 +60,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -138,6 +139,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         checkForAppUpdate()
         setupForTablet(lastSlidingPaneState)
         removeDuplicatedFragmentOnExpandedScreen()
+        NotificationListenerManagerService.start(this@MainActivity)
     }
 
     /**
@@ -159,7 +161,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
             }
         }
     }
-
 
     private fun setupForTablet(lastState: SlidingPaneState?) = with(binding) {
 
@@ -281,7 +282,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
                         }.setCancelable(false).show()
                 }
             } else {
-                App.instance.restartNotificationService()
+                NotificationListenerManagerService.restart(this@MainActivity)
             }
 
         }
@@ -309,10 +310,16 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         val enabledListeners = Settings.Secure.getString(
             contentResolver, "enabled_notification_listeners"
         ) ?: return false
-        // vai dar falso positivo se tiver mais de uma variante instalada no dispositivo. Ex: release e staging
-        // troquei o contains por equals e resolveu, testei no apk staging e release mas a versao da playstore
-        // nunca reconhecia a permissao mesmo depois de concedida entao tive que voltar a usar o contains.
-        return enabledListeners.split(":").any { it.contains(packageName) }
+
+        /*
+        Exemplo de enableListeners string em um Xiaomi com android 13. Até onde sei isso nao muda entre versoes do android e OEMs diferentes:
+        'dev.gmarques.controledenotificacoes.staging/dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener:etc...'
+        */
+        return enabledListeners.split(":") // obtenho os conjuntos app_pkg/nome_completo_classe isolados
+            .any {
+                it.split("/")[0] // isolo o app_pkg e comparo
+                    .equals(packageName, true)
+            }
     }
 
     fun requestNotificationAccessPermission() {
