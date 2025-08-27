@@ -28,6 +28,7 @@ package dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationFactory
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotificationFactory
 import dev.gmarques.controledenotificacoes.framework.model.ActiveStatusBarNotification
@@ -50,7 +51,7 @@ class SnoozeNotificationByRuleUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(notification: ActiveStatusBarNotification, until: Long) {
-        AppLogger.d("", notification)
+        AppLogger.d("", AppNotificationFactory.create(notification))
 
         if (!systemNotificationManager.canOperate()) return
 

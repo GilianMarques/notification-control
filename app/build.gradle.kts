@@ -44,7 +44,7 @@ android {
         applicationId = "dev.gmarques.controledenotificacoes"
         minSdk = 26
         targetSdk = 35
-        versionCode = 33
+        versionCode = 34
         versionName = "0.0.${versionCode}-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
