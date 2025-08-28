@@ -17,6 +17,11 @@
 # Mantém todas as classes do Google Credentials API
 -keep class com.google.android.gms.auth.** { *; }
 
+# Não ofuscar NADA da FirebaseUI Auth (remover se nao fucionar 28/08)
+-keep class com.firebase.ui.auth.** { *; }
+-keepclassmembers class com.firebase.ui.auth.** { *; }
+-dontwarn com.firebase.ui.auth.**
+
 # Mantém classes do Firebase UI Auth relacionadas à autenticação
 -keep class com.firebase.ui.auth.util.CredentialUtils { *; }
 -keep class com.firebase.ui.auth.data.remote.SignInKickstarter { *; }
