@@ -46,7 +46,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withStateAtLeast
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -193,16 +193,18 @@ class HomeFragment : MyFragment() {
 
         systemNotificationManager.doWhenConnected {
             lifecycleScope.launch {
-                viewLifecycleOwner.lifecycle.withStateAtLeast(Lifecycle.State.STARTED) {
+                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    collectFlow(
+                        systemNotificationManager
+                            .getActiveWithOngoingNotificationsFlow()
+                    ) {
 
-                collectFlow(systemNotificationManager.getActiveWithOngoingNotificationsFlow()) {
+                        binding.llActiveNotifications?.isGone = it.isEmpty()
 
-                    binding.llActiveNotifications?.isGone = it.isEmpty()
-
-                    notsAdapter.submitList(it.map { actNot ->
-                        ManageableNotification.from(system = actNot)
-                    })
-                }
+                        notsAdapter.submitList(it.map { actNot ->
+                            ManageableNotification.from(system = actNot)
+                        })
+                    }
                 }
             }
         }
