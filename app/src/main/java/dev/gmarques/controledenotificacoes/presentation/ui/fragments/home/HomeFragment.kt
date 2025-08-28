@@ -514,13 +514,15 @@ class HomeFragment : MyFragment() {
                 return@launch
             }
 
-            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                showBatteryRestrictionsWarning()
+            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
+                showPostNotificationRestrictionsWarning()
                 return@launch
             }
 
-            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                showPostNotificationRestrictionsWarning()
+            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
+                delay(1500)
+                if (!requireMainActivity().isAppInsetFromBatterySaving()) showBatteryRestrictionsWarning()
+                return@launch
             }
         }
     }
