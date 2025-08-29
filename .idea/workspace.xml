@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config>
+        <device id="_device_class_phone" />
+        <device id="pixel_tablet" />
+      </config>
+    </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/back_container.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/back_degrade.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/vec_alert.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/vec_alert_uninstalled_app.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/vec_app.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/vec_info.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/vec_info_small.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_main.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/fragment_home.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/view_hint.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_managed_apps.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_or_update_rule.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_datetime_layout.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_log.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_manage_notifications.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_profile.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_select_apps.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_select_notification.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_settings.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_view_managed_app.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_app_notification_manageable.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_app_notification_manageable_compact.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_log.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_managed_app_list.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/view_activity_header.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/view_hint.xml">
+        <config>
+          <state>Portrait</state>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/view_warning_battery_optimizations.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/navigation/nav_graph_details.xml">
+        <config>
+          <theme>@style/AppTheme</theme>
+        </config>
+      </layout>
+    </layouts>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerHolder.kt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=054cd9a30405)]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="valueResourceFile" />
+        <option value="resourceFile" />
+        <option value="Kotlin Object" />
+        <option value="Kotlin JUnit5 Test Class" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="G:\Drive\Desenvolvimento\ControleDeNotificacoes\controle_de_notificacoes.jks" />
+    <option name="KEY_ALIAS" value="release" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="home-animation" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GilianMarques&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/GilianMarques/notification-control.git&quot;,
+    &quot;accountId&quot;: &quot;f2ac886d-1be5-4029-8f4d-a0a01d0b859d&quot;
+  }
+}</component>
+  <component name="KotlinCodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2zmZz0SGqlGMWTrbEGnBJP7xy6n" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
+    &quot;BundleExportedModule&quot;: &quot;ControleDeNotificacoes.app&quot;,
+    &quot;ExportBundle.BundlePathForControleDeNotificacoes.app&quot;: &quot;C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.IncomingNotificationProcessorImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;ScreenshotViewer.SavePath&quot;: &quot;C:/Users/Gilian/Downloads&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.android.tools.idea.streaming.zoom.toolbar.visible&quot;: &quot;false&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Gilian/Documents/GitHub/notification-control/app/src/main/res/drawable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;ExportApk.BuildVariants&quot;: [
+      &quot;release&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\res\drawable" />
+      <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\res\layout" />
+      <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\java\dev\gmarques\controledenotificacoes\domain\usecase" />
+      <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\res\values-sw600dp" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="dev.gmarques.controledenotificacoes.domain.implementations" />
+    </key>
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification" />
+      <recent name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home" />
+      <recent name="dev.gmarques.controledenotificacoes.domain.usecase.framework" />
+      <recent name="dev.gmarques.controledenotificacoes.data.repository" />
+      <recent name="dev.gmarques.controledenotificacoes.domain.data.repository" />
+    </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications" />
+      <recent name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.shared" />
+      <recent name="dev.gmarques.controledenotificacoes.domain.framework.contracts" />
+      <recent name="dev.gmarques.controledenotificacoes.domain.framework" />
+      <recent name="dev.gmarques.controledenotificacoes.domain.usecase.framework" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Android App.app">
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="ControleDeNotificacoes.app" />
+      <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="ALLOW_ASSUME_VERIFIED" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="RESTORE_ENABLED" value="false" />
+      <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
+      <option name="CLEAR_LOGCAT" value="true" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tests in 'dev.gmarques.controledenotificacoes'" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
+      <module name="ControleDeNotificacoes.app" />
+      <option name="ANDROID_TEST_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="TESTING_TYPE" value="1" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="dev.gmarques.controledenotificacoes" />
+      <option name="TEST_NAME_REGEX" value="" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="EXTRA_OPTIONS" value="" />
+      <option name="RETENTION_ENABLED" value="No" />
+      <option name="RETENTION_MAX_SNAPSHOTS" value="2" />
+      <option name="RETENTION_COMPRESS_SNAPSHOTS" value="false" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IncomingNotificationProcessorImplTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testStagingUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImplTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="Tests in 'dev.gmarques.controledenotificacoes' (1)" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.*&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="Tests in 'dev.gmarques.controledenotificacoes'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testStagingUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.*&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'" />
+        <item itemvalue="Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1)" />
+        <item itemvalue="Gradle.Tests in 'dev.gmarques.controledenotificacoes'" />
+        <item itemvalue="Gradle.IncomingNotificationProcessorImplTest" />
+        <item itemvalue="Gradle.IncomingNotificationProcessorImplTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="1" Folder0="G:\Drive\Desenvolvimento\Android studio\dicionario pt-br" CustomDictionaries="1" CustomDictionary0="G:\Drive\Desenvolvimento\Android studio\dicionario pt-br\br.dic" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="false" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment="" />
+      <created>1752338469444</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1752338469444</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Refactor navigation in HomeFragment to use findNavControllerMain&#10;&#10;- In `HomeFragment.kt`:&#10;    - Replace `findNavController()` with `findNavControllerMain()` for navigation actions.&#10;    - Wrap navigation calls within a conditional block that checks `App.largeScreenDevice` to ensure `showOnlyMaster()` is called on the `SlidingPaneController` only for large screen devices before navigating. This applies to `navigateToEchoFragment()`, `navigateToSettingsFragment()`, and the profile icon click listener.">
+      <option name="closed" value="true" />
+      <created>1752443615691</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1752443615691</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Refine tablet layout and drag handle visuals&#10;&#10;- In `PaneResizer.kt`:&#10;    - Reduce fade animation duration for drag handle to `150ms`.&#10;- In `layout-sw600dp/activity_main.xml`:&#10;    - Set `elevation` to `0dp` for both `nav_host_master` and `nav_host_detail`.&#10;    - Restyle the `drag_handle`:&#10;        - Encapsulate `AppCompatImageView` within a `FrameLayout`.&#10;        - Add a `View` with a gradient background (`back_degrade.xml`) behind the drag handle image.&#10;        - Increase `drag_handle` width to `48dp`.&#10;- In `HomeFragment.kt`:&#10;    - Adjust `columnWidth` in `AutoFitGridLayoutManager` to `280dp`.&#10;- Create `drawable/back_degrade.xml` to define a vertical gradient from transparent to `?colorSurfaceVariant` and back to transparent.&#10;- In `values/dimens.xml`:&#10;    - Change `tablet_layout_max_width` to `700dp`.&#10;- In `values-sw600dp/dimens.xml`:&#10;    - Remove redundant dimension definitions that are already present in the default `values/dimens.xml`.">
+      <option name="closed" value="true" />
+      <created>1752536042765</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1752536042765</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Refactor: Move &quot;System Notification History&quot; to Settings fragment&#10;&#10;- In `NotificationListener.kt`:&#10;    - Extend the snooze duration for ongoing notifications to `60_000L`.&#10;    - Apply `cancelOngoingNotificationBySnooze` to all active notifications upon listener connection.&#10;- In `SettingsFragment.kt`:&#10;    - Add a &quot;System Notification History&quot; menu item that opens the Android system's notification history screen.&#10;    - Handle `ActivityNotFoundException` if the system history screen cannot be opened, showing an error message.&#10;- In `ViewManagedAppFragment.kt`:&#10;    - Remove the &quot;System Notification History&quot; option from the popup menu, as it's now accessible in the main settings.&#10;    - Simplify click listeners for confirmation dialogs.&#10;- In `fragment_settings.xml`:&#10;    - Add a `TextView` for the new &quot;System Notification History&quot; menu item, styled and with an icon.&#10;- Add `vec_system_history.xml` drawable for the &quot;System Notification History&quot; menu item icon.&#10;- Minor cleanup in `HomeFragment.kt`.">
+      <option name="closed" value="true" />
+      <created>1752711675205</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1752711675205</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Refactor: Rename `reEvaluateActiveNotifications` to `evaluateActiveNotifications`&#10;&#10;The method `reEvaluateActiveNotifications` in `NotificationListener.kt` has been renamed to `evaluateActiveNotifications` for clarity and conciseness.&#10;&#10;All calls to this method in `AddManagedAppsViewModel.kt` and `ViewManagedAppViewModel.kt` have been updated to reflect the new name.">
+      <option name="closed" value="true" />
+      <created>1752712085456</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1752712085456</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Refactor: End period of a TimeRange is now exclusive. eg: 10:00-12:00 blocks only until 11:59.">
+      <option name="closed" value="true" />
+      <created>1752713464255</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1752713464255</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Refactor: Comment out activeNotifications snooze logic">
+      <option name="closed" value="true" />
+      <created>1752714045850</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1752714045850</updated>
+    </task>
+    <task id="LOCAL-00010" summary="BugFix: navigation in EchoIntroFragment&#10;&#10;Use `findNavControllerDefault()` instead of `findNavControllerMain()` for navigation actions within `EchoIntroFragment` to avoid crashes.">
+      <option name="closed" value="true" />
+      <created>1752746580057</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1752746580057</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Refactor notification handling and introduce parser&#10;&#10;- Introduce `NotificationParser` to centralize extraction of data from `StatusBarNotification`.&#10;- `ParsedNotificationData` created to represent data extracted by `NotificationParser`.&#10;- `AppNotificationFactory` and `ActiveStatusBarNotificationFactory` now use `NotificationParser` to create their respective domain/presentation models (`AppNotification` and `ActiveStatusBarNotification`).&#10;- `ActiveStatusBarNotification` (previously in `presentation.model`) moved to `framework.model` and updated to include more notification details like `id`, `key`, `isOngoing`, `notification`, and `tag`.&#10;- `ShakeDetectorHelper` (previously in `framework.model`) moved to `framework` package.&#10;- `RuleEnforcer` interface and its implementation `RuleEnforcerImpl` updated to use `ActiveStatusBarNotification` and `AppNotification` (created by their factories) instead of direct `StatusBarNotification`.&#10;    - `RuleEnforcer.Callback` methods now accept `ActiveStatusBarNotification`.&#10;    - `RuleEnforcerImpl` now saves `largeIcon` to storage and handles snooze/cancel actions based on `ActiveStatusBarNotification`.&#10;- `NotificationListener` now implements `RuleEnforcer.Callback` and uses `ActiveStatusBarNotificationFactory` and `AppNotificationFactory`.&#10;- `Echo` interface and `EchoImpl` updated to use `ActiveStatusBarNotification`.&#10;- Removed `AppNotificationExtensionFun.createFromStatusBarNotification` as its logic is now in `AppNotificationFactory` via `NotificationParser`.&#10;- Renamed implementation classes in `framework` to a new `implementations` subpackage (e.g., `ActiveNotificationRepositoryImpl`, `AlarmSchedulerImpl`, `StringsProviderImpl`, `VibratorProviderImpl`, `EchoImpl`).&#10;- Add documentation explaining the new notification parsing flow.&#10;- Update various UI components and ViewModels to use the refactored `ActiveStatusBarNotification` from `framework.model`.">
+      <option name="closed" value="true" />
+      <created>1752805708975</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1752805708975</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Fix: Prevent crash by checking FragmentManager state before commit&#10;&#10;This commit addresses a potential crash in `MainActivity.onAnimationEnd` by adding a check for `supportFragmentManager.isStateSaved` before committing the fragment transaction.&#10;&#10;If the state is already saved or the manager is destroyed, the transaction is skipped, and an error is logged. This prevents an `IllegalStateException` that can occur if `commit()` is called after `onSaveInstanceState()`.">
+      <option name="closed" value="true" />
+      <created>1753142722470</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1753142722470</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Refactor: Improve navigation on large screens and remove logging&#10;&#10;This commit addresses a navigation issue on large screen devices and removes some logging statements.&#10;&#10;**MainActivity.kt:**&#10;- Replaced `popMasterNavControllerIfScreenExpanded` with `removeDuplicatedFragmentOnExpandedScreen`.&#10;- The new function `removeDuplicatedFragmentOnExpandedScreen` checks if both master and detail navigation hosts are displaying the `viewManagedAppFragment`. If so, it pops the fragment from the master navigation host. This prevents duplicate screens when transitioning from a smaller screen to a larger one (e.g., unfolding a foldable device).&#10;- Removed the `WAS_LARGE_SCREEN_DEVICE` constant and its usage in `onSaveInstanceState`.&#10;&#10;**NotificationListener.kt:**&#10;- Commented out several `Log.d` statements related to notification processing results (AllowNotification, AppNotManaged, CancelNotification, SnoozeNotification).">
+      <option name="closed" value="true" />
+      <created>1753229477507</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1753229477507</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Refactor: Improve readability and safety in `removeDuplicatedFragmentOnExpandedScreen`&#10;&#10;This commit refactors the `removeDuplicatedFragmentOnExpandedScreen` function in `MainActivity.kt`.&#10;&#10;- It now uses a standard function block instead of `with(binding.navHostDetail)`.&#10;- It introduces an early return if `binding.navHostDetail` is null, preventing potential null pointer exceptions.&#10;- The `navHostDetail` variable is explicitly declared for clarity.">
+      <option name="closed" value="true" />
+      <created>1753310544485</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1753310544485</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Refactor: Improve hint view with expand/collapse functionality&#10;&#10;This commit refactors the hint view to include an expand/collapse feature.&#10;&#10;- The hint text is now truncated if it exceeds `split_hint_max_chars` (defined in `integers.xml`), and a &quot;Leia mais&quot; (Read more) link is displayed.&#10;- Clicking the hint text toggles between the truncated and full versions.&#10;- The large hint icon (`iv_art`) is hidden, and a smaller icon (`iv_art_small`) is shown when the hint is collapsed.&#10;- The `showHintDialog` function in `MyFragment.kt` is renamed to `showHintView` to reflect this change.&#10;- Layout adjustments are made in `view_hint.xml` and `layout-sw600dp/view_hint.xml` to accommodate the new icons and behavior.&#10;- The hint view is now directly added to the parent layout without animation.&#10;- A new color `container_stroke_color` is defined for container borders, and `back_container.xml` is updated to use it.&#10;- Hint parent LinearLayouts are added or repositioned in `fragment_add_managed_apps.xml` and `fragment_add_or_update_rule.xml`.">
+      <option name="closed" value="true" />
+      <created>1753488586018</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1753488586018</updated>
+    </task>
+    <task id="LOCAL-00016" summary="included new SnoozedNotification.kt object that will allow notifications to be safely hidden">
+      <option name="closed" value="true" />
+      <created>1753565046260</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1753565046260</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Improvements on managing active notifications">
+      <option name="closed" value="true" />
+      <created>1753570561106</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1753570561106</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Refactor: Use StateFlow for NotificationListener instance and provide Flows for notifications&#10;&#10;This commit refactors how the `NotificationListener` service instance is accessed and how notifications are exposed to ViewModels.&#10;&#10;Key changes:&#10;- `NotificationListener.instance()` is replaced by `NotificationListener.get()` which returns the current service instance, and `NotificationListener.getWhenReady()` which returns a `Flow&lt;SystemNotificationRepository?&gt;` that emits the service instance when it becomes available. This allows components to reactively obtain the service.&#10;- `NotificationListener` now maintains `MutableStateFlow` for active, snoozed, and ongoing notifications (`activeNotificationsFlow`, `snoozedNotificationsFlow`, `ongoingNotificationsFlow`). These flows are updated whenever notifications are posted or removed.&#10;- `SystemNotificationRepository` interface is updated to include methods that return these flows: `getActiveNotsFlow()`, `getSnoozedNotsFlow()`, and `getOngoingNotsFlow()`.&#10;- `ManageNotificationsViewModel` now uses these flows to observe notification changes:&#10;    - `loadActiveNotifications()`, `loadSnoozedNotifications()`, and `loadOngoingNotifications()` methods added to subscribe to the respective flows.&#10;    - `getServiceWhenReady()` utility method added to wait for the `NotificationListener` service to be ready before accessing it.&#10;    - `observeNotifications()` method added to handle the collection of notification flows and update the UI.&#10;- `ManageNotificationsAdapter`: Large icon visibility is now correctly handled when &quot;read more&quot; text is present, ensuring it's only shown if `largeIcon` is not null and the full text is displayed.&#10;- `SelectNotificationViewModel`, `AddManagedAppsViewModel`, `ViewManagedAppViewModel`, and `PostAppSnoozedNotificationsUseCase` are updated to use `NotificationListener.get()` instead of `NotificationListener.instance()`.&#10;- `nav_graph.xml`: The start destination is changed from `splashFragment` to `manageNotificationsFragment`.">
+      <option name="closed" value="true" />
+      <created>1753630067498</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1753630067499</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Refactor: Enhance notification management and display&#10;&#10;This commit introduces several improvements to notification handling and presentation:&#10;&#10;- **ManageNotifications Screen:**&#10;    - Added a `MaterialButtonToggleGroup` to filter notifications by &quot;Snoozed&quot;, &quot;Active&quot;, and &quot;Ongoing&quot;.&#10;    - Implemented functionality to hide/show ongoing notifications.&#10;    - Updated UI with new dimension for nav bar max width.&#10;- **Snoozed Notifications:**&#10;    - Renamed `hidden` property to `permaHidden` in `SnoozedNotification` and `SnoozedNotificationEntity`.&#10;    - `SnoozedNotificationEntity` primary key changed from `postTime` to `key`. This is reflected in `MIGRATION_1_2`.&#10;    - Added `delete(key: String)` method to `SnoozedNotificationDao` and `SnoozedNotificationRepository`.&#10;    - Added `defaultSnoozePeriod` constant to `SnoozedNotification`.&#10;- **NotificationListener:**&#10;    - Refactored `getWhenReady()` to accept a callback for when the service is available.&#10;    - Added logging for `onNotificationPosted`.&#10;- **Use Cases:**&#10;    - Introduced `ShowHideOngoingNotificationUseCase` to manage the visibility of ongoing notifications.&#10;    - Introduced `DeleteHiddenNotificationUseCase` to remove permanently hidden notifications.&#10;- **ViewModel:**&#10;    - `ManageNotificationsViewModel` now uses `ShowHideOngoingNotificationUseCase` for hiding notifications.&#10;    - Simplified logic for loading different notification types by leveraging the refactored `NotificationListener.getWhenReady()`.&#10;- **Bug Fix:**&#10;    - Fixed a bug in `MyFragment.showHint()` where views were not being removed before adding new ones.&#10;- **Documentation:**&#10;    - Corrected a typo in the KDoc for `ScheduleAutoTurnOnUseCase`.&#10;    - Updated KDoc for `SnoozedNotification`.&#10;- **Minor:**&#10;    - `SnoozedNotificationMapper` updated to reflect the `hidden` to `permaHidden` rename.">
+      <option name="closed" value="true" />
+      <created>1753639859963</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1753639859963</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Refactor: Introduce framework contracts and SystemNotificationManager&#10;&#10;This commit introduces several new framework contracts and the `SystemNotificationManagerImpl` class to manage system notifications.&#10;&#10;**Key Changes:**&#10;&#10;- **New Contracts:**&#10;    - `SystemNotificationManager`: Defines an interface for accessing and managing active, ongoing, and snoozed system notifications. It includes methods to get these notifications as Flows or Lists, process active notifications, and snooze/post snoozed notifications.&#10;    - `AutoTurnOnAlarmScheduler`: Defines an interface for scheduling alarms to periodically re-enable the notification listener service.&#10;    - `ReportNotificationAlarmScheduler`: Defines an interface for managing the scheduling and cancellation of alarms used to issue report notifications. This includes methods to schedule, cancel, delete schedule data, check for existing alarms for a package, and retrieve all active schedules.&#10;&#10;- **`SystemNotificationManagerImpl`:**&#10;    - Implements the `SystemNotificationManager` interface.&#10;    - Provides `Flow`s (`activeFlow`, `snoozedFlow`, `ongoingFlow`) for observing changes in notification lists.&#10;    - Implements methods to retrieve active, ongoing, and snoozed notifications, filtering them based on `SystemNotificationValidator`.&#10;    - `processActiveNotifications()`: Iterates through active notifications and processes them.&#10;    - `processNotification(sbn: StatusBarNotification)`:&#10;        - Checks if the notification is valid.&#10;        - Retrieves snoozed notification data using `GetSnoozedNotificationByKeyUseCase`.&#10;        - If the notification was previously snoozed, it calls `processSnoozedNotification`.&#10;        - Otherwise, it calls `processNotificationRule`.&#10;    - `processSnoozedNotification()`: Handles logic for permanently hidden snoozed notifications by re-snoozing them for a default period. (TODO: Further implementation for non-permanently hidden and alarm-scheduled notifications).&#10;    - `processNotificationRule()`: Uses `ProcessIncomingNotificationUseCase` to determine the action for an incoming notification (Allow, AppNotManaged, Cancel, Snooze) and executes the corresponding action (repost via `echoImpl`, cancel via listener, or snooze via listener).&#10;    - `snoozeNotification()`: Snoozes a notification for a specified duration using the listener.&#10;    - `postSnoozedNotification()`: Posts a snoozed notification by snoozing it for a very short duration.&#10;    - `emitNotifications()`: Updates the notification Flows with the current data from the listener.&#10;    - Uses Hilt entry points to access dependencies like `EchoImpl`, `ProcessIncomingNotificationUseCase`, and `GetSnoozedNotificationByKeyUseCase`.&#10;&#10;- **`SnoozeNotificationUseCase`:**&#10;    - New use case responsible for the steps to snooze a notification.&#10;    - Takes an `ActiveStatusBarNotification`, `until` timestamp, and a `permanently` flag.&#10;    - Creates a `SnoozedNotification` using `SnoozedNotificationFactory`.&#10;    - Inserts the snoozed notification into the database via `InsertSnoozedNotificationUseCase`.&#10;    - Interacts with `NotificationListener`:&#10;        - If not permanent, snoozes the notification until the specified time. (TODO: Integrate `ReportNotificationAlarmScheduler`).&#10;        - If permanent, snoozes the notification for `SnoozedNotification.defaultSnoozePeriod`.">
+      <option name="closed" value="true" />
+      <created>1753660035108</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1753660035108</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Feat: Add DateTimePicker for snoozing notifications&#10;&#10;This commit introduces a `DateTimePickerFragment` and `DateTimePickerViewModel` to allow users to select a specific date and time for snoozing notifications.&#10;&#10;**Key Changes:**&#10;&#10;- **New Fragment &amp; ViewModel:**&#10;    - `DateTimePickerFragment`:&#10;        - Displays a `CalendarView` for date selection and a `TimePicker` for time selection.&#10;        - Provides a summary of the selected date and time with relative descriptions (e.g., &quot;Hoje às...&quot;, &quot;Amanhã às...&quot;).&#10;        - Validates the selected date/time (must be in the future and within one month).&#10;        - Returns the selected timestamp as a fragment result.&#10;    - `DateTimePickerViewModel`:&#10;        - Manages the state of the selected date and time.&#10;        - Exposes `Flows` for the selected date/time and validation status.&#10;        - Handles initialization with an initial timestamp and updates when date or time changes.&#10;- **ManageNotifications Screen:**&#10;    - `ManageNotificationsFragment`:&#10;        - When the &quot;Adiar&quot; (Snooze) option is selected for a notification, it now navigates to `DateTimePickerFragment`.&#10;        - Listens for the result from `DateTimePickerFragment` and uses the selected timestamp to snooze the notification.&#10;        - Added a &quot;Cancelar&quot; (Cancel) option for non-ongoing notifications (functionality to be implemented).&#10;    - `ManageNotificationsAdapter`:&#10;        - Displays the snooze status (e.g., &quot;Oculta por tempo indeterminado&quot;, snooze until date) below the notification content.&#10;        - Uses `vec_info_small.xml` icon for the status text.&#10;    - `ManageNotificationsViewModel`:&#10;        - Added a placeholder `cancelNotification()` method.&#10;- **Navigation:**&#10;    - Added navigation action from `ManageNotificationsFragment` to `DateTimePickerFragment` in `nav_graph.xml`.&#10;- **UI &amp; Resources:**&#10;    - `fragment_datetime_layout.xml`: New layout for `DateTimePickerFragment`.&#10;    - `vec_info_small.xml`: New drawable for displaying small info icons.&#10;    - New string resources for date/time selection, relative date/time descriptions, and snooze status.&#10;    - `styles.xml`: Added `CalendarViewTheme`, `CalendarDateTextAppearance`, and `CalendarWeekDayTextAppearance` for styling the date picker.&#10;- **Model:**&#10;    - `ManageableNotification.kt`: Changed `snoozeUntil` from nullable `Long?` to non-nullable `Long` with a default of 0.&#10;- **MyFragment:**&#10;    - Added action bar setup for `DateTimePickerFragment`.&#10;- **Minor:**&#10;    - `RescheduleAlarmsOnBootUseCase.kt`: Added a TODO comment to implement rescheduling of snoozed notifications.">
+      <option name="closed" value="true" />
+      <created>1753839297152</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1753839297152</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Refactor: Use Joda-Time in DateTimePickerFragment and ViewModel&#10;&#10;This commit replaces `java.util.Calendar` with `org.joda.time.LocalDateTime` and `org.joda.time.DateTime` in `DateTimePickerFragment` and `DateTimePickerViewModel` for improved date and time handling.&#10;&#10;**Key Changes:**&#10;&#10;- **DateTimePickerFragment:**&#10;    - `updateSelectedDateTimeDisplay`:&#10;        - Now accepts `LocalDateTime?`.&#10;        - Logic updated to use Joda-Time methods for comparisons and formatting (e.g., `isSameDay`, `isBefore`, `plusDays`, `dayOfWeek`).&#10;        - `sundaysBetweenNowAndDate` helper method added to correctly determine &quot;Próxima semana&quot; based on the number of Sundays between the current date and the target date.&#10;        - `getDayOfWeekName` and `getDayOfWeekArticle` now use Joda-Time's day of week constants (1 for Monday, 7 for Sunday).&#10;    - `setupDatePicker`: Uses `DateTime(millis).plusDays(30).millis` for calculating one month from now.&#10;    - Removed unused `setupSummaryCard()` method.&#10;- **DateTimePickerViewModel:**&#10;    - `_selectedDateTimeFlow`: Now a `MutableStateFlow&lt;LocalDateTime?&gt;`.&#10;    - `selectedDateTime`: Internal state changed from `Calendar` to `LocalDateTime`.&#10;    - `initializeDateTime`:&#10;        - Converts initial timestamp to `LocalDateTime`.&#10;        - If the initial time is in the past, it defaults to 2 minutes from now.&#10;    - `updateDate`: Updates `selectedDateTime` using Joda-Time's `withYear`, `withMonthOfYear`, `withDayOfMonth`.&#10;    - `updateTime`: Updates `selectedDateTime` using Joda-Time's `withHourOfDay`, `withMinuteOfHour`, etc.&#10;    - `validateSelection`: Uses Joda-Time's `isAfter` and `isBefore` for validation against current time and one month from now (approximated as 31 days).&#10;    - `getSelectedTimestamp`: Converts `selectedDateTime` to millis using `toDateTime().millis`.&#10;- **Layout:**&#10;    - `fragment_datetime_layout.xml`: Added `android:scrollbarSize=&quot;0dp&quot;` to the `NestedScrollView` to hide the scrollbar.">
+      <option name="closed" value="true" />
+      <created>1753865984353</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1753865984353</updated>
+    </task>
+    <task id="LOCAL-00023" summary="BugFix: If a notification is not blocked by a rule, the method now returns `PerformAction.Allow` instead of `PerformAction.Cancel`.">
+      <option name="closed" value="true" />
+      <created>1753919792451</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1753919792451</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Refactor: Apply default filters in SystemNotificationManager and improve UI&#10;&#10;This commit moves the default notification filtering logic (empty content/title, duplicate key/content) from `ManageNotificationsViewModel` to `SystemNotificationManagerImpl`. This ensures that all flows providing lists of `ActiveStatusBarNotification` (active, ongoing, active+ongoing) return pre-filtered lists.&#10;&#10;Additionally, a &quot;Tentar postar agora&quot; (Try to post now) option has been added to the context menu in `ManageNotificationsFragment` for notifications that are currently in the system tray but not permanently hidden. This allows users to attempt to re-post such notifications immediately.&#10;&#10;**Key Changes:**&#10;&#10;- **`SystemNotificationManagerImpl`**:&#10;    - New private extension function `List&lt;ActiveStatusBarNotification&gt;?.applyDefaultFilter()` added. This function filters out notifications with empty titles and content, and removes duplicates based on title/content and key.&#10;    - `getActiveNotificationsFlow()`, `getOngoingNotificationsFlow()`, and `getActiveWithOngoingNotificationsFlow()` now apply this default filter to the notifications retrieved from the system before emitting them.&#10;- **`ManageNotificationsViewModel`**:&#10;    - Removed the `applyDefaultFilters()` method as this filtering is now handled upstream by `SystemNotificationManagerImpl`.&#10;- **`ManageNotificationsFragment`**:&#10;    - Added a new item to the notification context menu:&#10;        - Label: &quot;Tentar postar agora&quot; (string resource `Tentar_postar_agora`)&#10;        - Icon: `vec_post_now.xml`&#10;        - Visibility: Shown if the notification is from the system (`isFromSystem`) and not permanently hidden (`!permaHidden`).&#10;        - Action: Calls `viewModel.postSnoozedOrHiddenNotification(not)`.&#10;- **Resources**:&#10;    - Added new string resource `Tentar_postar_agora`.">
+      <option name="closed" value="true" />
+      <created>1753919813893</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1753919813893</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Test: Add comprehensive tests for IncomingNotificationProcessorImpl&#10;&#10;This commit introduces a suite of unit tests for `IncomingNotificationProcessorImpl` to ensure its logic for determining notification actions (Allow, Snooze, Cancel) is correct under various scenarios.&#10;&#10;**Key Changes:**&#10;&#10;- **`IncomingNotificationProcessorImpl.kt`:**&#10;    - Added a `baseDate: LocalDateTime` parameter to `processNotification()` to allow for controlled testing of time-based logic. This parameter defaults to `LocalDateTime()` in the interface and its current usages, maintaining existing behavior for non-test scenarios.&#10;- **`IncomingNotificationProcessorImplTest.kt` (New File):**&#10;    - **Test Scenarios Covered:**&#10;        - Rules without conditions (Restrictive &amp; Permissive):&#10;            - Outside block period (should Allow)&#10;            - Inside block period with Snooze action&#10;            - Inside block period with Cancel action&#10;        - Restrictive rules with conditions (ONLY_IF &amp; EXCEPT):&#10;            - Inside block period, condition not satisfied (should Allow for ONLY_IF, Snooze/Cancel for EXCEPT)&#10;            - Inside block period, condition satisfied (should Snooze/Cancel for ONLY_IF, Allow for EXCEPT)&#10;            - Outside block period (should Allow regardless of condition satisfaction)&#10;        - Permissive rules with conditions (ONLY_IF &amp; EXCEPT):&#10;            - Outside block period, condition satisfied (should Allow for ONLY_IF, Snooze/Cancel for EXCEPT)&#10;            - Outside block period, condition not satisfied (should Snooze/Cancel for ONLY_IF, Allow for EXCEPT)&#10;            - Inside block period (should Allow regardless of condition satisfaction)&#10;        - Edge cases and comprehensive coverage for different action types (Snooze/Cancel).&#10;    - **Mocking:**&#10;        - `IsRuleInBlockPeriodUseCase` is mocked to control whether a rule is considered within or outside a block period.&#10;        - `android.util.Log` is mocked.&#10;    - **Helper Methods:**&#10;        - `createRestrictiveRule()`, `createPermissiveRule()`, `createConditionOnlyIf()`, `createConditionExcept()` for easy setup of test data.&#10;        - `appNotificationWithKeyword` and `appNotificationWithoutKeyword` for testing condition matching.&#10;- **`IncomingNotificationProcessor.kt`:**&#10;    - Updated the `processNotification` signature to include the optional `baseDate` parameter.&#10;- **`Rule.kt`:**&#10;    - Removed an unused newline in the companion object.">
+      <option name="closed" value="true" />
+      <created>1753922792698</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1753922792698</updated>
+    </task>
+    <task id="LOCAL-00026" summary="BugFix: Change `snoozeFor` to `until` in `ProcessingResult.SnoozeNotification`&#10;&#10;The logic in `ProcessIncomingNotificationUseCase` has been updated to calculate the `until` timestamp based on `rule.nextAppUnlockPeriodFromNow()`. The validation now checks if this `until` timestamp is in the future.">
+      <option name="closed" value="true" />
+      <created>1753956434770</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1753956434770</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Refactor: Improve notification display in SelectNotifications screen&#10;&#10;This commit introduces changes to how notification content is displayed in the `SelectNotificationsAdapter` and adjusts the padding of the `fragment_select_notification.xml` layout.&#10;&#10;**Key Changes:**&#10;&#10;- **SelectNotificationsAdapter:**&#10;    - Applied a fade-in animation to each item when it's created.&#10;    - Notification content (`tvContent`):&#10;        - It's now hidden if the content is empty.&#10;        - Implemented a &quot;read more&quot; feature:&#10;            - If the content is long enough to require it, the large icon (`ivLargeIcon`) is initially hidden.&#10;            - The text view will show a truncated version with a &quot;read more&quot; link.&#10;            - Clicking &quot;read more&quot; expands the text. The large icon is made visible if the text is fully expanded and a large icon exists.&#10;            - If the content doesn't need the &quot;read more&quot; feature, it's displayed as is.&#10;- **Layout:**&#10;    - `fragment_select_notification.xml`: Removed the `android:padding=&quot;8dp&quot;` attribute from the root layout.">
+      <option name="closed" value="true" />
+      <created>1753956886550</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1753956886550</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Refactor: Home screen UI and notification management logic&#10;&#10;This commit introduces several changes to the Home screen UI, particularly how the list of managed apps is displayed and animated, and refines the logic for handling system-snoozed notifications.&#10;&#10;**Key Changes:**&#10;&#10;**1. Home Screen UI (`HomeFragment.xml`, `HomeFragment.kt`):**&#10;    - **Layout Restructure:**&#10;        - The layout for displaying managed apps is now split into two parts: `ll_apps_card_top` (containing the title &quot;Apps gerenciados&quot;) and `ll_apps_card_bottom` (containing the `RecyclerView` `rvApps`).&#10;        - The `container_warnings` `FrameLayout` has been moved inside the `CollapsingToolbarLayout`.&#10;        - A new `LinearLayout` `ll_active_notifications` has been added to the `CollapsingToolbarLayout`, seemingly for displaying active notifications (visibility tied to notification listener permission).&#10;    - **Animation Refactor:**&#10;        - `animateRecyclerView()`:&#10;            - Now animates both `ll_apps_card_top` and `ll_apps_card_bottom` along with `rvApps`.&#10;            - `ll_apps_card_top`: Fades out and its horizontal margins shrink as the app bar collapses.&#10;            - `ll_apps_card_bottom`: Its vertical margins shrink, its height expands to fill the parent, and its background fades out as the app bar collapses.&#10;            - `rvApps`: Its margins shrink as the app bar collapses.&#10;    - **Empty State Handling:**&#10;        - `ll_apps_card_top` and `ll_apps_card_bottom` are now hidden if the list of managed apps is empty.&#10;    - **General:**&#10;        - Added `android:animateLayoutChanges=&quot;true&quot;` to the root layout.&#10;        - `CollapsingToolbarLayout` now uses `app:layout_scrollFlags=&quot;scroll|enterAlways|enterAlwaysCollapsed|snap&quot;`.&#10;&#10;**2. Manageable Notification Logic:**&#10;    - **`ManageableNotification.kt`:**&#10;        - Added a new property `isSystemSnoozed: Boolean` to indicate if a notification is snoozed by the Android system's native snoozing feature.&#10;        - The `from()` factory method now initializes `isSystemSnoozed` to `false`.&#10;    - **`ManageNotificationsViewModel.kt`:**&#10;        - When mapping system snoozed notifications (from `notificationManager.getSnoozedNotifications()`), the `isSystemSnoozed` flag in the resulting `ManageableNotification` is now set to `true`.&#10;    - **`ManageNotificationsFragment.kt`:**&#10;        - The context menu logic for notifications is updated to account for `isSystemSnoozed`:&#10;            - &quot;Tentar postar agora&quot; (Post Now) is shown if `(!not.permaHidden &amp;&amp; not.isSnoozed) || not.isSystemSnoozed`.&#10;            - &quot;Adiar&quot; (Snooze) is shown if `!not.permaHidden &amp;&amp; !not.isSnoozed &amp;&amp; !not.isSystemSnoozed`.&#10;            - &quot;Exibir&quot; (Show) is shown if `not.permaHidden &amp;&amp; not.isSystemSnoozed`.&#10;            - &quot;Ocultar&quot; (Hide) is shown if `!not.permaHidden &amp;&amp; !not.isSnoozed &amp;&amp; !not.isSystemSnoozed`.&#10;            - &quot;Dispensar&quot; (Dismiss) is shown if `!not.isOngoing &amp;&amp; !not.isSnoozed &amp;&amp; !not.permaHidden &amp;&amp; (not.isOnlyInSystem || not.isInDBAndSystem) &amp;&amp; !not.isSystemSnoozed`.&#10;&#10;**3. `PostAppSnoozedNotificationsUseCase.kt`:**&#10;    - `NotificationListener.getWhenReady()` is now called within a `withTimeoutOrNull(500L)`. If the listener is not ready within 500ms (e.g., permission not granted), the use case will return early, preventing potential hangs.&#10;&#10;**4. Minor:**&#10;    - `AddManagedAppsViewModel.kt`: `postAppSnoozedNotificationsUseCase(app)` is now correctly called (was previously commented out).&#10;    - `Afazeres`: Updated TODO list.">
+      <option name="closed" value="true" />
+      <created>1754165451725</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1754165451725</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Refactor: Improve HomeFragment layout and animations&#10;&#10;This commit refactors the layout and animations in `HomeFragment`.&#10;&#10;**Key Changes:**&#10;&#10;- **Layout (`fragment_home.xml`):**&#10;    - Removed `ll_apps_card_top` and `ll_apps_card_bottom`. The content is now managed within `rv_apps_background` (a `LinearLayout` acting as a background for the RecyclerView) and the `rvApps` itself.&#10;    - `rv_apps_background` now holds the &quot;Apps gerenciados&quot; title.&#10;    - `rvApps` is positioned on top of `rv_apps_background` with margins.&#10;    - `empty_view` is now constrained to the top of `rv_apps_background` and has a fixed height.&#10;    - Lottie animation view (`lottie_view`) within `empty_view` is smaller.&#10;    - Added a `Barrier` to manage the bottom position of `rv_apps_background` based on whether `rvApps` or `empty_view` is visible.&#10;    - `ll_active_notifications` is now always visible by default (visibility is likely controlled by code).&#10;&#10;- **Animations (`HomeFragment.kt`):**&#10;    - `animateRecyclerView()`:&#10;        - Simplified significantly due to layout changes.&#10;        - Now animates the left/right margins and alpha of `rv_apps_background`.&#10;        - Animates the alpha of `emptyView`.&#10;        - Removed logic related to `llAppsCardBottom` and `llAppsCardTop` height and margin animations.&#10;    - `updateUiActiveNotifications()`: Removed the line that sets `llActiveNotifications.isGone = false` as it's now visible by default in the layout.&#10;    - `updateUiApps()`: Removed lines that hide/show `llAppsCardTop` and `llAppsCardBottom` as these views no longer exist.&#10;&#10;**Afazeres:**&#10;- Added a new item: &quot;dar opçao de processar ou nao notificações persistentes via regra&quot; (provide an option to process or not process persistent notifications via rules).">
+      <option name="closed" value="true" />
+      <created>1754228408465</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1754228408465</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Tweak: Add &quot;post snoozed/hidden notifications on app removal&quot; to TODO list&#10;&#10;This commit adds a new item to the &quot;Afazeres&quot; (TODO list) to implement functionality that posts any snoozed or hidden notifications when the application is removed.">
+      <option name="closed" value="true" />
+      <created>1754228481508</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1754228481508</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Refactor: Improve logic for &quot;Post Now&quot; option in context menu&#10;&#10;The condition for showing the &quot;Post Now&quot; option in the notification context menu has been simplified.&#10;&#10;Previously, the condition was `(!not.permaHidden &amp;&amp; not.isSnoozed) || not.isSystemSnoozed`.&#10;It has been changed to `!not.permaHidden &amp;&amp; (not.isSnoozed || not.isSystemSnoozed)`.&#10;&#10;This change ensures that the &quot;Post Now&quot; option is shown if the notification is not permanently hidden AND it is either user-snoozed or system-snoozed.">
+      <option name="closed" value="true" />
+      <created>1754229352543</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1754229352543</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Refactor: Add timeout to `NotificationListener.getWhenReady()`&#10;&#10;This commit introduces an overloaded version of `NotificationListener.getWhenReady()` that accepts a timeout parameter.&#10;&#10;- The new `getWhenReady(timeOut: Long)` function will return `null` if the service instance is not available within the specified timeout.&#10;- The existing `getWhenReady()` function, which waits indefinitely, remains unchanged.&#10;&#10;This change allows callers to avoid indefinite blocking if the `NotificationListener` service takes too long to become available.">
+      <option name="closed" value="true" />
+      <created>1754233576939</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1754233576939</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Refactor: Adjust timeout for NotificationListener access&#10;&#10;The `PostAppSnoozedNotificationsUseCase` has been updated to use the new `NotificationListener.getWhenReady(timeoutMillis)` method. The timeout for obtaining the `NotificationListener` service has been adjusted from 500ms within a `withTimeoutOrNull` block to a direct 500ms timeout parameter in the `getWhenReady` call.&#10;&#10;This change streamlines the process of accessing the notification listener service while maintaining the timeout mechanism to prevent the app from hanging if notification access permission is not granted.">
+      <option name="closed" value="true" />
+      <created>1754246606992</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1754246606992</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Update pt-BR translation for notification list title&#10;&#10;The string &quot;Lista_de_notifica_es_ativas_e_adiadas&quot; was updated to &quot;Lista de notificações ativas&quot;.&#10;This change affects the title displayed for the list of active and snoozed notifications.">
+      <option name="closed" value="true" />
+      <created>1754246637621</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1754246637621</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Refactor: Move notification context menu creation to ViewModel and display active notifications on Home screen - MUST FIX SCROLL ANIMATION&#10;&#10;This commit refactors the creation of the context menu for managing notifications by moving the logic from `ManageNotificationsFragment` to `ManageNotificationsViewModel`. It also introduces a horizontal RecyclerView on the `HomeFragment` to display active notifications.&#10;&#10;**Key Changes:**&#10;&#10;**1. Context Menu Creation in `ManageNotificationsViewModel`:**&#10;    - A new method `createPopUpMenu()` is added to `ManageNotificationsViewModel`.&#10;        - This method takes a `ManageableNotification` and an action callback.&#10;        - It constructs a `PopupMenu` with appropriate actions (Post Now, Snooze, Show, Hide, Manage, Remove Record, Cancel, Copy) based on the notification's state.&#10;    - A sealed class `NotificationMenuAction` is introduced to represent the different actions that can be performed from the context menu.&#10;    - Both `ManageNotificationsFragment` and `HomeFragment` now call `viewModelManageNotifications.createPopUpMenu()` to display the context menu.&#10;&#10;**2. Active Notifications on `HomeFragment`:**&#10;    - `fragment_home.xml`:&#10;        - A new `RecyclerView` (`rvNots`) is added to display active notifications horizontally.&#10;        - The search EditText (`edt_search`) is moved below the &quot;Apps gerenciados&quot; title and is only visible when there are managed apps.&#10;        - The `divider` is initially invisible.&#10;        - The &quot;Notificações ativas&quot; section is now populated by `rvNots`.&#10;    - `HomeFragment.kt`:&#10;        - A new `ActiveNotificationsAdapter` is introduced to display `ManageableNotification` items in a compact horizontal layout.&#10;        - `setupActiveNotificationsView()`:&#10;            - Initializes `rvNots` with a `LinearLayoutManager` (horizontal).&#10;            - Collects active notifications from `NotificationListener.getActiveWithOngoingNotificationsFlow()`.&#10;            - Submits the list of active notifications (converted to `ManageableNotification`) to the `ActiveNotificationsAdapter`.&#10;            - Handles context menu clicks on active notifications, delegating actions to `ManageNotificationsViewModel`.&#10;        - `animateRecyclerView()` is renamed to `setupRecyclerViewAnimation()`.&#10;        - The visibility of `edtSearch` is now tied to whether the list of managed apps is empty or not.&#10;    - `item_app_notification_manageable_compact.xml`: New layout for displaying active notifications in the horizontal list on the Home screen.&#10;    - `ActiveNotificationsAdapter.kt`: New adapter for the `rvNots` RecyclerView.&#10;        - Uses `ItemAppNotificationManageableCompactBinding`.&#10;        - Displays the notification title, app icon, and content.&#10;        - Provides a menu button to trigger the context menu.&#10;        - Uses `FlexboxLayoutManager.LayoutParams` for item sizing (though `LinearLayoutManager` is used in `HomeFragment`).&#10;&#10;**3. Adapter Renaming:**&#10;    - `ManageNotificationsAdapter.kt` is renamed to `ManagedNotificationsAdapter.kt` for clarity.&#10;&#10;**4. Dependency:**&#10;    - `build.gradle.kts`: Added `com.google.android.flexbox:flexbox:3.0.0` dependency (though it seems `LinearLayoutManager` is used for the active notifications list).&#10;&#10;**Overall Impact:**&#10;- Centralizes the logic for creating the notification context menu, making it reusable.&#10;- Enhances the Home screen by providing a quick overview of currently active notifications.&#10;- Improves code organization and clarity.">
+      <option name="closed" value="true" />
+      <created>1754247003610</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1754247003610</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Fix: Stuttering in recyclerview animation&#10;&#10;This commit addresses an issue where the search bar visibility was not being handled correctly in `HomeFragment`.&#10;&#10;**Key Changes:**&#10;&#10;- **HomeFragment.kt:**&#10;    - Removed the second `binding.edtSearch.isVisible = apps?.isNotEmpty() == true` line within the delayed `lifecycleScope.launch` block. This line was redundant and potentially caused flickering or incorrect visibility states.&#10;    - The search bar will now only be made visible if `(apps?.size ?: 0) &gt; 9`.&#10;- **fragment_home.xml:**&#10;    - Moved the `edt_search` `AppCompatEditText` to appear above the &quot;Notificações ativas&quot; section.&#10;    - Adjusted top margins for &quot;Notificações ativas&quot; and &quot;Apps gerenciados&quot; section titles to `4dp`.&#10;    - Updated the top margin of the `emptyView` to `56dp` (was `116dp`) to account for the search bar's new position.&#10;&#10;These changes ensure that the search bar's visibility is determined by a single condition and its placement in the layout is more consistent.">
+      <option name="closed" value="true" />
+      <created>1754256762287</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1754256762287</updated>
+    </task>
+    <task id="LOCAL-00037" summary="must fix">
+      <option name="closed" value="true" />
+      <created>1754385953819</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1754385953819</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Refactor: Ensure views are not null before animation in HomeFragment&#10;&#10;This commit adds null checks for `rvNots` and `llActiveNotifications`&#10;in the `setupRecyclerViewAnimation` function within `HomeFragment`&#10;to prevent potential null pointer exceptions during view animation setup.&#10;&#10;Additionally, it applies the alpha animation (fade out) to&#10;`llActiveNotifications` similar to how it was applied to `emptyView`.">
+      <option name="closed" value="true" />
+      <created>1754438762321</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1754438762321</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Refactor: Use new use case for posting snoozed and backup notifications&#10;&#10;This commit introduces and uses a new use case, `PostAppSnoozedAndBackupNotificationsUseCase`, in `ViewManagedAppViewModel` when an app is deleted.&#10;&#10;This new use case is responsible for:&#10;1. Posting all snoozed notifications for the app that are still available in the Android system using `PostAppSnoozedNotificationsUseCase`.&#10;2. Iterating through any remaining backup notification alarm schedules in the database.&#10;3. For each remaining schedule (representing a snoozed notification that might have been lost by the system), it posts a backup notification.&#10;4. It only processes notifications that were originally snoozed by a rule (`Origin.RULE`).&#10;&#10;**Key Changes:**&#10;&#10;- **New Use Case:**&#10;    - `PostAppSnoozedAndBackupNotificationsUseCase`:&#10;        - Injected with `DeleteSnoozedNotificationUseCase`, `BackupNotificationAlarmScheduler`, `GetSnoozedNotificationByKeyUseCase`, `BackupNotificationManager`, and `PostAppSnoozedNotificationsUseCase`.&#10;        - When invoked with a `packageName`:&#10;            - Calls `postAppSnoozedNotificationsUseCase` to handle system-available snoozed notifications.&#10;            - Retrieves all backup alarm schedules via `backupNotificationAlarmScheduler.getAllSchedules()`.&#10;            - For each scheduled key:&#10;                - Fetches the `SnoozedNotification`.&#10;                - If the notification's origin is `Origin.RULE`, it shows a backup notification via `backupNotificationManager`, deletes the snoozed notification record, and cancels the backup alarm.&#10;- **ViewManagedAppViewModel:**&#10;    - `deleteApp()`: Now calls `postAppSnoozedAndBackupNotificationsUseCase(it)` instead of `postAppSnoozedNotificationsUseCase(it)` after deleting a managed app.&#10;- **PostAppSnoozedNotificationsUseCase:**&#10;    - Added a comment clarifying that it only processes notifications snoozed by rules, as handling user-snoozed notifications here could break the snoozing of active app notifications.">
+      <option name="closed" value="true" />
+      <created>1754526226898</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1754526226898</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Refactor: Enhance AppLogger with structured logging and update usage&#10;&#10;This commit refactors the `AppLogger` to support structured logging by introducing an `AppLog` data class. This allows for logging a message along with relevant objects and automatically captures the caller and timestamp.&#10;&#10;The `AppLogger.log(String)` method has been replaced with `AppLogger.d(msg: String, vararg relevantObjects: Any)`. The old `log` methods for specific object types (`SnoozedNotification`, `ActiveStatusBarNotification`, `AppNotification`) have been removed in favor of passing these objects directly to the new `d` method.&#10;&#10;Log calls throughout the codebase have been updated to use the new `AppLogger.d()` method.&#10;&#10;**Key Changes:**&#10;&#10;- **AppLogger.kt:**&#10;    - Introduced `AppLog(msg: String, relevantObjects: List&lt;Any&gt;, caller: String, timeStamp: Long)` data class.&#10;    - `writeToLog(log: AppLog)`:&#10;        - Now serializes the `AppLog` object to JSON using Moshi before saving to preferences.&#10;        - Logs a formatted string to Logcat including caller, message, and relevant objects.&#10;    - New `d()` and `d(msg: String, vararg relevantObjects: Any)` methods:&#10;        - Automatically determine the caller's class and method name.&#10;        - Create an `AppLog` instance and pass it to `writeToLog`.&#10;    - Removed old `log(String)`, `log(SnoozedNotification)`, `log(ActiveStatusBarNotification)`, and `log(AppNotification)` methods.&#10;&#10;- **Codebase-wide:**&#10;    - Replaced calls to `Log.d(&quot;USUK&quot;, ...)` and the old `AppLogger.log(...)` methods with the new `AppLogger.d(...)`.&#10;    - `SystemNotificationManagerImpl.kt`: Added logging to the `notificationListener` property setter and getter to trace its instance changes.&#10;    - `InsertSnoozedNotificationUseCase.kt`: Added `AppLogger.d` call.&#10;    - `SnoozeNotificationByRuleUseCase.kt`: Added `AppLogger.d` call.&#10;    - `BackupNotificationAlarmSchedulerImpl.kt`: Added `AppLogger.d` call to `scheduleAlarm` and `cancelAlarm`.&#10;    - `NotificationServiceManager.kt`: Updated `AppLogger.d` usage in `isNotificationListenerActive`.&#10;    - `IncomingNotificationProcessorImpl.kt`: Updated `AppLogger.d` usage.&#10;    - `ProcessIncomingNotificationUseCase.kt`: Updated `AppLogger.d` usage.&#10;    - `AppNotificationRepositoryImpl.kt`: Updated `AppLogger.d` usage.&#10;    - `SnoozedNotificationRepositoryImpl.kt`: Removed `AppLogger.log` call as it's now handled by `InsertSnoozedNotificationUseCase`.&#10;    - `RescheduleReportNotificationsOnBootUseCase.kt`: Updated `AppLogger.d` usage.&#10;    - `HomeFragment.kt`:&#10;        - Removed `setupRecyclerViewAnimation()` method and its related view interactions/animations.&#10;        - In `onResume`, the warnings container (`binding.containerWarnings`) is now cleared before potentially adding new warnings. This addresses an issue with duplicated views after navigating back from the battery optimization screen.&#10;        - In `setupActiveNotificationsView`, the `llActiveNotifications` visibility is now directly tied to the emptiness of the active notifications list.&#10;        - Added a Log.d call in `onViewCreated` to trace `NotificationListener.getWhenReady()`.&#10;    - `item_app_notification_manageable_compact.xml`:&#10;        - Changed `layout_height` of root to `wrap_content`.&#10;        - Changed background of `parent` ConstraintLayout.&#10;        - `tvContent`:&#10;            - Enabled `singleLine`, `ellipsize=&quot;marquee&quot;`, `scrollHorizontally=&quot;true&quot;`.&#10;            - Changed `maxLines` to 1.&#10;            - Added horizontal padding and set gravity to start.&#10;    - `fragment_home.xml`:&#10;        - `llActiveNotifications`:&#10;            - Changed background.&#10;            - Set initial visibility to `gone`.&#10;        - `rvNots`: Changed `layout_width` to `match_parent` and updated `tools:listitem`.&#10;        - Removed `rv_apps_background` LinearLayout and its `TextView`.&#10;        - Removed `barrier`.&#10;        - `empty_view`:&#10;            - Changed `layout_width` to `match_parent` and added `elevation`.&#10;            - Constrained to parent top and bottom.&#10;        - `rvApps`:&#10;            - Changed `layout_height` to `match_parent` and removed margin attributes.&#10;    - `view_warning_battery_optimizations.xml`:&#10;        - Removed `chip_restriction_removed`.&#10;&#10;- **NotificationListener.kt:**&#10;    - Added `AppLogger.d()` call in `onStartCommand`.&#10;    - Clarified KDoc for `getWhenReady(timeOut: Long)`.&#10;&#10;- **Minor UI Adjustments:**&#10;    - `ActiveNotificationsAdapter.kt`: Made `tvContent` `isSelected = true` to enable marquee if text is too long.&#10;    - `HomeFragment.kt`: In `showBatteryRestrictionsWarning`, removed click listener from `chip_restriction_removed` as the chip itself was removed.">
+      <option name="closed" value="true" />
+      <created>1755976267715</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1755976267715</updated>
+    </task>
+    <task id="LOCAL-00041" summary="++">
+      <option name="closed" value="true" />
+      <created>1755976296793</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1755976296793</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Refactor: Update NotificationListener logging and factory usage&#10;&#10;This commit refactors the `NotificationListener` service and `SystemNotificationManagerImpl` to improve logging and standardize notification object creation.&#10;&#10;**Key Changes:**&#10;&#10;- **SystemNotificationManagerImpl.kt:**&#10;    - Replaced `ActiveStatusBarNotificationFactory.create(sbn)` with `AppNotificationFactory.create(sbn)` in the `when` block of `processNotification()` for logging purposes. This standardizes the factory used for creating `AppNotification` instances from `StatusBarNotification` objects.&#10;&#10;- **NotificationListener.kt:**&#10;    - `onListenerConnected()`: Added an `AppLogger.d()` call to log when the listener connects.&#10;    - `onListenerDisconnected()`: The order of operations within this method was slightly changed, but the core logic remains the same (cancelling, updating `systemNotificationManager`, setting `serviceInstanceFlow` to null).&#10;    - `DebugTests` class: The error message in the `init` block was corrected from &quot;Deve ser usada apenas em buids de begug&quot; to &quot;Deve ser usada apenas em buids de Debug&quot;.&#10;    - `Companion` object: A new empty function `setInstanceIfAlreadyConnected()` was added. *(Note: This function is currently a stub and does not contain any implementation.)*&#10;&#10;- **File Deletion:**&#10;    - `app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/Notes`: This file was deleted.">
+      <option name="closed" value="true" />
+      <created>1755980828682</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1755980828682</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Refactor: Remove redundant `AppLogger.d()` overload&#10;&#10;This commit removes the no-argument `AppLogger.d()` overload as it was redundant. The `AppLogger.d(msg: String, vararg relevantObjects: Any)` method can be called with an empty string to achieve the same result.&#10;&#10;Calls to the removed overload in `RescheduleReportNotificationsOnBootUseCase.kt` and `NotificationListener.kt` have been updated to `AppLogger.d(&quot;&quot;)`.&#10;&#10;A minor formatting change (newline) was made in `SystemNotificationManagerImpl.kt`.">
+      <option name="closed" value="true" />
+      <created>1755983511655</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1755983511655</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Refactor: Improve NotificationListener stability and instance management&#10;&#10;This commit refactors the `NotificationListener` service to improve its stability, instance handling, and the way it interacts with `SystemNotificationManager`.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   Removed the local `systemNotificationManager` property. The `SystemNotificationManagerImpl` instance is now directly created and assigned to `serviceInstanceFlow.value` in `onListenerConnected()`, and its `NotificationListener` dependency is passed in the constructor.&#10;    *   In `onListenerDisconnected()`, `serviceInstanceFlow.value?.clearNotificationListenerInstance()` is now called instead of trying to set a local `notificationListener` property on a potentially stale `systemNotificationManager` instance.&#10;    *   **Instance Retrieval (`Companion` object):**&#10;        *   `getOrNull()`: Removed.&#10;        *   `getWhenReady()`: Removed.&#10;        *   `getWhenReady(timeOut: Long)`: Renamed to `getWhenReadyOrNull()`.&#10;            *   This function now attempts to restart the listener via `NotificationServiceManager.instance?.restartListener()` if the service instance is not immediately available.&#10;            *   It uses a timeout of 2 seconds (`withTimeoutOrNull(2_000L)`) to wait for the instance.&#10;            *   Added logging to indicate if restarting the listener resolved the instance retrieval.&#10;        *   `setInstanceIfAlreadyConnected()`: Removed as its functionality is no longer needed with the new instance management.&#10;    *   `onStartCommand()`: Removed an `AppLogger.d(&quot;&quot;)` call.&#10;    *   Calls to `systemNotificationManager` methods (e.g., `emitNotifications`, `processNotification`, `processActiveNotifications`) are now safely invoked on `serviceInstanceFlow.value?`.&#10;    *   `isListenerConnected()`: Improved the check for active listeners to avoid false positives by splitting the `enabled_notification_listeners` string and checking for an exact match of the component name.&#10;&#10;These changes aim to make the `NotificationListener` more robust by ensuring that `SystemNotificationManager` always has a valid `NotificationListener` instance when connected and by providing a more reliable way to obtain the service instance.">
+      <option name="closed" value="true" />
+      <created>1755990430568</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1755990430568</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Fix: Use specific icon for uninstalled managed apps&#10;&#10;This commit updates the `ManagedAppsAdapter` to use a new, specific icon (`vec_alert_uninstalled_app.xml`) when a managed app's icon cannot be loaded, typically indicating the app has been uninstalled.&#10;&#10;**Key Changes:**&#10;&#10;*   **`ManagedAppsAdapter.kt`:**&#10;    *   In the `ViewHolder`'s `bind` method, the Glide error placeholder for the app icon (`ivAppIcon`) was changed from `R.drawable.vec_app` to `R.drawable.vec_alert_uninstalled_app`.&#10;*   **New Drawable:**&#10;    *   Added `app/src/main/res/drawable/vec_alert_uninstalled_app.xml`. This is a vector drawable representing an alert triangle, filled with `@color/md_theme_error`.&#10;&#10;This change provides clearer visual feedback to the user when a previously managed app is no longer installed on the device.">
+      <option name="closed" value="true" />
+      <created>1755990915140</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1755990915140</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Refactor: Enhance LogFragment and Logging Mechanisms&#10;&#10;This commit introduces significant improvements to the debug logging functionality and the underlying logging mechanism.&#10;&#10;**Key Changes:**&#10;&#10;*   **LogFragment &amp; LogAdapter (`LogFragment.kt`, `LogAdapter.kt`, `item_log.xml`):**&#10;    *   Log items now display timestamp, caller information, the main message, and collapsible/expandable relevant objects.&#10;    *   Long-pressing a log item copies the full log details (timestamp, caller, message, and formatted relevant objects) to the clipboard.&#10;    *   The layout (`item_log.xml`) has been redesigned to accommodate the new structured log display.&#10;    *   `LogFragment` now uses a popup menu (triggered by an icon in its action bar) for actions like &quot;Clear logs&quot; and a new &quot;Export logs&quot; feature.&#10;    *   The FAB for clearing logs has been removed; this action is now in the popup menu.&#10;    *   The title and action bar for `LogFragment` are now configured in `MyFragment.kt`.&#10;&#10;*   **LogViewModel (`LogViewModel.kt`):**&#10;    *   Filtering now considers the message, caller, relevant objects (converted to string), and timestamp.&#10;    *   Added `exportToFile()` method to save all logs to a &quot;logs.txt&quot; file in the app's data directory. Logs are formatted with timestamp, caller, message, and relevant objects.&#10;&#10;*   **AppLogger (`AppLogger.kt`):**&#10;    *   Now stores `AppLog` objects directly in preferences instead of just their JSON string representation. This involves updating the Moshi adapter to handle a list of `AppLog`.&#10;    *   Improved Logcat output for `AppLogger.d()` to be more readable.&#10;&#10;*   **JsonFormatter (`JsonFormatter.kt`):**&#10;    *   Simplified `JsonFormatter`: removed `formatLogMessage` and `formatDataClassLike`.&#10;    *   `formatRelevantObjects` now uses Moshi to serialize a list of objects to a pretty-printed JSON string.&#10;&#10;*   **IncomingNotificationProcessorImpl (`IncomingNotificationProcessorImpl.kt`):**&#10;    *   Enhanced `AppLogger.d` calls with more descriptive messages and inclusion of the notification title.&#10;    *   Refactored `processCondition()` and `processNoConditionRule()`:&#10;        *   The logic for determining `PerformAction` (Snooze/Cancel) when a notification should be blocked is now directly within these methods, removing the need for the separate `decideHowToBlockNotification()` method, which was deleted.&#10;&#10;*   **SystemNotificationManagerImpl (`SystemNotificationManagerImpl.kt`):**&#10;    *   Improved logging in `processNotificationRule()` to include the notification title when logging the processing result (Allow, AppNotManaged, Cancel, Snooze).&#10;&#10;*   **String Resources (`strings.xml`):**&#10;    *   Added `exportar_logs` string for the new export functionality.&#10;&#10;*   **Layouts (`fragment_log.xml`):**&#10;    *   Updated to include `view_activity_header` for the action bar.&#10;    *   Removed the explicit title TextView and icon, as this is now handled by the included action bar.&#10;    *   Removed the `FloatingActionButton` for clearing logs.&#10;&#10;*   **Minor (`App.kt`):**&#10;    *   Removed an unnecessary blank line.">
+      <option name="closed" value="true" />
+      <created>1756058001625</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1756058001625</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Refactor: Update UI for compact manageable app notification item&#10;&#10;This commit updates the UI for the compact version of the manageable app notification item and increments the app version code.&#10;&#10;**Key Changes:**&#10;&#10;*   **`item_app_notification_manageable_compact.xml`:**&#10;    *   `iv_app_icon`:&#10;        *   Size changed from `30dp`x`30dp` to `24dp`x`24dp`.&#10;        *   Removed background drawable (`@drawable/back_circle`).&#10;        *   Padding changed from `6dp` to `2dp`.&#10;        *   Tint changed from `?colorOnPrimary` to `?colorPrimary`.&#10;    *   `tv_title`:&#10;        *   Constrained bottom to `iv_app_icon`.&#10;    *   `iv_menu`:&#10;        *   Removed top margin (`-8dp`).&#10;        *   Constrained bottom to `iv_app_icon`.&#10;    *   `tvContent`:&#10;        *   Removed horizontal padding (`8dp`).&#10;*   **`app/build.gradle.kts`:**&#10;    *   `versionCode` incremented from `32` to `33`.">
+      <option name="closed" value="true" />
+      <created>1756058660616</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1756058660616</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Refactor: Improve NotificationListener stability and management&#10;&#10;This commit refactors the notification listening mechanism to enhance its stability and management. The `NotificationServiceManager` has been renamed to `NotificationListenerManagerService` for clarity.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListenerManagerService.kt` (formerly `NotificationServiceManager.kt`):**&#10;    *   Renamed the class from `NotificationServiceManager` to `NotificationListenerManagerService`.&#10;    *   The method `isNotificationListenerActive()` was renamed to `isNotificationListenerConnected()` for better semantic accuracy.&#10;    *   The check interval (`checkIntervalMs`) for ensuring the listener is connected is now configurable based on the build type (5 seconds for debug, 60 seconds for release).&#10;    *   PendingIntents for opening notification settings and the app are now created with `FLAG_IMMUTABLE`.&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   The `NotificationServiceManager` reference in KDocs and logic was updated to `NotificationListenerManagerService`.&#10;    *   Removed `isListenerConnected()` method as this responsibility is now handled by `NotificationListenerManagerService.isNotificationListenerConnected()`.&#10;    *   In `getWhenReadyOrNull()`, if the service instance is null, it now attempts to restart the listener via `NotificationListenerManagerService.instance?.restartListener()`.&#10;    *   In `onListenerConnected()`, `debugTests` is now initialized directly if `BuildConfig.DEBUG` is true.&#10;    *   In `onListenerDisconnected()`:&#10;        *   Added `AppLogger.d()` call.&#10;        *   The `SystemNotificationManager` instance is now properly closed (`serviceInstanceFlow.value?.close()`).&#10;        *   `debugTests?.cancel()` is called to prevent crashes related to pending debug operations.&#10;    *   **`DebugTests` class:**&#10;        *   Now implements `CoroutineScope by MainScope()`.&#10;        *   Error jobs (`validationCallbackErrorJob`, `errorJob`) are now launched using the class's `CoroutineScope`.&#10;        *   `cancelCrashIfNotificationDoesNotRemove()` now only accesses `BuildConfig.DEBUG` implicitly through the `debugTests` instance check.&#10;&#10;*   **`SystemNotificationManagerImpl.kt`:**&#10;    *   Replaced calls to `notificationListener?.isListenerConnected()` with `NotificationListenerManagerService.instance?.isNotificationListenerConnected()`.&#10;    *   Renamed `clearNotificationListenerInstance()` to `close()`. This method now also cancels the coroutine scope of the `SystemNotificationManagerImpl` instance.&#10;    *   The KDoc for `close()` was updated to reflect its new responsibilities.&#10;&#10;*   **`SystemNotificationManager.kt` (Interface):**&#10;    *   Renamed `clearNotificationListenerInstance()` to `close()`.&#10;&#10;*   **`AndroidManifest.xml`:**&#10;    *   Updated the service name from `.framework.notification_listener_service.NotificationServiceManager` to `.framework.notification_listener_service.NotificationListenerManagerService`.&#10;&#10;*   **`App.kt`:**&#10;    *   Updated references from `NotificationServiceManager` to `NotificationListenerManagerService` when starting/restarting the service.&#10;&#10;*   **`ProfileViewModel.kt`:**&#10;    *   Updated `NotificationServiceManager.stopSelf()` to `NotificationListenerManagerService.stopSelf()`.&#10;&#10;These changes aim to make the notification listening component more robust, prevent potential crashes, and improve code clarity.">
+      <option name="closed" value="true" />
+      <created>1756063306046</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1756063306046</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Refactor: Improve notification processing and debug tests&#10;&#10;This commit introduces a null check before attempting to load a notification's large icon and refactors the debug test for notification removal.&#10;&#10;**Key Changes:**&#10;&#10;*   **`ProcessIncomingNotificationUseCase.kt`:**&#10;    *   Added a null check for `targetNotification.largeIcon` before attempting to load it as a drawable and save it as a bitmap. This prevents potential `NullPointerExceptions` if a notification does not have a large icon.&#10;&#10;*   **`DebugTests.kt`:**&#10;    *   The `testNotificationRemoval` function was refactored. Instead of using `withTimeoutOrNull` and `first` to wait for a specific notification removal, it now launches a separate coroutine that will raise an error after a 1-second delay if the notification hasn't been removed.&#10;    *   It now collects `NotificationListener.onNotificationRemovedFlow` and cancels the error-throwing job if the target notification is removed. This provides a more robust way to test notification cancellation.&#10;&#10;*   **`AppLogger.kt`:**&#10;    *   Minor whitespace changes (removed extra blank lines).">
+      <option name="closed" value="true" />
+      <created>1756164548885</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1756164548885</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Refactor: Adjust `rvNots` height in `fragment_home.xml`&#10;&#10;The `layout_height` of the `RecyclerView` with ID `rvNots` in `fragment_home.xml` has been changed from `82dp` to `wrap_content`.&#10;Additionally, the `tools:layout_height=&quot;80dp&quot;` attribute was removed.">
+      <option name="closed" value="true" />
+      <created>1756247210644</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1756247210644</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Refactor: Improve NotificationListener stability and logging&#10;&#10;This commit introduces several changes to enhance the stability and logging of the `NotificationListener` service and its interactions with `SystemNotificationManagerImpl`.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   `onListenerConnected()`: Now calls `systemNotificationManager.emitNotifications()` to ensure notifications are processed immediately upon connection.&#10;    *   `onNotificationRemoved()`: Wrapped the logic in `launch(IO)` to ensure operations are performed on an IO thread.&#10;&#10;*   **`SystemNotificationManagerImpl.kt`:**&#10;    *   Renamed `onConnectedActions` to `onConnectedListeners` for clarity.&#10;    *   Updated log messages in `processNotification()` for better context (e.g., &quot;Processing result: ...&quot; to &quot;Result: ...&quot;).&#10;&#10;*   **`NotificationListenerManagerService.kt`:**&#10;    *   Moved the `setupNotificationListener()` logic from `App.kt` into the `onStartCommand()` of this service. This ensures the listener is checked and connected (if necessary) when the service starts.&#10;    *   Added an `AppLogger.d()` call in `connectListener()` for better traceability.&#10;    *   The `restartListener()` method is now annotated with `@Suppress(&quot;unused&quot;)` as it's not directly called within the class but might be used externally.&#10;&#10;*   **`App.kt`:**&#10;    *   Removed the `setupNotificationListener()` method as its functionality has been moved to `NotificationListenerManagerService`.&#10;&#10;*   **`HomeFragment.kt`:**&#10;    *   Removed a `TODO` comment in the `lifecycleScope.launch` block that collects `systemNotificationManager.getActiveWithOngoingNotificationsFlow()`.&#10;&#10;*   **`AppLogger.kt`:**&#10;    *   Simplified the Logcat output in `writeToLog(log: AppLog)` by removing the detailed printing of `relevantObjects`. The log now only includes the caller and the message. This was done to prevent overly verbose log entries.">
+      <option name="closed" value="true" />
+      <created>1756255324989</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1756255324989</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored.">
+      <option name="closed" value="true" />
+      <created>1756510819360</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1756510819360</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
+    <servers />
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ID_WIDTH">
+                <map>
+                  <entry key="Table.Default.Author.ColumnIdWidth" value="118" />
+                  <entry key="Table.Default.Date.ColumnIdWidth" value="98" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Refactor: Improve HomeFragment layout and animations&#10;&#10;This commit refactors the layout and animations in `HomeFragment`.&#10;&#10;**Key Changes:**&#10;&#10;- **Layout (`fragment_home.xml`):**&#10;    - Removed `ll_apps_card_top` and `ll_apps_card_bottom`. The content is now managed within `rv_apps_background` (a `LinearLayout` acting as a background for the RecyclerView) and the `rvApps` itself.&#10;    - `rv_apps_background` now holds the &quot;Apps gerenciados&quot; title.&#10;    - `rvApps` is positioned on top of `rv_apps_background` with margins.&#10;    - `empty_view` is now constrained to the top of `rv_apps_background` and has a fixed height.&#10;    - Lottie animation view (`lottie_view`) within `empty_view` is smaller.&#10;    - Added a `Barrier` to manage the bottom position of `rv_apps_background` based on whether `rvApps` or `empty_view` is visible.&#10;    - `ll_active_notifications` is now always visible by default (visibility is likely controlled by code).&#10;&#10;- **Animations (`HomeFragment.kt`):**&#10;    - `animateRecyclerView()`:&#10;        - Simplified significantly due to layout changes.&#10;        - Now animates the left/right margins and alpha of `rv_apps_background`.&#10;        - Animates the alpha of `emptyView`.&#10;        - Removed logic related to `llAppsCardBottom` and `llAppsCardTop` height and margin animations.&#10;    - `updateUiActiveNotifications()`: Removed the line that sets `llActiveNotifications.isGone = false` as it's now visible by default in the layout.&#10;    - `updateUiApps()`: Removed lines that hide/show `llAppsCardTop` and `llAppsCardBottom` as these views no longer exist.&#10;&#10;**Afazeres:**&#10;- Added a new item: &quot;dar opçao de processar ou nao notificações persistentes via regra&quot; (provide an option to process or not process persistent notifications via rules)." />
+    <MESSAGE value="Tweak: Add &quot;post snoozed/hidden notifications on app removal&quot; to TODO list&#10;&#10;This commit adds a new item to the &quot;Afazeres&quot; (TODO list) to implement functionality that posts any snoozed or hidden notifications when the application is removed." />
+    <MESSAGE value="Refactor: Improve logic for &quot;Post Now&quot; option in context menu&#10;&#10;The condition for showing the &quot;Post Now&quot; option in the notification context menu has been simplified.&#10;&#10;Previously, the condition was `(!not.permaHidden &amp;&amp; not.isSnoozed) || not.isSystemSnoozed`.&#10;It has been changed to `!not.permaHidden &amp;&amp; (not.isSnoozed || not.isSystemSnoozed)`.&#10;&#10;This change ensures that the &quot;Post Now&quot; option is shown if the notification is not permanently hidden AND it is either user-snoozed or system-snoozed." />
+    <MESSAGE value="add fragment manage notifications no tablet nao  deu certo" />
+    <MESSAGE value="Refactor: Add timeout to `NotificationListener.getWhenReady()`&#10;&#10;This commit introduces an overloaded version of `NotificationListener.getWhenReady()` that accepts a timeout parameter.&#10;&#10;- The new `getWhenReady(timeOut: Long)` function will return `null` if the service instance is not available within the specified timeout.&#10;- The existing `getWhenReady()` function, which waits indefinitely, remains unchanged.&#10;&#10;This change allows callers to avoid indefinite blocking if the `NotificationListener` service takes too long to become available." />
+    <MESSAGE value="Refactor: Adjust timeout for NotificationListener access&#10;&#10;The `PostAppSnoozedNotificationsUseCase` has been updated to use the new `NotificationListener.getWhenReady(timeoutMillis)` method. The timeout for obtaining the `NotificationListener` service has been adjusted from 500ms within a `withTimeoutOrNull` block to a direct 500ms timeout parameter in the `getWhenReady` call.&#10;&#10;This change streamlines the process of accessing the notification listener service while maintaining the timeout mechanism to prevent the app from hanging if notification access permission is not granted." />
+    <MESSAGE value="Update pt-BR translation for notification list title&#10;&#10;The string &quot;Lista_de_notifica_es_ativas_e_adiadas&quot; was updated to &quot;Lista de notificações ativas&quot;.&#10;This change affects the title displayed for the list of active and snoozed notifications." />
+    <MESSAGE value="Refactor: Move notification context menu creation to ViewModel and display active notifications on Home screen - MUST FIX SCROLL ANIMATION&#10;&#10;This commit refactors the creation of the context menu for managing notifications by moving the logic from `ManageNotificationsFragment` to `ManageNotificationsViewModel`. It also introduces a horizontal RecyclerView on the `HomeFragment` to display active notifications.&#10;&#10;**Key Changes:**&#10;&#10;**1. Context Menu Creation in `ManageNotificationsViewModel`:**&#10;    - A new method `createPopUpMenu()` is added to `ManageNotificationsViewModel`.&#10;        - This method takes a `ManageableNotification` and an action callback.&#10;        - It constructs a `PopupMenu` with appropriate actions (Post Now, Snooze, Show, Hide, Manage, Remove Record, Cancel, Copy) based on the notification's state.&#10;    - A sealed class `NotificationMenuAction` is introduced to represent the different actions that can be performed from the context menu.&#10;    - Both `ManageNotificationsFragment` and `HomeFragment` now call `viewModelManageNotifications.createPopUpMenu()` to display the context menu.&#10;&#10;**2. Active Notifications on `HomeFragment`:**&#10;    - `fragment_home.xml`:&#10;        - A new `RecyclerView` (`rvNots`) is added to display active notifications horizontally.&#10;        - The search EditText (`edt_search`) is moved below the &quot;Apps gerenciados&quot; title and is only visible when there are managed apps.&#10;        - The `divider` is initially invisible.&#10;        - The &quot;Notificações ativas&quot; section is now populated by `rvNots`.&#10;    - `HomeFragment.kt`:&#10;        - A new `ActiveNotificationsAdapter` is introduced to display `ManageableNotification` items in a compact horizontal layout.&#10;        - `setupActiveNotificationsView()`:&#10;            - Initializes `rvNots` with a `LinearLayoutManager` (horizontal).&#10;            - Collects active notifications from `NotificationListener.getActiveWithOngoingNotificationsFlow()`.&#10;            - Submits the list of active notifications (converted to `ManageableNotification`) to the `ActiveNotificationsAdapter`.&#10;            - Handles context menu clicks on active notifications, delegating actions to `ManageNotificationsViewModel`.&#10;        - `animateRecyclerView()` is renamed to `setupRecyclerViewAnimation()`.&#10;        - The visibility of `edtSearch` is now tied to whether the list of managed apps is empty or not.&#10;    - `item_app_notification_manageable_compact.xml`: New layout for displaying active notifications in the horizontal list on the Home screen.&#10;    - `ActiveNotificationsAdapter.kt`: New adapter for the `rvNots` RecyclerView.&#10;        - Uses `ItemAppNotificationManageableCompactBinding`.&#10;        - Displays the notification title, app icon, and content.&#10;        - Provides a menu button to trigger the context menu.&#10;        - Uses `FlexboxLayoutManager.LayoutParams` for item sizing (though `LinearLayoutManager` is used in `HomeFragment`).&#10;&#10;**3. Adapter Renaming:**&#10;    - `ManageNotificationsAdapter.kt` is renamed to `ManagedNotificationsAdapter.kt` for clarity.&#10;&#10;**4. Dependency:**&#10;    - `build.gradle.kts`: Added `com.google.android.flexbox:flexbox:3.0.0` dependency (though it seems `LinearLayoutManager` is used for the active notifications list).&#10;&#10;**Overall Impact:**&#10;- Centralizes the logic for creating the notification context menu, making it reusable.&#10;- Enhances the Home screen by providing a quick overview of currently active notifications.&#10;- Improves code organization and clarity." />
+    <MESSAGE value="Fix: Stuttering in recyclerview animation&#10;&#10;This commit addresses an issue where the search bar visibility was not being handled correctly in `HomeFragment`.&#10;&#10;**Key Changes:**&#10;&#10;- **HomeFragment.kt:**&#10;    - Removed the second `binding.edtSearch.isVisible = apps?.isNotEmpty() == true` line within the delayed `lifecycleScope.launch` block. This line was redundant and potentially caused flickering or incorrect visibility states.&#10;    - The search bar will now only be made visible if `(apps?.size ?: 0) &gt; 9`.&#10;- **fragment_home.xml:**&#10;    - Moved the `edt_search` `AppCompatEditText` to appear above the &quot;Notificações ativas&quot; section.&#10;    - Adjusted top margins for &quot;Notificações ativas&quot; and &quot;Apps gerenciados&quot; section titles to `4dp`.&#10;    - Updated the top margin of the `emptyView` to `56dp` (was `116dp`) to account for the search bar's new position.&#10;&#10;These changes ensure that the search bar's visibility is determined by a single condition and its placement in the layout is more consistent." />
+    <MESSAGE value="must fix" />
+    <MESSAGE value="Refactor: Ensure views are not null before animation in HomeFragment&#10;&#10;This commit adds null checks for `rvNots` and `llActiveNotifications`&#10;in the `setupRecyclerViewAnimation` function within `HomeFragment`&#10;to prevent potential null pointer exceptions during view animation setup.&#10;&#10;Additionally, it applies the alpha animation (fade out) to&#10;`llActiveNotifications` similar to how it was applied to `emptyView`." />
+    <MESSAGE value="Refactor: Use new use case for posting snoozed and backup notifications&#10;&#10;This commit introduces and uses a new use case, `PostAppSnoozedAndBackupNotificationsUseCase`, in `ViewManagedAppViewModel` when an app is deleted.&#10;&#10;This new use case is responsible for:&#10;1. Posting all snoozed notifications for the app that are still available in the Android system using `PostAppSnoozedNotificationsUseCase`.&#10;2. Iterating through any remaining backup notification alarm schedules in the database.&#10;3. For each remaining schedule (representing a snoozed notification that might have been lost by the system), it posts a backup notification.&#10;4. It only processes notifications that were originally snoozed by a rule (`Origin.RULE`).&#10;&#10;**Key Changes:**&#10;&#10;- **New Use Case:**&#10;    - `PostAppSnoozedAndBackupNotificationsUseCase`:&#10;        - Injected with `DeleteSnoozedNotificationUseCase`, `BackupNotificationAlarmScheduler`, `GetSnoozedNotificationByKeyUseCase`, `BackupNotificationManager`, and `PostAppSnoozedNotificationsUseCase`.&#10;        - When invoked with a `packageName`:&#10;            - Calls `postAppSnoozedNotificationsUseCase` to handle system-available snoozed notifications.&#10;            - Retrieves all backup alarm schedules via `backupNotificationAlarmScheduler.getAllSchedules()`.&#10;            - For each scheduled key:&#10;                - Fetches the `SnoozedNotification`.&#10;                - If the notification's origin is `Origin.RULE`, it shows a backup notification via `backupNotificationManager`, deletes the snoozed notification record, and cancels the backup alarm.&#10;- **ViewManagedAppViewModel:**&#10;    - `deleteApp()`: Now calls `postAppSnoozedAndBackupNotificationsUseCase(it)` instead of `postAppSnoozedNotificationsUseCase(it)` after deleting a managed app.&#10;- **PostAppSnoozedNotificationsUseCase:**&#10;    - Added a comment clarifying that it only processes notifications snoozed by rules, as handling user-snoozed notifications here could break the snoozing of active app notifications." />
+    <MESSAGE value="Refactor: Enhance AppLogger with structured logging and update usage&#10;&#10;This commit refactors the `AppLogger` to support structured logging by introducing an `AppLog` data class. This allows for logging a message along with relevant objects and automatically captures the caller and timestamp.&#10;&#10;The `AppLogger.log(String)` method has been replaced with `AppLogger.d(msg: String, vararg relevantObjects: Any)`. The old `log` methods for specific object types (`SnoozedNotification`, `ActiveStatusBarNotification`, `AppNotification`) have been removed in favor of passing these objects directly to the new `d` method.&#10;&#10;Log calls throughout the codebase have been updated to use the new `AppLogger.d()` method.&#10;&#10;**Key Changes:**&#10;&#10;- **AppLogger.kt:**&#10;    - Introduced `AppLog(msg: String, relevantObjects: List&lt;Any&gt;, caller: String, timeStamp: Long)` data class.&#10;    - `writeToLog(log: AppLog)`:&#10;        - Now serializes the `AppLog` object to JSON using Moshi before saving to preferences.&#10;        - Logs a formatted string to Logcat including caller, message, and relevant objects.&#10;    - New `d()` and `d(msg: String, vararg relevantObjects: Any)` methods:&#10;        - Automatically determine the caller's class and method name.&#10;        - Create an `AppLog` instance and pass it to `writeToLog`.&#10;    - Removed old `log(String)`, `log(SnoozedNotification)`, `log(ActiveStatusBarNotification)`, and `log(AppNotification)` methods.&#10;&#10;- **Codebase-wide:**&#10;    - Replaced calls to `Log.d(&quot;USUK&quot;, ...)` and the old `AppLogger.log(...)` methods with the new `AppLogger.d(...)`.&#10;    - `SystemNotificationManagerImpl.kt`: Added logging to the `notificationListener` property setter and getter to trace its instance changes.&#10;    - `InsertSnoozedNotificationUseCase.kt`: Added `AppLogger.d` call.&#10;    - `SnoozeNotificationByRuleUseCase.kt`: Added `AppLogger.d` call.&#10;    - `BackupNotificationAlarmSchedulerImpl.kt`: Added `AppLogger.d` call to `scheduleAlarm` and `cancelAlarm`.&#10;    - `NotificationServiceManager.kt`: Updated `AppLogger.d` usage in `isNotificationListenerActive`.&#10;    - `IncomingNotificationProcessorImpl.kt`: Updated `AppLogger.d` usage.&#10;    - `ProcessIncomingNotificationUseCase.kt`: Updated `AppLogger.d` usage.&#10;    - `AppNotificationRepositoryImpl.kt`: Updated `AppLogger.d` usage.&#10;    - `SnoozedNotificationRepositoryImpl.kt`: Removed `AppLogger.log` call as it's now handled by `InsertSnoozedNotificationUseCase`.&#10;    - `RescheduleReportNotificationsOnBootUseCase.kt`: Updated `AppLogger.d` usage.&#10;    - `HomeFragment.kt`:&#10;        - Removed `setupRecyclerViewAnimation()` method and its related view interactions/animations.&#10;        - In `onResume`, the warnings container (`binding.containerWarnings`) is now cleared before potentially adding new warnings. This addresses an issue with duplicated views after navigating back from the battery optimization screen.&#10;        - In `setupActiveNotificationsView`, the `llActiveNotifications` visibility is now directly tied to the emptiness of the active notifications list.&#10;        - Added a Log.d call in `onViewCreated` to trace `NotificationListener.getWhenReady()`.&#10;    - `item_app_notification_manageable_compact.xml`:&#10;        - Changed `layout_height` of root to `wrap_content`.&#10;        - Changed background of `parent` ConstraintLayout.&#10;        - `tvContent`:&#10;            - Enabled `singleLine`, `ellipsize=&quot;marquee&quot;`, `scrollHorizontally=&quot;true&quot;`.&#10;            - Changed `maxLines` to 1.&#10;            - Added horizontal padding and set gravity to start.&#10;    - `fragment_home.xml`:&#10;        - `llActiveNotifications`:&#10;            - Changed background.&#10;            - Set initial visibility to `gone`.&#10;        - `rvNots`: Changed `layout_width` to `match_parent` and updated `tools:listitem`.&#10;        - Removed `rv_apps_background` LinearLayout and its `TextView`.&#10;        - Removed `barrier`.&#10;        - `empty_view`:&#10;            - Changed `layout_width` to `match_parent` and added `elevation`.&#10;            - Constrained to parent top and bottom.&#10;        - `rvApps`:&#10;            - Changed `layout_height` to `match_parent` and removed margin attributes.&#10;    - `view_warning_battery_optimizations.xml`:&#10;        - Removed `chip_restriction_removed`.&#10;&#10;- **NotificationListener.kt:**&#10;    - Added `AppLogger.d()` call in `onStartCommand`.&#10;    - Clarified KDoc for `getWhenReady(timeOut: Long)`.&#10;&#10;- **Minor UI Adjustments:**&#10;    - `ActiveNotificationsAdapter.kt`: Made `tvContent` `isSelected = true` to enable marquee if text is too long.&#10;    - `HomeFragment.kt`: In `showBatteryRestrictionsWarning`, removed click listener from `chip_restriction_removed` as the chip itself was removed." />
+    <MESSAGE value="++" />
+    <MESSAGE value="Refactor: Update NotificationListener logging and factory usage&#10;&#10;This commit refactors the `NotificationListener` service and `SystemNotificationManagerImpl` to improve logging and standardize notification object creation.&#10;&#10;**Key Changes:**&#10;&#10;- **SystemNotificationManagerImpl.kt:**&#10;    - Replaced `ActiveStatusBarNotificationFactory.create(sbn)` with `AppNotificationFactory.create(sbn)` in the `when` block of `processNotification()` for logging purposes. This standardizes the factory used for creating `AppNotification` instances from `StatusBarNotification` objects.&#10;&#10;- **NotificationListener.kt:**&#10;    - `onListenerConnected()`: Added an `AppLogger.d()` call to log when the listener connects.&#10;    - `onListenerDisconnected()`: The order of operations within this method was slightly changed, but the core logic remains the same (cancelling, updating `systemNotificationManager`, setting `serviceInstanceFlow` to null).&#10;    - `DebugTests` class: The error message in the `init` block was corrected from &quot;Deve ser usada apenas em buids de begug&quot; to &quot;Deve ser usada apenas em buids de Debug&quot;.&#10;    - `Companion` object: A new empty function `setInstanceIfAlreadyConnected()` was added. *(Note: This function is currently a stub and does not contain any implementation.)*&#10;&#10;- **File Deletion:**&#10;    - `app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/Notes`: This file was deleted." />
+    <MESSAGE value="Refactor: Remove redundant `AppLogger.d()` overload&#10;&#10;This commit removes the no-argument `AppLogger.d()` overload as it was redundant. The `AppLogger.d(msg: String, vararg relevantObjects: Any)` method can be called with an empty string to achieve the same result.&#10;&#10;Calls to the removed overload in `RescheduleReportNotificationsOnBootUseCase.kt` and `NotificationListener.kt` have been updated to `AppLogger.d(&quot;&quot;)`.&#10;&#10;A minor formatting change (newline) was made in `SystemNotificationManagerImpl.kt`." />
+    <MESSAGE value="Refactor: Improve NotificationListener stability and instance management&#10;&#10;This commit refactors the `NotificationListener` service to improve its stability, instance handling, and the way it interacts with `SystemNotificationManager`.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   Removed the local `systemNotificationManager` property. The `SystemNotificationManagerImpl` instance is now directly created and assigned to `serviceInstanceFlow.value` in `onListenerConnected()`, and its `NotificationListener` dependency is passed in the constructor.&#10;    *   In `onListenerDisconnected()`, `serviceInstanceFlow.value?.clearNotificationListenerInstance()` is now called instead of trying to set a local `notificationListener` property on a potentially stale `systemNotificationManager` instance.&#10;    *   **Instance Retrieval (`Companion` object):**&#10;        *   `getOrNull()`: Removed.&#10;        *   `getWhenReady()`: Removed.&#10;        *   `getWhenReady(timeOut: Long)`: Renamed to `getWhenReadyOrNull()`.&#10;            *   This function now attempts to restart the listener via `NotificationServiceManager.instance?.restartListener()` if the service instance is not immediately available.&#10;            *   It uses a timeout of 2 seconds (`withTimeoutOrNull(2_000L)`) to wait for the instance.&#10;            *   Added logging to indicate if restarting the listener resolved the instance retrieval.&#10;        *   `setInstanceIfAlreadyConnected()`: Removed as its functionality is no longer needed with the new instance management.&#10;    *   `onStartCommand()`: Removed an `AppLogger.d(&quot;&quot;)` call.&#10;    *   Calls to `systemNotificationManager` methods (e.g., `emitNotifications`, `processNotification`, `processActiveNotifications`) are now safely invoked on `serviceInstanceFlow.value?`.&#10;    *   `isListenerConnected()`: Improved the check for active listeners to avoid false positives by splitting the `enabled_notification_listeners` string and checking for an exact match of the component name.&#10;&#10;These changes aim to make the `NotificationListener` more robust by ensuring that `SystemNotificationManager` always has a valid `NotificationListener` instance when connected and by providing a more reliable way to obtain the service instance." />
+    <MESSAGE value="Fix: Use specific icon for uninstalled managed apps&#10;&#10;This commit updates the `ManagedAppsAdapter` to use a new, specific icon (`vec_alert_uninstalled_app.xml`) when a managed app's icon cannot be loaded, typically indicating the app has been uninstalled.&#10;&#10;**Key Changes:**&#10;&#10;*   **`ManagedAppsAdapter.kt`:**&#10;    *   In the `ViewHolder`'s `bind` method, the Glide error placeholder for the app icon (`ivAppIcon`) was changed from `R.drawable.vec_app` to `R.drawable.vec_alert_uninstalled_app`.&#10;*   **New Drawable:**&#10;    *   Added `app/src/main/res/drawable/vec_alert_uninstalled_app.xml`. This is a vector drawable representing an alert triangle, filled with `@color/md_theme_error`.&#10;&#10;This change provides clearer visual feedback to the user when a previously managed app is no longer installed on the device." />
+    <MESSAGE value="Refactor: Enhance LogFragment and Logging Mechanisms&#10;&#10;This commit introduces significant improvements to the debug logging functionality and the underlying logging mechanism.&#10;&#10;**Key Changes:**&#10;&#10;*   **LogFragment &amp; LogAdapter (`LogFragment.kt`, `LogAdapter.kt`, `item_log.xml`):**&#10;    *   Log items now display timestamp, caller information, the main message, and collapsible/expandable relevant objects.&#10;    *   Long-pressing a log item copies the full log details (timestamp, caller, message, and formatted relevant objects) to the clipboard.&#10;    *   The layout (`item_log.xml`) has been redesigned to accommodate the new structured log display.&#10;    *   `LogFragment` now uses a popup menu (triggered by an icon in its action bar) for actions like &quot;Clear logs&quot; and a new &quot;Export logs&quot; feature.&#10;    *   The FAB for clearing logs has been removed; this action is now in the popup menu.&#10;    *   The title and action bar for `LogFragment` are now configured in `MyFragment.kt`.&#10;&#10;*   **LogViewModel (`LogViewModel.kt`):**&#10;    *   Filtering now considers the message, caller, relevant objects (converted to string), and timestamp.&#10;    *   Added `exportToFile()` method to save all logs to a &quot;logs.txt&quot; file in the app's data directory. Logs are formatted with timestamp, caller, message, and relevant objects.&#10;&#10;*   **AppLogger (`AppLogger.kt`):**&#10;    *   Now stores `AppLog` objects directly in preferences instead of just their JSON string representation. This involves updating the Moshi adapter to handle a list of `AppLog`.&#10;    *   Improved Logcat output for `AppLogger.d()` to be more readable.&#10;&#10;*   **JsonFormatter (`JsonFormatter.kt`):**&#10;    *   Simplified `JsonFormatter`: removed `formatLogMessage` and `formatDataClassLike`.&#10;    *   `formatRelevantObjects` now uses Moshi to serialize a list of objects to a pretty-printed JSON string.&#10;&#10;*   **IncomingNotificationProcessorImpl (`IncomingNotificationProcessorImpl.kt`):**&#10;    *   Enhanced `AppLogger.d` calls with more descriptive messages and inclusion of the notification title.&#10;    *   Refactored `processCondition()` and `processNoConditionRule()`:&#10;        *   The logic for determining `PerformAction` (Snooze/Cancel) when a notification should be blocked is now directly within these methods, removing the need for the separate `decideHowToBlockNotification()` method, which was deleted.&#10;&#10;*   **SystemNotificationManagerImpl (`SystemNotificationManagerImpl.kt`):**&#10;    *   Improved logging in `processNotificationRule()` to include the notification title when logging the processing result (Allow, AppNotManaged, Cancel, Snooze).&#10;&#10;*   **String Resources (`strings.xml`):**&#10;    *   Added `exportar_logs` string for the new export functionality.&#10;&#10;*   **Layouts (`fragment_log.xml`):**&#10;    *   Updated to include `view_activity_header` for the action bar.&#10;    *   Removed the explicit title TextView and icon, as this is now handled by the included action bar.&#10;    *   Removed the `FloatingActionButton` for clearing logs.&#10;&#10;*   **Minor (`App.kt`):**&#10;    *   Removed an unnecessary blank line." />
+    <MESSAGE value="Refactor: Update UI for compact manageable app notification item&#10;&#10;This commit updates the UI for the compact version of the manageable app notification item and increments the app version code.&#10;&#10;**Key Changes:**&#10;&#10;*   **`item_app_notification_manageable_compact.xml`:**&#10;    *   `iv_app_icon`:&#10;        *   Size changed from `30dp`x`30dp` to `24dp`x`24dp`.&#10;        *   Removed background drawable (`@drawable/back_circle`).&#10;        *   Padding changed from `6dp` to `2dp`.&#10;        *   Tint changed from `?colorOnPrimary` to `?colorPrimary`.&#10;    *   `tv_title`:&#10;        *   Constrained bottom to `iv_app_icon`.&#10;    *   `iv_menu`:&#10;        *   Removed top margin (`-8dp`).&#10;        *   Constrained bottom to `iv_app_icon`.&#10;    *   `tvContent`:&#10;        *   Removed horizontal padding (`8dp`).&#10;*   **`app/build.gradle.kts`:**&#10;    *   `versionCode` incremented from `32` to `33`." />
+    <MESSAGE value="Refactor: Improve NotificationListener stability and management&#10;&#10;This commit refactors the notification listening mechanism to enhance its stability and management. The `NotificationServiceManager` has been renamed to `NotificationListenerManagerService` for clarity.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListenerManagerService.kt` (formerly `NotificationServiceManager.kt`):**&#10;    *   Renamed the class from `NotificationServiceManager` to `NotificationListenerManagerService`.&#10;    *   The method `isNotificationListenerActive()` was renamed to `isNotificationListenerConnected()` for better semantic accuracy.&#10;    *   The check interval (`checkIntervalMs`) for ensuring the listener is connected is now configurable based on the build type (5 seconds for debug, 60 seconds for release).&#10;    *   PendingIntents for opening notification settings and the app are now created with `FLAG_IMMUTABLE`.&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   The `NotificationServiceManager` reference in KDocs and logic was updated to `NotificationListenerManagerService`.&#10;    *   Removed `isListenerConnected()` method as this responsibility is now handled by `NotificationListenerManagerService.isNotificationListenerConnected()`.&#10;    *   In `getWhenReadyOrNull()`, if the service instance is null, it now attempts to restart the listener via `NotificationListenerManagerService.instance?.restartListener()`.&#10;    *   In `onListenerConnected()`, `debugTests` is now initialized directly if `BuildConfig.DEBUG` is true.&#10;    *   In `onListenerDisconnected()`:&#10;        *   Added `AppLogger.d()` call.&#10;        *   The `SystemNotificationManager` instance is now properly closed (`serviceInstanceFlow.value?.close()`).&#10;        *   `debugTests?.cancel()` is called to prevent crashes related to pending debug operations.&#10;    *   **`DebugTests` class:**&#10;        *   Now implements `CoroutineScope by MainScope()`.&#10;        *   Error jobs (`validationCallbackErrorJob`, `errorJob`) are now launched using the class's `CoroutineScope`.&#10;        *   `cancelCrashIfNotificationDoesNotRemove()` now only accesses `BuildConfig.DEBUG` implicitly through the `debugTests` instance check.&#10;&#10;*   **`SystemNotificationManagerImpl.kt`:**&#10;    *   Replaced calls to `notificationListener?.isListenerConnected()` with `NotificationListenerManagerService.instance?.isNotificationListenerConnected()`.&#10;    *   Renamed `clearNotificationListenerInstance()` to `close()`. This method now also cancels the coroutine scope of the `SystemNotificationManagerImpl` instance.&#10;    *   The KDoc for `close()` was updated to reflect its new responsibilities.&#10;&#10;*   **`SystemNotificationManager.kt` (Interface):**&#10;    *   Renamed `clearNotificationListenerInstance()` to `close()`.&#10;&#10;*   **`AndroidManifest.xml`:**&#10;    *   Updated the service name from `.framework.notification_listener_service.NotificationServiceManager` to `.framework.notification_listener_service.NotificationListenerManagerService`.&#10;&#10;*   **`App.kt`:**&#10;    *   Updated references from `NotificationServiceManager` to `NotificationListenerManagerService` when starting/restarting the service.&#10;&#10;*   **`ProfileViewModel.kt`:**&#10;    *   Updated `NotificationServiceManager.stopSelf()` to `NotificationListenerManagerService.stopSelf()`.&#10;&#10;These changes aim to make the notification listening component more robust, prevent potential crashes, and improve code clarity." />
+    <MESSAGE value="Refactor: Improve notification processing and debug tests&#10;&#10;This commit introduces a null check before attempting to load a notification's large icon and refactors the debug test for notification removal.&#10;&#10;**Key Changes:**&#10;&#10;*   **`ProcessIncomingNotificationUseCase.kt`:**&#10;    *   Added a null check for `targetNotification.largeIcon` before attempting to load it as a drawable and save it as a bitmap. This prevents potential `NullPointerExceptions` if a notification does not have a large icon.&#10;&#10;*   **`DebugTests.kt`:**&#10;    *   The `testNotificationRemoval` function was refactored. Instead of using `withTimeoutOrNull` and `first` to wait for a specific notification removal, it now launches a separate coroutine that will raise an error after a 1-second delay if the notification hasn't been removed.&#10;    *   It now collects `NotificationListener.onNotificationRemovedFlow` and cancels the error-throwing job if the target notification is removed. This provides a more robust way to test notification cancellation.&#10;&#10;*   **`AppLogger.kt`:**&#10;    *   Minor whitespace changes (removed extra blank lines)." />
+    <MESSAGE value="Refactor: Adjust `rvNots` height in `fragment_home.xml`&#10;&#10;The `layout_height` of the `RecyclerView` with ID `rvNots` in `fragment_home.xml` has been changed from `82dp` to `wrap_content`.&#10;Additionally, the `tools:layout_height=&quot;80dp&quot;` attribute was removed." />
+    <MESSAGE value="Refactor: Improve NotificationListener stability and logging&#10;&#10;This commit introduces several changes to enhance the stability and logging of the `NotificationListener` service and its interactions with `SystemNotificationManagerImpl`.&#10;&#10;**Key Changes:**&#10;&#10;*   **`NotificationListener.kt`:**&#10;    *   `onListenerConnected()`: Now calls `systemNotificationManager.emitNotifications()` to ensure notifications are processed immediately upon connection.&#10;    *   `onNotificationRemoved()`: Wrapped the logic in `launch(IO)` to ensure operations are performed on an IO thread.&#10;&#10;*   **`SystemNotificationManagerImpl.kt`:**&#10;    *   Renamed `onConnectedActions` to `onConnectedListeners` for clarity.&#10;    *   Updated log messages in `processNotification()` for better context (e.g., &quot;Processing result: ...&quot; to &quot;Result: ...&quot;).&#10;&#10;*   **`NotificationListenerManagerService.kt`:**&#10;    *   Moved the `setupNotificationListener()` logic from `App.kt` into the `onStartCommand()` of this service. This ensures the listener is checked and connected (if necessary) when the service starts.&#10;    *   Added an `AppLogger.d()` call in `connectListener()` for better traceability.&#10;    *   The `restartListener()` method is now annotated with `@Suppress(&quot;unused&quot;)` as it's not directly called within the class but might be used externally.&#10;&#10;*   **`App.kt`:**&#10;    *   Removed the `setupNotificationListener()` method as its functionality has been moved to `NotificationListenerManagerService`.&#10;&#10;*   **`HomeFragment.kt`:**&#10;    *   Removed a `TODO` comment in the `lifecycleScope.launch` block that collects `systemNotificationManager.getActiveWithOngoingNotificationsFlow()`.&#10;&#10;*   **`AppLogger.kt`:**&#10;    *   Simplified the Logcat output in `writeToLog(log: AppLog)` by removing the detailed printing of `relevantObjects`. The log now only includes the caller and the message. This was done to prevent overly verbose log entries." />
+    <MESSAGE value="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
+  </component>
+  <component name="play_dynamic_filters_status">
+    <option name="appIdToCheckInfo">
+      <map>
+        <entry key="dev.gmarques.controledenotificacoes">
+          <value>
+            <CheckInfo lastCheckTimestamp="1756246941865" />
+          </value>
+        </entry>
+        <entry key="dev.gmarques.controledenotificacoes.staging">
+          <value>
+            <CheckInfo lastCheckTimestamp="1756246941857" />
+          </value>
+        </entry>
+        <entry key="dev.gmarques.controledenotificacoes.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1756246941955" />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
