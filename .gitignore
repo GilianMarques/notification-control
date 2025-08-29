@@ -17,12 +17,37 @@ output.json
 # arquivos gerados pelo relatorio da cobertura de codigo
 htmlReport/
 
-# IntelliJ
+# IntelliJ / Android Studio
 *.iml
+
+# Ignorar toda a pasta .idea por padrão
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+
+# Mas permitir versionar apenas configs de projeto relevantes
+!.idea/codeStyles/
+!.idea/runConfigurations/
+!.idea/dictionaries/
+!.idea/vcs.xml
+!.idea/misc.xml
+!.idea/gradle.xml
+!.idea/compiler.xml
+!.idea/navEditor.xml
+!.idea/assetWizardSettings.xml
+!.idea/AndroidProjectSystem.xml
+!.idea/appInsightsSettings.xml
+
+# Workspace e caches são locais (NÃO versionar)
+.idea/workspace.xml
+.idea/caches/
+.idea/shelf/
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/other.xml
+.idea/deploymentTargetDropDown.xml
+.idea/render.experimental.xml
+.idea/androidTestResultsUserPreferences.xml
+.idea/deviceManager.xml
+.idea/migrations.xml
 
 # Keystore files
 *.jks
@@ -36,8 +61,5 @@ google-services.json
 
 # release keystore data
 /keystore.properties
-app/release/app-release.aab
-app/release/app-release.aab
-app/release/app-release.aab
-/app/usage.txt
+/app/release
 /app/seeds.txt
