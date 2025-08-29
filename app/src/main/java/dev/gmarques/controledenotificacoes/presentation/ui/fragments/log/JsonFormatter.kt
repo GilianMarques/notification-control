@@ -39,7 +39,7 @@ object JsonFormatter {
         val moshi = Moshi.Builder().build()
         val adapter = moshi.adapter(Any::class.java).indent("  ")
 
-        return objects.joinToString("\n") { obj ->
+        return objects.joinToString("\n\n") { obj ->
             adapter.toJson(obj)
         }
     }

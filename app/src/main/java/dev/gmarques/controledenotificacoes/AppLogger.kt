@@ -50,7 +50,7 @@ object AppLogger {
         val data = PreferencesImpl.log.value
         val logs = if (data.isEmpty()) mutableListOf() else typeListAdapter.fromJson(data)!!
 
-        logs.add(log)
+        logs.add(0, log)
         PreferencesImpl.log.set(typeListAdapter.toJson(logs))
     }
 

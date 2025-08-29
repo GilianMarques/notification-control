@@ -95,7 +95,7 @@ class SystemNotificationManagerImpl @Inject constructor(
     init {
         val callback = object : NotificationListenerHolder.ConnectionCallback {
             override fun onConnectionChanged(listener: NotificationListener?) {
-                AppLogger.d("listener ${if (listener == null) " desconnectado " else " connectado "}")
+                AppLogger.d("ConnectionCallback: listener ${if (listener == null) " desconectado " else " conectado "}")
 
                 this@SystemNotificationManagerImpl.listener = listener
 

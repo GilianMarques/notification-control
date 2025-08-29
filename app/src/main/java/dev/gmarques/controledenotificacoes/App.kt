@@ -67,6 +67,7 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     override fun onCreate() {
         instance = this
+        AppLogger.d("nova sessao ===========================================\n===========================================\n===========================================\n")
         setupRemoteConfig()
         setupCrashLytics()
         scheduleAlarms()

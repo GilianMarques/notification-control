@@ -33,19 +33,25 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
+import android.service.notification.NotificationListenerService.requestRebind
+import android.service.notification.NotificationListenerService.requestUnbind
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startForegroundService
-import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Timer
-import java.util.TimerTask
 
 /**
  * Criado por Gilian Marques
@@ -53,14 +59,14 @@ import java.util.TimerTask
 
  * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
-class NotificationListenerManagerService : Service() { // TODO: usar workmanager?
+class NotificationListenerManagerService : Service(), CoroutineScope by MainScope() { // TODO: usar workmanager?
 
     companion object {
         private const val NOTIFICATION_ID = 220461
         var instance: NotificationListenerManagerService? = null
 
         fun stopSelf() {
-            instance?.disconnectListener()
+            instance?.requestListenerUnbind()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
         }
 
@@ -77,14 +83,14 @@ class NotificationListenerManagerService : Service() { // TODO: usar workmanager
 
     }
 
+
     private val checkIntervalMs = if (BuildConfig.DEBUG) 5_000L else 60_000L // intervalo entre checagens
-    private var timer: Timer? = null
     private val channelId = "notification_watcher_channel"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
-        setupNotificationListener()
+        turnListenerOnIfNeeded()
         instance = this
         return START_STICKY
     }
@@ -97,13 +103,12 @@ class NotificationListenerManagerService : Service() { // TODO: usar workmanager
      * a cada [checkIntervalMs] milissegundos.
      */
     private fun keepCheckingNotificationListenerIsAlive() {
-        timer?.cancel()
-        timer = Timer().apply {
-            schedule(object : TimerTask() {
-                override fun run() {
-                    if (!isNotificationListenerConnected()) connectListener()
-                }
-            }, 0, checkIntervalMs)
+        launch {
+            while (true) {
+                AppLogger.d("Checando se o listener de notificações está conectado...")
+                if (!isNotificationListenerConnected()) requestListenerRebind()
+                delay(checkIntervalMs)
+            }
         }
     }
 
@@ -167,37 +172,12 @@ class NotificationListenerManagerService : Service() { // TODO: usar workmanager
      * entender que o listener está ativo mesmo que não esteja, retornando um falso positivo
      */
     fun isNotificationListenerConnected(): Boolean {
-        val baseContext = App.instance
-
         val cn = ComponentName(baseContext, NotificationListener::class.java)
         val enabledListeners = Settings.Secure.getString(
             baseContext.contentResolver, "enabled_notification_listeners"
         )
         // evita falsos positivos em caso de variaçoes do mesmo app instaladas
         return enabledListeners.split(":").any { it == cn.flattenToString() }
-    }
-
-    fun connectListener() {
-        AppLogger.d("")
-        val pm = packageManager
-        val componentName = ComponentName(this, NotificationListener::class.java)
-
-        pm.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-    }
-
-    fun disconnectListener() {
-        val pm = packageManager
-        val componentName = ComponentName(this, NotificationListener::class.java)
-
-        pm.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
     }
 
     /**
@@ -211,26 +191,38 @@ class NotificationListenerManagerService : Service() { // TODO: usar workmanager
      *  de [SystemNotificationManager] para uso, o inutilizando.
      */
 
-    @Suppress("unused")
-    fun restartListener() {
-        AppLogger.d("")
-        disconnectListener()
-        connectListener()
+    fun requestListenerRebind() {
+        AppLogger.d("Solicitando rebind do NotificationListener")
+        val componentName = ComponentName(this, NotificationListener::class.java)
+        requestRebind(componentName)
     }
+
+    private fun requestListenerUnbind() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            AppLogger.d("Solicitando unbind do NotificationListener")
+            val componentName = ComponentName(this, NotificationListener::class.java)
+            requestUnbind(componentName)
+        } else Log.d(
+            "USUK",
+            "NotificationListenerManagerService.requestListenerUnbind: Impossivel desconectar nessa versao de API"
+        )
+    }
+
 
     /**
      * Garante que o listener esteja conectado ao abrir o processo
      */
-    private fun setupNotificationListener() {
+    private fun turnListenerOnIfNeeded() {
+        AppLogger.d("Ligando listener. havera rebind se necessario")
         if (!isNotificationListenerConnected()) {
-            AppLogger.d("Notification listener is not connected")
-            connectListener()
+            requestListenerRebind()
         }
     }
 
 
     override fun onDestroy() {
-        timer?.cancel()
+        AppLogger.d("fechando serviço. Listener conectado? ${isNotificationListenerConnected()}{}")
+        cancel()
         super.onDestroy()
     }
 }

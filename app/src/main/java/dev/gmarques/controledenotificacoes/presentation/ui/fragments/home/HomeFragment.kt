@@ -144,7 +144,6 @@ class HomeFragment : MyFragment() {
 
     }
 
-
     private fun setupAppbar() = with(binding) {
 
         val expanded = findNavControllerDefault()
@@ -192,6 +191,14 @@ class HomeFragment : MyFragment() {
         }
 
         systemNotificationManager.doWhenConnected {
+
+            // Só executa se a view existir
+            val viewLifecycleOwner = viewLifecycleOwnerLiveData.value
+            if (viewLifecycleOwner == null || !isAdded || view == null) {
+                // Fragmento não está pronto, não mexe na UI
+                return@doWhenConnected
+            }
+
             lifecycleScope.launch {
                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     collectFlow(
