@@ -50,19 +50,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    val keystorePath: String? = project.findProperty("KEYSTORE_PATH") as String?
+    val keystorePropertiesFile = keystorePath?.let { file(it) }
     val keystoreProperties = Properties()
-    if (keystorePropertiesFile.exists()) {
+
+    if (keystorePropertiesFile?.exists() == true) {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
-    signingConfigs {
-        create("release") {
-            if (keystorePropertiesFile.exists()) {
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
+    android {
+        signingConfigs {
+            create("release") {
+                if (keystorePropertiesFile?.exists() == true) {
+                    storeFile = file(keystoreProperties["storeFile"] as String)
+                    storePassword = keystoreProperties["storePassword"] as String
+                    keyAlias = keystoreProperties["keyAlias"] as String
+                    keyPassword = keystoreProperties["keyPassword"] as String
+                }
             }
         }
     }
