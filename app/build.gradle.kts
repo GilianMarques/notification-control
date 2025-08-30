@@ -50,11 +50,40 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    val keystorePropertiesFile = rootProject.file("keystore.properties")
-    val keystoreProperties = Properties()
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    val keystorePropsPathFile = rootProject.file(".keystorePropsPath")
+
+    if (!keystorePropsPathFile.exists()) {
+        throw GradleException(
+            "Arquivo .keystorePropsPath não encontrado na raiz do projeto.\n" +
+                    "Crie o arquivo e coloque dentro o caminho absoluto do seu keystore.properties.\n" +
+                    "Exemplo de conteúdo:\n" +
+                    "G:/Drive/Desenvolvimento/ControleDeNotificacoes/keystore.properties"
+        )
     }
+
+    val keystorePropsPath = keystorePropsPathFile.readText().trim()
+    val keystorePropertiesFile = file(keystorePropsPath)
+
+    if (!keystorePropertiesFile.exists()) {
+        throw GradleException(
+            "O caminho definido em .keystorePropsPath não é válido:\n" +
+                    "$keystorePropsPath\n" +
+                    "Verifique se o arquivo keystore.properties existe e o caminho está correto."
+        )
+    }
+
+    val keystoreProperties = Properties()
+    try {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    } catch (e: Exception) {
+        throw GradleException(
+            "Falha ao ler o arquivo keystore.properties em:\n" +
+                    "$keystorePropsPath\n" +
+                    "Verifique se o arquivo está acessível e formatado corretamente.\n" +
+                    "Erro original: ${e.message}"
+        )
+    }
+
 
     signingConfigs {
         create("release") {

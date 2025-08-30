@@ -166,9 +166,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app-release.aab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerHolder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +180,7 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=054cd9a30405)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Gilian\.android\avd\Pixel_9a.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -228,7 +227,7 @@
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -242,41 +241,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
-    &quot;Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
-    &quot;BundleExportedModule&quot;: &quot;ControleDeNotificacoes.app&quot;,
-    &quot;ExportBundle.BundlePathForControleDeNotificacoes.app&quot;: &quot;C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.IncomingNotificationProcessorImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;ScreenshotViewer.SavePath&quot;: &quot;C:/Users/Gilian/Downloads&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.android.tools.idea.streaming.zoom.toolbar.visible&quot;: &quot;false&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Gilian/Documents/GitHub/notification-control/app/src/main/res/drawable&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Android App.app.executor": "Run",
+    "Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor": "Run",
+    "BundleExportedModule": "ControleDeNotificacoes.app",
+    "ExportBundle.BundlePathForControleDeNotificacoes.app": "C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.IncomingNotificationProcessorImplTest.executor": "Run",
+    "Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor": "Run",
+    "Gradle.Tests in 'dev.gmarques.controledenotificacoes'.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "ScreenshotViewer.SavePath": "C:/Users/Gilian/Downloads",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.android.tools.idea.streaming.zoom.toolbar.visible": "false",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Gilian/Documents/GitHub/notification-control/app/src/main/res/drawable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "show.migrate.to.gradle.popup": "false"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ExportApk.BuildVariants&quot;: [
-      &quot;release&quot;
+  "keyToStringList": {
+    "ExportApk.BuildVariants": [
+      "release"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\res\drawable" />
