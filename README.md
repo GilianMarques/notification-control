@@ -83,6 +83,21 @@ Vá em `Settings > Build, Execution, Deployment > Build Tools > Gradle` e defina
     <img src= "https://github.com/user-attachments/assets/bcbbb6ae-02e5-411c-8784-5d170aca4d5d" height="500">
 </p>
 
+## Seja um testador 🚀
+
+O app está em teste fechado na **Google Play Store** e você pode participar dos testes e enviar seu feedback antes do lançamento oficial. 
+Além de solucionar um problema real, este projeto é 100% gratuito e livre de anúncios!
+
+A Google exige que todo novo aplicativo passe por um período de testes antes de ser liberado em produção. Nesse formato de **teste fechado**, é necessário cadastrar manualmente os testadores e enviar um convite antes que eles possam instalar o app pela Play Store.
+
+Por isso, se tiver interesse em participar, basta me enviar uma mensagem com o seu **e-mail do Google** (o mesmo usado na Play Store) em um dos canais abaixo:
+
+* [LinkedIn](https://www.linkedin.com/in/gilianmarques/)
+* [E-mail](mailto:dev.gmarques@gmail.com)
+
+
+
+
 
 
 
