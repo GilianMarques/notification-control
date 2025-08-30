@@ -63,7 +63,6 @@ android {
 
     val keystorePropsPath = keystorePropsPathFile.readText().trim()
     val keystorePropertiesFile = file(keystorePropsPath)
-
     if (!keystorePropertiesFile.exists()) {
         throw GradleException(
             "O caminho definido em .keystorePropsPath não é válido:\n" +
@@ -71,7 +70,6 @@ android {
                     "Verifique se o arquivo keystore.properties existe e o caminho está correto."
         )
     }
-
     val keystoreProperties = Properties()
     try {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
