@@ -40,21 +40,31 @@ Por fim, implementei **descrições de conteúdo** para tornar o aplicativo aces
     No Android Studio, vá em:  
     `Build > Generate Signed Bundle / APK`  
     Siga o assistente para gerar uma chave `.jks`.
+    Salve em uma pasta segura no seu computador.
     
-2.  **Crie o arquivo `keystore.properties` na raiz do projeto:**  
-    Isso é necessário para rodar as versões `staging` e `release` localmente.
+3.  **Crie o arquivo `keystore.properties`:**  
+    Esse arquivo vai conter as informações da chave, novamente, salve em uma pasta segura no seu computador.
+    Este arquivo é necessário para rodar as versões `staging` e `release` localmente através do `Build Variants` no Android Studio.
     
     Preencha com:
     
     ```properties
-    storeFile=C:/Users/Usuario/Documents/GitHub/controle_de_notificacoes.jks  (caminho da sua chave)
+    storeFile=caminho_da_sua_chave (ex: C:/Users/Usuario/Documents/minha_chave_release.jks)
     storePassword=senha_keystore
     keyAlias=release  (use o mesmo alias definido durante a criação da chave)
     keyPassword=senha_alias
+    ```
+
+4.  **Crie o arquivo `.keystorePropsPath`:**
+    Salve esse arquivo na raiz do projeto. 
+    Dentro dele insira o  **caminho absoluto** para o `keystore.properties` criado no passo anterior.
+    Exemplo:
     
     ```
-    
-3.  **Configure o Firebase:**
+    C:/Users/Usuario/Documents/keystore.properties
+    ```
+
+6.  **Configure o Firebase:**
     
     -   Crie uma conta no [Firebase](https://firebase.google.com/). 
         
@@ -64,10 +74,10 @@ Por fim, implementei **descrições de conteúdo** para tornar o aplicativo aces
         
     -   Baixe o arquivo `google-services.json` e salve-o na pasta `app/`.
         
-4.  **Configure o Java:**
+7.  **Configure o Java:**
     
     O projeto utiliza o `JDK 21`.  
-Vá em `Settings > Build, Execution, Deployment > Build Tools > Gradle` e defina `Gradle JDK` para umas das versões  `21.x.x` embarcadas ou instalada na sua máquina. Caso opte por instalar um jdk manualmente, certifique-se de e configurar a variável de ambiente `JAVA_HOME` apontando para o diretório raiz da instalação.
+    Vá em `Settings > Build, Execution, Deployment > Build Tools > Gradle` e defina `Gradle JDK` para uma das versões `21.x.x` embarcadas ou instalada na sua máquina. Caso opte por instalar um JDK manualmente, certifique-se de configurar a variável de ambiente `JAVA_HOME` apontando para o diretório raiz da instalação.
 
 ## Capturas de Tela
 
