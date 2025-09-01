@@ -56,9 +56,9 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeR
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostRuleSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.PostRuleSnoozedNotificationsUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.NameErrorMessage
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.SimpleErrorMessage
 import kotlinx.coroutines.Dispatchers.IO
@@ -270,6 +270,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         updateSelectedDays(rule.days)
         updateCondition(rule.condition)
         updateRuleAction(rule.action)
+        updateKeepFullHistory(rule.keepFullHistory)
         viewModelScope.launch {
             rule.timeRanges.forEach {
                 addTimeRange(it)
@@ -474,7 +475,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         _conditionFlow.value = null
     }
 
-    fun setKeepFullHistory(keep: Boolean) {
+    fun updateKeepFullHistory(keep: Boolean) {
         _keepFullHistoryFlow.tryEmit(keep)
     }
 }

@@ -355,7 +355,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private fun setupSwFullHistory() = with(binding) {
         swFullHistory.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setKeepFullHistory(isChecked)
+            viewModel.updateKeepFullHistory(isChecked)
         }
     }
 
