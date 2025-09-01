@@ -306,20 +306,9 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         }
     }
 
-    fun isListenNotificationEnabled(): Boolean {
-        val enabledListeners = Settings.Secure.getString(
-            contentResolver, "enabled_notification_listeners"
-        ) ?: return false
-
-        /*
-        Exemplo de enableListeners string em um Xiaomi com android 13. Até onde sei isso nao muda entre versoes do android e OEMs diferentes:
-        'dev.gmarques.controledenotificacoes.staging/dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener:etc...'
-        */
-        return enabledListeners.split(":") // obtenho os conjuntos app_pkg/nome_completo_classe isolados
-            .any {
-                it.split("/")[0] // isolo o app_pkg e comparo
-                    .equals(packageName, true)
-            }
+    fun isListenNotificationPermissionGranted(): Boolean {
+        return NotificationListenerManagerService
+            .isListenNotificationPermissionGranted(this@MainActivity)
     }
 
     fun requestNotificationAccessPermission() {

@@ -26,7 +26,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import android.util.Log
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.ReportNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -56,7 +55,6 @@ class RescheduleReportNotificationsOnBootUseCase @Inject constructor(
      * É executado em uma corrotina no dispatcher IO.
      */
     suspend operator fun invoke() = withContext(IO) {
-        AppLogger.d("")
         val activeSchedules = reportNotificationAlarmScheduler.getAllSchedules()
 
         activeSchedules.map { pkg ->

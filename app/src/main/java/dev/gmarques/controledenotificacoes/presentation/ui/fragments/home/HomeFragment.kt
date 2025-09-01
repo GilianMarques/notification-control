@@ -516,7 +516,7 @@ class HomeFragment : MyFragment() {
 
             binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
 
-            if (!requireMainActivity().isListenNotificationEnabled()) {
+            if (!requireMainActivity().isListenNotificationPermissionGranted()) {
                 showListenNotificationWarning()
                 return@launch
             }

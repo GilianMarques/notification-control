@@ -25,7 +25,6 @@
 
 package dev.gmarques.controledenotificacoes.data.repository
 
-import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.data.local.room.dao.AppNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.AppNotificationMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
@@ -40,7 +39,6 @@ class AppNotificationRepositoryImpl @Inject constructor(
 
     override suspend fun insert(notification: AppNotification) {
         AppNotificationMapper.toEntity(notification).let { dao.insert(it) }
-        AppLogger.d("", notification)
     }
 
 

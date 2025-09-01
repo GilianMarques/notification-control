@@ -166,7 +166,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment="Refactor: Externalize keystore.properties path&#10;&#10;This commit updates the build process to read the path of the `keystore.properties` file from a new file named `.keystorePropsPath` located in the project root.&#10;&#10;**Key Changes:**&#10;&#10;*   **`app/build.gradle.kts`:**&#10;    *   The build script now first reads the absolute path to `keystore.properties` from `.keystorePropsPath`.&#10;    *   Added error handling:&#10;        *   Throws a `GradleException` if `.keystorePropsPath` is not found.&#10;        *   Throws a `GradleException` if the path specified in `.keystorePropsPath` is invalid or `keystore.properties` is not found at that location.&#10;        *   Throws a `GradleException` if there's an issue reading the `keystore.properties` file.&#10;    *   The `keystore.properties` file is then loaded using the path obtained from `.keystorePropsPath`.&#10;&#10;*   **`.gitignore`:**&#10;    *   Added `/.keystorePropsPath` to ensure this new configuration file (which contains a local path) is not committed to the repository.&#10;&#10;This change allows developers to store their `keystore.properties` file outside the project directory, improving flexibility and security by not requiring the keystore information to be within the project structure itself.">
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/data/repository/AppNotificationRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/data/repository/AppNotificationRepositoryImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/domain/usecase/alarms/RescheduleReportNotificationsOnBootUseCase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/domain/usecase/alarms/RescheduleReportNotificationsOnBootUseCase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/domain/usecase/alarms/ScheduleAutoTurnOnUseCase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/domain/usecase/alarms/ScheduleAutoTurnOnUseCase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/AutoTurnOnReceiver.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/AutoTurnOnReceiver.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerManagerService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/NotificationListenerManagerService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/SystemNotificationManagerImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/framework/notification_listener_service/SystemNotificationManagerImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/presentation/ui/activities/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/presentation/ui/activities/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/presentation/ui/fragments/home/HomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/dev/gmarques/controledenotificacoes/presentation/ui/fragments/home/HomeFragment.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +189,7 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Gilian\.android\avd\Pixel_9a.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=VCEEB6NFK7CEAITG)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -240,41 +250,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.app.executor": "Run",
-    "Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor": "Run",
-    "BundleExportedModule": "ControleDeNotificacoes.app",
-    "ExportBundle.BundlePathForControleDeNotificacoes.app": "C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app",
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.IncomingNotificationProcessorImplTest.executor": "Run",
-    "Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor": "Run",
-    "Gradle.Tests in 'dev.gmarques.controledenotificacoes'.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "ScreenshotViewer.SavePath": "C:/Users/Gilian/Downloads",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.android.tools.idea.streaming.zoom.toolbar.visible": "false",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Gilian/Documents/GitHub/notification-control/app/src/main/res/drawable",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
+    &quot;Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
+    &quot;BundleExportedModule&quot;: &quot;ControleDeNotificacoes.app&quot;,
+    &quot;ExportBundle.BundlePathForControleDeNotificacoes.app&quot;: &quot;C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.IncomingNotificationProcessorImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;ScreenshotViewer.SavePath&quot;: &quot;C:/Users/Gilian/Downloads&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.android.tools.idea.streaming.zoom.toolbar.visible&quot;: &quot;false&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Gilian/Documents/GitHub/notification-control/app/src/main/res/drawable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   },
-  "keyToStringList": {
-    "ExportApk.BuildVariants": [
-      "release"
+  &quot;keyToStringList&quot;: {
+    &quot;ExportApk.BuildVariants&quot;: [
+      &quot;release&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Gilian\Documents\GitHub\notification-control\app\src\main\res\drawable" />
@@ -289,11 +299,11 @@
       <recent name="dev.gmarques.controledenotificacoes.domain.implementations" />
     </key>
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="dev.gmarques.controledenotificacoes.framework.notification_listener_service" />
       <recent name="dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification" />
       <recent name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home" />
       <recent name="dev.gmarques.controledenotificacoes.domain.usecase.framework" />
       <recent name="dev.gmarques.controledenotificacoes.data.repository" />
-      <recent name="dev.gmarques.controledenotificacoes.domain.data.repository" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
       <recent name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications" />

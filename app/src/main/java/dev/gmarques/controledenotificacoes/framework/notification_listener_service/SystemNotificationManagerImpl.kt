@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
@@ -93,9 +94,12 @@ class SystemNotificationManagerImpl @Inject constructor(
         )
 
     init {
+        var firstcall = true
         val callback = object : NotificationListenerHolder.ConnectionCallback {
             override fun onConnectionChanged(listener: NotificationListener?) {
-                AppLogger.d("ConnectionCallback: listener ${if (listener == null) " desconectado " else " conectado "}")
+
+                if (firstcall) firstcall = false
+                else AppLogger.d("ConnectionCallback: listener ${if (listener == null) " desconectado " else " conectado "}")
 
                 this@SystemNotificationManagerImpl.listener = listener
 
@@ -104,6 +108,7 @@ class SystemNotificationManagerImpl @Inject constructor(
                     return
                 }
 
+                observeRulesChanges()
                 with(onConnectedListeners) {
                     forEach { it.invoke() }
                     clear()
@@ -180,7 +185,7 @@ class SystemNotificationManagerImpl @Inject constructor(
     }
 
     /**
-     * Atualiza os Flows de notificações ativas, adiadas e em andamento om base no conteudo do Listener de notificações.
+     * Atualiza os Flows de notificações ativas, adiadas e em andamento com base no conteudo do Listener de notificações.
      */
     override fun emitNotifications() {
         activeFlow.value = getActiveNotifications()
@@ -305,6 +310,18 @@ class SystemNotificationManagerImpl @Inject constructor(
         }
 
 
+    }
+
+    /**
+     * Observa mudanças nas regras de notificação.
+     * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
+     * o mét.odo [SystemNotificationManagerImpl.processActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
+     */
+    private fun observeRulesChanges() = scope.launch(IO) {
+        HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
+            processActiveNotifications()
+        }
     }
 
     /**

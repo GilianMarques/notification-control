@@ -56,6 +56,9 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         private val _onNotificationRemovedFlow = MutableSharedFlow<StatusBarNotification>(replay = 0, extraBufferCapacity = 1)
         val onNotificationRemovedFlow: Flow<StatusBarNotification> get() = _onNotificationRemovedFlow
 
+        var connected = false
+            private set
+
     }
 
     private val systemNotificationManager = HiltEntryPoints.systemNotificationManager()
@@ -67,18 +70,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        holder.setListener(this@NotificationListener)
-        observeRulesChanges()
+        setListenerConnected()
         systemNotificationManager.emitNotifications()
     }
 
     override fun onListenerDisconnected() {
-        cancel()
-        holder.setListener(null)
         super.onListenerDisconnected()
+        cancel()
+        setListenerDisconnected()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
+        super.onNotificationPosted(sbn)
+        setListenerConnected()
         launch(IO) {
             systemNotificationManager.emitNotifications()
             systemNotificationManager.processNotification(sbn)
@@ -86,23 +90,27 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap?) {
+        super.onNotificationRemoved(sbn, rankingMap)
+        setListenerConnected()
         launch(IO) {
             systemNotificationManager.emitNotifications()
             _onNotificationRemovedFlow.tryEmit(sbn)
         }
-        super.onNotificationRemoved(sbn, rankingMap)
     }
 
-    /**
-     * Observa mudanças nas regras de notificação.
-     * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
-     * o mét.odo [SystemNotificationManagerImpl.processActiveNotifications] é chamado para reavaliar todas as notificações ativas
-     * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
-     */
-    private fun observeRulesChanges() = launch(IO) {
-        HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            systemNotificationManager.processActiveNotifications()
-        }
+    private fun setListenerConnected() {
+        connected = true
+        holder.setListener(this@NotificationListener)
+    }
+
+    private fun setListenerDisconnected() {
+        connected = false
+        holder.setListener(null)
+    }
+
+    override fun onDestroy() {
+        setListenerDisconnected()
+        super.onDestroy()
     }
 
 }

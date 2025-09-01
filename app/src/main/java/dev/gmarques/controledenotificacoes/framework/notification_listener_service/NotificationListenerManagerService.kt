@@ -33,10 +33,10 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
-import android.service.notification.NotificationListenerService.requestRebind
 import android.service.notification.NotificationListenerService.requestUnbind
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -80,17 +80,36 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
             start(context)
         }
 
+        /**
+         * Vetrifica se o listener se o app tem permissao pra ler notificações
+         * Se essa função for chamada após o ap ser morto, ela retorna um falso negativo.
+         */
+        fun isListenNotificationPermissionGranted(context: Context): Boolean {
+            val enabledListeners = Settings.Secure.getString(
+                context.contentResolver, "enabled_notification_listeners"
+            ) ?: return false
+
+            /*
+            Exemplo de enableListeners string em um Xiaomi com android 13. Até onde sei isso nao muda entre versoes do android e OEMs diferentes:
+            'dev.gmarques.controledenotificacoes.staging/dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener:etc...'
+            */
+            return enabledListeners.split(":") // obtenho os conjuntos app_pkg/nome_completo_classe isolados
+                .any {
+                    it.split("/")[0] // isolo o app_pkg e comparo
+                        .equals(context.packageName, true)
+                }
+        }
+
 
     }
 
 
-    private val checkIntervalMs = if (BuildConfig.DEBUG) 5_000L else 60_000L // intervalo entre checagens
+    private val checkIntervalMs = if (BuildConfig.DEBUG) 10_000L else 60_000L // intervalo entre checagens
     private val channelId = "notification_watcher_channel"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
-        turnListenerOnIfNeeded()
         instance = this
         return START_STICKY
     }
@@ -105,8 +124,13 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
     private fun keepCheckingNotificationListenerIsAlive() {
         launch {
             while (true) {
-                AppLogger.d("Checando se o listener de notificações está conectado...")
-                if (!isNotificationListenerConnected()) requestListenerRebind()
+
+                if (NotificationListener.connected) {
+                    AppLogger.d("listener conectado")
+                    return@launch
+                }
+
+                requestListenerRebind()
                 delay(checkIntervalMs)
             }
         }
@@ -167,34 +191,37 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
     }
 
     /**
-     * Verifica se o listener de notificações está ativo.
-     * Essa função pode retornar true por engano em casos onde o usuário mata o aplicativo. Ao abrir ele em seguida essa função vai
-     * entender que o listener está ativo mesmo que não esteja, retornando um falso positivo
-     */
-    fun isNotificationListenerConnected(): Boolean {
-        val cn = ComponentName(baseContext, NotificationListener::class.java)
-        val enabledListeners = Settings.Secure.getString(
-            baseContext.contentResolver, "enabled_notification_listeners"
-        )
-        // evita falsos positivos em caso de variaçoes do mesmo app instaladas
-        return enabledListeners.split(":").any { it == cn.flattenToString() }
-    }
-
-    /**
-     * Serve pra reanexar o listener de notificações no sistema.
-     * Isso faz com que o onListenerConnected do [NotificationListener] Seja chamado E inicialize Os objetos necessários.
+     * Reanexa o listener de notificações ao sistema, forçando a chamada do mét.odo `onListenerConnected`
+     * da classe [NotificationListener]. Este processo é crucial para inicializar objetos necessários
+     * para o funcionamento adequado do listener.
      *
-     * Por que existe?
-     * Em dispositivo Xiaomi com Android 13 (Foi onde vi o bug) as vezes onListenerConnected do [NotificationListener] nunca é
-     * chamado. Ao verificar o porque, descobri que o listener ja estava conectado e deduzi que essa era a causa.
-     * Quando esse bug ocorria fazia com que o restante do aplicativo nunca conseguisse receber uma instância valida
-     *  de [SystemNotificationManager] para uso, o inutilizando.
+     * **Motivação:**
+     * Em determinados cenários, especialmente observado em dispositivos Xiaomi com Android 13,
+     * o mét.odo `onListenerConnected` do [NotificationListener] pode não ser invocado mesmo quando o
+     * listener já está conectado ao sistema. Essa falha impede que o aplicativo receba uma instância
+     * válida de [SystemNotificationManager], comprometendo sua funcionalidade principal de gerenciamento
+     * de notificações. Este mét.odo visa contornar esse problema ao forçar a reconexão do listener.
      */
-
     fun requestListenerRebind() {
         AppLogger.d("Solicitando rebind do NotificationListener")
+
         val componentName = ComponentName(this, NotificationListener::class.java)
-        requestRebind(componentName)
+
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        packageManager.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+
+        //  Por algum motivo usar o packagemanager pra ligar/desligar o listener é mais rapido ~1-2 segs com parado ao
+        //  requestRebind() que por sua vez pode levar 7 segs pra reconectar isso quando nunca reconecta
+        //requestRebind(componentName)
+
     }
 
     private fun requestListenerUnbind() {
@@ -209,19 +236,8 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
     }
 
 
-    /**
-     * Garante que o listener esteja conectado ao abrir o processo
-     */
-    private fun turnListenerOnIfNeeded() {
-        AppLogger.d("Ligando listener. havera rebind se necessario")
-        if (!isNotificationListenerConnected()) {
-            requestListenerRebind()
-        }
-    }
-
-
     override fun onDestroy() {
-        AppLogger.d("fechando serviço. Listener conectado? ${isNotificationListenerConnected()}{}")
+        AppLogger.d("fechando serviço. Listener conectado? ${NotificationListener.connected}")
         cancel()
         super.onDestroy()
     }

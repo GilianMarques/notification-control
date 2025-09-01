@@ -25,10 +25,15 @@
 
 package dev.gmarques.controledenotificacoes.framework
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationCompat
 import dev.gmarques.controledenotificacoes.AppLogger
+import dev.gmarques.controledenotificacoes.BuildConfig
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
@@ -47,8 +52,34 @@ class AutoTurnOnReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         AppLogger.d("")
+        notificar(context)
         NotificationListenerManagerService.start(context)
         HiltEntryPoints.scheduleAutoTurnOnUseCase().invoke()
+    }
+
+
+    private fun notificar(context: Context) {
+        if (!BuildConfig.DEBUG) return
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val channelId = "auto_turn_on_channel"
+        val channelName = "Auto Turn On Notifications"
+        val importance = NotificationManager.IMPORTANCE_LOW
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            description = "Notificações para o AutoTurnOnReceiver"
+        }
+        notificationManager.createNotificationChannel(channel)
+
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setContentTitle("Controle de Notificações")
+            .setContentText("AutoTurnOnReceiver executado.")
+            .setSmallIcon(R.drawable.ic_launcher_foreground) // Substitua pelo ícone do seu app
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setSound(null)
+            .setVibrate(null)
+            .build()
+
+        notificationManager.notify(10925, notification) // Use um ID único para a notificação
     }
 
 }

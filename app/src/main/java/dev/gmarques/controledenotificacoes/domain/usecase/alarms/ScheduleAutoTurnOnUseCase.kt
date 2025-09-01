@@ -27,8 +27,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.AutoTurnOnAlarmScheduler
 import dev.gmarques.controledenotificacoes.framework.AutoTurnOnReceiver
-import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.at
-import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.withSecondsAndMillisSetToZero
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
@@ -42,19 +40,23 @@ import javax.inject.Inject
 class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: AutoTurnOnAlarmScheduler) {
 
     operator fun invoke() {
-
         val now = LocalDateTime()
+        // por hora, vai despertar em periodos mais curtos
+        // TODO: verificar se isso nao esta consumindo muita bateria e cpu
+        scheduler.scheduleAutoTurnOnAlarm(now.plusMinutes(10).toDate().time)
+        /*
 
-        val times = listOf(
-            LocalDateTime().at(12, 0).withSecondsAndMillisSetToZero(),
-            LocalDateTime().at(0, 0).plusDays(1).withSecondsAndMillisSetToZero()// primeiro instante do dia seguinte
-        )
 
-        for (time in times) {
-            if (time.isAfter(now)) {
-                scheduler.scheduleAutoTurnOnAlarm(time.toDate().time)
-                break
-            }
-        }
+                val times = listOf(
+                    LocalDateTime().at(12, 0).withSecondsAndMillisSetToZero(),
+                    LocalDateTime().at(0, 0).plusDays(1).withSecondsAndMillisSetToZero()// primeiro instante do dia seguinte
+                )
+
+                for (time in times) {
+                    if (time.isAfter(now)) {
+                        scheduler.scheduleAutoTurnOnAlarm(time.toDate().time)
+                        break
+                    }
+                }*/
     }
 }
