@@ -53,7 +53,7 @@ class AutoTurnOnReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         AppLogger.d("")
         notificar(context)
-        NotificationListenerManagerService.start(context)
+        NotificationListenerManagerService.startIfNotAlready(context)
         HiltEntryPoints.scheduleAutoTurnOnUseCase().invoke()
     }
 

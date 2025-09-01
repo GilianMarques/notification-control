@@ -109,7 +109,6 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
     }
 
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -139,7 +138,7 @@ class MainActivity() : AppCompatActivity(), SlidingPaneController.SlidingPaneCon
         checkForAppUpdate()
         setupForTablet(lastSlidingPaneState)
         removeDuplicatedFragmentOnExpandedScreen()
-        NotificationListenerManagerService.start(this@MainActivity)
+        NotificationListenerManagerService.startIfNotAlready(this@MainActivity)
     }
 
     /**

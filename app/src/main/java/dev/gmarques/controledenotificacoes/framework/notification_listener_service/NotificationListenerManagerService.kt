@@ -45,6 +45,7 @@ import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService.Companion.instance
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -59,25 +60,34 @@ import java.util.Timer
 
  * Serviço em primeiro plano que é responsavel por manter o listener de notificaçoes [NotificationListener] sempre conectado
  */
-class NotificationListenerManagerService : Service(), CoroutineScope by MainScope() { // TODO: usar workmanager?
+class NotificationListenerManagerService : Service(), CoroutineScope by MainScope() {
 
     companion object {
         private const val NOTIFICATION_ID = 220461
         var instance: NotificationListenerManagerService? = null
 
+        /**
+         * Para o serviço e remove a notificação em primeiro plano e nulifica o [instance].
+         */
         fun stopSelf() {
             instance?.requestListenerUnbind()
             instance?.stopForeground(STOP_FOREGROUND_REMOVE)
+            instance = null
         }
 
-        fun start(context: Context) {
+        /**
+         * Inicia o serviço se ele ainda não estiver em execução.
+         * @param context O contexto para iniciar o serviço.
+         */
+        fun startIfNotAlready(context: Context) {
+            if (instance != null) return
             val serviceIntent = Intent(context, NotificationListenerManagerService::class.java)
             startForegroundService(context, serviceIntent)
         }
 
         fun restart(context: Context) {
             stopSelf()
-            start(context)
+            startIfNotAlready(context)
         }
 
         /**
@@ -108,9 +118,9 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
     private val channelId = "notification_watcher_channel"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        instance = this
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
-        instance = this
         return START_STICKY
     }
 

@@ -51,7 +51,7 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             AppLogger.d("")
-            NotificationListenerManagerService.start(context)
+            NotificationListenerManagerService.startIfNotAlready(context)
         }
     }
 
