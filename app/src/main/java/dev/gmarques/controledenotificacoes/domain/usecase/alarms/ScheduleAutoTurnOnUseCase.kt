@@ -43,7 +43,7 @@ class ScheduleAutoTurnOnUseCase @Inject constructor(private val scheduler: AutoT
         val now = LocalDateTime()
         // por hora, vai despertar em periodos mais curtos
         // TODO: verificar se isso nao esta consumindo muita bateria e cpu
-        scheduler.scheduleAutoTurnOnAlarm(now.plusMinutes(10).toDate().time)
+        scheduler.scheduleAutoTurnOnAlarm(now.plusMinutes(20).toDate().time)
         /*
 
 
