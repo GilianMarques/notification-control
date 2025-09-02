@@ -106,7 +106,6 @@ class IncomingNotificationProcessorImpl @Inject constructor(
         AppLogger.d(
             msg = "Processando notificação com condição ${appNotification.title}",
             "isConditionSatisfied: $isConditionSatisfied",
-            condition,
             rule,
             appNotification
         )
