@@ -25,16 +25,7 @@ htmlReport/
 
 # Mas permitir versionar apenas configs de projeto relevantes
 !.idea/codeStyles/
-!.idea/runConfigurations/
 !.idea/dictionaries/
-!.idea/vcs.xml
-!.idea/misc.xml
-!.idea/gradle.xml
-!.idea/compiler.xml
-!.idea/navEditor.xml
-!.idea/assetWizardSettings.xml
-!.idea/AndroidProjectSystem.xml
-!.idea/appInsightsSettings.xml
 
 # Workspace e caches são locais (NÃO versionar)
 .idea/workspace.xml
