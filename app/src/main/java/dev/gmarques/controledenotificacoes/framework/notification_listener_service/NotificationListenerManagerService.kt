@@ -44,6 +44,7 @@ import androidx.core.content.ContextCompat.startForegroundService
 import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.ExtFuns.minutes
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService.Companion.instance
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
@@ -114,7 +115,7 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
     }
 
 
-    private val checkIntervalMs = if (BuildConfig.DEBUG) 10_000L else 60_000L // intervalo entre checagens
+    private val checkIntervalMs = if (BuildConfig.DEBUG) 5.minutes() else 10.minutes()// intervalo entre checagens
     private val channelId = "notification_watcher_channel"
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -141,7 +142,7 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
                 }
 
                 requestListenerRebind()
-                delay(checkIntervalMs)
+                delay(checkIntervalMs.toLong())
             }
         }
     }
@@ -252,3 +253,4 @@ class NotificationListenerManagerService : Service(), CoroutineScope by MainScop
         super.onDestroy()
     }
 }
+
