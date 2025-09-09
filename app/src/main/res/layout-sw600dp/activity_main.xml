@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ MIT License
   ~
   ~ Copyright (c) 2025 Gilian Marques Fernandes - linkedin.com/in/gilianmarques
@@ -26,14 +25,10 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:name="androidx.navigation.fragment.NavHostFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:navGraph="@navigation/nav_graph_details">
+    android:layout_height="match_parent">
 
-    <!-- Painel mestre -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_master"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -41,50 +36,6 @@
         android:layout_height="match_parent"
         android:elevation="0dp"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"
-        tools:layout_width="200dp" />
-
-    <FrameLayout
-        android:id="@+id/drag_indicator"
-        android:layout_width="48dp"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:elevation="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/nav_host_detail"
-        app:layout_constraintStart_toEndOf="@id/nav_host_master"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:alpha="1">
-
-        <View
-            android:layout_width="8dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@drawable/back_degrade" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/drag_handle"
-            android:layout_width="36dp"
-            android:layout_height="72dp"
-            android:layout_gravity="center"
-            android:background="@drawable/back_round_drag_handle"
-            android:backgroundTint="?colorSurfaceContainerHighest"
-            android:padding="6dp"
-            android:src="@drawable/vec_drag_handle"
-            app:tint="?colorPrimary" />
-
-    </FrameLayout>
-
-
-    <!-- Painel de detalhes -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_detail"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:elevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/nav_host_master"
-        app:navGraph="@navigation/nav_graph_details" />
+        app:navGraph="@navigation/nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

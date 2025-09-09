@@ -27,9 +27,11 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.animation.doOnEnd
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.detailsPaneScreenPercent
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.BOTH
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.ONLY_DETAILS
@@ -40,9 +42,9 @@ import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPan
  * Em quarta-feira, 09 de julho de 2025 as 15:07.
  */
 class SlidingPaneController(
-    private val activity: Activity,
-    masterId: Int,
-    detailId: Int,
+    private val context: Context,
+    private val masterView: View,
+    private val detailView: View
 ) {
 
     companion object {
@@ -61,12 +63,9 @@ class SlidingPaneController(
     var state: SlidingPaneState = ONLY_MASTER
         private set
 
-    private val masterView: View = activity.findViewById(masterId)
-    private val detailView: View = activity.findViewById(detailId)
-
     /**Recebe a largura da tela, considerando a orientação do dispositivo (sempre recebe o valor horizontal da tela)*/
     private val screenWidth: Int
-        get() = activity.resources.displayMetrics.widthPixels
+        get() = context.resources.displayMetrics.widthPixels
 
     private val targetPercent: Float
         get() = detailsPaneScreenPercent.value

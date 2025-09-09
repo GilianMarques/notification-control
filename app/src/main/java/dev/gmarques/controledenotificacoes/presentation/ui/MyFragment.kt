@@ -283,19 +283,10 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBack() {
         vibrator.interaction()
-        findNavControllerDefault().navigateUp()
+        findNavController().navigateUp()
         Log.d("USUK", "MyFragment.goBack: ${this.javaClass.simpleName}")
     }
 
-    /**
-     * Mesmo que [goBack] mas cusando o NavHost do painel de detalhes.
-     * Se quer voltar na navegação em um fragmento no painel de detalhes essa é a fução que deve chamar.
-     */
-    protected open fun goBackDetails() {
-        vibrator.interaction()
-        findNavControllerDetails()?.navigateUp()
-        Log.d("USUK", "MyFragment.goBackDetails: ${this.javaClass.simpleName} ")
-    }
 
     protected fun requireMainActivity(): MainActivity {
         return requireActivity() as MainActivity
@@ -531,32 +522,6 @@ open class MyFragment() : Fragment() {
 
         }
     }
-
-    /** Retorna o  Controlador de navegação do painel de detalhes (o da direita)
-     * Esse controlador só estará disponível em dispositivos com tela grande com tablets e tvs
-     * para saber se pode chamar essa função verifique [App.largeScreenDevice]
-     *
-     * @See findNavControllerMain*/
-    protected fun findNavControllerDetails(): NavController? {
-        return requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_detail)?.findNavController()
-    }
-
-    /**
-     * Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets)
-     * Esse controlador sempre estará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
-     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme [SlidingPaneController.SlidingPaneState] do [SlidingPaneController].
-     * para obter o navegador Default do sistema no momento da chamada use [findNavControllerDefault].
-     */
-    protected fun findNavControllerMain() =
-        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_master)?.findNavController()
-            ?: error("Nao deveria ser nulo independente do dispositivo e tamanho da tela")
-
-
-    /**
-     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [SlidingPaneController]
-     * Use [findNavControllerMain] para obter o navController do painel principal e [findNavControllerDetails] para obter o
-     * navController do painel de detalhes (indisponivel em celulares)*/
-    protected fun findNavControllerDefault() = findNavController()
 
     override fun onResume() {
         if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onResume: ")

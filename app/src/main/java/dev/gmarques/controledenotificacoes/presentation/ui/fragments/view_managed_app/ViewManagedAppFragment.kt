@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
+import android.R.attr.direction
 import android.app.PendingIntent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -37,6 +38,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -68,16 +70,40 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPaneControllerCallback {
+class ViewManagedAppFragment() : MyFragment(),
+    SlidingPaneController.SlidingPaneControllerCallback {
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: ViewManagedAppFragmentArgs by navArgs()
+    private var navCallback: NavigationCallback? = null
 
     @Inject
     lateinit var shakeDetector: ShakeDetectorHelper
     private lateinit var adapter: AppNotificationAdapter
     private lateinit var appIcon: Drawable
+
+    companion object {
+
+        fun newInstance(
+            args: Bundle,
+            callback: NavigationCallback
+        ): ViewManagedAppFragment {
+
+            val fragment = ViewManagedAppFragment().apply {
+                arguments = args
+                navCallback = callback
+            }
+
+            return fragment
+        }
+
+        interface NavigationCallback {
+            fun navigateToEditRule()
+            fun navigateToSelectRule()
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,16 +136,6 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         setupFabOpenApp()
         setupSelectRuleListener()
         closeDetailsPaneOnExit()
-        setupDetailsPaneListener()
-    }
-
-    /**
-     * Configura um listener para o estado do painel deslizante (em tablets). Quando o painel está visível apenas
-     * no modo "master" o painel de detalhes é fechado, então esse fragmento deve fechar tambem.
-     */
-    private fun setupDetailsPaneListener() {
-        requireMainActivity().slidingPaneController
-            ?.addStateListener(this@ViewManagedAppFragment, this@ViewManagedAppFragment)
     }
 
     /**
@@ -134,17 +150,6 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
             this.remove() // Remove o callback para evitar chamadas múltiplas
             goBack()
         }
-    }
-
-    /**
-     * Sobrescreve o mét.odo goBack() para lidar com a navegação em dispositivos com telas grandes.
-     * Se for um dispositivo de tela grande, força o painel deslizante para o modo "onlyMaster"
-     * (apenas a lista de aplicativos) antes de chamar o goBack() da superclasse.
-     * Caso contrário (dispositivo de tela pequena), apenas chama o goBack() da superclasse.
-     */
-    override fun goBack() {
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster() //dispara o listener que fecha o frag
-        else super.goBack()
     }
 
     /**atua nas animaçoes do lottie e vibração*/
@@ -315,11 +320,10 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
 
     private fun navigateToEditRule() {
 
-        val direction = ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule)
-
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyDetails {
-            findNavControllerDetails()?.navigate(direction)
-        } else findNavControllerMain().navigate(direction)
+        if (navCallback != null) navCallback!!.navigateToEditRule()
+        else findNavController().navigate(
+            ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule)
+        )
     }
 
     private fun setupSelectRuleListener() {
@@ -333,12 +337,10 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
 
     private fun navigateToSelectRule() {
 
-        val direction = ViewManagedAppFragmentDirections.toSelectRuleFragment()
-
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showMasterAndDetails {
-            findNavControllerDetails()?.navigate(direction)
-        } else findNavControllerMain().navigate(direction)
-
+        if (navCallback != null) navCallback!!.navigateToEditRule()
+        else findNavController().navigate(
+            ViewManagedAppFragmentDirections.toSelectRuleFragment()
+        )
     }
 
     private fun confirmRemoveRule() {
@@ -386,12 +388,7 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
         super.onPause()
     }
 
-    /**
-     * Garante que sempre que esse fragmento entrar na tela, os paineis de master e detalhes  serao exibidos juntos (se em tablet)
-     * e mais...
-     */
     override fun onResume() {
-        requireMainActivity().slidingPaneController?.showMasterAndDetails()
         viewModel.markNotificationsAsRead()
         super.onResume()
     }
@@ -408,7 +405,7 @@ class ViewManagedAppFragment() : MyFragment(), SlidingPaneController.SlidingPane
 
     /**Callback de [SlidingPaneController.SlidingPaneControllerCallback]*/
     override fun onAnimationEnd(newState: SlidingPaneState) {
-        if (newState == SlidingPaneState.ONLY_MASTER) goBackDetails()
+        if (newState == SlidingPaneState.ONLY_MASTER) goBack()
     }
 
 }

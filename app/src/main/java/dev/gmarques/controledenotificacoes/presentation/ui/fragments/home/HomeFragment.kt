@@ -22,18 +22,20 @@
  * SOFTWARE.
  *
  */
-
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
-
+import android.R.attr.fragment
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
@@ -47,8 +49,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
@@ -68,16 +70,20 @@ import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNoti
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.PaneResizer
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.PaneResizer.PaneResizeListener
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.NotificationMenuAction
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment.Companion.NavigationCallback
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebindAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -89,6 +95,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : MyFragment() {
 
+
     @Inject
     lateinit var systemNotificationManager: SystemNotificationManager
 
@@ -97,7 +104,14 @@ class HomeFragment : MyFragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
-    private val isAppBarExpandedKey = "app_bar_expanded"
+    private var paneResizer: PaneResizer? = null
+    private var slidingPaneController: SlidingPaneController? = null
+    private var mViewManagedAppFragment: ViewManagedAppFragment? = null
+
+    companion object {
+        private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
+        private const val IS_APP_BAR_EXPANDED = "app_bar_expanded"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,7 +132,6 @@ class HomeFragment : MyFragment() {
             interpolator = AccelerateDecelerateInterpolator()
             duration = 350
         }
-
     }
 
     override fun onCreateView(
@@ -132,6 +145,7 @@ class HomeFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch {
             setupPopUpMenu()
             setupRecyclerView()
@@ -140,20 +154,19 @@ class HomeFragment : MyFragment() {
             setupSearch()
             setupActiveNotificationsView()
             setupAppbar()
+            setupForTablet(savedInstanceState)
         }
 
     }
 
     private fun setupAppbar() = with(binding) {
 
-        val expanded = findNavControllerDefault()
-            .currentBackStackEntry
-            ?.savedStateHandle
-            ?.get<Boolean>(isAppBarExpandedKey) ?: true
+        val expanded =
+            findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(IS_APP_BAR_EXPANDED) ?: true
 
         appbar.setExpanded(expanded, false)
         appbar.addOnOffsetChangedListener { _, verticalOffset ->
-            findNavControllerDefault().currentBackStackEntry?.savedStateHandle?.set(isAppBarExpandedKey, verticalOffset == 0)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(IS_APP_BAR_EXPANDED, verticalOffset == 0)
         }
     }
 
@@ -163,8 +176,7 @@ class HomeFragment : MyFragment() {
 
         val notsAdapter = ActiveNotificationsAdapter(object : ActiveNotificationsAdapter.Callback {
             override fun onMenuClicked(
-                notification: ManageableNotification,
-                ivMenu: AppCompatImageView
+                notification: ManageableNotification, ivMenu: AppCompatImageView
             ) {
                 viewModelManageNotifications.createPopUpMenu(notification) { action ->
                     when (action) {
@@ -202,8 +214,7 @@ class HomeFragment : MyFragment() {
             lifecycleScope.launch {
                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     collectFlow(
-                        systemNotificationManager
-                            .getActiveWithOngoingNotificationsFlow()
+                        systemNotificationManager.getActiveWithOngoingNotificationsFlow()
                     ) {
 
                         binding.llActiveNotifications?.isGone = it.isEmpty()
@@ -272,25 +283,16 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toEchoFragment()) }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
+        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
     }
 
     private fun navigateToSettingsFragment() {
 
-        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toSettingsFragment()) }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
+        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
     }
 
     private fun navigateToManageNotificationsFragment() {
-        val navigate = {
-            findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
-        }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
-
+        findNavController().navigate(HomeFragmentDirections.toManageNotificationsFragment())
     }
 
     private fun navigateToPickDateAndTime(not: ManageableNotification) {
@@ -299,16 +301,44 @@ class HomeFragment : MyFragment() {
             val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
             viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
         }
-        findNavControllerMain().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+        findNavController().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
     }
 
     private fun navigateToAddManagedApp(not: ManageableNotification) {
-        val navigate = {
-            findNavControllerMain()
-                .navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+        findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+    }
+
+    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+
+        binding.edtSearch.setText("")
+
+        if (App.largeScreenDevice) {
+            slidingPaneController?.showMasterAndDetails()
+            mViewManagedAppFragment = ViewManagedAppFragment.newInstance(
+                bundleOf("app" to app), object : NavigationCallback {
+
+                    override fun navigateToEditRule() {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun navigateToSelectRule() {
+                        TODO("Not yet implemented")
+                    }
+                })
+            parentFragmentManager.beginTransaction().replace(R.id.container_view_managed_apps, mViewManagedAppFragment!!).commit()
+            return
         }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
+
+        // Navegação padrão (Celular)
+        findNavController().navigate(
+            HomeFragmentDirections.toViewManagedAppFragment(app = app), FragmentNavigatorExtras(
+                binding.ivProfilePicture to "view_app_icon",
+                binding.tvUserName to "view_app_name",
+                binding.ivMenu to "view_menu",
+                binding.divider to "divider",
+                binding.fabAdd to "fab",
+            )
+        )
     }
 
     private fun setupActionBar() = binding.apply {
@@ -338,9 +368,8 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toProfileFragment(), extras) }
-                if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-                else navigate()
+
+                findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
 
             })
         }
@@ -348,13 +377,12 @@ class HomeFragment : MyFragment() {
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            requireMainActivity().slidingPaneController?.showOnlyMaster()
 
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
             )
-            findNavControllerMain().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
+            findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
         })
     }
 
@@ -411,14 +439,13 @@ class HomeFragment : MyFragment() {
     private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
         return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
 
-            if (requireMainActivity().slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
-            adapter.setUseGridView(spanCount)
-            /*
+            if (slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
+            adapter.setUseGridView(spanCount)/*
             * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
             * a visualização em lista e em grades com multiplas colunas.
             * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
             */
-            binding.rvApps.rebindAdapter()
+            // TODO:     binding.rvApps.rebindAdapter()
         }
     }
 
@@ -431,47 +458,77 @@ class HomeFragment : MyFragment() {
      * @see createResponsiveLayoutManager
      */
     private fun setupPaneAnimationListener(layoutManager: AutoFitGridLayoutManager) {
-        requireMainActivity().slidingPaneController
-            ?.addStateListener(this@HomeFragment, object : SlidingPaneControllerCallback {
-                override fun onAnimationStarted(currentState: SlidingPaneController.SlidingPaneState) {
-                    binding.rvApps.adapter = null
-                }
+        slidingPaneController?.addStateListener(this@HomeFragment, object : SlidingPaneControllerCallback {
+            override fun onAnimationStarted(currentState: SlidingPaneState) {
+                binding.rvApps.adapter = null
+            }
 
-                override fun onAnimationEnd(newState: SlidingPaneController.SlidingPaneState) {
-                    adapter.setUseGridView(layoutManager.spanCount)
-                    binding.rvApps.adapter = adapter
-                }
-            })
+            override fun onAnimationEnd(newState: SlidingPaneState) {
+                adapter.setUseGridView(layoutManager.spanCount)
+                binding.rvApps.adapter = adapter
+            }
+        })
     }
 
-    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+    private fun setupForTablet(savedInstanceState: Bundle?) = with(binding) {
 
-        binding.edtSearch.setText("")
+        if (!App.largeScreenDevice) return@with
 
-        val extras = FragmentNavigatorExtras(
-            binding.ivProfilePicture to "view_app_icon",
-            binding.tvUserName to "view_app_name",
-            binding.ivMenu to "view_menu",
-            binding.divider to "divider",
-            binding.fabAdd to "fab",
+        if (mainContent == null ||
+            containerViewManagedApps == null ||
+            dragIndicator == null ||
+            dragHandle == null
+        ) {
+            Log.e(
+                "USUK",
+                "MainActivity.setupForTablet: Essa view nao deve ser nula em dispositivos de tela grande dragIndicator: $dragIndicator dragHandle: $dragHandle"
+            )
+            return@with
+        }
+
+        requireMainActivity()
+            .onBackPressedDispatcher
+            .addCallback {
+                if (mViewManagedAppFragment != null) {
+                    parentFragmentManager
+                        .beginTransaction()
+                        .remove(mViewManagedAppFragment!!)
+                        .commit()
+                    slidingPaneController?.showOnlyMaster()
+                } else goBack()
+            }
+
+        val lastState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            savedInstanceState?.getSerializable(DETAILS_PANE_STATE, SlidingPaneState::class.java)
+        } else {
+            @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState?
+        } ?: SlidingPaneState.ONLY_MASTER
+
+
+        paneResizer = PaneResizer(
+            handleParent = dragIndicator,
+            dragHandler = dragHandle,
+            vibratorProvider = vibrator,
+            listener = object : PaneResizeListener {
+                /**
+                 * Disparada quando o [PaneResizer] detecta alterações no tamanho do painel, para autalizar
+                 * os valores no [SlidingPaneController] que por sua vez atualiza a posição do painel e salva em
+                 * preferencias o novo valor padrao  do painel
+                 */
+                override fun onPaneResized(positionPercent: Float) {
+                    slidingPaneController?.onPaneResizedByHand(positionPercent) ?: 0f
+                }
+            })
+        slidingPaneController = SlidingPaneController(
+            context = requireMainActivity(),
+            masterView = mainContent,
+            detailView = containerViewManagedApps
         )
 
-        if (App.largeScreenDevice) lifecycleScope.launch {
-            val navigate = {
-                findNavControllerDetails()!!.navigate(
-                    R.id.viewManagedAppFragment,
-                    bundleOf("app" to app),
-                    NavOptions
-                        .Builder()
-                        .setPopUpTo(R.id.viewManagedAppFragment, true)
-                        .build()
-                )
-            }
-            requireMainActivity().slidingPaneController?.showMasterAndDetails(navigate)
-
-        } else {
-            // Navegação padrão (Celular)
-            findNavControllerMain().navigate(HomeFragmentDirections.toViewManagedAppFragment(app = app), extras)
+        when (lastState) {
+            SlidingPaneState.ONLY_MASTER -> slidingPaneController?.showOnlyMaster()
+            SlidingPaneState.BOTH -> slidingPaneController?.showMasterAndDetails()
+            SlidingPaneState.ONLY_DETAILS -> slidingPaneController?.showOnlyDetails()
         }
     }
 
@@ -534,6 +591,11 @@ class HomeFragment : MyFragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable(DETAILS_PANE_STATE, slidingPaneController?.state ?: SlidingPaneState.ONLY_MASTER)
+    }
+
     private fun showListenNotificationWarning() {
 
         val warningBinding = ViewWarningListenNotificationPermissionBinding.inflate(layoutInflater)
@@ -542,8 +604,7 @@ class HomeFragment : MyFragment() {
             MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Sua_privacidade_importa))
                 .setMessage(getString(R.string.O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros))
                 .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                }
-                .setNegativeButton(getString(R.string.Ver_politica_de_privacidade)) { dialog, _ ->
+                }.setNegativeButton(getString(R.string.Ver_politica_de_privacidade)) { dialog, _ ->
                     val url = App.instance.remoteConfigValues.value?.privacyUrl
 
                     if (!url.isNullOrBlank()) {
@@ -551,13 +612,11 @@ class HomeFragment : MyFragment() {
                         startActivity(intent)
                     } else {
                         showErrorSnackBar(
-                            getString(R.string.Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes),
-                            binding.fabAdd
+                            getString(R.string.Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes), binding.fabAdd
                         )
                     }
 
-                }
-                .setIcon(R.drawable.vec_info).show()
+                }.setIcon(R.drawable.vec_info).show()
         })
 
         warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
@@ -600,8 +659,7 @@ class HomeFragment : MyFragment() {
     }
 
     private fun showHowToFeedbackDialog() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback))
-            .setIcon(R.drawable.vec_info)
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
                 openPlayStore()
