@@ -40,6 +40,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorPr
  * e retorna esse valor para o listener registrado. Também aplica animações de fade-in e fade-out durante o toque.
  *
  * @param handleParent View que o usuário pode arrastar.
+ * @param dragHandler View que será animada verticalmente conforme o usuário arrasta o handleParent.
  * @param listener Callback que recebe o valor entre 0.0f e 1.0f correspondente à posição horizontal do arrasto.
  */
 class PaneResizer(
