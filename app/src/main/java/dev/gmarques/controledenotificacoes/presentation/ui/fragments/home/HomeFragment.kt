@@ -558,7 +558,7 @@ class HomeFragment : MyFragment() {
                     }
                 })
             parentFragmentManager.beginTransaction()
-                .replace(R.id.details_container, mViewManagedAppFragment!!)
+                .replace(R.id.details_fragment_host, mViewManagedAppFragment!!)
                 .commit()
 
         }

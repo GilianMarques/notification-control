@@ -33,7 +33,8 @@
         android:id="@+id/master_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:background="?attr/AppColorBackground">
+        tools:background="?attr/AppColorBackground"
+        tools:layout_width="500dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_profile_picture"
@@ -272,7 +273,7 @@
         android:layout_width="48dp"
         android:layout_height="match_parent"
         android:alpha="0"
-        android:elevation="5dp"
+        android:elevation="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/details_container"
         app:layout_constraintStart_toEndOf="@id/master_container"
@@ -298,14 +299,21 @@
 
     </FrameLayout>
 
-    <androidx.fragment.app.FragmentContainerView
+    <FrameLayout
         android:id="@+id/details_container"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:elevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/master_container"
-        />
+        app:layout_constraintStart_toEndOf="@id/master_container">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/details_fragment_host"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:background="@drawable/back_details_pane"
+            android:elevation="8dp" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
