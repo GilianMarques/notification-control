@@ -351,41 +351,6 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="SelectAppsFragment">
-                    <value>
-                      <LayoutPositions />
-                    </value>
-                  </entry>
-                  <entry key="addManagedAppsFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="to_SelectAppsFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="to_addRuleFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="to_selectNotificationFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="to_selectRuleFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="addOrUpdateConditionFragment">
                     <value>
                       <LayoutPositions>
@@ -419,28 +384,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="dateTimePickerFragment">
-                    <value>
-                      <LayoutPositions />
-                    </value>
-                  </entry>
-                  <entry key="manageNotificationsFragment">
+                  <entry key="placeHolderFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
                             <option name="x" value="12" />
-                            <option name="y" value="131" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="to_addManagedAppsFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="to_dateTimePickerFragment">
+                            <entry key="to_viewManagedAppFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -448,11 +403,6 @@
                           </map>
                         </option>
                       </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="selectNotificationFragment">
-                    <value>
-                      <LayoutPositions />
                     </value>
                   </entry>
                   <entry key="selectRuleFragment">

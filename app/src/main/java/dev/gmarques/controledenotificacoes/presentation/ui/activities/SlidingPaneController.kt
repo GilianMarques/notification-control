@@ -26,12 +26,10 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.animation.doOnEnd
-import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.detailsPaneScreenPercent
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.BOTH
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState.ONLY_DETAILS
@@ -43,8 +41,8 @@ import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPan
  */
 class SlidingPaneController(
     private val context: Context,
-    private val masterView: View,
-    private val detailView: View
+    private val masterPane: View,
+    private val detailsPane: View
 ) {
 
     companion object {
@@ -84,17 +82,18 @@ class SlidingPaneController(
 
         stateListener.values.forEach { it.onAnimationStarted(state) }
         state = BOTH
-        detailView.visibility = View.VISIBLE
-        masterView.visibility = View.VISIBLE
+        detailsPane.visibility = View.VISIBLE
+        masterPane.visibility = View.VISIBLE
 
-        animateWidth(masterView, masterView.width, screenWidth - detailTargetWidth)
-        animateWidth(detailView, detailView.width, detailTargetWidth) {
+        animateWidth(masterPane, masterPane.width, screenWidth - detailTargetWidth)
+        animateWidth(detailsPane, detailsPane.width, detailTargetWidth) {
             callback.invoke()
             stateListener.values.forEach { it.onAnimationEnd(state) }
         }
 
     }
 
+    @Suppress("unused")
     fun showOnlyDetails(callback: () -> Unit = {}) {
 
         if (state == ONLY_DETAILS) {
@@ -104,11 +103,11 @@ class SlidingPaneController(
 
         stateListener.values.forEach { it.onAnimationStarted(state) }
         state = ONLY_DETAILS
-        detailView.visibility = View.VISIBLE
+        detailsPane.visibility = View.VISIBLE
 
-        animateWidth(masterView, masterView.width, 0)
-        animateWidth(detailView, detailView.width, screenWidth) {
-            masterView.visibility = View.GONE
+        animateWidth(masterPane, masterPane.width, 0)
+        animateWidth(detailsPane, detailsPane.width, screenWidth) {
+            masterPane.visibility = View.GONE
             callback.invoke()
             stateListener.values.forEach { it.onAnimationEnd(state) }
         }
@@ -124,11 +123,11 @@ class SlidingPaneController(
 
         stateListener.values.forEach { it.onAnimationStarted(state) }
         state = ONLY_MASTER
-        masterView.visibility = View.VISIBLE
+        masterPane.visibility = View.VISIBLE
 
-        animateWidth(masterView, masterView.width, screenWidth)
-        animateWidth(detailView, detailView.width, 0) {
-            detailView.visibility = View.GONE
+        animateWidth(masterPane, masterPane.width, screenWidth)
+        animateWidth(detailsPane, detailsPane.width, 0) {
+            detailsPane.visibility = View.GONE
             callback.invoke()
             stateListener.values.forEach { it.onAnimationEnd(state) }
         }
@@ -194,10 +193,10 @@ class SlidingPaneController(
 
         val masterWidth = (screenWidth * newPercent).toInt()
         val detailWidth = screenWidth - masterWidth
-        masterView.layoutParams.width = masterWidth
-        detailView.layoutParams.width = detailWidth
-        masterView.requestLayout()
-        detailView.requestLayout()
+        masterPane.layoutParams.width = masterWidth
+        detailsPane.layoutParams.width = detailWidth
+        masterPane.requestLayout()
+        detailsPane.requestLayout()
 
     }
 

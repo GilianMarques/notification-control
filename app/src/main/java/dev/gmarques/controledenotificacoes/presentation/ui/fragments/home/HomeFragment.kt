@@ -24,17 +24,14 @@
  */
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
-import android.R.attr.fragment
 import android.content.Intent
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
@@ -67,6 +64,7 @@ import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimiz
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -84,6 +82,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebindAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -100,16 +99,23 @@ class HomeFragment : MyFragment() {
     lateinit var systemNotificationManager: SystemNotificationManager
 
     private val viewModel: HomeViewModel by activityViewModels()
+
+    /**permite obter as notificaçõesa tivas sem duplica codigo*/
     private val viewModelManageNotifications: ManageNotificationsViewModel by activityViewModels()
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
+    /**Permite ajustar o tamanho do painel manualmente*/
     private var paneResizer: PaneResizer? = null
+
+    /**Permite alternar a visibilidade do painel de detalhes*/
     private var slidingPaneController: SlidingPaneController? = null
+
+    /**fragmento de detalhes*/
     private var mViewManagedAppFragment: ViewManagedAppFragment? = null
 
     companion object {
-        private const val DETAILS_PANE_STATE = "details_pane_state_expanded"
         private const val IS_APP_BAR_EXPANDED = "app_bar_expanded"
     }
 
@@ -147,16 +153,45 @@ class HomeFragment : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            setupPopUpMenu()
             setupRecyclerView()
+            setupPopUpMenu()
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
             setupActiveNotificationsView()
             setupAppbar()
-            setupForTablet(savedInstanceState)
+            setupForTablet()
+            setupOnBackPressedListener()
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (viewModel.currentAppOpen != null) openDetailsFragment(viewModel.currentAppOpen!!)
+
+        lifecycleScope.launch {
+
+            binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
+
+            if (!requireMainActivity().isListenNotificationPermissionGranted()) {
+                showListenNotificationWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
+                showPostNotificationRestrictionsWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
+                delay(1500)
+                if (!requireMainActivity().isAppInsetFromBatterySaving()) showBatteryRestrictionsWarning()
+                return@launch
+            }
+
+        }
     }
 
     private fun setupAppbar() = with(binding) {
@@ -282,63 +317,23 @@ class HomeFragment : MyFragment() {
         })
     }
 
-    private fun navigateToEchoFragment() {
-        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
-    }
-
-    private fun navigateToSettingsFragment() {
-
-        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
-    }
-
-    private fun navigateToManageNotificationsFragment() {
-        findNavController().navigate(HomeFragmentDirections.toManageNotificationsFragment())
-    }
-
-    private fun navigateToPickDateAndTime(not: ManageableNotification) {
-
-        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
-            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
-            viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
-        }
-        findNavController().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
-    }
-
-    private fun navigateToAddManagedApp(not: ManageableNotification) {
-        findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
-    }
-
-    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
-
-        binding.edtSearch.setText("")
-
-        if (App.largeScreenDevice) {
-            slidingPaneController?.showMasterAndDetails()
-            mViewManagedAppFragment = ViewManagedAppFragment.newInstance(
-                bundleOf("app" to app), object : NavigationCallback {
-
-                    override fun navigateToEditRule() {
-                        TODO("Not yet implemented")
-                    }
-
-                    override fun navigateToSelectRule() {
-                        TODO("Not yet implemented")
-                    }
-                })
-            parentFragmentManager.beginTransaction().replace(R.id.container_view_managed_apps, mViewManagedAppFragment!!).commit()
-            return
-        }
-
-        // Navegação padrão (Celular)
-        findNavController().navigate(
-            HomeFragmentDirections.toViewManagedAppFragment(app = app), FragmentNavigatorExtras(
-                binding.ivProfilePicture to "view_app_icon",
-                binding.tvUserName to "view_app_name",
-                binding.ivMenu to "view_menu",
-                binding.divider to "divider",
-                binding.fabAdd to "fab",
-            )
-        )
+    /**
+     * Configura um listener para o botão "voltar".
+     * Em dispositivos de tela grande, se o fragmento [ViewManagedAppFragment] estiver visível,
+     * ele é removido e as visualizações de tela única são restauradas. Caso contrário, a ação de "voltar" padrão é executada.
+     */
+    private fun setupOnBackPressedListener() {
+        requireMainActivity()
+            .onBackPressedDispatcher
+            .addCallback(owner = this@HomeFragment) {
+                if (mViewManagedAppFragment != null) {
+                    closeDetailsFragment()
+                    return@addCallback
+                }
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
     }
 
     private fun setupActionBar() = binding.apply {
@@ -424,32 +419,6 @@ class HomeFragment : MyFragment() {
     }
 
     /**
-     * Cria um `AutoFitGridLayoutManager` que calcula automaticamente a quantidade de colunas
-     * com base na largura disponível. Força o RecyclerView a recriar as views ao alternar
-     * entre visualização em lista e em grade.
-     *
-     * Durante as animaçoes do  [SlidingPaneController] as mudanças de SpanCount do [AutoFitGridLayoutManager] são ignoradas
-     * isso acontece porque [setupPaneAnimationListener] sabe quando o painel esta abrindo/fechando e atualiza o
-     * adapter com spancount e o redefine no recyclerview. ISso gera uma transição suave entre as views de lista e grade.
-     *
-     * @return Um layout manager configurado.
-     *
-     * @see setupManagedAppsAdapter
-     */
-    private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
-        return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
-
-            if (slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
-            adapter.setUseGridView(spanCount)/*
-            * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
-            * a visualização em lista e em grades com multiplas colunas.
-            * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
-            */
-            // TODO:     binding.rvApps.rebindAdapter()
-        }
-    }
-
-    /**
      * Adiciona um listener ao `SlidingPaneController` para reatribuir o adapter nos momentos certos da
      * animação de abertura ou fechamento do painel, garantindo uma transição visual suave.
      *
@@ -470,12 +439,12 @@ class HomeFragment : MyFragment() {
         })
     }
 
-    private fun setupForTablet(savedInstanceState: Bundle?) = with(binding) {
+    private fun setupForTablet() = with(binding) {
 
         if (!App.largeScreenDevice) return@with
 
-        if (mainContent == null ||
-            containerViewManagedApps == null ||
+        if (masterContainer == null ||
+            detailsContainer == null ||
             dragIndicator == null ||
             dragHandle == null
         ) {
@@ -485,26 +454,6 @@ class HomeFragment : MyFragment() {
             )
             return@with
         }
-
-        requireMainActivity()
-            .onBackPressedDispatcher
-            .addCallback {
-                if (mViewManagedAppFragment != null) {
-                    parentFragmentManager
-                        .beginTransaction()
-                        .remove(mViewManagedAppFragment!!)
-                        .commit()
-                    slidingPaneController?.showOnlyMaster()
-                } else goBack()
-            }
-
-        val lastState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savedInstanceState?.getSerializable(DETAILS_PANE_STATE, SlidingPaneState::class.java)
-        } else {
-            @Suppress("DEPRECATION") savedInstanceState?.getSerializable(DETAILS_PANE_STATE) as SlidingPaneState?
-        } ?: SlidingPaneState.ONLY_MASTER
-
-
         paneResizer = PaneResizer(
             handleParent = dragIndicator,
             dragHandler = dragHandle,
@@ -521,14 +470,158 @@ class HomeFragment : MyFragment() {
             })
         slidingPaneController = SlidingPaneController(
             context = requireMainActivity(),
-            masterView = mainContent,
-            detailView = containerViewManagedApps
+            masterPane = masterContainer,
+            detailsPane = detailsContainer
         )
 
-        when (lastState) {
-            SlidingPaneState.ONLY_MASTER -> slidingPaneController?.showOnlyMaster()
-            SlidingPaneState.BOTH -> slidingPaneController?.showMasterAndDetails()
-            SlidingPaneState.ONLY_DETAILS -> slidingPaneController?.showOnlyDetails()
+    }
+
+    private fun setupSearch() {
+        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.managedAppsWithRules.value.let {
+                it?.let { adapter.submitList(it, text.toString().trim()) }
+            }
+        }
+    }
+
+    private fun navigateToEchoFragment() {
+        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+    }
+
+    private fun navigateToSettingsFragment() {
+
+        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+    }
+
+    private fun navigateToManageNotificationsFragment() {
+        findNavController().navigate(HomeFragmentDirections.toManageNotificationsFragment())
+    }
+
+    private fun navigateToPickDateAndTime(not: ManageableNotification) {
+
+        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
+            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
+            viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
+        }
+        findNavController().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+    }
+
+    private fun navigateToAddManagedApp(not: ManageableNotification) {
+        findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+    }
+
+    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+
+        binding.edtSearch.setText("")
+
+        // para teblets
+        if (App.largeScreenDevice) {
+            openDetailsFragment(app)
+            return
+        }
+        // Navegação padrão (Celular)
+        findNavController().navigate(
+            HomeFragmentDirections.toViewManagedAppFragment(app = app), FragmentNavigatorExtras(
+                binding.ivProfilePicture to "view_app_icon",
+                binding.tvUserName to "view_app_name",
+                binding.ivMenu to "view_menu",
+                binding.divider to "divider",
+                binding.fabAdd to "fab",
+            )
+        )
+    }
+
+    /**
+     * Abre o fragmento de detalhes para um aplicativo gerenciado específico.
+     * Esta função é usada apenas em dispositivos de tela grande  onde
+     * a lista de aplicativos e os detalhes de um aplicativo selecionado podem ser exibidos lado a lado.
+     *
+     * @param app O objeto [ManagedAppWithRule] contendo os dados do aplicativo a ser exibido.
+     *
+     * @see ViewManagedAppFragment
+     */
+    private fun openDetailsFragment(app: ManagedAppWithRule) {
+        viewModel.currentAppOpen = app
+        toggleSingleScreenViews(false)
+        slidingPaneController?.showMasterAndDetails {
+            mViewManagedAppFragment = ViewManagedAppFragment.newInstance(
+                bundleOf("app" to app), object : NavigationCallback {
+
+                    override fun navigateToEditRule(rule: Rule) {
+                        findNavController().navigate(
+                            HomeFragmentDirections.toAddRuleFragment(rule)
+                        )
+                    }
+
+                    override fun navigateToSelectRule() {
+                        findNavController().navigate(HomeFragmentDirections.toSelectRuleFragment())
+                    }
+                })
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.details_container, mViewManagedAppFragment!!)
+                .commit()
+
+        }
+        return
+    }
+
+    /**
+     * Fecha o fragmento de detalhes.
+     *
+     * Esta função é usada apenas em dispositivos de tela grande onde
+     * a lista de aplicativos e os detalhes de um aplicativo selecionado podem ser exibidos lado a lado.
+     *
+     * @see ViewManagedAppFragment
+     */
+    private fun closeDetailsFragment() {
+        mViewManagedAppFragment?.let {
+            viewModel.currentAppOpen = null
+            slidingPaneController?.showOnlyMaster {
+                parentFragmentManager
+                    .beginTransaction()
+                    .remove(mViewManagedAppFragment!!)
+                    .commit()
+                mViewManagedAppFragment = null
+                toggleSingleScreenViews(true)
+            }
+        }
+    }
+
+    /**
+     * Alterna a visibilidade dos elementos de interface que são específicos para a visualização em tela única.
+     * Isso é usado em dispositivos de tela grande para esconder/mostrar elementos como o FAB e o menu
+     * quando o painel de detalhes é exibido ou ocultado.
+     * @param show Booleano indicando se os elementos devem ser exibidos (`true`) ou ocultos (`false`).
+     */
+    private fun toggleSingleScreenViews(show: Boolean) = with(binding) {
+        fabAdd.isGone = show.not()
+        ivMenu.isGone = show.not()
+    }
+
+    /**
+     * Cria um `AutoFitGridLayoutManager` que calcula automaticamente a quantidade de colunas
+     * com base na largura disponível. Força o RecyclerView a recriar as views ao alternar
+     * entre visualização em lista e em grade.
+     *
+     * Durante as animaçoes do  [SlidingPaneController] as mudanças de SpanCount do [AutoFitGridLayoutManager] são ignoradas
+     * isso acontece porque [setupPaneAnimationListener] sabe quando o painel esta abrindo/fechando e atualiza o
+     * adapter com spancount e o redefine no recyclerview. ISso gera uma transição suave entre as views de lista e grade.
+     *
+     * @return Um layout manager configurado.
+     *
+     * @see setupManagedAppsAdapter
+     */
+    private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
+        return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
+
+            if (slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
+            adapter.setUseGridView(spanCount)
+            /*
+            * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
+            * a visualização em lista e em grades com multiplas colunas.
+            * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
+            */
+            binding.rvApps.rebindAdapter()
         }
     }
 
@@ -556,44 +649,6 @@ class HomeFragment : MyFragment() {
                 binding.emptyView.isGone = apps?.isNotEmpty() == true
             }
         }
-    }
-
-    private fun setupSearch() {
-        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
-            viewModel.managedAppsWithRules.value.let {
-                it?.let { adapter.submitList(it, text.toString().trim()) }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        lifecycleScope.launch {
-
-            binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
-
-            if (!requireMainActivity().isListenNotificationPermissionGranted()) {
-                showListenNotificationWarning()
-                return@launch
-            }
-
-            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                showPostNotificationRestrictionsWarning()
-                return@launch
-            }
-
-            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                delay(1500)
-                if (!requireMainActivity().isAppInsetFromBatterySaving()) showBatteryRestrictionsWarning()
-                return@launch
-            }
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putSerializable(DETAILS_PANE_STATE, slidingPaneController?.state ?: SlidingPaneState.ONLY_MASTER)
     }
 
     private fun showListenNotificationWarning() {
@@ -662,32 +717,12 @@ class HomeFragment : MyFragment() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
-                openPlayStore()
+                requireMainActivity().openPlayStore()
             }.setNegativeButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
-                openMailToSendFeedback()
+                requireMainActivity().openMailToSendFeedback()
             }.show()
     }
 
-    private fun openMailToSendFeedback() {
-        val email = App.instance.remoteConfigValues.value?.contactEmail
-        if (email == null) return
-
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = "mailto:".toUri()
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            putExtra(
-                Intent.EXTRA_TEXT,
-                (getString(R.string.Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso))
-            )
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Feedback_do_app))
-        }
-
-        if (intent.resolveActivity(App.instance.packageManager) != null) {
-            App.instance.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        } else {
-            Toast.makeText(App.instance, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
-        }
-    }
 }
 
 

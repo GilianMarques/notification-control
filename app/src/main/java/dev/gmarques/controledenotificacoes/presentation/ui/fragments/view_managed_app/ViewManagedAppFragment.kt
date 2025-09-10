@@ -25,7 +25,6 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
-import android.R.attr.direction
 import android.app.PendingIntent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -68,6 +67,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.rebind
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 
 @AndroidEntryPoint
 class ViewManagedAppFragment() : MyFragment(),
@@ -76,7 +76,12 @@ class ViewManagedAppFragment() : MyFragment(),
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: ViewManagedAppFragmentArgs by navArgs()
-    private var navCallback: NavigationCallback? = null
+
+    /**
+     * Em dispositivos de tela grande, este callback é usado para delegar a navegação ao [HomeFragment],
+     * que incorpora este fragmento em sua interface de usuário.
+     */
+    private var tabletNavCallback: NavigationCallback? = null
 
     @Inject
     lateinit var shakeDetector: ShakeDetectorHelper
@@ -89,21 +94,18 @@ class ViewManagedAppFragment() : MyFragment(),
             args: Bundle,
             callback: NavigationCallback
         ): ViewManagedAppFragment {
-
-            val fragment = ViewManagedAppFragment().apply {
+            return ViewManagedAppFragment().apply {
                 arguments = args
-                navCallback = callback
+                tabletNavCallback = callback
             }
 
-            return fragment
         }
 
         interface NavigationCallback {
-            fun navigateToEditRule()
+            fun navigateToEditRule(rule: Rule)
             fun navigateToSelectRule()
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -320,7 +322,7 @@ class ViewManagedAppFragment() : MyFragment(),
 
     private fun navigateToEditRule() {
 
-        if (navCallback != null) navCallback!!.navigateToEditRule()
+        if (tabletNavCallback != null) tabletNavCallback!!.navigateToEditRule(viewModel.managedAppFlow.value!!.rule)
         else findNavController().navigate(
             ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule)
         )
@@ -337,7 +339,7 @@ class ViewManagedAppFragment() : MyFragment(),
 
     private fun navigateToSelectRule() {
 
-        if (navCallback != null) navCallback!!.navigateToEditRule()
+        if (tabletNavCallback != null) tabletNavCallback!!.navigateToSelectRule()
         else findNavController().navigate(
             ViewManagedAppFragmentDirections.toSelectRuleFragment()
         )

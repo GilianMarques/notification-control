@@ -23,23 +23,6 @@ htmlReport/
 # Ignorar toda a pasta .idea por padrão
 .idea/
 
-# Mas permitir versionar apenas configs de projeto relevantes
-!.idea/codeStyles/
-!.idea/dictionaries/
-
-# Workspace e caches são locais (NÃO versionar)
-.idea/workspace.xml
-.idea/caches/
-.idea/shelf/
-.idea/tasks.xml
-.idea/usage.statistics.xml
-.idea/other.xml
-.idea/deploymentTargetDropDown.xml
-.idea/render.experimental.xml
-.idea/androidTestResultsUserPreferences.xml
-.idea/deviceManager.xml
-.idea/migrations.xml
-
 # Keystore files
 *.jks
 *.keystore

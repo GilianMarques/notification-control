@@ -27,13 +27,14 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
-import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -44,7 +45,6 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -61,7 +61,6 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListenerManagerService
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -297,6 +296,78 @@ class MainActivity() : AppCompatActivity() {
             true
         } else false
 
+    }
+
+
+     fun openMailToSendFeedback() {
+        val email = App.instance.remoteConfigValues.value?.contactEmail
+        if (email == null) return
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:".toUri()
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+            putExtra(
+                Intent.EXTRA_TEXT,
+                (getString(R.string.Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso))
+            )
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Feedback_do_app))
+        }
+
+        if (intent.resolveActivity(App.instance.packageManager) != null) {
+            App.instance.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+        } else {
+            Toast.makeText(App.instance, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    /**
+     * Abre a página do aplicativo na Play Store.
+     *
+     * Tenta abrir diretamente no aplicativo da Play Store. Se não estiver instalado,
+     * abre no navegador.
+     *
+     * Utiliza um link do Firebase Remote Config se disponível, caso contrário, usa o nome do pacote do aplicativo.
+     */
+    fun openPlayStore() {
+        val appPackageName = App.instance.packageName
+        // TODO: otimizar depois dos testes
+
+        val playStoreLink = App.instance.remoteConfigValues.value?.playStoreAppLink
+        if (!playStoreLink.isNullOrBlank()) {
+
+            try {
+
+                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
+                    addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    setPackage("com.android.vending")
+                }
+                startActivity(intent)
+
+            } catch (_: ActivityNotFoundException) {
+
+                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
+                    addFlags(FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+
+            }
+        } else try {
+
+            val intent = Intent(
+                Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri()
+            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
+            intent.setPackage("com.android.vending")
+            startActivity(intent)
+
+        } catch (_: ActivityNotFoundException) {
+
+            val intent = Intent(
+                Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$appPackageName".toUri()
+            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
+        }
     }
 
 }
