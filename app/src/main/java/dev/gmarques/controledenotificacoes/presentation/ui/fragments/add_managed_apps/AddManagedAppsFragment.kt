@@ -33,6 +33,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -161,7 +162,7 @@ class AddManagedAppsFragment() : MyFragment() {
         tvAddApp.setOnClickListener(AnimatedClickListener {
 
 
-            findNavControllerMain().navigate(
+            findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()), FragmentNavigatorExtras(
                     fabConclude to fabConclude.transitionName
                 )
@@ -175,7 +176,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
         tvSelectNotification.setOnClickListener(AnimatedClickListener {
 
-            findNavControllerMain().navigate(
+            findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectNotificationFragment(), FragmentNavigatorExtras(
                     fabConclude to fabConclude.transitionName
                 )
@@ -233,7 +234,7 @@ class AddManagedAppsFragment() : MyFragment() {
     }
 
     private fun navigateToSelectRule() = with(binding) {
-        findNavControllerMain().navigate(
+        findNavController().navigate(
             AddManagedAppsFragmentDirections.toSelectRuleFragment(), FragmentNavigatorExtras(
                 fabConclude to fabConclude.transitionName,
                 llRule to llRule.transitionName,
@@ -243,7 +244,7 @@ class AddManagedAppsFragment() : MyFragment() {
     }
 
     private fun navigateToAddRule() = with(binding) {
-        findNavControllerMain().navigate(
+        findNavController().navigate(
             AddManagedAppsFragmentDirections.toAddRuleFragment(), FragmentNavigatorExtras(
                 tvRuleTittle to tvRuleTittle.transitionName,
                 tvTargetApp to tvTargetApp.transitionName,

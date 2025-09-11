@@ -37,9 +37,11 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.SnoozedNotification
 import dev.gmarques.controledenotificacoes.framework.NotificationReceiver
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -54,6 +56,14 @@ class BackupNotificationManager @Inject constructor(
     private val channelId = "backup_snoozed_notification"
 
     fun showBackupNotification(notification: SnoozedNotification) {
+
+        AppLogger.d(
+            "postando backup not atrasada${notification.title}",
+            "horario de postagem original = ${LocalDateTime(notification.snoozeUntil)}",
+            "Postada em ${LocalDateTime.now()}",
+            notification,
+        )
+
         createNotificationChannel()
 
         val id = notification.packageName.hashCode()

@@ -25,12 +25,14 @@
 
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
+import dev.gmarques.controledenotificacoes.AppLogger
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.alarms.BackupNotificationAlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.DeleteSnoozedNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.snoozed_notification.GetSnoozedNotificationByKeyUseCase
 import dev.gmarques.controledenotificacoes.framework.backup_notification.BackupNotificationManager
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -67,6 +69,11 @@ class ScheduleBackupNotificationsOnBootUseCase @Inject constructor(
                 }
 
                 backupNotificationAlarmScheduler.scheduleAlarm(key, snoozedNotification.snoozeUntil)
+                AppLogger.d(
+                    "backup not agendada ${snoozedNotification.title}",
+                    snoozedNotification,
+                    "snoozeUntil = ${LocalDateTime(snoozedNotification.snoozeUntil)}"
+                )
             }
     }
 }

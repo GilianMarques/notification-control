@@ -36,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
@@ -159,7 +160,7 @@ class SelectRuleFragment : MyFragment() {
         val destination = if (rule != null) SelectRuleFragmentDirections.toAddRuleFragment(rule)
         else SelectRuleFragmentDirections.toAddRuleFragment()
 
-        findNavControllerDefault().navigate(destination, extras)
+        findNavController().navigate(destination, extras)
     }
 
     private fun observeViewModel() {

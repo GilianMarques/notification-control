@@ -27,9 +27,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -37,7 +34,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -45,8 +41,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
 import androidx.transition.Fade
@@ -63,7 +57,6 @@ import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.VibratorProvider
 import dev.gmarques.controledenotificacoes.framework.implementations.VibratorProviderImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
-import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -283,19 +276,11 @@ open class MyFragment() : Fragment() {
      */
     protected open fun goBack() {
         vibrator.interaction()
-        findNavControllerDefault().navigateUp()
+        // TODO: att doc
+        requireMainActivity().onBackPressedDispatcher.onBackPressed()
         Log.d("USUK", "MyFragment.goBack: ${this.javaClass.simpleName}")
     }
 
-    /**
-     * Mesmo que [goBack] mas cusando o NavHost do painel de detalhes.
-     * Se quer voltar na navegação em um fragmento no painel de detalhes essa é a fução que deve chamar.
-     */
-    protected open fun goBackDetails() {
-        vibrator.interaction()
-        findNavControllerDetails()?.navigateUp()
-        Log.d("USUK", "MyFragment.goBackDetails: ${this.javaClass.simpleName} ")
-    }
 
     protected fun requireMainActivity(): MainActivity {
         return requireActivity() as MainActivity
@@ -475,88 +460,13 @@ open class MyFragment() : Fragment() {
                     getString(R.string.app_name)
                 )
             ).setPositiveButton(getString(R.string.Ir_a_loja)) { dialog, _ ->
-                openPlayStore()
+                requireMainActivity().openPlayStore()
             }.setNegativeButton(getString(R.string.Sair)) { dialog, _ ->
                 exitProcess(0)
             }.setCancelable(false).show()
         }
 
     }
-
-    /**
-     * Abre a página do aplicativo na Play Store.
-     *
-     * Tenta abrir diretamente no aplicativo da Play Store. Se não estiver instalado,
-     * abre no navegador.
-     *
-     * Utiliza um link do Firebase Remote Config se disponível, caso contrário, usa o nome do pacote do aplicativo.
-     */
-    protected fun openPlayStore() {
-        val appPackageName = App.instance.packageName
-        // TODO: otimizar depois dos testes
-
-        val playStoreLink = App.instance.remoteConfigValues.value?.playStoreAppLink
-        if (!playStoreLink.isNullOrBlank()) {
-
-            try {
-
-                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
-                    addFlags(FLAG_ACTIVITY_NEW_TASK)
-                    setPackage("com.android.vending")
-                }
-                startActivity(intent)
-
-            } catch (_: ActivityNotFoundException) {
-
-                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
-                    addFlags(FLAG_ACTIVITY_NEW_TASK)
-                }
-                startActivity(intent)
-
-            }
-        } else try {
-
-            val intent = Intent(
-                Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri()
-            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
-            intent.setPackage("com.android.vending")
-            startActivity(intent)
-
-        } catch (_: ActivityNotFoundException) {
-
-            val intent = Intent(
-                Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$appPackageName".toUri()
-            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-
-        }
-    }
-
-    /** Retorna o  Controlador de navegação do painel de detalhes (o da direita)
-     * Esse controlador só estará disponível em dispositivos com tela grande com tablets e tvs
-     * para saber se pode chamar essa função verifique [App.largeScreenDevice]
-     *
-     * @See findNavControllerMain*/
-    protected fun findNavControllerDetails(): NavController? {
-        return requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_detail)?.findNavController()
-    }
-
-    /**
-     * Retorna o  Controlador de navegação do painel principal (o da esquerda em tablets)
-     * Esse controlador sempre estará disponivel independente do dispositivo (telefones, tablets tvs, etc..)
-     * mas nem sempre ele será o controlador Default do sistema, podendo variar conforme [SlidingPaneController.SlidingPaneState] do [SlidingPaneController].
-     * para obter o navegador Default do sistema no momento da chamada use [findNavControllerDefault].
-     */
-    protected fun findNavControllerMain() =
-        requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_master)?.findNavController()
-            ?: error("Nao deveria ser nulo independente do dispositivo e tamanho da tela")
-
-
-    /**
-     * Retorna o navController padrão definido no sistema que pode ser o master ou details dependendo do estado de [SlidingPaneController]
-     * Use [findNavControllerMain] para obter o navController do painel principal e [findNavControllerDetails] para obter o
-     * navController do painel de detalhes (indisponivel em celulares)*/
-    protected fun findNavControllerDefault() = findNavController()
 
     override fun onResume() {
         if (enableLifecycleDebugLogs) Log.d("USUK", "${this.javaClass.simpleName}.onResume: ")

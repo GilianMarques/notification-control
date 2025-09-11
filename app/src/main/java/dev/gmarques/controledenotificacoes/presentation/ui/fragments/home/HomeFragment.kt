@@ -22,18 +22,17 @@
  * SOFTWARE.
  *
  */
-
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
-
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
@@ -47,8 +46,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
@@ -65,14 +64,20 @@ import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimiz
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.framework.contracts.SystemNotificationManager
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.presentation.model.ManageableNotification
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.PaneResizer
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.PaneResizer.PaneResizeListener
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneControllerCallback
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.SlidingPaneController.SlidingPaneState
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.date_picker.DateTimePickerFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.ManageNotificationsViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.manage_notifications.NotificationMenuAction
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment.Companion.NavigationCallback
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.AutoFitGridLayoutManager
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -89,15 +94,30 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : MyFragment() {
 
+
     @Inject
     lateinit var systemNotificationManager: SystemNotificationManager
 
     private val viewModel: HomeViewModel by activityViewModels()
+
+    /**permite obter as notificaçõesa tivas sem duplica codigo*/
     private val viewModelManageNotifications: ManageNotificationsViewModel by activityViewModels()
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
-    private val isAppBarExpandedKey = "app_bar_expanded"
+    /**Permite ajustar o tamanho do painel manualmente*/
+    private var paneResizer: PaneResizer? = null
+
+    /**Permite alternar a visibilidade do painel de detalhes*/
+    private var slidingPaneController: SlidingPaneController? = null
+
+    /**fragmento de detalhes*/
+    private var mViewManagedAppFragment: ViewManagedAppFragment? = null
+
+    companion object {
+        private const val IS_APP_BAR_EXPANDED = "app_bar_expanded"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,7 +138,6 @@ class HomeFragment : MyFragment() {
             interpolator = AccelerateDecelerateInterpolator()
             duration = 350
         }
-
     }
 
     override fun onCreateView(
@@ -132,28 +151,57 @@ class HomeFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch {
-            setupPopUpMenu()
             setupRecyclerView()
+            setupPopUpMenu()
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
             setupActiveNotificationsView()
             setupAppbar()
+            setupForTablet()
+            setupOnBackPressedListener()
         }
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (viewModel.currentAppOpen != null) openDetailsFragment(viewModel.currentAppOpen!!)
+
+        lifecycleScope.launch {
+
+            binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
+
+            if (!requireMainActivity().isListenNotificationPermissionGranted()) {
+                showListenNotificationWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
+                showPostNotificationRestrictionsWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
+                delay(1500)
+                if (!requireMainActivity().isAppInsetFromBatterySaving()) showBatteryRestrictionsWarning()
+                return@launch
+            }
+
+        }
+    }
+
     private fun setupAppbar() = with(binding) {
 
-        val expanded = findNavControllerDefault()
-            .currentBackStackEntry
-            ?.savedStateHandle
-            ?.get<Boolean>(isAppBarExpandedKey) ?: true
+        val expanded =
+            findNavController().currentBackStackEntry?.savedStateHandle?.get<Boolean>(IS_APP_BAR_EXPANDED) ?: true
 
         appbar.setExpanded(expanded, false)
         appbar.addOnOffsetChangedListener { _, verticalOffset ->
-            findNavControllerDefault().currentBackStackEntry?.savedStateHandle?.set(isAppBarExpandedKey, verticalOffset == 0)
+            findNavController().currentBackStackEntry?.savedStateHandle?.set(IS_APP_BAR_EXPANDED, verticalOffset == 0)
         }
     }
 
@@ -163,8 +211,7 @@ class HomeFragment : MyFragment() {
 
         val notsAdapter = ActiveNotificationsAdapter(object : ActiveNotificationsAdapter.Callback {
             override fun onMenuClicked(
-                notification: ManageableNotification,
-                ivMenu: AppCompatImageView
+                notification: ManageableNotification, ivMenu: AppCompatImageView
             ) {
                 viewModelManageNotifications.createPopUpMenu(notification) { action ->
                     when (action) {
@@ -202,8 +249,7 @@ class HomeFragment : MyFragment() {
             lifecycleScope.launch {
                 viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     collectFlow(
-                        systemNotificationManager
-                            .getActiveWithOngoingNotificationsFlow()
+                        systemNotificationManager.getActiveWithOngoingNotificationsFlow()
                     ) {
 
                         binding.llActiveNotifications?.isGone = it.isEmpty()
@@ -271,44 +317,23 @@ class HomeFragment : MyFragment() {
         })
     }
 
-    private fun navigateToEchoFragment() {
-        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toEchoFragment()) }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
-    }
-
-    private fun navigateToSettingsFragment() {
-
-        val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toSettingsFragment()) }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
-    }
-
-    private fun navigateToManageNotificationsFragment() {
-        val navigate = {
-            findNavControllerMain().navigate(HomeFragmentDirections.toManageNotificationsFragment())
-        }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
-
-    }
-
-    private fun navigateToPickDateAndTime(not: ManageableNotification) {
-
-        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
-            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
-            viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
-        }
-        findNavControllerMain().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
-    }
-
-    private fun navigateToAddManagedApp(not: ManageableNotification) {
-        val navigate = {
-            findNavControllerMain()
-                .navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
-        }
-        if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-        else navigate()
+    /**
+     * Configura um listener para o botão "voltar".
+     * Em dispositivos de tela grande, se o fragmento [ViewManagedAppFragment] estiver visível,
+     * ele é removido e as visualizações de tela única são restauradas. Caso contrário, a ação de "voltar" padrão é executada.
+     */
+    private fun setupOnBackPressedListener() {
+        requireMainActivity()
+            .onBackPressedDispatcher
+            .addCallback(owner = this@HomeFragment) {
+                if (mViewManagedAppFragment != null) {
+                    closeDetailsFragment()
+                    return@addCallback
+                }
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
     }
 
     private fun setupActionBar() = binding.apply {
@@ -338,9 +363,8 @@ class HomeFragment : MyFragment() {
                     ivProfilePicture to ivProfilePicture.transitionName,
                     divider to divider.transitionName,
                 )
-                val navigate = { findNavControllerMain().navigate(HomeFragmentDirections.toProfileFragment(), extras) }
-                if (App.largeScreenDevice) requireMainActivity().slidingPaneController?.showOnlyMaster(navigate)
-                else navigate()
+
+                findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
 
             })
         }
@@ -348,13 +372,12 @@ class HomeFragment : MyFragment() {
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            requireMainActivity().slidingPaneController?.showOnlyMaster()
 
             binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
             )
-            findNavControllerMain().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
+            findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(), extras)
         })
     }
 
@@ -396,6 +419,186 @@ class HomeFragment : MyFragment() {
     }
 
     /**
+     * Adiciona um listener ao `SlidingPaneController` para reatribuir o adapter nos momentos certos da
+     * animação de abertura ou fechamento do painel, garantindo uma transição visual suave.
+     *
+     * @param layoutManager Layout manager usado no RecyclerView.
+     *
+     * @see createResponsiveLayoutManager
+     */
+    private fun setupPaneAnimationListener(layoutManager: AutoFitGridLayoutManager) {
+        slidingPaneController?.addStateListener(this@HomeFragment, object : SlidingPaneControllerCallback {
+            override fun onAnimationStarted(currentState: SlidingPaneState) {
+                binding.rvApps.adapter = null
+            }
+
+            override fun onAnimationEnd(newState: SlidingPaneState) {
+                adapter.setUseGridView(layoutManager.spanCount)
+                binding.rvApps.adapter = adapter
+            }
+        })
+    }
+
+    private fun setupForTablet() = with(binding) {
+
+        if (!App.largeScreenDevice) return@with
+
+        if (masterContainer == null ||
+            detailsContainer == null ||
+            dragIndicator == null ||
+            dragHandle == null
+        ) {
+            Log.e(
+                "USUK",
+                "MainActivity.setupForTablet: Essa view nao deve ser nula em dispositivos de tela grande dragIndicator: $dragIndicator dragHandle: $dragHandle"
+            )
+            return@with
+        }
+        paneResizer = PaneResizer(
+            handleParent = dragIndicator,
+            dragHandler = dragHandle,
+            vibratorProvider = vibrator,
+            listener = object : PaneResizeListener {
+                /**
+                 * Disparada quando o [PaneResizer] detecta alterações no tamanho do painel, para autalizar
+                 * os valores no [SlidingPaneController] que por sua vez atualiza a posição do painel e salva em
+                 * preferencias o novo valor padrao  do painel
+                 */
+                override fun onPaneResized(positionPercent: Float) {
+                    slidingPaneController?.onPaneResizedByHand(positionPercent) ?: 0f
+                }
+            })
+        slidingPaneController = SlidingPaneController(
+            context = requireMainActivity(),
+            masterPane = masterContainer,
+            detailsPane = detailsContainer
+        )
+
+    }
+
+    private fun setupSearch() {
+        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.managedAppsWithRules.value.let {
+                it?.let { adapter.submitList(it, text.toString().trim()) }
+            }
+        }
+    }
+
+    private fun navigateToEchoFragment() {
+        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
+    }
+
+    private fun navigateToSettingsFragment() {
+
+        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
+    }
+
+    private fun navigateToManageNotificationsFragment() {
+        findNavController().navigate(HomeFragmentDirections.toManageNotificationsFragment())
+    }
+
+    private fun navigateToPickDateAndTime(not: ManageableNotification) {
+
+        setFragmentResultListener(DateTimePickerFragment.RESULT_KEY) { _, bundle ->
+            val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
+            viewModelManageNotifications.snoozeNotification(not, selectedTimestamp)
+        }
+        findNavController().navigate(HomeFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+    }
+
+    private fun navigateToAddManagedApp(not: ManageableNotification) {
+        findNavController().navigate(HomeFragmentDirections.toAddManagedAppsFragment(not.packageName))
+    }
+
+    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+
+        binding.edtSearch.setText("")
+
+        // para teblets
+        if (App.largeScreenDevice) {
+            openDetailsFragment(app)
+            return
+        }
+        // Navegação padrão (Celular)
+        findNavController().navigate(
+            HomeFragmentDirections.toViewManagedAppFragment(app = app), FragmentNavigatorExtras(
+                binding.ivProfilePicture to "view_app_icon",
+                binding.tvUserName to "view_app_name",
+                binding.ivMenu to "view_menu",
+                binding.divider to "divider",
+                binding.fabAdd to "fab",
+            )
+        )
+    }
+
+    /**
+     * Abre o fragmento de detalhes para um aplicativo gerenciado específico.
+     * Esta função é usada apenas em dispositivos de tela grande  onde
+     * a lista de aplicativos e os detalhes de um aplicativo selecionado podem ser exibidos lado a lado.
+     *
+     * @param app O objeto [ManagedAppWithRule] contendo os dados do aplicativo a ser exibido.
+     *
+     * @see ViewManagedAppFragment
+     */
+    private fun openDetailsFragment(app: ManagedAppWithRule) {
+        viewModel.currentAppOpen = app
+        toggleSingleScreenViews(false)
+        slidingPaneController?.showMasterAndDetails {
+            mViewManagedAppFragment = ViewManagedAppFragment.newInstance(
+                bundleOf("app" to app), object : NavigationCallback {
+
+                    override fun navigateToEditRule(rule: Rule) {
+                        findNavController().navigate(
+                            HomeFragmentDirections.toAddRuleFragment(rule)
+                        )
+                    }
+
+                    override fun navigateToSelectRule() {
+                        findNavController().navigate(HomeFragmentDirections.toSelectRuleFragment())
+                    }
+                })
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.details_fragment_host, mViewManagedAppFragment!!)
+                .commit()
+
+        }
+        return
+    }
+
+    /**
+     * Fecha o fragmento de detalhes.
+     *
+     * Esta função é usada apenas em dispositivos de tela grande onde
+     * a lista de aplicativos e os detalhes de um aplicativo selecionado podem ser exibidos lado a lado.
+     *
+     * @see ViewManagedAppFragment
+     */
+    private fun closeDetailsFragment() {
+        mViewManagedAppFragment?.let {
+            viewModel.currentAppOpen = null
+            slidingPaneController?.showOnlyMaster {
+                parentFragmentManager
+                    .beginTransaction()
+                    .remove(mViewManagedAppFragment!!)
+                    .commit()
+                mViewManagedAppFragment = null
+                toggleSingleScreenViews(true)
+            }
+        }
+    }
+
+    /**
+     * Alterna a visibilidade dos elementos de interface que são específicos para a visualização em tela única.
+     * Isso é usado em dispositivos de tela grande para esconder/mostrar elementos como o FAB e o menu
+     * quando o painel de detalhes é exibido ou ocultado.
+     * @param show Booleano indicando se os elementos devem ser exibidos (`true`) ou ocultos (`false`).
+     */
+    private fun toggleSingleScreenViews(show: Boolean) = with(binding) {
+        fabAdd.isGone = show.not()
+        ivMenu.isGone = show.not()
+    }
+
+    /**
      * Cria um `AutoFitGridLayoutManager` que calcula automaticamente a quantidade de colunas
      * com base na largura disponível. Força o RecyclerView a recriar as views ao alternar
      * entre visualização em lista e em grade.
@@ -411,7 +614,7 @@ class HomeFragment : MyFragment() {
     private fun createResponsiveLayoutManager(): AutoFitGridLayoutManager {
         return AutoFitGridLayoutManager(requireContext(), 280) { spanCount ->
 
-            if (requireMainActivity().slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
+            if (slidingPaneController?.isAnimating == true) return@AutoFitGridLayoutManager
             adapter.setUseGridView(spanCount)
             /*
             * Reatribuo o adapter para que o RecyclerView recrie as views. Isso força a animação de transição entre
@@ -419,59 +622,6 @@ class HomeFragment : MyFragment() {
             * Não é obrigatório reatribuir o adapter, o próprio LayoutManager ajusta as colunas e tamanhos.
             */
             binding.rvApps.rebindAdapter()
-        }
-    }
-
-    /**
-     * Adiciona um listener ao `SlidingPaneController` para reatribuir o adapter nos momentos certos da
-     * animação de abertura ou fechamento do painel, garantindo uma transição visual suave.
-     *
-     * @param layoutManager Layout manager usado no RecyclerView.
-     *
-     * @see createResponsiveLayoutManager
-     */
-    private fun setupPaneAnimationListener(layoutManager: AutoFitGridLayoutManager) {
-        requireMainActivity().slidingPaneController
-            ?.addStateListener(this@HomeFragment, object : SlidingPaneControllerCallback {
-                override fun onAnimationStarted(currentState: SlidingPaneController.SlidingPaneState) {
-                    binding.rvApps.adapter = null
-                }
-
-                override fun onAnimationEnd(newState: SlidingPaneController.SlidingPaneState) {
-                    adapter.setUseGridView(layoutManager.spanCount)
-                    binding.rvApps.adapter = adapter
-                }
-            })
-    }
-
-    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
-
-        binding.edtSearch.setText("")
-
-        val extras = FragmentNavigatorExtras(
-            binding.ivProfilePicture to "view_app_icon",
-            binding.tvUserName to "view_app_name",
-            binding.ivMenu to "view_menu",
-            binding.divider to "divider",
-            binding.fabAdd to "fab",
-        )
-
-        if (App.largeScreenDevice) lifecycleScope.launch {
-            val navigate = {
-                findNavControllerDetails()!!.navigate(
-                    R.id.viewManagedAppFragment,
-                    bundleOf("app" to app),
-                    NavOptions
-                        .Builder()
-                        .setPopUpTo(R.id.viewManagedAppFragment, true)
-                        .build()
-                )
-            }
-            requireMainActivity().slidingPaneController?.showMasterAndDetails(navigate)
-
-        } else {
-            // Navegação padrão (Celular)
-            findNavControllerMain().navigate(HomeFragmentDirections.toViewManagedAppFragment(app = app), extras)
         }
     }
 
@@ -501,39 +651,6 @@ class HomeFragment : MyFragment() {
         }
     }
 
-    private fun setupSearch() {
-        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
-            viewModel.managedAppsWithRules.value.let {
-                it?.let { adapter.submitList(it, text.toString().trim()) }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        lifecycleScope.launch {
-
-            binding.containerWarnings.removeAllViews() // necessario por causa do bug da tela de bateria em alguns sistemas
-
-            if (!requireMainActivity().isListenNotificationPermissionGranted()) {
-                showListenNotificationWarning()
-                return@launch
-            }
-
-            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                showPostNotificationRestrictionsWarning()
-                return@launch
-            }
-
-            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                delay(1500)
-                if (!requireMainActivity().isAppInsetFromBatterySaving()) showBatteryRestrictionsWarning()
-                return@launch
-            }
-        }
-    }
-
     private fun showListenNotificationWarning() {
 
         val warningBinding = ViewWarningListenNotificationPermissionBinding.inflate(layoutInflater)
@@ -542,8 +659,7 @@ class HomeFragment : MyFragment() {
             MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Sua_privacidade_importa))
                 .setMessage(getString(R.string.O_conteudo_das_notifica_es_fica_salvo_apenas_no_seu_dispositivo_e_sob_nenhuma_circunst_ncia_compartilhado_com_terceiros))
                 .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                }
-                .setNegativeButton(getString(R.string.Ver_politica_de_privacidade)) { dialog, _ ->
+                }.setNegativeButton(getString(R.string.Ver_politica_de_privacidade)) { dialog, _ ->
                     val url = App.instance.remoteConfigValues.value?.privacyUrl
 
                     if (!url.isNullOrBlank()) {
@@ -551,13 +667,11 @@ class HomeFragment : MyFragment() {
                         startActivity(intent)
                     } else {
                         showErrorSnackBar(
-                            getString(R.string.Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes),
-                            binding.fabAdd
+                            getString(R.string.Nao_foi_possivel_obter_url_tente_novamente_em_alguns_instantes), binding.fabAdd
                         )
                     }
 
-                }
-                .setIcon(R.drawable.vec_info).show()
+                }.setIcon(R.drawable.vec_info).show()
         })
 
         warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
@@ -600,36 +714,15 @@ class HomeFragment : MyFragment() {
     }
 
     private fun showHowToFeedbackDialog() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback))
-            .setIcon(R.drawable.vec_info)
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
-                openPlayStore()
+                requireMainActivity().openPlayStore()
             }.setNegativeButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
-                openMailToSendFeedback()
+                requireMainActivity().openMailToSendFeedback()
             }.show()
     }
 
-    private fun openMailToSendFeedback() {
-        val email = App.instance.remoteConfigValues.value?.contactEmail
-        if (email == null) return
-
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = "mailto:".toUri()
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            putExtra(
-                Intent.EXTRA_TEXT,
-                (getString(R.string.Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso))
-            )
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Feedback_do_app))
-        }
-
-        if (intent.resolveActivity(App.instance.packageManager) != null) {
-            App.instance.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        } else {
-            Toast.makeText(App.instance, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
-        }
-    }
 }
 
 

@@ -36,6 +36,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import dev.gmarques.controledenotificacoes.App
@@ -153,8 +154,8 @@ class SplashFragment : MyFragment() {
             // previne erro de navegação quando o app é minimizado na hora de navegar
             collectFlow(lifecycle.currentStateFlow) {
                 if (lifecycle.currentState == Lifecycle.State.RESUMED &&
-                    findNavControllerMain().currentDestination?.id == R.id.splashFragment
-                ) findNavControllerMain().navigate(
+                    findNavController().currentDestination?.id == R.id.splashFragment
+                ) findNavController().navigate(
                     SplashFragmentDirections.toHomeFragment(),
                     extras
                 )
@@ -164,7 +165,7 @@ class SplashFragment : MyFragment() {
     }
 
     private fun navigateToFragmentLogin() {
-        findNavControllerMain().navigate(SplashFragmentDirections.toLoginFragment())
+        findNavController().navigate(SplashFragmentDirections.toLoginFragment())
     }
 
     private fun setupUiWithUserData(user: User) = lifecycleScope.launch {

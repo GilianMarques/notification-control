@@ -39,6 +39,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
@@ -379,7 +380,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 binding.llConditionParent to "tv_summary",
             )
 
-            findNavControllerMain().navigate(
+            findNavController().navigate(
                 AddOrUpdateRuleFragmentDirections.toAddOrUpdateCondition(
                     viewModel.conditionFlow.value,
                     viewModel.ruleType.value == Type.RESTRICTIVE
