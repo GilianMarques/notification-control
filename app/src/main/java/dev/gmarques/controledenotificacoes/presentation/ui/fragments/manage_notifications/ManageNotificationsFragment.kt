@@ -33,6 +33,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl.showManageNotificationsFragmentUiHints
@@ -99,18 +100,6 @@ class ManageNotificationsFragment : MyFragment(), ManagedNotificationsAdapter.Ca
 
     private fun setupRecyclerView() {
         adapter = ManagedNotificationsAdapter(this)
-
-        requireMainActivity().slidingPaneController
-            ?.addStateListener(this@ManageNotificationsFragment, object : SlidingPaneControllerCallback {
-                override fun onAnimationStarted(currentState: SlidingPaneController.SlidingPaneState) {
-                    binding.rvNotifications.adapter = null
-                }
-
-                override fun onAnimationEnd(newState: SlidingPaneController.SlidingPaneState) {
-                    binding.rvNotifications.adapter = adapter
-                }
-            })
-
         binding.rvNotifications.apply {
             layoutManager = AutoFitGridLayoutManager(requireContext(), 300) {
                 binding.rvNotifications.rebindAdapter()
@@ -160,11 +149,11 @@ class ManageNotificationsFragment : MyFragment(), ManagedNotificationsAdapter.Ca
             val selectedTimestamp = bundle.getLong(DateTimePickerFragment.TIMESTAMP_KEY)
             viewModel.snoozeNotification(not, selectedTimestamp)
         }
-        findNavControllerMain().navigate(ManageNotificationsFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
+        findNavController().navigate(ManageNotificationsFragmentDirections.toDateTimePickerFragment(System.currentTimeMillis()))
     }
 
     private fun navigateToAddManagedApp(not: ManageableNotification) {
-        findNavControllerMain()
+        findNavController()
             .navigate(ManageNotificationsFragmentDirections.toAddManagedAppsFragment(not.packageName))
     }
 

@@ -23,19 +23,10 @@
   ~
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_master"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="0dp"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+    <corners android:radius="16dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <solid android:color="?attr/AppColorBackground" />
+
+</shape>

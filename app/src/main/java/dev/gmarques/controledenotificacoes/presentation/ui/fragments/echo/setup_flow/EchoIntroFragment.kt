@@ -29,6 +29,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -67,7 +68,7 @@ class EchoIntroFragment : MyFragment() {
 
     /**Se o echo ja estiver ligado, navega direto pra tela onde ele pode ser desligado.*/
     private fun navigateToEchoIsEnabledFragIfNeeded() {
-        if (viewModel.isEchoEnabled()) findNavControllerDefault().navigate(EchoIntroFragmentDirections.toEchoIsEnabled())
+        if (viewModel.isEchoEnabled()) findNavController().navigate(EchoIntroFragmentDirections.toEchoIsEnabled())
     }
 
 
@@ -76,7 +77,7 @@ class EchoIntroFragment : MyFragment() {
      */
     private fun setupFabEcho() {
         binding.fab.setOnClickListener {
-            findNavControllerDefault().navigate(EchoIntroFragmentDirections.toEchoStepOneFragment())
+            findNavController().navigate(EchoIntroFragmentDirections.toEchoStepOneFragment())
         }
     }
 

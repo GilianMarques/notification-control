@@ -65,6 +65,13 @@ class HomeViewModel @Inject constructor(
 
 
     /**
+     * Em tablets, ao abrir o fragmento de detalhes, esta variável salva o aplicativo que está sendo exibido para reabrir
+     * o painel de detalhes caso o fragmento seja recriado.
+     * Em celulares, esta variável não tem função.
+     */
+    var currentAppOpen: ManagedAppWithRule? = null
+
+    /**
      * A função que combina os  dados ([combineFlows]) é atualizada sempre que qualquer um dos 3 [Flow]s é atualizado.
      * Não existe uma ordem específica em que isso pode acontecer, por esse motivo, é possível que ao combinar os dados um
      * aplicativo gerenciado a sua regra nao esteja presente na lista de regras, isso lançaria uma exceção.

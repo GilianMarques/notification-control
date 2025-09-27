@@ -48,7 +48,8 @@ object AppLogger {
         val typeListAdapter = moshi.adapter<MutableList<AppLog>>(typeList)
 
         val data = PreferencesImpl.log.value
-        val logs = if (data.isEmpty()) mutableListOf() else typeListAdapter.fromJson(data)!!
+        var logs = if (data.isEmpty()) mutableListOf() else typeListAdapter.fromJson(data)!!
+        if (logs.size > 500) logs = logs.subList(0, 499).toMutableList()
 
         logs.add(0, log)
         PreferencesImpl.log.set(typeListAdapter.toJson(logs))

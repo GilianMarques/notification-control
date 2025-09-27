@@ -100,6 +100,12 @@
         <action
             android:id="@+id/to_dateTimePickerFragment"
             app:destination="@id/dateTimePickerFragment" />
+        <action
+            android:id="@+id/to_selectRuleFragment"
+            app:destination="@id/selectRuleFragment" />
+        <action
+            android:id="@+id/to_addRuleFragment"
+            app:destination="@id/addRuleFragment" />
 
     </fragment>
 

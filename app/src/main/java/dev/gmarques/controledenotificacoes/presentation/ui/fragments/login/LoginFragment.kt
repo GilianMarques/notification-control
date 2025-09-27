@@ -32,6 +32,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.Firebase
@@ -111,7 +112,7 @@ class LoginFragment : MyFragment() {
                 }
 
                 is LoginEvent.Success -> {
-                    findNavControllerMain().navigate(
+                    findNavController().navigate(
                         LoginFragmentDirections.toSplashFragment(event.user)
                     )
                 }
