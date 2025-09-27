@@ -1,10 +1,5 @@
 Observações do que fazer a seguir:
 
-// TODO: ver se a notificação esta sendo exibida -> sim
-    // TODO: ver se o receiver continua funcionando ao limpar os apps da memoria -> sim
-    // TODO: verificar se versoes antifgas do app tem o serviço morto ao limpar todos os apps recentes
-
-
 postar notificações adiadas/ocultas ao remover app
 nao processar notificações de midia
 remover livedatas

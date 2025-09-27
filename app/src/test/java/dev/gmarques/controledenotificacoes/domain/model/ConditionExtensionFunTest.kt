@@ -277,7 +277,7 @@ class ConditionExtensionFunTest {
     }
 
     @Test
-    fun `retorna verdadeiro mesmo quando palavra chave e substring de outra`() {
+    fun `retorna true mesmo quando palavra chave e substring de outra`() {
         val condition = Condition(
             type = Condition.Type.ONLY_IF,
             field = Condition.NotificationField.TITLE,

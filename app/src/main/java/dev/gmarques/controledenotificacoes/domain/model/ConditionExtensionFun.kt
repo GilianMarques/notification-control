@@ -120,9 +120,7 @@ object ConditionExtensionFun {
         else keywords.map { it.lowercase() }
 
         return keywords.any { keyword ->
-            // É necessário isolar a palavra-chave entre espaços pra evitar falsos positivos.
-            // Importantes.contains("Importante") retorna true e isso causa um comportamento indesejado.
-            normalizedNotificationText.contains(" $keyword ")
+            normalizedNotificationText.contains(keyword)
         }
 
     }
