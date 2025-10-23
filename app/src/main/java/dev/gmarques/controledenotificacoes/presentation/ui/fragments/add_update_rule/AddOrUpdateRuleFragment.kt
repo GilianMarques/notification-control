@@ -368,7 +368,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
             viewModel.setCondition(condition)
         }
 
-
         tvAddCondition.setOnClickListener(AnimatedClickListener {
 
             val transitionExtras = FragmentNavigatorExtras(
@@ -578,7 +577,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private fun observeCondition() {
         collectFlow(viewModel.conditionFlow) { condition ->
-
             if (condition == null) {
                 binding.llContainerConditions.isGone = true
                 binding.ivRemoveCondition.isGone = true
@@ -660,5 +658,3 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
 }
-
-

@@ -468,7 +468,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     }
 
     fun setCondition(condition: Condition) {
-        _conditionFlow.tryEmit(condition)
+        viewModelScope.launch {
+            _conditionFlow.emit(condition)
+        }
     }
 
     fun removeCondition() {

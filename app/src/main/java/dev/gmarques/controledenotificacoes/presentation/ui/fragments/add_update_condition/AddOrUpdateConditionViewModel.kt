@@ -25,6 +25,7 @@
 
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition
 
+
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,14 +33,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.model.Condition
-import dev.gmarques.controledenotificacoes.domain.model.Condition.Type
 import dev.gmarques.controledenotificacoes.domain.model.Condition.NotificationField
+import dev.gmarques.controledenotificacoes.domain.model.Condition.Type
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.KeywordsValidationException.MaxKeywordsExceededException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.BlankKeywordException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidatorException.SingleKeywordValidationException.InvalidKeywordLengthException
- 
- 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -153,7 +152,6 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
 
     fun validateCondition() {
 
-
         if (_conditionTypeFlow.value == null) {
             _eventsChannel.trySend(Event.NoTypeDefined)
             return
@@ -163,6 +161,7 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
             _eventsChannel.trySend(Event.NoFieldDefined)
             return
         }
+
         if (_keywordsFlow.value.isEmpty()) {
             _eventsChannel.trySend(Event.NoKeywordDefined)
             return
@@ -227,7 +226,6 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
 
         return hint
     }
-
 
 }
 
