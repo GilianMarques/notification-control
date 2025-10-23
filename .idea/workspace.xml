@@ -165,8 +165,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment=".gitignore update">
+    <list default="true" id="20614493-03fe-46cb-ac23-84ebf7bdc690" name="Changes" comment="Fix: Revert keyword matching to allow substrings&#10;&#10;This commit reverts the keyword matching logic in notification conditions.&#10;&#10;The previous implementation padded keywords with spaces (e.g., `&quot; $keyword &quot;`) to ensure only whole words were matched. This change removes the padding, allowing the logic to match keywords even when they appear as substrings within larger words in the notification content. This addresses scenarios where the stricter matching was too restrictive.&#10;&#10;The related unit test has also been updated to reflect this change.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +181,7 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=VCEEB6NFK7CEAITG)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -246,6 +248,9 @@
     &quot;Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'.executor&quot;: &quot;Run&quot;,
     &quot;BundleExportedModule&quot;: &quot;ControleDeNotificacoes.app&quot;,
     &quot;ExportBundle.BundlePathForControleDeNotificacoes.app&quot;: &quot;C:\\Users\\Gilian\\Documents\\GitHub\\notification-control\\app&quot;,
+    &quot;Gradle.ConditionExtensionFunTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ConditionExtensionFunTest.retorna falso mesmo quando palavra chave e substring de outra.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ConditionExtensionFunTest.retorna verdadeiro quando palavra chave possui emoji.executor&quot;: &quot;Debug&quot;,
     &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.IncomingNotificationProcessorImplTest.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1).executor&quot;: &quot;Run&quot;,
@@ -438,7 +443,7 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="IncomingNotificationProcessorImplTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ConditionExtensionFunTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -449,9 +454,57 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value=":app:testStagingUnitTest" />
+            <option value=":app:testDebugUnitTest" />
             <option value="--tests" />
-            <option value="&quot;dev.gmarques.controledenotificacoes.domain.implementations.IncomingNotificationProcessorImplTest&quot;" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFunTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="ConditionExtensionFunTest.retorna falso mesmo quando palavra chave e substring de outra" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFunTest.retorna falso mesmo quando palavra chave e substring de outra&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="ConditionExtensionFunTest.retorna verdadeiro quando palavra chave possui emoji" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:testDebugUnitTest" />
+            <option value="--tests" />
+            <option value="&quot;dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFunTest.retorna verdadeiro quando palavra chave possui emoji&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -486,37 +539,13 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Tests in 'dev.gmarques.controledenotificacoes'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":app:testStagingUnitTest" />
-            <option value="--tests" />
-            <option value="&quot;dev.gmarques.controledenotificacoes.*&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'" />
+        <item itemvalue="Gradle.ConditionExtensionFunTest" />
+        <item itemvalue="Gradle.ConditionExtensionFunTest.retorna verdadeiro quando palavra chave possui emoji" />
         <item itemvalue="Gradle.Tests in 'dev.gmarques.controledenotificacoes' (1)" />
-        <item itemvalue="Gradle.Tests in 'dev.gmarques.controledenotificacoes'" />
-        <item itemvalue="Gradle.IncomingNotificationProcessorImplTest" />
-        <item itemvalue="Gradle.IncomingNotificationProcessorImplTest" />
+        <item itemvalue="Gradle.ConditionExtensionFunTest.retorna falso mesmo quando palavra chave e substring de outra" />
+        <item itemvalue="Android Instrumented Tests.Tests in 'dev.gmarques.controledenotificacoes'" />
       </list>
     </recent_temporary>
   </component>
@@ -528,14 +557,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1752338469444</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Refactor: Move &quot;System Notification History&quot; to Settings fragment&#10;&#10;- In `NotificationListener.kt`:&#10;    - Extend the snooze duration for ongoing notifications to `60_000L`.&#10;    - Apply `cancelOngoingNotificationBySnooze` to all active notifications upon listener connection.&#10;- In `SettingsFragment.kt`:&#10;    - Add a &quot;System Notification History&quot; menu item that opens the Android system's notification history screen.&#10;    - Handle `ActivityNotFoundException` if the system history screen cannot be opened, showing an error message.&#10;- In `ViewManagedAppFragment.kt`:&#10;    - Remove the &quot;System Notification History&quot; option from the popup menu, as it's now accessible in the main settings.&#10;    - Simplify click listeners for confirmation dialogs.&#10;- In `fragment_settings.xml`:&#10;    - Add a `TextView` for the new &quot;System Notification History&quot; menu item, styled and with an icon.&#10;- Add `vec_system_history.xml` drawable for the &quot;System Notification History&quot; menu item icon.&#10;- Minor cleanup in `HomeFragment.kt`.">
-      <option name="closed" value="true" />
-      <created>1752711675205</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1752711675205</updated>
     </task>
     <task id="LOCAL-00007" summary="Refactor: Rename `reEvaluateActiveNotifications` to `evaluateActiveNotifications`&#10;&#10;The method `reEvaluateActiveNotifications` in `NotificationListener.kt` has been renamed to `evaluateActiveNotifications` for clarity and conciseness.&#10;&#10;All calls to this method in `AddManagedAppsViewModel.kt` and `ViewManagedAppViewModel.kt` have been updated to reflect the new name.">
       <option name="closed" value="true" />
@@ -921,7 +942,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756850406596</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Fix: Revert keyword matching to allow substrings&#10;&#10;This commit reverts the keyword matching logic in notification conditions.&#10;&#10;The previous implementation padded keywords with spaces (e.g., `&quot; $keyword &quot;`) to ensure only whole words were matched. This change removes the padding, allowing the logic to match keywords even when they appear as substrings within larger words in the notification content. This addresses scenarios where the stricter matching was too restrictive.&#10;&#10;The related unit test has also been updated to reflect this change.">
+      <option name="closed" value="true" />
+      <created>1759013227097</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1759013227098</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="UpdateCopyrightCheckinHandler">
@@ -948,7 +977,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Refactor: Improve logic for &quot;Post Now&quot; option in context menu&#10;&#10;The condition for showing the &quot;Post Now&quot; option in the notification context menu has been simplified.&#10;&#10;Previously, the condition was `(!not.permaHidden &amp;&amp; not.isSnoozed) || not.isSystemSnoozed`.&#10;It has been changed to `!not.permaHidden &amp;&amp; (not.isSnoozed || not.isSystemSnoozed)`.&#10;&#10;This change ensures that the &quot;Post Now&quot; option is shown if the notification is not permanently hidden AND it is either user-snoozed or system-snoozed." />
     <MESSAGE value="add fragment manage notifications no tablet nao  deu certo" />
     <MESSAGE value="Refactor: Add timeout to `NotificationListener.getWhenReady()`&#10;&#10;This commit introduces an overloaded version of `NotificationListener.getWhenReady()` that accepts a timeout parameter.&#10;&#10;- The new `getWhenReady(timeOut: Long)` function will return `null` if the service instance is not available within the specified timeout.&#10;- The existing `getWhenReady()` function, which waits indefinitely, remains unchanged.&#10;&#10;This change allows callers to avoid indefinite blocking if the `NotificationListener` service takes too long to become available." />
     <MESSAGE value="Refactor: Adjust timeout for NotificationListener access&#10;&#10;The `PostAppSnoozedNotificationsUseCase` has been updated to use the new `NotificationListener.getWhenReady(timeoutMillis)` method. The timeout for obtaining the `NotificationListener` service has been adjusted from 500ms within a `withTimeoutOrNull` block to a direct 500ms timeout parameter in the `getWhenReady` call.&#10;&#10;This change streamlines the process of accessing the notification listener service while maintaining the timeout mechanism to prevent the app from hanging if notification access permission is not granted." />
@@ -973,11 +1001,15 @@
     <MESSAGE value="Refactor: Update .gitignore for Android Studio and project files&#10;&#10;This commit updates the `.gitignore` file to better align with standard Android Studio project structures and to explicitly manage which `.idea` configuration files are versioned.&#10;&#10;**Key Changes:**&#10;&#10;*   **IntelliJ / Android Studio Section:**&#10;    *   The general rule `.idea/` is added to ignore the entire `.idea` directory by default.&#10;    *   Specific configuration files within `.idea/` that are often useful to version are now explicitly allowed using `!`:&#10;        *   `!.idea/codeStyles/`&#10;        *   `!.idea/runConfigurations/`&#10;        *   `!.idea/dictionaries/`&#10;        *   `!.idea/vcs.xml`&#10;        *   `!.idea/misc.xml` (was previously listed individually)&#10;        *   `!.idea/gradle.xml`&#10;        *   `!.idea/compiler.xml`&#10;        *   `!.idea/navEditor.xml`&#10;        *   `!.idea/assetWizardSettings.xml`&#10;        *   `!.idea/AndroidProjectSystem.xml`&#10;        *   `!.idea/appInsightsSettings.xml`&#10;    *   Files that are generally user-specific or machine-specific caches and workspace settings are now explicitly listed to be ignored, ensuring they are not accidentally committed even if the general `.idea/` rule was somehow bypassed:&#10;        *   `.idea/workspace.xml`&#10;        *   `.idea/caches/`&#10;        *   `.idea/shelf/`&#10;        *   `.idea/tasks.xml`&#10;        *   `.idea/usage.statistics.xml`&#10;        *   `.idea/other.xml`&#10;        *   `.idea/deploymentTargetDropDown.xml` (was previously listed individually)&#10;        *   `.idea/render.experimental.xml` (was previously listed individually)&#10;        *   `.idea/androidTestResultsUserPreferences.xml`&#10;        *   `.idea/deviceManager.xml`&#10;        *   `.idea/migrations.xml`&#10;*   **Removed Redundant Entries:**&#10;    *   Individual listings for `misc.xml`, `deploymentTargetDropDown.xml`, and `render.experimental.xml` were removed as they are now covered by the more specific allow/deny rules under the `.idea/` directory.&#10;*   **Release Artifacts:**&#10;    *   Changed `/app/release/app-release.aab` (and its duplicates) to `/app/release` to ignore all contents of the release output directory.&#10;*   **Removed `/app/usage.txt`:** This specific file is no longer explicitly ignored." />
     <MESSAGE value="Refactor: Externalize keystore.properties path&#10;&#10;This commit updates the build process to read the path of the `keystore.properties` file from a new file named `.keystorePropsPath` located in the project root.&#10;&#10;**Key Changes:**&#10;&#10;*   **`app/build.gradle.kts`:**&#10;    *   The build script now first reads the absolute path to `keystore.properties` from `.keystorePropsPath`.&#10;    *   Added error handling:&#10;        *   Throws a `GradleException` if `.keystorePropsPath` is not found.&#10;        *   Throws a `GradleException` if the path specified in `.keystorePropsPath` is invalid or `keystore.properties` is not found at that location.&#10;        *   Throws a `GradleException` if there's an issue reading the `keystore.properties` file.&#10;    *   The `keystore.properties` file is then loaded using the path obtained from `.keystorePropsPath`.&#10;&#10;*   **`.gitignore`:**&#10;    *   Added `/.keystorePropsPath` to ensure this new configuration file (which contains a local path) is not committed to the repository.&#10;&#10;This change allows developers to store their `keystore.properties` file outside the project directory, improving flexibility and security by not requiring the keystore information to be within the project structure itself." />
     <MESSAGE value=".gitignore update" />
-    <option name="LAST_COMMIT_MESSAGE" value=".gitignore update" />
+    <MESSAGE value="Fix: Revert keyword matching to allow substrings&#10;&#10;This commit reverts the keyword matching logic in notification conditions.&#10;&#10;The previous implementation padded keywords with spaces (e.g., `&quot; $keyword &quot;`) to ensure only whole words were matched. This change removes the padding, allowing the logic to match keywords even when they appear as substrings within larger words in the notification content. This addresses scenarios where the stricter matching was too restrictive.&#10;&#10;The related unit test has also been updated to reflect this change." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix: Revert keyword matching to allow substrings&#10;&#10;This commit reverts the keyword matching logic in notification conditions.&#10;&#10;The previous implementation padded keywords with spaces (e.g., `&quot; $keyword &quot;`) to ensure only whole words were matched. This change removes the padding, allowing the logic to match keywords even when they appear as substrings within larger words in the notification content. This addresses scenarios where the stricter matching was too restrictive.&#10;&#10;The related unit test has also been updated to reflect this change." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ControleDeNotificacoes$Tests_in__dev_gmarques_controledenotificacoes___1_.ic" NAME="Tests in 'dev.gmarques.controledenotificacoes' (1) Coverage Results" MODIFIED="1759010602797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
