@@ -263,6 +263,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param rule A regra [Rule] a ser definida para edição.
      */
     fun setEditingRule(rule: Rule) {
+        if (editingRule != null) return
         editingRule = rule
 
         updateRuleName(rule.name)
